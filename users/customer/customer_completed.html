@@ -1,0 +1,256 @@
+<!DOCTYPE html> 
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Completed</title>
+    <link href='https://fonts.googleapis.com/css?family=Poppins' rel='stylesheet'>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-pzjw8f+uaex3+ihrbIk8mz07tb2F4F5ssx6kl5v5PmUGp1ELjF8j5+zM1a7z5t2N" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="../../css/customer.css">
+
+</head>
+
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg">
+            <!-- Logo -->
+            <a class="navbar-brand d-flex align-items-center" href="#">
+            <img src="../../images/logo.png" alt="BulakBuy Logo" class="img-fluid logo">
+        </a>
+            <!-- Search Bar -->
+            <div class="navbar-collapse justify-content-md-center">
+                <ul class="navbar-nav dib">
+                    <li class="nav-item">
+                        <form class="form-inline my-2 my-lg-0">
+                            <a href=""><i class="fa fa-search"></i></a>
+                            <input type="text"  class="form-control form-input" placeholder="Search">
+                            <a href="javascript:void(0);" onclick="goBack()">
+                            <i class="back fa fa-angle-left" aria-hidden="true"></i>
+                            <div id="search-results">Completed</div>
+                            </a>
+                            
+                        </form>
+                    </li>     
+                </ul>
+            </div>
+        </nav><hr class="nav-hr">
+    </header>
+
+  <div class="wrapper">
+    <div class="button-container">
+        <button class="products-btn active">Products</button>
+        <button class="services-button">Services</button>
+    </div>
+    <div class="products-card" id="productsCard">
+        <div class="single-card " onclick="redirectToAnotherPage()">
+            <div class="img-area">
+                <img src="https://assets.florista.ph/uploads/product-pics/5022_86_5022.webp" alt="">
+            </div>
+            <div class="info">
+                <div class="text-left">
+                    <h3>Winter Green</h3>
+                    <div class="flower-type">
+                        <p class="flower">Flower:</p>
+                        <p class="type">Anthurium , White Rose, Assorted Mums, Rose </p>
+                    </div>
+                    <div class="ribbon-color">
+                        <p class="ribbon">Ribbon:</p>
+                        <p class="color"> Violet </p>
+                    </div>
+                    <p class="price">₱ 1000.00</p>
+                </div>
+                <div class="text-right">
+                    <i class="bi bi-chevron-right"></i>
+                    <p class="count">x 20</p>
+                     
+                </div>
+            </div>
+        </div>
+        <div class="single-card " onclick="redirectToAnotherPage()">
+            <div class="img-area">
+                <img src="https://assets.florista.ph/uploads/product-pics/5022_86_5022.webp" alt="">
+            </div>
+            <div class="info">
+                <div class="text-left">
+                    <h3>Winter Green</h3>
+                    <div class="flower-type">
+                        <p class="flower">Flower:</p>
+                        <p class="type">Anthurium , White Rose, Assorted Mums, Rose </p>
+                    </div>
+                    <div class="ribbon-color">
+                        <p class="ribbon">Ribbon:</p>
+                        <p class="color"> Violet </p>
+                    </div>
+                    <p class="price">₱ 1000.00</p>
+                </div>
+                <div class="text-right">
+                    <i class="bi bi-chevron-right"></i>
+                    <p class="count">x 20</p>
+                     
+                </div>
+            </div>
+        </div>
+        <div class="single-card " onclick="redirectToAnotherPage()">
+            <div class="img-area">
+                <img src="https://assets.florista.ph/uploads/product-pics/5022_86_5022.webp" alt="">
+            </div>
+            <div class="info">
+                <div class="text-left">
+                    <h3>Winter Green</h3>
+                    <div class="flower-type">
+                        <p class="flower">Flower:</p>
+                        <p class="type">Anthurium , White Rose, Assorted Mums, Rose </p>
+                    </div>
+                    <div class="ribbon-color">
+                        <p class="ribbon">Ribbon:</p>
+                        <p class="color"> Violet </p>
+                    </div>
+                    <p class="price">₱ 1000.00</p>
+                </div>
+                <div class="text-right">
+                    <i class="bi bi-chevron-right"></i>
+                    <p class="count">x 20</p>
+                     
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="service-list" id="service-container">
+        <div class="single-card " onclick="redirectToAnotherPage()">
+            <div class="img-area">
+                <img src="https://i.pinimg.com/736x/0a/f6/03/0af60386c63dd4d9361d0a1e629293ac.jpg" alt="">
+            </div>
+            <div class="info">
+                <div class="text-left">
+                    <h3>Mary Rose</h3>
+                    <p class="ad">Tugop, Babag II, Cebu City</p>
+                    
+                    <div class="o-date-time">
+                        <span class="date">23 July 2023</span>
+                        <span class="time">7:20 AM</span>
+                    </div>
+                    <p class="price">₱ 1000.00</p>
+                </div>
+                <div class="text-right">
+                    <i class="bi bi-chevron-right"></i>
+                    <p class="interval">10 hrs</p>
+                   
+                </div>
+            </div>
+        </div>
+        <div class="single-card " onclick="redirectToAnotherPage()">
+            <div class="img-area">
+                <img src="https://i.pinimg.com/736x/0a/f6/03/0af60386c63dd4d9361d0a1e629293ac.jpg" alt="">
+            </div>
+            <div class="info">
+                <div class="text-left">
+                    <h3>Mary Rose</h3>
+                    <p class="ad">Tugop, Babag II, Cebu City</p>
+                    <div class="o-date-time">
+                        <span class="date">23 July 2023</span>
+                        <span class="time">7:20 AM</span>
+                    </div>
+                    <p class="price">₱ 1000.00</p>
+                </div>
+                <div class="text-right">
+                    <i class="bi bi-chevron-right"></i>
+                    <p class="interval">10 hrs</p>
+                   
+                </div>
+            </div>
+        </div>
+        <div class="single-card " onclick="redirectToAnotherPage()">
+            <div class="img-area">
+                <img src="https://i.pinimg.com/736x/0a/f6/03/0af60386c63dd4d9361d0a1e629293ac.jpg" alt="">
+            </div>
+            <div class="info">
+                <div class="text-left">
+                    <h3>Mary Rose</h3>
+                    <p class="ad">Tugop, Babag II, Cebu City</p>
+                    <div class="o-date-time">
+                        <span class="date">23 July 2023</span>
+                        <span class="time">7:20 AM</span>
+                    </div>
+                    <p class="price">₱ 1000.00</p>
+                </div>
+                <div class="text-right">
+                    <i class="bi bi-chevron-right"></i>
+                    <p class="interval">10 hrs</p>
+                   
+                </div>
+            </div>
+        </div>
+        
+    </div>
+  </div>
+  <script>
+        // Get the products and services elements
+        const products = document.querySelector('.products-card');
+        const services = document.querySelector('.service-list');
+
+        // Get the products and product buttons
+        const productsBtn = document.querySelector('.products-btn');
+        const productBtn = document.querySelector('.services-button');
+
+        // Function to set the active page in localStorage
+        function setActivePage(page) {
+            localStorage.setItem('activePage', page);
+        }products
+
+        // Function to get the active page from localStorage
+        function getActivePage() {
+            return localStorage.getItem('activePage');
+        }
+
+        // Function to handle button clicks
+        function handleButtonClick(page) {
+            setActivePage(page);
+
+            if (page === 'products') {
+                // Show the products and hide the services
+                products.style.display = 'block';
+                services.style.display = 'none';
+
+                // Make the products button active and deactivate the product button
+                productsBtn.classList.add('active');
+                productBtn.classList.remove('active');
+            } else if (page === 'services') {
+                // Show the services and hide the products
+                products.style.display = 'none';
+                services.style.display = 'block';
+
+                // Make the product button active and deactivate the products button
+                productBtn.classList.add('active');
+                productsBtn.classList.remove('active');
+            }
+        }
+
+        // Check if there's an active page in localStorage and set it
+        const activePage = getActivePage();
+        if (activePage === 'services') {
+            handleButtonClick('services');
+        } else {
+            handleButtonClick('products'); // Default to products if no active page is found
+        }
+
+        // Add click event listeners to the products and services buttons
+        productsBtn.addEventListener('click', () => handleButtonClick('products'));
+        productBtn.addEventListener('click', () => handleButtonClick('services'));
+    </script>
+<script>
+    function goBack() {
+        window.history.back();
+    }
+  </script>
+  <script>
+    function redirectToAnotherPage() {
+        // Redirect the user to another page when the single-card is clicked
+        window.location.href = 'order_status.html';
+    }
+</script>
+    
+</body>
+</html>

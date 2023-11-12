@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+   <head>
+      <meta charset="UTF-8">
+      <title>Review Accounts</title>
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+      <!-- Boxicons CDN Link -->
+      <link href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css' rel='stylesheet'>
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <link rel="stylesheet" href="../../css/admin.css">
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <link href='https://fonts.googleapis.com/css?family=Poppins' rel='stylesheet'>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+   </head>
+   <body>
+      <!---Sidebar-->
+      <div class="sidebar">
+         <div class="d-flex flex-column ">
+            <div class="logo align-items-center  text-center mt-5">
+               <img src='images/logo.png' alt="BulakBuy Logo">
+               <hr>
+            </div>
+            <div class="profile">
+               <img src='https://media.istockphoto.com/id/517528555/photo/trendy-young-man-smiling-on-white-background.jpg?s=1024x1024&w=is&k=20&c=FJijfaHuhjDH_byYfFku4oclIL5oepIO5ZCA4y_iav0=' alt="Admin Profile">
+               <h6>Dan Mark</h6>
+            </div>
+         </div>
+         <ul class="nav-links align-items-center  text-center ">
+            <li>
+               <a href="dashboard.html">
+                  <i class="fa fa-home" aria-hidden="true"></i>
+                  <span class="links_name">Dashboard</span>
+               </a>
+            </li>
+            <li>
+               <a href="users.php">
+                  <i class="fa fa-user-circle-o" aria-hidden="true"></i>
+                  <span class="links_name">Users</span>
+               </a>
+            </li>
+            <li>
+               <a href="reported_accounts.html">
+                  <i class="fa fa-user-times" aria-hidden="true"></i>
+                  <span class="links_name">Reported Accounts</span>
+               </a>
+            </li>
+            <li>
+               <a href="blocked_accounts.html">
+                  <i class="fa fa-ban" aria-hidden="true"></i>
+                  <span class="links_name">Blocked Accounts</span>
+               </a>
+            </li>
+            <li>
+               <a href="subscriptions.html">
+                  <i class="fa fa-credit-card-alt" aria-hidden="true"></i>
+                  <span class="links_name">Subscriptions</span>
+               </a>
+            </li>
+            <li>
+               <a href="review_accounts.html" class="active">
+                  <i class="fa fa-users" aria-hidden="true"></i>
+                  <span class="links_name">Review Accounts</span>
+               </a>
+            </li>
+            <li>
+               <a href="transaction_history.html">
+                  <i class="fa fa-line-chart" aria-hidden="true"></i>
+                  <span class="links_name">Transaction History</span>
+               </a>
+            </li>
+            <li>
+               <a href="login.php">
+                  <i class="fa fa-sign-out" aria-hidden="true"></i>
+                  <span class="links_name">Logout</span>
+               </a>
+            </li>
+         </ul>
+      </div>
+      <div class="home-section">
+         <nav class="navbar navbar-expand-lg ">
+            <div class="container-fluid">
+               <div class="row">
+                  <div class="col-lg-12">
+                     <div class=" head ">
+                        <div class="dropdown dib">
+                           <div class="header-icon" data-toggle="dropdown">
+                              <i class="fa fa-bell-o" aria-hidden="true"></i>
+                              <div class="drop-down dropdown-menu dropdown-menu-right">
+                                 <div class="dropdown-content-heading">
+                                    <span class="text-left">Recent Notifications</span>
+                                 </div>
+                                 <div class="dropdown-content-body">
+                                    <ul>
+                                       <li>
+                                          <a href="#">
+                                             <img class="pull-left m-r-10 avatar-img" src="#" alt="" />
+                                             <div class="notification-content">
+                                                <small class="notification-timestamp pull-right">02:34 PM</small>
+                                                <div class="notification-heading">Mr. John</div>
+                                                <div class="notification-text">5 members joined today </div>
+                                             </div>
+                                          </a>
+                                       </li>
+                                       <li class="text-center">
+                                          <a href="#" class="more-link">See All</a>
+                                       </li>
+                                    </ul>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                        <div class="dib">
+                           <div class="header-icon">
+                              <i class="fa fa-commenting-o" aria-hidden="true"></i>
+                           </div>
+                        </div>
+                        <div class="container dib">
+                           <div class="row">
+                              <div class="col-lg-5">
+                                 <div class="form">
+                                    <i class="fa fa-search"></i>
+                                    <input type="text" style="height:50px;" class="form-control form-input" id="myInput" onkeyup="myFunction()" placeholder="Search . . .">
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </nav>
+         <div class="home-content">
+            <div id="home" class="tab-pane fade in active">
+               <div class="sales-boxes py-5 ">
+                  <div class="recent-sales box">
+                     <div class="table-container" style="height: 700px;">
+                        <table class="table" id="myTable">
+                           <thead style="text-align: center;">
+                              <tr class="title" style="text-align: center;">
+                                 <th scope="col" class="px-5" style="text-align: center;">IDNO</th>
+                                 <th scope="col" class="px-5" style="text-align: center;">Name</th>
+                                 <th scope="col" class="px-5" style="text-align: center;">Role</th>
+                                 <th scope="col" class="px-5" style="text-align: center;">Images</th>
+                                 <th scope="col" class="px-5" style="text-align: center;">Address</th>
+                                 <th scope="col" class="px-5" style="text-align: center;">Action</th>
+                              </tr>
+                           </thead>
+                           <tbody>
+                              <tr class="name" style="text-align: center;">
+                                 <td class="px-4 py-3" style="min-width: 100px;">00001</td>
+                                 <td class="px-5 py-3" style="width: 400px; text-align: center;">Jefferson Anderson</td>
+                                 <td class="px-5 py-3" style="min-width: 150px; text-align: center;">Seller</td>
+                                 <td class="px-5 py-2" style="min-width: 260px; text-align: right;">
+                                    <div class="d-flex">
+                                        <div class="col dib">
+                                            <img id="myImg1" src='https://cdn4.premiumread.com/?url=https://sunstar.com.ph/uploads/images/2018/10/31/98831.jpg&w=800&q=100&f=jpg&t=2' alt="Valid Id" style="width:60px;height:60px;padding:2px;margin-right: 5px; cursor: pointer;">
+                                        </div>
+                                        <div class="col dib">
+                                            <img id="myImg2" src='https://live.staticflickr.com/7310/13197804604_747bc05acb_z.jpg' alt="Realtime Selfie" style="width:60px;height:60px;padding:2px;margin-right: 5px; cursor: pointer;">
+                                        </div>
+                                    </div>
+                                     
+                                 </td>
+                                 <td class="px-5 py-3 text-center" style="min-width: 300px;">Casuntingan, Mandaue City, 6014, Cebu, Mandaue City, Cebu</td>
+                                 <td class="button py-1" style="min-width: 260px;">
+                                    <a href="#">
+                                       <button class="btn dib">Approve</button>
+                                    </a>
+                                    <a href="#">
+                                       <button class="btn dib">Reject</button>
+                                    </a>
+                                 </td>
+                              </tr>                      
+                             <tr class="name" style="text-align: center;">
+                                <td class="px-4 py-3" style="min-width: 100px;">00001</td>
+                                <td class="px-5 py-3" style="width: 400px; text-align: center;">Jefferson Anderson</td>
+                                <td class="px-5 py-3" style="min-width: 150px; text-align: center;">Seller</td>
+                                <td class="px-5 py-2" style="min-width: 260px; text-align: right;">
+                                   <div class="d-flex">
+                                       <div class="col dib">
+                                           <img id="myImg3" src='https://cdn4.premiumread.com/?url=https://sunstar.com.ph/uploads/images/2018/10/31/98831.jpg&w=800&q=100&f=jpg&t=2' alt="Valid Id" style="width:60px;height:60px;padding:2px;margin-right: 5px; cursor: pointer;">
+                                       </div>
+                                       <div class="col dib">
+                                           <img id="myImg4" src='https://live.staticflickr.com/7310/13197804604_747bc05acb_z.jpg' alt="Realtime Selfie" style="width:60px;height:60px;padding:2px;margin-right: 5px; cursor: pointer;">
+                                       </div>
+                                   </div>
+                                    
+                                </td>
+                                <td class="px-5 py-3 text-center" style="min-width: 300px;">Casuntingan, Mandaue City, 6014, Cebu, Mandaue City, Cebu</td>
+                                <td class="button py-1" style="min-width: 260px;">
+                                   <a href="#">
+                                      <button class="btn dib">Approve</button>
+                                   </a>
+                                   <a href="#">
+                                      <button class="btn dib">Reject</button>
+                                   </a>
+                                </td>
+                             </tr>
+                             <tr class="name" style="text-align: center;">
+                                <td class="px-4 py-3" style="min-width: 100px;">00001</td>
+                                <td class="px-5 py-3" style="width: 400px; text-align: center;">Jefferson Anderson</td>
+                                <td class="px-5 py-3" style="min-width: 150px; text-align: center;">Seller</td>
+                                <td class="px-5 py-2" style="min-width: 260px; text-align: right;">
+                                   <div class="d-flex">
+                                       <div class="col dib">
+                                           <img id="myImg5" src='https://cdn4.premiumread.com/?url=https://sunstar.com.ph/uploads/images/2018/10/31/98831.jpg&w=800&q=100&f=jpg&t=2' alt="Valid Id" style="width:60px;height:60px;padding:2px;margin-right: 5px; cursor: pointer;">
+                                       </div>
+                                       <div class="col dib">
+                                           <img id="myImg6" src='https://live.staticflickr.com/7310/13197804604_747bc05acb_z.jpg' alt="Realtime Selfie" style="width:60px;height:60px;padding:2px;margin-right: 5px; cursor: pointer;">
+                                       </div>
+                                   </div>
+                                    
+                                </td>
+                                <td class="px-5 py-3 text-center" style="min-width: 300px;">Casuntingan, Mandaue City, 6014, Cebu, Mandaue City, Cebu</td>
+                                <td class="button py-1" style="min-width: 260px;">
+                                   <a href="#">
+                                      <button class="btn dib">Approve</button>
+                                   </a>
+                                   <a href="#">
+                                      <button class="btn dib">Reject</button>
+                                   </a>
+                                </td>
+                             </tr>
+                           </tbody>
+                        </table>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+        <!-- The Modal -->
+        <div id="myModal" class="modal">
+            <span class="close"><i class="fa fa-times" aria-hidden="true"></i></span>
+            <img class="modal-content" id="img01">
+        </div>
+
+        <script>
+            // Get the modal
+            var modal = document.getElementById("myModal");
+         
+            // Get the images and insert them inside the modal
+            var img1 = document.getElementById("myImg1");
+            var img2 = document.getElementById("myImg2");
+            var img3 = document.getElementById("myImg3");
+            var img4 = document.getElementById("myImg4");
+            var img5 = document.getElementById("myImg5");
+            var img6 = document.getElementById("myImg6");
+            var modalImg = document.getElementById("img01");
+
+        
+            // Function to open the modal for image 1
+            img1.onclick = function () {
+                modal.style.display = "block";
+                modalImg.src = this.src;
+            }
+        
+            // Function to open the modal for image 2
+            img2.onclick = function () {
+                modal.style.display = "block";
+                modalImg.src = this.src;
+            }
+            // Function to open the modal for image 3
+            img3.onclick = function () {
+                modal.style.display = "block";
+                modalImg.src = this.src;
+            }
+        
+            // Function to open the modal for image 4
+            img4.onclick = function () {
+                modal.style.display = "block";
+                modalImg.src = this.src;
+            }
+            // Function to open the modal for image 5
+            img5.onclick = function () {
+                modal.style.display = "block";
+                modalImg.src = this.src;
+            }
+        
+            // Function to open the modal for image 6
+            img6.onclick = function () {
+                modal.style.display = "block";
+                modalImg.src = this.src;
+            }
+        
+            // Get the <span> element that closes the modal
+            var span = document.getElementsByClassName("close")[0];
+        
+            // When the user clicks on <span> (x), close the modal
+            span.onclick = function () {
+                modal.style.display = "none";
+            }
+        </script>
+
+
+        <script>
+            function myFunction() {
+              var input, filter, table, tr, td, i, j, txtValue;
+              input = document.getElementById("myInput");
+              filter = input.value.toUpperCase();
+              table = document.getElementById("myTable");
+              tr = table.getElementsByTagName("tr");
+              
+              for (i = 0; i < tr.length; i++) {
+                if (tr[i].classList.contains("title")) {
+                  continue; // Skip the header row
+                }
+            
+                var rowVisible = false; // To keep track of row visibility
+                
+                // Loop through all <td> elements in the current row
+                for (j = 0; j < tr[i].cells.length; j++) {
+                  td = tr[i].cells[j];
+                  if (td) {
+                    txtValue = td.textContent || td.innerText;
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                      rowVisible = true; // Set row as visible if any cell contains the filter text
+                    }
+                  }
+                }
+                
+                // Set row display property based on rowVisible
+                if (rowVisible) {
+                  tr[i].style.display = "";
+                } else {
+                  tr[i].style.display = "none";
+                }
+              }
+            }
+         </script>
+   </body>
+</html>

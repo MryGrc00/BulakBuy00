@@ -1,0 +1,335 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap");
+ * {
+     margin: 0;
+     padding: 0;
+     box-sizing: border-box;
+     font-family: "Poppins", sans-serif;
+}
+ .navbar img {
+     padding: 0;
+     width: 195px;
+     height: 100px;
+     margin-top: -10px;
+     margin-left: 186%;
+}
+ .form {
+     position: relative;
+     color: #8e8e8e;
+     left: 130px;
+}
+ .form-inline .fa-search {
+     position: absolute;
+     top: 43px;
+     left: 78%;
+     color: #9ca3af;
+     font-size: 22px;
+}
+ .form-input[type="text"] {
+     height: 50px;
+     width: 500px;
+     background-color: #f0f0f0;
+     border-radius: 10px;
+     margin-left: 430px;
+     margin-top: -10px;
+}
+ 
+ .nav-hr{
+     width:60%;
+     margin: auto;
+     margin-top:-6px;
+}
+ #search-results{
+     display:none;
+}
+ .back{
+     display: none;
+}
+ .income-info {
+     background-color: #f0f0f0;
+     padding: 20px;
+     padding-bottom: 60px;
+     display: flex;
+     border-radius: 20px;
+     flex-direction: column;
+     align-items: center;
+     justify-content: center;
+     text-align: center;
+     margin:auto;
+     margin-top: 0px;
+     width:60%;
+     background-color: #84BEBE;
+     color: white;
+
+}
+
+ .income-name {
+     font-size: 20px;
+     margin-bottom: 15px;
+     font-weight: 300;
+     color: white;
+     margin-top: 40px;
+     
+}
+ .income{
+     font-size: 25px;
+     margin-bottom: 45px;
+     margin-top: 30px;
+     font-weight: 500;
+    
+}
+
+.container1 {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20px;
+    margin-bottom: 40px;
+    gap: 17%;
+}
+/* Card styles */
+.card2 {
+    width: 200px;
+    height: 150px;
+    border: none;
+  box-shadow: 0px 0px 8px #bebebe;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    text-align: center;
+    margin-top: 20px;
+}
+/* Icon styles */
+.card2 i {
+    font-size: 35px;
+    margin-bottom: 10px;
+    color: #65a5a5;
+}
+a:hover {
+    text-decoration: none;
+}
+.label {
+    font-size: 17px;
+    color: #555;
+    white-space: nowrap;
+}
+.sales{
+    font-size: 20px;
+    color: #ff7e95;
+    margin-top:20px;
+    font-weight: 500;
+}
+ .vertical-container {
+     display: flex;
+     flex-direction: column;
+     gap: 10px;
+     width:59%;
+     margin: auto;
+   box-shadow: 0px 0px 8px #bebebe;
+     border-radius: 20px;
+     margin-bottom:20px;
+}
+.subscription-details {
+    display: flex;
+}
+.fa-money {
+    font-size: 50px;
+    margin-top:25px;
+    margin-left:30px;
+    color:#FF7E95
+}
+.text-content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-top: 25px;
+    margin-bottom: 25px;
+    margin-left: 15px;
+    color:#666;
+    flex: 1;
+    padding-left: 10px;
+}
+
+
+.subscription-status{
+    color:#666;
+    font-size: 17px;
+}
+
+.income-monthly{
+    color:#666;
+    font-size: 15px;
+    padding:3px 10px;
+    border-radius:5px;
+    font-size: 15px;
+    margin-top:10px;
+    margin-left:-10px;
+}
+
+/*Responsiveness*/
+ @media (max-width: 768px) {
+     .navbar{
+         position: fixed;
+         background-color: white;
+         width:100%;
+         z-index: 10;
+         top:-1px;
+         
+    }
+     .navbar img {
+         display: none;
+    }
+     .form-input[type="text"] {
+         display: none;
+    }
+     .nav-hr{
+         width:100%;
+    }
+     a #search-results{
+         display: block ;
+         font-size: 15px;
+         margin-left: 20px;
+         color: #555;
+         margin-top: -20px;
+    }
+    a:hover{
+        text-decoration: none;
+        outline: none;
+        border:none;
+    }
+     .back{
+         display: block;
+         font-size: 20px;
+    }
+     
+     .form-inline .fa-search {
+         display: none;
+    }
+     .form-inline .back{
+         text-decoration: none;
+         color:#666;
+    }
+     .form-inline .fa-angle-left:focus {
+         text-decoration: none;
+         outline: none;
+    }
+     .income-info {
+         background-color: #f0f0f0;
+         padding: 20px 10px;
+         display: flex;
+         border-radius: 20px;
+         flex-direction: row;
+         align-items: center;
+         justify-content: center;
+         text-align: center;
+         margin: auto;
+         margin-top: 85px;
+         width: 93%;
+         background-color: #84BEBE;
+         color: white;
+    }
+
+     .income-name {
+         margin-bottom: 5px;
+         font-size: 13px;
+         margin-top:10px;
+    }
+     .income{
+         margin-bottom: 10px;
+         font-size: 15px;
+         font-weight: 500;
+    }
+    
+
+     .container {
+         display: flex;
+         flex-wrap: wrap;
+         justify-content: center;
+         align-items: center;
+         margin-top: 30px;
+        
+    }
+    /* Card styles */
+     .card2 {
+         width: 130px;
+         height: 100px;
+         margin: 10px;
+         padding: 10px;
+         background-color: transparent;
+         display: flex;
+         flex-direction: column;
+         align-items: center;
+         justify-content: center;
+         border-radius: 4px;
+         margin-bottom: 0px;
+    }
+    /* Icon styles */
+     .card2 i {
+         font-size: 20px;
+         margin-bottom: 10px;
+         color: #65a5a5;
+    }
+    /* Label styles */
+     .label {
+         font-size: 12px;
+         color: #555;
+    }
+    .sales{
+        font-size: 14px;
+        color: #ff7e95;
+        margin-top:10px;
+        font-weight: 500;
+    }
+    .subscription-details {
+        display: flex;
+    }
+    .fa-money {
+        font-size: 25px;
+        margin-top:15px;
+        margin-left:10px;
+        color:#FF7E95
+    }
+    .text-content {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        margin-top: 10px;
+        margin-bottom: 10px;
+        margin-left: 10px;
+        color:#666;
+        flex: 1;
+        padding-left: 10px;
+    }
+    
+    
+    .subscription-status{
+        color:#666;
+        font-size: 14px;
+    }
+    
+    .income-monthly{
+        color:#666;
+        font-size: 13px;
+        padding:3px 10px;
+        border-radius:5px;
+        margin-top:5px;
+        margin-left:-10px;
+    }
+    .vertical-container {
+        display: flex;
+        flex-direction: column;
+        width:93%;
+        margin: auto;
+        box-shadow: 0px 0px 5px #bebebe;
+        border-radius: 10px;
+        margin-top:10px;
+        margin-bottom:15px;
+        padding:5px 
+   }
+    
+
+    
+}
+ 

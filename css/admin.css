@@ -1,0 +1,347 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap");
+
+* {
+   margin: 0;
+   padding: 0;
+   box-sizing: border-box;
+   font-family: "Poppins", sans-serif;
+}
+.dib {
+   display: inline-block;
+ }
+  
+ /* Sidebar */
+.sidebar {
+   position: fixed;
+   height: 100%;
+   width: 240px;
+   background: #ffffff;
+   transition: all 0.5s ease;
+}
+
+.sidebar.active {
+   width: 80px;
+}
+
+.sidebar .nav-links {
+   margin-top: 10px;
+}
+
+.sidebar .nav-links li {
+   position: relative;
+   list-style: none;
+   height: 50px;
+}
+
+.sidebar .nav-links li a {
+   height: 100%;
+   width: 100%;
+   display: flex;
+   align-items: center;
+   text-decoration: none;
+   transition: all 0.4s ease;
+   color: #65a5a5; 
+}
+
+.sidebar .nav-links li a.active {
+   color: white;
+   background-color:  #65a5a5; ;
+   
+}
+.sidebar .nav-links li a.active i {
+   color: white;
+}
+.sidebar .nav-links li i {
+   min-width: 60px;
+   text-align: center;
+   font-size: 18px;
+   color: #65a5a5; 
+   transition: color 0.4s ease;
+}
+
+.sidebar .nav-links li a:hover i {
+   color: #dff1f1; 
+}
+
+
+.sidebar .nav-links li a:hover {
+   color:  #dff1f1; 
+}
+
+.sidebar .nav-links li i {
+   min-width: 60px;
+   text-align: center;
+   font-size: 18px;
+   color: #65a5a5;
+}
+
+.sidebar .nav-links li a .links_name {
+   font-size: 15px;
+   font-weight: 400;
+   white-space: nowrap;
+}
+
+
+
+.logo img {
+   padding: 0;
+   width: 150px;
+   height: 70px;
+   margin-top: -19px;
+}
+.logo hr {
+   margin-top: -1px;
+}
+.profile {
+   text-align: center;
+   margin-bottom: 20px;
+   margin-top: 20px;
+}
+.profile img {
+   width: 80px;
+   height: 75px;
+   border-radius: 50%;
+   margin-bottom: 20px;
+}
+.profile h6{
+  font-size: 15px;
+  color:gray;
+}
+.sidebar.active ~ .home-section {
+   width: calc(100% - 60px);
+   left: 60px;
+}
+.home-section {
+   position: relative;
+   background: #65a5a529;
+   min-height: 100vh;
+   width: calc(100% - 240px);
+   left: 240px;
+   transition: all 0.5s ease;
+   overflow: hidden;
+
+}
+
+.main{
+   margin-top: 8%;
+}
+ 
+ /* Navbar */
+.home-section .navbar {
+   
+   height: 80px;
+   background: #65a5a5ca;
+   position: fixed;
+   width: calc(100% - 240px);
+   z-index: 100;
+   padding: 0 20px;
+   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+   transition: all 0.5s ease;
+}
+.form{
+   position: relative;
+   padding: 60px;
+   top:-115px;
+   left:650px;
+   
+ }
+ 
+ .form .fa-search{
+   position: absolute;
+   top:77px;
+   left: 80px;
+   color: #9ca3af;
+ 
+ }
+ 
+ .head{
+   margin-right: -650px;
+   display: inline-block;
+   width:100%;
+   
+ }
+ 
+ .form-input{
+ 
+   text-indent: 33px;
+   border-radius: 100%;
+ }
+ 
+ .form-input:focus{
+ 
+   box-shadow: none;
+   border: 1px solid #e5e2e2;
+ 
+ }
+
+ .header-icon {
+   font-size: 24px;
+   padding: 12px 15px;
+   color: white;
+   position: relative;
+   transition: all 0.4s ease-in-out;
+   right:-1100%;
+   margin-top:175px;
+ }
+ 
+ /* Dashboard*/
+ .stat-widget-one .stat-icon i {
+   font-size: 45px;
+   padding: 10px;
+   font-weight: 900;
+   display: inline-block;
+   color:#FCA4A4;
+ }
+ .stat-widget-one .stat-content {
+   margin-left: 30px;
+   margin-top: 7px;
+ }
+ .stat-widget-one .stat-text {
+   font-size: 14px;
+   color: #868e96;
+ }
+ .stat-widget-one .stat-digit {
+   font-size: 24px;
+   color: #373757;
+ }
+
+ .card {
+   background: #ffffff;
+   margin: 7.5px 0;
+   padding: 40px;
+   border: 1px solid #e7e7e7;
+   border-radius: 20px;
+   box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+ } 
+
+  
+ /* Home Section*/
+ .home-section .nav li a{
+
+   align-items: center;
+   font-size: 15px;
+   padding:20px;
+   color:black;
+
+}
+
+.home-section .home-content {
+   position: relative;
+   margin-top: 100px;
+}
+
+
+.home-content .sales-boxes {
+   display: flex;
+   justify-content: space-between;
+  
+}
+
+.home-content .sales-boxes .recent-sales {
+   width: 100%;
+   background: #fff;
+   padding: 40px 30px;
+   margin: 0 20px;
+   border-radius: 12px;
+   box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+}
+
+.sales-boxes .table .title{
+    font-size: 15px;
+    background-color: #F2F2F2;
+
+}
+
+/*table*/
+
+.table-container {
+   position: relative;
+   overflow: auto;
+   height: 600px; 
+}
+
+.table-container thead {
+   position: sticky;
+   top: 0;
+   background-color: white; 
+}
+
+.sales-boxes .table .btn{
+    font-size: 15px;
+    margin-top: 10px;
+    background-color: #65a5a5; 
+    color: white;
+    display: inline-block;
+
+}
+.sales-boxes .table .btn:focus{
+   border: none;
+   outline:none;
+
+}
+
+
+
+#myImg {
+   border-radius: 5px;
+   cursor: pointer;
+   transition: 0.3s;
+ }
+ 
+ #myImg:hover {opacity: 0.7;}
+ 
+ /* The Modal */
+ .modal {
+   display: none; 
+   position: fixed; 
+   z-index: 1; 
+   padding-top: 100px;
+   left: 0;
+   top: 0;
+   width: 100%; 
+   height: 100%; 
+   overflow: auto;
+   background-color: rgba(0, 0, 0, 0.301);
+   background-color: rgba(87, 73, 73, 0.836); 
+ }
+ 
+ /* Modal Content (image) */
+ .modal-content {
+   margin: auto;
+   display: block;
+   width: 80%;
+   max-width: 700px;
+ }
+ 
+ 
+ @-webkit-keyframes zoom {
+   from {-webkit-transform:scale(0)} 
+   to {-webkit-transform:scale(1)}
+ }
+ 
+ @keyframes zoom {
+   from {transform:scale(0)} 
+   to {transform:scale(1)}
+ }
+ 
+ /* Close Button */
+ 
+.close i{
+   position: absolute;
+   top: 40px;
+   right: 40px;
+   color: #ffffff;
+   font-size: 40px;
+   font-weight: bold;
+   cursor: pointer;
+}
+
+.close:hover {
+   color: rgb(255, 255, 255); 
+}
+
+ @media only screen and (max-width: 700px){
+   .modal-content {
+     width: 100%;
+   }
+ }

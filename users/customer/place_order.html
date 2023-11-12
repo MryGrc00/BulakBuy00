@@ -1,0 +1,277 @@
+<!DOCTYPE html> 
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Place Order</title>
+        <link href='https://fonts.googleapis.com/css?family=Poppins' rel='stylesheet'>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-pzjw8f+uaex3+ihrbIk8mz07tb2F4F5ssx6kl5v5PmUGp1ELjF8j5+zM1a7z5t2N" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+        <link rel="stylesheet" href="../../css/place_order.css">
+    </head>
+    <body>
+        <header>
+            <nav class="navbar navbar-expand-lg">
+                <!-- Logo -->
+                <a class="navbar-brand d-flex align-items-center" href="#">
+                <img src="../../images/logo.png" alt="BulakBuy Logo" class="img-fluid logo">
+                </a>
+                <!-- Search Bar -->
+                <div class="navbar-collapse justify-content-md-center">
+                    <ul class="navbar-nav dib">
+                        <li class="nav-item">
+                            <form class="form-inline my-2 my-lg-0">
+                                <a href=""><i class="fa fa-search"></i></a>
+                                <input type="text"  class="form-control form-input" placeholder="Search" style="text-align:left;padding-left: 15px;font-size: 16px;">
+                                <a href="javascript:void(0);" onclick="goBack()">
+                                    <i class="back fa fa-angle-left" aria-hidden="true"></i>
+                                    <div id="search-results">Order Summary</div>
+                                  </a>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+            <hr class="nav-hr">
+        </header>
+        <main class="main">
+            <div class="container">
+                <div class="column1">
+                    <div class="location">
+                        <i class="bi bi-geo-alt"></i>
+                        <div class="location-info">
+                            <a href="#">
+                                <p class="name"> Niña Mae Cabilao<i class=" fa fa-angle-right" aria-hidden="true"></i></p>
+                            </a>
+                            <p class="number"> (+63)9785654543</p>
+                            <p class="street">Action Area 11, Newtown, 10km away</p>
+                        </div>
+                    </div>
+                    <div class="cart-container">
+                        <div class="all-items">
+                            <h6 class="items-label">Payment Method</h6>
+                        </div>
+                        <div class="payment-method">
+                            <i class=" wallet bi bi-wallet2"></i>
+                            <label for="cash">Cash on Delivery</label>
+                            <input type="radio" id="cash" name="payment" value="cash">
+                        </div>
+                        <div class="payment-method">
+                            <img src="https://logos-download.com/wp-content/uploads/2020/06/GCash_Logo.png" alt="GCash Icon">
+                            <label for="gcash">GCash</label>
+                            <input type="radio" id="gcash" name="payment" value="gcash">
+                        </div>
+                        <div class="border"></div>
+                        <div class="cart-items">
+                            <div class="shop-info">
+                                <img src="https://images.squarespace-cdn.com/content/v1/57451c424c2f85ae9b18f48d/ddcb7ab1-22ab-49dd-8da9-9b3b054393a5/Claudia+Lapena+-+4A4B169D-B766-409B-BD76-AAC2590167F7.jpeg" alt="Shop 1">
+                                <div class="shop-name">
+                                    <a href="#">
+                                        <h3>Mary Grace Flower Shop</h3>
+                                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="cart-item">
+                                <div class="custom-checkbox" style="margin-top:-30px">
+                                    <img src="https://assets.florista.ph/uploads/product-pics/1674804112_5022.png" alt="Product 1">
+                                </div>
+                                <div class="item-details">
+                                    <h2>White Flower Arrangement</h2>
+                                    <div class="flower-type">
+                                        <p class="flower">Flower:</p>
+                                        <p class="type">Anthurium , White Rose, Assorted Mums, Rose </p>
+                                    </div>
+                                    <div class="ribbon-color">
+                                        <p class="ribbon">Ribbon:</p>
+                                        <p class="color"> Violet </p>
+                                    </div>
+                                    <p class="price">₱ 3,000</p>
+                                    <div class="quantity-control">
+                                        <p class="quantity"> X 1</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="border"></div>
+                        </div>
+                        <div class="cart-items">
+                            <div class="shop-info">
+                                <img src="https://images.squarespace-cdn.com/content/v1/57451c424c2f85ae9b18f48d/ddcb7ab1-22ab-49dd-8da9-9b3b054393a5/Claudia+Lapena+-+4A4B169D-B766-409B-BD76-AAC2590167F7.jpeg" alt="Shop 1">
+                                <div class="shop-name">
+                                    <a href="#">
+                                        <h3>Mary Grace Flower Shop</h3>
+                                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="cart-item">
+                                <div class="custom-checkbox" style="margin-top:-30px">
+                                    <img src="https://assets.florista.ph/uploads/product-pics/1674804112_5022.png" alt="Product 1">
+                                </div>
+                                <div class="item-details">
+                                    <h2>White Flower Arrangement</h2>
+                                    <div class="flower-type">
+                                        <p class="flower">Flower:</p>
+                                        <p class="type">Anthurium , White Rose, Assorted Mums, Rose </p>
+                                    </div>
+                                    <div class="ribbon-color">
+                                        <p class="ribbon">Ribbon:</p>
+                                        <p class="color"> Violet </p>
+                                    </div>
+                                    <p class="price">₱ 3,000</p>
+                                    <div class="quantity-control">
+                                        <p class="quantity"> X 1</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="border"></div>
+                        </div>
+                        <div class="cart-items">
+                            <div class="shop-info">
+                                <img src="https://images.squarespace-cdn.com/content/v1/57451c424c2f85ae9b18f48d/ddcb7ab1-22ab-49dd-8da9-9b3b054393a5/Claudia+Lapena+-+4A4B169D-B766-409B-BD76-AAC2590167F7.jpeg" alt="Shop 1">
+                                <div class="shop-name">
+                                    <a href="#">
+                                        <h3>Mary Grace Flower Shop</h3>
+                                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="cart-item">
+                                <div class="custom-checkbox" style="margin-top:-30px">
+                                    <img src="https://assets.florista.ph/uploads/product-pics/1674804112_5022.png" alt="Product 1">
+                                </div>
+                                <div class="item-details">
+                                    <h2>White Flower Arrangement</h2>
+                                    <div class="flower-type">
+                                        <p class="flower">Flower:</p>
+                                        <p class="type">Anthurium , White Rose, Assorted Mums, Rose </p>
+                                    </div>
+                                    <div class="ribbon-color">
+                                        <p class="ribbon">Ribbon:</p>
+                                        <p class="color"> Violet </p>
+                                    </div>
+                                    <p class="price">₱ 3,000</p>
+                                    <div class="quantity-control">
+                                        <p class="quantity"> X 1</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="border"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="column2">
+                    <div class="summary-container">
+                        <div class="order-summary">
+                            <h6 class="order-label">Order Summary</h6>
+                        </div>
+                        <div class="summary-items">
+                            <div class="sub-total">
+                                <div class="product-price">
+                                    <p class="product">Product Price</p>
+                                    <p class="order-price">₱ 3,000</p>
+                                    <br>
+                                </div>
+                                <div class="total-payment">
+                                    <p class="total">Total</p>
+                                    <p class="t-payment">₱ 3,000</p>
+                                    <br>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="button-container">
+                            <div class="button-container">
+                                <div class="total-info">
+                                    <p class="total-item">Total ( 1 item )</p>
+                                    <p class="total-price">₱ 3,000</p>
+                                </div>
+                                <button class="checkout" id="placeOrderBtn">Place Order</button>
+                                <!-- Confirmation Modal -->
+                                <div id="confirmationModal" class="modal">
+                                    <div class="modal-content">
+                                        <p class="confirm-order">Do you want to confirm your order?</p>
+                                        <p class="confirm-note">Once confirmed, it cannot be canceled.</p>
+                                        <div class="confirm-btn">
+                                            <button class="cancel" id="cancelOrderBtn">Cancel</button>
+                                            <button class="confirm" id="confirmOrderBtn">Confirm</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Thank You Modal (Initially hidden) -->
+                                <div id="thankYouModal" class="modal">
+                                    <div class="modal-content">
+                                        <span class="close" id="closeThankYouModal">&times;</span>
+                                        <i class="bi bi-check-circle"></i>
+                                        <h2 class="confirmed">Order Confirmed !</h2>
+                                        <p class="sucessful">Your order has been placed sucessfully. Check the status of your order here. <a href="order_status.html">Order Status</a></p>
+                                        <a href="home.html"><button class="c-shopping">Continue Shopping</button></a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+        <script>
+            /// Get the modal elements
+            const confirmationModal = document.getElementById("confirmationModal");
+            const thankYouModal = document.getElementById("thankYouModal");
+            
+            // Get the buttons to trigger modals
+            const placeOrderBtn = document.getElementById("placeOrderBtn");
+            const closeThankYouModal = document.getElementById("closeThankYouModal");
+            const confirmOrderBtn = document.getElementById("confirmOrderBtn");
+            const cancelOrderBtn = document.getElementById("cancelOrderBtn");
+            
+            // Show the confirmation modal when the "Place Order" button is clicked
+            placeOrderBtn.addEventListener("click", () => {
+              confirmationModal.style.display = "block";
+            });
+            
+            
+            // Show the thank you modal when the order is confirmed
+            confirmOrderBtn.addEventListener("click", () => {
+              confirmationModal.style.display = "none";
+              thankYouModal.style.display = "block";
+            });
+            
+            // Close the thank you modal when the "Close" button is clicked
+            closeThankYouModal.addEventListener("click", () => {
+              thankYouModal.style.display = "none";
+            });
+            
+            // Close the modals if the user clicks outside the content
+            window.addEventListener("click", (event) => {
+              if (event.target === confirmationModal) {
+                confirmationModal.style.display = "none";
+              }
+              if (event.target === thankYouModal) {
+                thankYouModal.style.display = "none";
+              }
+            });
+            
+            // Close the confirmation modal when the "Cancel" button is clicked
+            cancelOrderBtn.addEventListener("click", () => {
+              confirmationModal.style.display = "none";
+            });
+            // Close the modals if the user presses the "Esc" key
+            document.addEventListener("keydown", (event) => {
+              if (event.key === "Escape") {
+                confirmationModal.style.display = "none";
+                thankYouModal.style.display = "none";
+              }
+            });      
+        </script> 
+        <script>
+            function goBack() {
+                window.history.back();
+            }
+          </script>
+    </body>
+</html>

@@ -1,0 +1,362 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap");
+ * {
+     margin: 0;
+     padding: 0;
+     box-sizing: border-box;
+     font-family: "Poppins", sans-serif;
+}
+ .navbar img {
+     padding: 0;
+     width: 195px;
+     height: 100px;
+     margin-top: -10px;
+     margin-left: 186%;
+}
+ .form {
+     position: relative;
+     color: #8e8e8e;
+     left: 130px;
+}
+ .form-inline .fa-search {
+     position: absolute;
+     top: 43px;
+     left: 78%;
+     color: #9ca3af;
+     font-size: 22px;
+}
+ .form-input[type="text"] {
+     height: 50px;
+     width: 500px;
+     background-color: #f0f0f0;
+     border-radius: 10px;
+     margin-left: 430px;
+     margin-top: -10px;
+}
+ .cart {
+     font-size: 30px;
+     padding: 0;
+     color: #65a5a5;
+     margin-top: -5px;
+     left: 50.5%;
+     transform: translateX(-50%);
+     position: absolute;
+}
+ .num-cart {
+     background-color: #ff7e95;
+     border-radius: 50px;
+     padding: 2px;
+     margin: auto;
+     width: 20px;
+     height: 20px;
+     font-size: 10px;
+     position: absolute;
+     top: 5px;
+     margin-left: 20.5%;
+     transform: translateX(50%);
+     color: white;
+     text-align: center;
+}
+ .nav-hr{
+     width:60%;
+     margin: auto;
+     margin-top:-6px;
+}
+ #search-results{
+     display:none;
+}
+ .back{
+     display: none;
+}
+ .container {
+     display: flex;
+     justify-content: space-between;
+     gap: 20px;
+}
+ .column2 {
+     flex-basis: 100%;
+     margin-top:20px;
+     margin-bottom:20px;
+}
+ .p-review {
+     display: flex;
+     align-items: center;
+    /* Vertically align items */
+}
+ .review-pic img{
+     width: 35px;
+     height: 35px;
+     margin-right: 10px;
+     border-radius:50px;
+     position: relative;
+     top: -10px;
+}
+ .review-info {
+     flex-direction: column;
+     font-size:13px;
+     line-height:5%;
+     margin-top: 2%;
+     position: relative;
+}
+ .review-text {
+     margin-top: 10px;
+    /* Adjust the margin-top as needed */
+}
+ .r-date{
+     font-size: 11px;
+}
+ .r-star .fa {
+     color: gold;
+     font-size: .8em;
+     margin-right: 1px;
+}
+ .c-review{
+     width:98%;
+     text-align: justify;
+     margin-left:4%;
+     margin-top: 10px;
+     font-size: 13px;
+}
+/* Image preview */
+ .image-preview {
+     display: flex;
+     flex-wrap: nowrap;
+     margin-left: 40px;
+     margin-top: 20px;
+     padding:0px;
+}
+ .image-preview img{
+     width: 80px;
+     height: 70px;
+     margin-right: 5px;
+     align-items: flex-start;
+     padding: 0px;
+     border-radius: 5px;
+}
+/* Add this CSS to your stylesheet */
+ .modal1 {
+     display: none;
+     position: fixed;
+     z-index: 1;
+     left: 0;
+     top: 0;
+     width: 100%;
+     height: 100%;
+     background-color: rgba(0, 0, 0, 0.5);
+}
+ .modal1-content {
+     margin: auto;
+     display: block;
+     width: 70%;
+     height: 90%;
+     background-color: transparent;
+     margin-top:30px;
+}
+ .close {
+     position: absolute;
+     top: 20px;
+     right: 30px;
+     font-size: 30px;
+     cursor: pointer;
+     color: white;
+}
+ .prev, .next {
+     position: absolute;
+     top: 50%;
+     transform: translateY(-50%);
+     background-color: rgba(0, 0, 0, 0.5);
+     color: white;
+     border: none;
+     padding: 10px;
+     font-size: 20px;
+     cursor: pointer;
+}
+ .prev {
+     left: 10px;
+}
+ .next {
+     right: 10px;
+}
+/*Responsiveness*/
+ @media (max-width: 768px) {
+    .navbar{
+        position: fixed;
+        background-color: white;
+        width:100%;
+        z-index: 100;
+    }
+     .navbar img {
+         display: none;
+    }
+     .form-input[type="text"] {
+         display: none;
+    }
+     .nav-hr{
+         width:100%;
+    }
+     a #search-results{
+         display: block ;
+         font-size: 15px;
+         margin-left: 20px;
+         color: #555;
+         margin-top: -20px;
+    }
+    a:hover{
+        text-decoration: none;
+        outline: none;
+        border:none;
+    }
+     .back{
+         display: block;
+         font-size: 20px;
+    }
+     .cart {
+         font-size: 20px;
+         padding: 0;
+         position: absolute;
+         top: 25px;
+         left: 90%;
+         transform: translateX(-50%);
+         color: #65a5a5;
+    }
+     .num-cart {
+         background-color: #ff7e95;
+         border-radius: 50px;
+         padding: 2px;
+         margin: auto;
+         width: 17px;
+         height: 17px;
+         font-size: 9px;
+         font-weight: bold;
+         position: absolute;
+         top: 2px;
+         margin-left: 10%;
+         transform: translateX(50%);
+         color: white;
+         text-align: center;
+    }
+     .form-inline .fa-search {
+         display: none;
+    }
+     .form-inline .back{
+         text-decoration: none;
+         color:#666;
+    }
+     .form-inline .fa-angle-left:focus {
+         text-decoration: none;
+         outline: none;
+    }
+     .container {
+         display: flex;
+         flex-direction: column;
+         gap: 20px;
+         margin-top:60px;
+    }
+     .column2{
+         margin-top:20px;
+         margin-bottom:20px;
+    }
+     .p-review {
+         display: flex;
+         align-items: center;
+    }
+     .review-pic img{
+         width: 30px;
+         height: 30px;
+         margin-right: 10px;
+         border-radius:50px;
+         position: relative;
+         top: -10px;
+    }
+     .review-info {
+         flex-direction: column;
+         font-size:12px;
+         line-height:5%;
+         margin-top: 2%;
+         position: relative;
+    }
+     .review-text {
+         margin-top: 10px;
+    }
+     .r-date{
+         font-size: 11px;
+    }
+     .r-star .fa {
+         color: gold;
+         font-size: .8em;
+         margin-right: 1px;
+    }
+     .c-review{
+         width:85%;
+         text-align: justify;
+         margin-left: 13%;
+         margin-top: 10px;
+         font-size: 11px;
+    }
+    /* Image preview */
+     .image-preview {
+         display: flex;
+         flex-wrap: nowrap;
+         margin-left: 40px;
+         margin-top: 20px;
+         padding:0px;
+    }
+     .image-preview img{
+         max-width: 60px;
+         height: 50px;
+         margin-right: 3px;
+         align-items: flex-start;
+         padding: 0px;
+         border-radius: 5px;
+    }
+    /* Add this CSS to your stylesheet */
+     .modal1 {
+         display: none;
+         position: fixed;
+         z-index: 200;
+         left: 0;
+         top: 0;
+         width: 100%;
+         height: 100%;
+         background-color: rgba(0, 0, 0, 0.5);
+    }
+     .modal1-content {
+         margin: auto;
+         display: block;
+         width: 80%;
+         height: 50%;
+         background-color: transparent;
+         margin-top:50%;
+    }
+     .close {
+         position: absolute;
+         top: 15%;
+         right: 30px;
+         font-size: 20px;
+         cursor: pointer;
+         color: white;
+    }
+     .prev, .next {
+         position: absolute;
+         top: 50%;
+         transform: translateY(-50%);
+         background-color: transparent;
+         color: white;
+         border: none;
+         padding: 10px;
+         font-size: 20px;
+         cursor: pointer;
+    }
+     .prev {
+         left: 10px;
+    }
+     .next {
+         right: 10px;
+    }
+    .prev:focus {
+        outline: none;
+   }
+    .next:focus {
+        outline: none;
+   }
+}
+ 

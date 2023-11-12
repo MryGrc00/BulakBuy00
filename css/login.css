@@ -1,0 +1,30 @@
+.password-input-container {
+    position: relative;
+}
+
+.toggle-password {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    cursor: pointer;
+}
+
+/* Eye icon styles */
+.toggle-password i {
+    font-size: 18px;
+    color: #999;
+}
+
+/* Style the eye icon when password is revealed */
+.password-revealed i {
+    color: #33b5e5;
+}
+
+.btns{
+    background-color: #65A5A5;
+    padding: 10px;
+    border: none;
+    color: white;
+    border-radius: 10px;
+}

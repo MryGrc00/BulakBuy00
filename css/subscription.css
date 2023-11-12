@@ -1,0 +1,241 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;   700&display=swap");
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+	font-family: "Poppins", sans-serif;
+}
+.navbar img {
+	padding: 0;
+	width: 195px;
+	height: 100px;
+	margin-top: -10px;
+	margin-left: 186%;
+}
+.form {
+	position: relative;
+	color: #8e8e8e;
+	left: 130px;
+}
+.form-inline .fa-search {
+	position: absolute;
+	top: 43px;
+	left: 78%;
+	color: #9ca3af;
+	font-size: 22px;
+}
+.form-input[type="text"] {
+	height: 50px;
+	width: 500px;
+	background-color: #f0f0f0;
+	border-radius: 10px;
+	margin-left: 430px;
+	margin-top: -10px;
+}
+.nav-hr {
+	width: 60%;
+	margin: auto;
+	margin-top: -6px;
+}
+#search-results {
+	display: none;
+}
+.back {
+	display: none;
+}
+.container {
+	margin-top: 40px;
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+	border-radius: 10px;
+}
+.column1 {
+	display: flex;
+	flex-direction: column;
+	margin: 0;
+	margin-left: 0;
+	margin-bottom: 10px;
+}
+.subscription-details {
+	display: flex;
+}
+.bi-cash-coin {
+	font-size: 50px;
+	margin-top: 30px;
+	margin-left: 30px;
+	color: #FF7E95
+}
+.text-content {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	margin-top: 35px;
+	margin-left: 15px;
+	color: #666;
+	flex: 1;
+	padding-left: 10px;
+}
+.subscription-status, .subscription-description{
+	margin-bottom: 10px;
+	margin-top: 50px;
+}
+.subscription-status {
+	color: #222;
+	font-size: 17px;
+}
+.subscription-expire {
+	color: #65A5A5;
+	font-size: 15px;
+	padding: 3px 10px;
+	border-radius: 5px;
+	border: 1px solid #65A5A5;
+	font-size: 15px;
+	margin-top: 10px;
+}
+.subscription-description {
+	margin-top: 15px;
+	font-size: 15px;
+	text-align: justify;
+	width: 96%;
+}
+.price-renew {
+	margin-bottom: 20px;
+	margin-top: 10px;
+}
+.subscription-price {
+	margin-right: 820px;
+	font-size: 19px;
+	margin-top: 30px;
+}
+.subscription-renew {
+	font-size: 17px;
+	color: white;
+	background-color: #65A5A5;
+	margin-bottom: 20px;
+	padding: 5px 15px;
+	border-radius: 5px;
+	margin-top: 40px;
+	border: none;
+}
+.subscription-hr {
+	width: 96%;
+	margin-bottom: -10px;
+	margin-top: 20px;
+}
+@media (max-width: 768px) {
+	.navbar {
+		position: fixed;
+		background-color: white;
+		width: 100%;
+		z-index: 100;
+	}
+	.navbar img {
+		display: none;
+	}
+	.form-input[type="text"] {
+		display: none;
+	}
+	.nav-hr {
+		width: 100%;
+	}
+	#search-results {
+		display: block;
+		font-size: 15px;
+		margin-left: 15px;
+	}
+	.back {
+		display: block;
+		font-size: 20px;
+	}
+	.back:focus {
+		text-decoration: none;
+	}
+	.form-inline .fa-search {
+		display: none;
+	}
+	.form-inline .back {
+		text-decoration: none;
+		color: #666;
+	}
+	.form-inline .fa-angle-left:focus {
+		text-decoration: none;
+		outline: none;
+	}
+	.container {
+		margin-top: 50px;
+		display: flex;
+		flex-direction: column;
+		gap: 20px;
+		box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+		width: 93%;
+		margin-top: 75px;
+	}
+	.column1 {
+		display: flex;
+		flex-direction: column;
+		margin: 0;
+		margin-left: 0;
+		margin-bottom: 10px;
+	}
+	.subscription-details {
+		display: flex;
+	}
+	.bi-cash-coin {
+		font-size: 30px;
+		margin-top: 15px;
+		margin-left: 10px;
+		color: #FF7E95
+	}
+	.text-content {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		margin-top: 15px;
+		margin-left: 10px;
+		color: #666;
+		flex: 1;
+		padding-left: 10px;
+	}
+	.subscription-status {
+		color: #222;
+		font-size: 14px;
+	}
+	.subscription-expire {
+		color: #65A5A5;
+		font-size: 12px;
+		padding: 3px 10px;
+		border-radius: 5px;
+		border: 1px solid #65A5A5;
+		margin-top: 10px;
+	}
+	.subscription-description {
+		margin-top: 13px;
+		font-size: 12px;
+		text-align: justify;
+		width: 95%;
+	}
+	.price-renew {
+		margin-bottom: 20px;
+		margin-bottom: 10px;
+	}
+	.subscription-price {
+		margin-right: 125px;
+		font-size: 15px;
+		margin-top: 30px;
+	}
+	.subscription-renew {
+		font-size: 14px;
+		color: white;
+		background-color: #65A5A5;
+		padding: 3px 15px;
+		border-radius: 5px;
+		margin-top: 40px;
+		border: none;
+	}
+	.subscription-hr {
+		width: 95%;
+		margin-top: 20px;
+	}
+}

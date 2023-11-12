@@ -1,0 +1,214 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap");
+ * {
+     margin: 0;
+     padding: 0;
+     box-sizing: border-box;
+     font-family: "Poppins", sans-serif;
+}
+ .navbar img {
+     padding: 0;
+     width: 195px;
+     height: 100px;
+     margin-top: -10px;
+     margin-left: 186%;
+}
+ .form {
+     position: relative;
+     color: #8e8e8e;
+     left: 130px;
+}
+ .form-inline .fa-search {
+     position: absolute;
+     top: 43px;
+     left: 78%;
+     color: #9ca3af;
+     font-size: 22px;
+}
+ #search-results{
+     display:none;
+}
+ .back{
+     display: none;
+}
+ .form-input[type="text"] {
+     height: 50px;
+     width: 500px;
+     background-color: #f0f0f0;
+     border-radius: 10px;
+     margin-left: 430px;
+     margin-top: -10px;
+}
+ .cart {
+     font-size: 30px;
+     padding: 0;
+     color: #65a5a5;
+     margin-top: -5px;
+     left: 50.5%;
+     transform: translateX(-50%);
+     position: absolute;
+}
+ .num-label{
+     background-color: #ff7e95;
+     border-radius: 50px;
+     padding: 2px;
+     margin: auto;
+     width: 20px;
+     height: 20px;
+     font-size: 10px;
+     position: absolute;
+     top: 5px;
+     margin-left: 20.5%;
+     transform: translateX(50%);
+     color: white;
+     text-align: center;
+}
+ .nav-hr{
+     width:60%;
+     margin: auto;
+     margin-top:-6px;
+}
+ .maps {
+     display: flex;
+     justify-content: center;
+     margin-top:30px;
+     align-items: center;
+}
+ .maps img{
+     width:30%;
+     height:20%;
+}
+ .maps-container {
+     width: 100%;
+     margin-top:20px;
+     display: flex;
+     justify-content: center;
+     margin-top:30px;
+     align-items: center;
+}
+ .maps-btn {
+     margin-top:-4px;
+     font-size:16px;
+     border: none;
+     padding:6px 15px;
+     background-color: #65A5A5;
+     border-radius: 5px;
+     color:white;
+}
+ .maps-btn:focus{
+     outline: none;
+}
+ @media (max-width: 768px) {
+    .navbar{
+        position: fixed;
+        background-color: white;
+        width:100%;
+        z-index: 100;
+    }
+     .navbar img {
+         display: none;
+    }
+     .navbar{
+         position: fixed;
+         background-color: white;
+         width:100%;
+         z-index: 1;
+         top:0;
+    }
+     .form {
+         text-align: left;
+         
+    }
+     .form-input[type="text"] {
+         height: 45px;
+         width: 100%;
+         background-color: #f0f0f0;
+         border-radius: 10px;
+         margin: 0;
+         margin-top: 40px;
+    }
+     .form-inline .fa-search {
+         font-size: 20px;
+         margin-top: 37px;
+         margin-left: 40px;
+    }
+     ::placeholder {
+         font-size: 14px;
+    }
+     a #search-results{
+         display: block ;
+         font-size: 15px;
+         margin-left: 20px;
+         color: #555;
+         margin-top: -20px;
+    }
+    a:hover{
+        text-decoration: none;
+        outline: none;
+        border:none;
+    }
+     .back{
+         display: block;
+         font-size: 20px;
+         color:#666;
+    }
+     .nav-hr{
+         display: none;
+    }
+     .cart {
+         font-size: 20px;
+         padding: 0;
+         position: absolute;
+         top: 25px;
+         left: 90%;
+         transform: translateX(-50%);
+         color: #65a5a5;
+    }
+     .num-label{
+         background-color: #ff7e95;
+         border-radius: 50px;
+         padding: 2px;
+         margin: auto;
+         width: 17px;
+         height: 17px;
+         font-size: 9px;
+         font-weight: bold;
+         position: absolute;
+         top: 2px;
+         margin-left: 10%;
+         transform: translateX(50%);
+         color: white;
+         text-align: center;
+    }
+     .maps {
+         display: flex;
+         justify-content: center;
+         margin-top:30px;
+         align-items: center;
+         margin-top:150px;
+    }
+     .maps img{
+         width:90%;
+         height:70%;
+    }
+     .maps-container {
+         width: 100%;
+         margin-top:20px;
+         display: flex;
+         justify-content: center;
+         margin-top:30px;
+         align-items: center;
+    }
+     .maps-btn {
+         margin-top:-4px;
+         font-size:14px;
+         border: none;
+         padding:6px 15px;
+         background-color: #65A5A5;
+         border-radius: 5px;
+         color:white;
+    }
+     .maps-btn:focus{
+         outline: none;
+    }
+}
+ 
