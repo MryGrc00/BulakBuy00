@@ -9,10 +9,6 @@ if (isset($_SESSION["user_id"]) && ($_SESSION["role"] === "seller" || $_SESSION[
     // Fetch products from the database
     $products = get_products_by_seller($user_id);
 
-    // Function to format price with commas for thousands
-    function formatPrice($price) {
-        return '₱ ' . number_format($price);
-    }
 } else {
     echo "Access Denied. User not logged in or not authorized.";
     // Optional: Redirect to login or home page
@@ -44,14 +40,14 @@ if (isset($_SESSION["user_id"]) && ($_SESSION["role"] === "seller" || $_SESSION[
             <nav class="navbar navbar-expand-lg">
                 <!-- Logo -->
                 <a class="navbar-brand d-flex align-items-center" href="#">
-                <img src="../../images/logo.png" alt="BulakBuy Logo" class="img-fluid logo">
+                <img src="../php/images/logo.png" alt="BulakBuy Logo" class="img-fluid logo">
                 </a>
                 <!-- Search Bar -->
                 <div class="navbar-collapse justify-content-md-center">
                     <ul class="navbar-nav">
                         <li class="nav-item">
                             <form class="form-inline my-2 my-lg-0">
-                                <a href="javascript:void(0);" onclick="goBack()">
+                                <a href="vendor_home.php">
                                     <i class="back fa fa-angle-left" aria-hidden="true"></i>
                                     <div id="search-results">My Products</div>
                                   </a>

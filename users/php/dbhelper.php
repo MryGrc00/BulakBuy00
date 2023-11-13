@@ -210,6 +210,26 @@ function get_products_by_arranger($user_id) {
     }
 }
 
+//before clicking the shop
+    function is_shop_empty($userId) {
+        global $pdo; // Ensure that $pdo is your PDO database connection variable
 
+        // Check if the shop table has an entry for this user using a prepared statement
+        $query = "SELECT COUNT(*) AS shop_count FROM shops WHERE owner_id = :userId";
+        $stmt = $pdo->prepare($query);
+        $stmt->bindParam(':userId', $userId, PDO::PARAM_INT);
+        $stmt->execute();
+
+        if ($stmt) {
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $row['shop_count'] == 0;
+        }
+        return true; // Return true if query fails, assuming no shop exists
+    }
+
+    // Function to format price with commas for thousands
+    function formatPrice($price) {
+        return '₱ ' . number_format($price);
+    }
 
 ?>

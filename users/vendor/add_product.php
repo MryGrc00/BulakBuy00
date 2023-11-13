@@ -88,7 +88,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
     <nav class="navbar navbar-expand-lg">
         <!-- Logo -->
         <a class="navbar-brand d-flex align-items-center" href="#">
-          <img src="..//images/logo.png" alt="BulakBuy Logo" class="img-fluid logo">
+        <img src="../php/images/logo.png" alt="BulakBuy Logo" class="img-fluid logo">
       </a>
         <!-- Search Bar -->
         <div class="navbar-collapse justify-content-md-center">

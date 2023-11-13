@@ -38,7 +38,7 @@ $conn = null;
             <nav class="navbar navbar-expand-lg">
                 <!-- Logo -->
                 <a class="navbar-brand d-flex align-items-center" href="#">
-                <img src="../../images/logo.png" alt="BulakBuy Logo" class="img-fluid logo">
+                <img src="../php/images/logo.png" alt="BulakBuy Logo" class="img-fluid logo">
                 </a>
                 <!-- Search Bar -->
                 <div class="navbar-collapse justify-content-md-center">
@@ -59,17 +59,17 @@ $conn = null;
         <main class="main">
             <section>
                 <div class="vertical-container">
-                    <a href="#">
+                    <a href="../forgot_password.php">
                         <div class="link-content">
                             <i class="bi bi-key"></i>
                             <span class="label1">Change Password</span>
                         </div>
                         <i class="bi bi-chevron-right"></i>
                     </a>
-                    <a href="manage_address.html">
+                    <a href="edit_shop.php">
                         <div class="link-content">
                             <i class="bi bi-house-door"></i>
-                            <span class="label1">Manage Address</span>
+                            <span class="label1">Change Shop Details</span>
                         </div>
                         <i class="bi bi-chevron-right"></i>
                     </a>

@@ -8,8 +8,9 @@ if (isset($_GET['user_id'])) {
     $userID = $_GET['user_id'];
     $users = get_record('users', 'user_id', $userID);
 
-    // Check if the user exists
     if ($users) {
+        $profileImg = $users['profile_img']; // Default to existing image path
+
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $firstname = htmlspecialchars($_POST['first_name']);
             $lastname = htmlspecialchars($_POST['last_name']);
@@ -19,28 +20,21 @@ if (isset($_GET['user_id'])) {
             $zipcode = htmlspecialchars($_POST['zipcode']);
             $address = htmlspecialchars($_POST['address']);
 
-            $imagePath = ''; // Single image path
-            $uploadFolder = '../php/images/';
+            // Process and upload profile image
+            $uploadDir = '../php/images/';
+            if (isset($_FILES['profile_img']) && $_FILES['profile_img']['error'] == 0) {
+                $profileImage = $_FILES['profile_img'];
+                $uploadFile = $uploadDir . basename($profileImage['name']);
+                $allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
 
-            if (!empty($_FILES['profile_img']['name'])) {
-                $file_name = $_FILES['profile_img']['name'];
-                $file_tmp = $_FILES['profile_img']['tmp_name'];
-
-                if (!empty($file_name)) {
-                    $newFilePath = $uploadFolder . basename($file_name);
-                    if (move_uploaded_file($file_tmp, $newFilePath)) {
-                        $imagePath = $newFilePath;
-                    } else {
-                        echo "Error uploading file.";
-                        exit();
-                    }
+                if (in_array($profileImage['type'], $allowedTypes) && move_uploaded_file($profileImage['tmp_name'], $uploadFile)) {
+                    $profileImg = $uploadDir . basename($profileImage['name']); // Update the image path
+                } else {
+                    echo "Invalid file type or upload failed.";
                 }
-            } else {
-                $imagePath = $users['profile_img']; // Use the existing image path if no new image is uploaded
             }
 
             try {
-                // Assuming $pdo is initialized in dbhelper.php
                 $stmt = $pdo->prepare("UPDATE users SET first_name = :first_name, last_name = :last_name, username = :username, email = :email, phone = :phone, zipcode = :zipcode, address = :address, profile_img = :profile_img WHERE user_id = :user_id");
                 $stmt->bindParam(':first_name', $firstname);
                 $stmt->bindParam(':last_name', $lastname);
@@ -49,22 +43,25 @@ if (isset($_GET['user_id'])) {
                 $stmt->bindParam(':phone', $phone);
                 $stmt->bindParam(':zipcode', $zipcode);
                 $stmt->bindParam(':address', $address);
-                $stmt->bindParam(':profile_img', $imagePath);
+                $stmt->bindParam(':profile_img', $profileImg);
                 $stmt->bindParam(':user_id', $userID);
+
                 $stmt->execute();
 
-                header("Location: vendor_home.php");
+                header("Location: vendor_home.php"); // Redirect after successful update
                 exit();
             } catch (PDOException $e) {
                 echo "Error updating user record: " . $e->getMessage();
             }
         }
     } else {
-        // Handle the case when the user is not found
         echo "User not found!";
     }
+} else {
+    echo "No user specified.";
 }
 ?>
+
 
 
 
@@ -94,7 +91,7 @@ if (isset($_GET['user_id'])) {
     <nav class="navbar navbar-expand-lg">
         <!-- Logo -->
         <a class="navbar-brand d-flex align-items-center" href="#">
-          <img src="../../images/logo.png" alt="BulakBuy Logo" class="img-fluid logo">
+        <img src="../php/images/logo.png" alt="BulakBuy Logo" class="img-fluid logo">
       </a>
         <!-- Search Bar -->
         <div class="navbar-collapse justify-content-md-center">
@@ -118,18 +115,12 @@ if (isset($_GET['user_id'])) {
         <?php if ($users): ?>
             <div class="form-container">
             <h3 class="profimgT">Profile Image</h3>                      
-            <div class="image-upload-container">
-            <div class="image-upload">
-                    <input type="file" name ="profile_img" id="profile_img" class="image-input" accept="image/*" multiple > 
-                    <label for="profile_img"><p class="plus"></p class="add-plus"> + Edit Image</label>
+            <div class="circle-container">
+            <img class="circle-image" id="profile-image" src="<?php echo !empty($users['profile_img']) ? $users['profile_img'] : 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'; ?>" alt="Shop Image">                       <label class="upload-button">
+                        <input accept="image/*" type="file" id="imageInput" name="profile_img">
+                        <i class="bi bi-plus"></i>
+                    </label>
                 </div>
-                <div class="image-preview" id="imagePreview">
-                <?php
-                    $profileImage = !empty($users['profile_img']) ? $users['profile_img'] : '../php/images/default.jpg'; 
-                    echo '<img src="' . $profileImage . '" alt="' . $users['last_name'] . '" class="preview-image">';
-                 ?>
-                </div>
-            </div> 
             
     
             <h3 class="prodnaT">First Name</h3>
@@ -175,41 +166,17 @@ if (isset($_GET['user_id'])) {
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js">
 </script> 
 <script>
-        document.addEventListener("DOMContentLoaded", function () {
-        var imageInputs = document.querySelectorAll(".image-input");
-        var imagePreview = document.getElementById("imagePreview");
+    const circleImage = document.getElementById('profile-image');
+    const uploadInput = document.getElementById('imageInput');
 
-        function displayImages() {
-            imagePreview.innerHTML = "";
-            imageInputs.forEach(function (input) {
-                for (var i = 0; i < input.files.length; i++) {
-                    var file = input.files[i];
-                    if (file.type.startsWith("image/")) {
-                        var imageUrl = URL.createObjectURL(file);
-                        var imageContainer = document.createElement("div");
-                        imageContainer.classList.add("image-container");
-
-                        var imageElement = document.createElement("img");
-                        imageElement.classList.add("preview-image");
-                        imageElement.src = imageUrl;
-
-                        imageContainer.appendChild(imageElement);
-                        imagePreview.appendChild(imageContainer);
-                    }
-                }
-            });
+    uploadInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const imageURL = URL.createObjectURL(file);
+            circleImage.src = imageURL; // Temporarily change the image source for preview
         }
-
-        // Add event listeners to all file inputs
-        imageInputs.forEach(function (input) {
-            input.addEventListener("change", function () {
-                displayImages();
-            });
-        });
     });
-
-
-       </script>
+</script>
          <script>
             function goBack() {
                 window.history.back();

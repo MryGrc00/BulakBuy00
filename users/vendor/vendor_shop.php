@@ -1,3 +1,18 @@
+<?php
+session_start();
+include '../php/dbhelper.php'; // Make sure this path is correct
+
+$pdo = dbconnect();
+$user_id = $_SESSION["user_id"] ?? null;
+$isShopEmpty = is_shop_empty($user_id);
+
+// Initialize variables to prevent undefined variable error
+$users = get_record('shops', 'owner_id', $user_id) ?? null;
+$products = get_products_by_seller($user_id) ?? [];
+?>
+
+
+
 <!DOCTYPE html> 
 <html lang="en">
     <head>
@@ -16,7 +31,7 @@
             <nav class="navbar navbar-expand-lg">
                 <!-- Logo -->
                 <a class="navbar-brand d-flex align-items-center" href="#">
-                <img src="../../images/logo.png" alt="BulakBuy Logo" class="img-fluid logo">
+                <img src="../php/images/logo.png" alt="BulakBuy Logo" class="img-fluid logo">
                 </a>
                 <!-- Search Bar -->
                 <div class="navbar-collapse justify-content-md-center">
@@ -25,7 +40,7 @@
                             <form class="form-inline my-2 my-lg-0">
                                 <a href=""><i class="fa fa-search"></i></a>
                                 <input type="text"  class="form-control form-input" placeholder="Search">
-                                <a href="vendor_home.html"><i class="back fa fa-angle-left" aria-hidden="true"></i></a>
+                                <a href="vendor_home.php"><i class="back fa fa-angle-left" aria-hidden="true"></i></a>
                                 <div id="search-results">Shop</div>
                             </form>
                         </li>
@@ -35,183 +50,78 @@
         </header>
         <main class="main">
             <div class="seller-info">
-                <img src="https://assets.vogue.com/photos/613a830fa36a9a12a6efc522/master/w_1600%2Cc_limit/E2U_LAFlowerVendors_ArleneMejorado_006.jpg" alt="Seller Image" class="seller-image">
+            <?php if (isset($users) && is_array($users)): ?>
+                <img src="<?php echo htmlspecialchars($users['shop_img'] ?? 'https://assets.vogue.com/photos/613a830fa36a9a12a6efc522/master/w_1600%2Cc_limit/E2U_LAFlowerVendors_ArleneMejorado_006.jpg'); ?>" alt="Seller Image" class="seller-image">
                 <div class="seller-details">
                     <div class="seller-name">
-                        <i class="bi bi-person" aria-hidden="true"></i>John Doe
+                        <i class="bi bi-person" aria-hidden="true"></i><?php echo htmlspecialchars($users['shop_name']); ?><a href="edit_shop.php"><i class="bi bi-pencil-square" style="margin-left: 10px;"></i></a>
                     </div>
                     <div class="seller-contact">
-                        <i class="bi bi-geo-alt" aria-hidden="true"></i> Action Area 11, Newtown
+                        <i class="bi bi-geo-alt" aria-hidden="true"></i> <?php echo htmlspecialchars($users['shop_address']); ?>
                     </div>
                     <div class="seller-contact">
-                        <i class="bi bi-telephone" aria-hidden="true"></i> (+63)9785654543
+                        <i class="bi bi-telephone" aria-hidden="true"></i> <?php echo htmlspecialchars($users['shop_phone']); ?>
+                    </div>
+                <?php endif; ?>
                     </div>
                 </div>
-            </div>
             <section>
+            <?php foreach ($products as $product) : ?>
                 <div class="product-list" id="product-container">
                     <div class="product">
-                        <a href="../customer/product.html">
-                            <img src="https://www.flowersexpress.ph/cdn/shop/products/PinkPassionFlowerBouquet_1024x1024.jpg?v=1637481564" alt="Product 1">
-                            <div class="product-name">Product 1</div>
-                            <div class="product-category">Category 1</div>
+                        <a href="">
+                        <?php
+                            echo '<img src="' . $product['product_img'] . '" alt="' . $product['product_name'] . '">';
+                        ?>
+                            <div class="product-name"><?php echo $product['product_name']; ?></div>
+                            <div class="product-category"><?php echo $product['product_category']; ?></div>
                             <div class="p">
-                                <div class="product-price">₱ 19.99</div>
-                                <div class="product-ratings">4.5 stars</div>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="product">
-                        <a href="../customer/product.html">
-                            <img src="https://www.mindanews.com/wp-content/uploads/2017/11/01flower11.jpg" alt="Product 1">
-                            <div class="product-name">Product 1</div>
-                            <div class="product-category">Category 1</div>
-                            <div class="p">
-                                <div class="product-price">₱ 19.99</div>
-                                <div class="product-ratings">4.5 stars</div>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="product">
-                        <a href="../customer/product.html">
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/408Radus_White_chrysanthemums_09.jpg/1280px-408Radus_White_chrysanthemums_09.jpg" alt="Product 1">
-                            <div class="product-name">Product 1</div>
-                            <div class="product-category">Category 1</div>
-                            <div class="p">
-                                <div class="product-price">₱ 19.99</div>
-                                <div class="product-ratings">4.5 stars</div>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="product">
-                        <a href="../customer/product.html">
-                            <img src="https://www.flowersexpress.ph/cdn/shop/products/PinkPassionFlowerBouquet_1024x1024.jpg?v=1637481564" alt="Product 1">
-                            <div class="product-name">Product 1</div>
-                            <div class="product-category">Category 1</div>
-                            <div class="p">
-                                <div class="product-price">₱ 19.99</div>
-                                <div class="product-ratings">4.5 stars</div>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="product">
-                        <a href="../customer/product.html">
-                            <img src="https://casajuan.ph/cdn/shop/products/anahawnapkinring.jpg?v=1626910031" alt="Product 1">
-                            <div class="product-name">Product 1</div>
-                            <div class="product-category">Category 1</div>
-                            <div class="p">
-                                <div class="product-price">₱ 19.99</div>
-                                <div class="product-ratings">4.5 stars</div>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="product">
-                        <a href="../customer/product.html">
-                            <img src="https://imagedelivery.net/3aWclJA3XiJCb-KKeyLo9Q/b90368d8-14eb-4411-171b-66477b63b900/large" alt="Product 1">
-                            <div class="product-name">Product 1</div>
-                            <div class="product-category">Category 1</div>
-                            <div class="p">
-                                <div class="product-price">₱ 19.99</div>
-                                <div class="product-ratings">4.5 stars</div>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="product">
-                        <a href="../customer/product.html">
-                            <img src="https://www.flowersexpress.ph/cdn/shop/products/PinkPassionFlowerBouquet_1024x1024.jpg?v=1637481564" alt="Product 1">
-                            <div class="product-name">Product 1</div>
-                            <div class="product-category">Category 1</div>
-                            <div class="p">
-                                <div class="product-price">₱ 19.99</div>
-                                <div class="product-ratings">4.5 stars</div>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="product">
-                        <a href="../customer/product.html">
-                            <img src="https://www.mindanews.com/wp-content/uploads/2017/11/01flower11.jpg" alt="Product 1">
-                            <div class="product-name">Product 1</div>
-                            <div class="product-category">Category 1</div>
-                            <div class="p">
-                                <div class="product-price">₱ 19.99</div>
-                                <div class="product-ratings">4.5 stars</div>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="product">
-                        <a href="../customer/product.html">
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/408Radus_White_chrysanthemums_09.jpg/1280px-408Radus_White_chrysanthemums_09.jpg" alt="Product 1">
-                            <div class="product-name">Product 1</div>
-                            <div class="product-category">Category 1</div>
-                            <div class="p">
-                                <div class="product-price">₱ 19.99</div>
-                                <div class="product-ratings">4.5 stars</div>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="product">
-                        <a href="../customer/product.html">
-                            <img src="https://www.flowersexpress.ph/cdn/shop/products/PinkPassionFlowerBouquet_1024x1024.jpg?v=1637481564" alt="Product 1">
-                            <div class="product-name">Product 1</div>
-                            <div class="product-category">Category 1</div>
-                            <div class="p">
-                                <div class="product-price">₱ 19.99</div>
-                                <div class="product-ratings">4.5 stars</div>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="product">
-                        <a href="../customer/product.html">
-                            <img src="https://casajuan.ph/cdn/shop/products/anahawnapkinring.jpg?v=1626910031" alt="Product 1">
-                            <div class="product-name">Product 1</div>
-                            <div class="product-category">Category 1</div>
-                            <div class="p">
-                                <div class="product-price">₱ 19.99</div>
-                                <div class="product-ratings">4.5 stars</div>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="product">
-                        <a href="../customer/product.html">
-                            <img src="https://imagedelivery.net/3aWclJA3XiJCb-KKeyLo9Q/b90368d8-14eb-4411-171b-66477b63b900/large" alt="Product 1">
-                            <div class="product-name">Product 1</div>
-                            <div class="product-category">Category 1</div>
-                            <div class="p">
-                                <div class="product-price">₱ 19.99</div>
-                                <div class="product-ratings">4.5 stars</div>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="product">
-                        <a href="../customer/product.html">
-                            <img src="https://www.flowersexpress.ph/cdn/shop/products/PinkPassionFlowerBouquet_1024x1024.jpg?v=1637481564" alt="Product 1">
-                            <div class="product-name">Product 1</div>
-                            <div class="product-category">Category 1</div>
-                            <div class="p">
-                                <div class="product-price">₱ 19.99</div>
-                                <div class="product-ratings">4.5 stars</div>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="product">
-                        <a href="../customer/product.html">
-                            <img src="https://casajuan.ph/cdn/shop/products/anahawnapkinring.jpg?v=1626910031" alt="Product 1">
-                            <div class="product-name">Product 1</div>
-                            <div class="product-category">Category 1</div>
-                            <div class="p">
-                                <div class="product-price">₱ 19.99</div>
+                                <div class="product-price"><?php echo formatPrice($product['product_price']); ?></div>
                                 <div class="product-ratings">4.5 stars</div>
                             </div>
                         </a>
                     </div>
                 </div>
+                
+                <?php endforeach; ?>
+
+                <?php if (empty($products)) : ?>
+                    <p class="p-end">No more products found</p><br><br><br>
+                <?php endif; ?>
                 </div>
             </section>
             <p class="p-end">No more products found</p>
             <br><br><br>
+            <!-- Modal -->
+            <div class="modal fade" id="shopDetailsModal" tabindex="-1" aria-labelledby="shopDetailsModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="shopDetailsModalLabel">Shop Details Needed</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    You need to fill up your shop details first.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="location.href='edit_shop.php'">Edit Shop Details</button>
+                </div>
+                </div>
+            </div>
+            </div>
+
         </main>
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+        <script>
+        $(document).ready(function() {
+            <?php if ($isShopEmpty): ?>
+            $('#shopDetailsModal').modal('show');
+            <?php endif; ?>
+        });
+        </script>
+        
+
     </body>
 </html>

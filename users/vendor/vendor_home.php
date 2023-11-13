@@ -35,7 +35,7 @@ if (isset($_SESSION["user_id"]) && isset($_SESSION["role"])) {
             <nav class="navbar navbar-expand-lg">
                 <!-- Logo -->
                 <a class="navbar-brand d-flex align-items-center" href="#">
-                <img src="../images/logo.png" alt="BulakBuy Logo" class="img-fluid logo">
+                <img src="../php/images/logo.png" alt="BulakBuy Logo" class="img-fluid logo">
                 </a>
                 <!-- Search Bar -->
                 <div class="navbar-collapse justify-content-md-center">
@@ -155,10 +155,7 @@ if (isset($_SESSION["user_id"]) && isset($_SESSION["role"])) {
         <main class="main">
         <?php foreach ($users as $user) : ?>
             <div class="user-info">
-                <?php
-                    $profileImage = !empty($users['profile_img']) ? $users['profile_img'] : '../php/images/default.jpg'; 
-                    echo '<img src="' . $profileImage . '" alt="' . $users['last_name'] . '" class="user-image">';
-                 ?>
+            <img src="<?php echo ($user['profile_img'] ?? 'https://assets.vogue.com/photos/613a830fa36a9a12a6efc522/master/w_1600%2Cc_limit/E2U_LAFlowerVendors_ArleneMejorado_006.jpg'); ?>" alt="Seller Image" class="user-image">
                 <div class="user-details">
                     <div class="user-name">
                         <?php echo $user['first_name'] . ' ' . $user['last_name']; ?> <a href="edit_profile.php?user_id=<?php echo $user['user_id']; ?>"><i class="bi bi-pencil-square"></i></a>
@@ -208,7 +205,7 @@ if (isset($_SESSION["user_id"]) && isset($_SESSION["role"])) {
                             <span class="label">My Products</span>
                         </div>
                     </a>
-                    <a href="vendor_shop.html">
+                    <a href="vendor_shop.php">
                         <div class="card2">
                             <i class="bi bi-shop"></i>
                             <span class="label">Shop</span>
@@ -254,6 +251,7 @@ if (isset($_SESSION["user_id"]) && isset($_SESSION["role"])) {
                     </a>
                 </div>
             </section>
+
         </main>
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
