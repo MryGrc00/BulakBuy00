@@ -1,9 +1,9 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap");
-* {
-	margin: 0;
-	padding: 0;
-	box-sizing: border-box;
-	font-family: "Poppins", sans-serif;
+ * {
+     margin: 0;
+     padding: 0;
+     box-sizing: border-box;
+     font-family: "Poppins", sans-serif;
 }
 .navbar img {
 	padding: 0;
@@ -313,6 +313,24 @@ a:hover {
 	margin-bottom: 10px; 
 	margin-top: 10px; 
  }
+
+ .btns{
+	border: none;
+	outline: none;
+	font-size: 13px;
+	padding:10px 20px;
+	background-color: #65A5A5;
+	color:white;
+	border-radius:20px;
+	margin-top:10px;
+	margin-bottom:20px;
+}
+.btns:focus{
+outline:none;
+border:none;
+}
+
+
 /*Responsiveness*/
 
 @media (max-width: 768px) {
@@ -545,4 +563,22 @@ a:hover {
 		color: white;
 		text-align: center;
 	}
+
+	.btns{
+			border: none;
+			outline: none;
+			font-size: 13px;
+			padding:10px 20px;
+			background-color: #65A5A5;
+			color:white;
+			border-radius:20px;
+			margin-top:10px;
+			margin-bottom:20px;
+	}
+	.btns:focus{
+		outline:none;
+		border:none;
+	}
+
 }
+

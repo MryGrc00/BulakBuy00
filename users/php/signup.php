@@ -31,17 +31,28 @@ if (!empty($fname) && !empty($lname) && !empty($username) && !empty($password) &
         $otp = sprintf("%06d", mt_rand(1, 999999));
 
         try {
-            // Check if username already exists
-            $stmt = $conn->prepare("SELECT * FROM users WHERE username = :username");
-            $stmt->bindParam(':username', $username);
-            $stmt->execute();
+     // Check if email already exists
+        $stmt = $conn->prepare("SELECT * FROM users WHERE email = :email");
+        $stmt->bindParam(':email', $email);
+        $stmt->execute();
 
-            if ($stmt->rowCount() > 0) {
-                echo json_encode(array("success" => false, "message" => "$username - This username already exists!"));
-            } else {
+        if ($stmt->rowCount() > 0) {
+            echo json_encode(array("success" => false, "message" => "Email already exists!"));
+            exit; // Exit the script if email exists
+        }
+
+        // Check if username already exists
+        $stmt = $conn->prepare("SELECT * FROM users WHERE username = :username");
+        $stmt->bindParam(':username', $username);
+        $stmt->execute();
+
+        if ($stmt->rowCount() > 0) {
+            echo json_encode(array("success" => false, "message" => "$username - This username already exists!"));
+            exit; // Exit the script if username exists
+        } else{
                 $status = "Active now";
                 $email_stat = "Not Verified"; //
-                $encrypt_pass = md5($password); // Note: md5 is not the most secure way to hash passwords, consider using password_hash() instead
+                $encrypt_pass = md5($password); 
 
                 // Insert user data into the database with the email field
                 $insert_query = $conn->prepare("INSERT INTO users (first_name, last_name, username, password, email, role, phone, address, zipcode, status, otp, e_status, date)

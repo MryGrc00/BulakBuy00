@@ -1,13 +1,14 @@
 <?php
 session_start();
-include '../php/dbhelper.php'; // Make sure this path is correct
+include '../php/dbhelper.php'; // Ensure this path is correct
 
-$pdo = dbconnect();
-$user_id = $_SESSION["user_id"] ?? null;
-$isShopEmpty = is_shop_empty($user_id);
 
-// Initialize variables to prevent undefined variable error
+$user_id = $_SESSION["user_id"] ?? null; // Make sure to get the user_id from session
+
+// Fetching shop details
 $users = get_record('shops', 'owner_id', $user_id) ?? null;
+
+// Fetching product details
 $products = get_products_by_seller($user_id) ?? [];
 ?>
 
@@ -51,7 +52,7 @@ $products = get_products_by_seller($user_id) ?? [];
         <main class="main">
             <div class="seller-info">
             <?php if (isset($users) && is_array($users)): ?>
-                <img src="<?php echo htmlspecialchars($users['shop_img'] ?? 'https://assets.vogue.com/photos/613a830fa36a9a12a6efc522/master/w_1600%2Cc_limit/E2U_LAFlowerVendors_ArleneMejorado_006.jpg'); ?>" alt="Seller Image" class="seller-image">
+                <img src="<?php echo htmlspecialchars(!empty($users['shop_img']) ? $users['shop_img'] : 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'); ?>" alt="Seller Image" class="seller-image">
                 <div class="seller-details">
                     <div class="seller-name">
                         <i class="bi bi-person" aria-hidden="true"></i><?php echo htmlspecialchars($users['shop_name']); ?><a href="edit_shop.php"><i class="bi bi-pencil-square" style="margin-left: 10px;"></i></a>
@@ -86,42 +87,20 @@ $products = get_products_by_seller($user_id) ?? [];
                 <?php endforeach; ?>
 
                 <?php if (empty($products)) : ?>
-                    <p class="p-end">No more products found</p><br><br><br>
+                    <p class="p-end">No products found</p><br><br><br>
                 <?php endif; ?>
                 </div>
             </section>
-            <p class="p-end">No more products found</p>
             <br><br><br>
             <!-- Modal -->
-            <div class="modal fade" id="shopDetailsModal" tabindex="-1" aria-labelledby="shopDetailsModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="shopDetailsModalLabel">Shop Details Needed</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    You need to fill up your shop details first.
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" onclick="location.href='edit_shop.php'">Edit Shop Details</button>
-                </div>
-                </div>
-            </div>
-            </div>
 
         </main>
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-        <script>
-        $(document).ready(function() {
-            <?php if ($isShopEmpty): ?>
-            $('#shopDetailsModal').modal('show');
-            <?php endif; ?>
-        });
-        </script>
+
         
 
+        <!---for the blurry background -->
     </body>
 </html>

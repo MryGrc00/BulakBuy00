@@ -6,8 +6,8 @@ include_once "php/mail.php"; // Include the file with the sendOTP function
 // Establish database connection
 $conn = dbconnect();
 
-if (isset($_POST['submit'])) {
-    $email = $_POST['email'];
+if (isset($_GET['email'])) {
+    $email = $_GET['email'];
 
     try {
         // Generate a new OTP
@@ -42,53 +42,3 @@ function generateOTP() {
 ?>
 
 
-
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="stylesheet" href="../css/login.css">
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css" /> 
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity= "sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href='https://fonts.googleapis.com/css?family=Poppins' rel='stylesheet'>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css"/>
-
-    
-    <title>Verify Email</title>
-</head>
-<body>
-  
-<div class="container">
-    <main>
-        <div class="container-fluid mt-5">
-            <div class="row fw-semibold">
-                <h2>Enter Your Email</h2>
-                <form action="#" method="POST" enctype="multipart/form-data" autocomplete="off">
-                <div class="error-text"></div>
-                <div class="form-group">
-                    <input type="text" class="form-control bg-light rounded" name="email" id="email" placeholder="Email" required>
-                </div>
-                    <div class="form-group">
-                        <br>
-                        <div class="button">
-                            <input type="submit" name="submit" class="btn btn-primary w-100"  value="Verify"></button>
-                        </div>
-                        <br>
-                    </div>
-                </form>                
-
-
-            </div>
-        </div>
-    </div>
-    </main>
-
-
-
-
-</body>
-</html>

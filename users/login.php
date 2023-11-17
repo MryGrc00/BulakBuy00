@@ -57,7 +57,6 @@
                     <div class="row">
                         <br>
                       <a href="signup.php" class="link-dark pt-2 text-center">Don't have an account?</a>
-                      <a href="verifyemail.php" class="link-dark pt-2 text-center">Verify Email?</a>
                       <a href="forgot_password.php" class="link-dark pt-2 text-center">Forgot your password?</a>
                     </div>
                 </div>

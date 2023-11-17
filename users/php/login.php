@@ -52,7 +52,8 @@ if (!empty($input) && !empty($password)) {
                     echo "Something went wrong. Please try again!";
                 }
             } else {
-                echo "Email not verified!";
+                // Include the email in the response
+                echo "Email not verified!|" . $row['email'];
             }
         } else {
             echo "Invalid Credentials!";

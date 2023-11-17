@@ -9,10 +9,6 @@ if (isset($_SESSION["user_id"]) && ($_SESSION["role"] === "seller" || $_SESSION[
     // Fetch products from the database
     $products = get_products_by_arranger($user_id);
 
-    // Function to format price with commas for thousands
-    function formatPrice($price) {
-        return '₱ ' . number_format($price);
-    }
 } else {
     echo "Access Denied. User not logged in or not authorized.";
     // Optional: Redirect to login or home page
@@ -45,7 +41,7 @@ if (isset($_SESSION["user_id"]) && ($_SESSION["role"] === "seller" || $_SESSION[
                     <ul class="navbar-nav">
                         <li class="nav-item">
                             <form class="form-inline my-2 my-lg-0">
-                                <a href="javascript:void(0);" onclick="goBack()">
+                                <a href="arranger_home.php">
                                     <i class="back fa fa-angle-left" aria-hidden="true"></i>
                                     <div id="search-results">My Products</div>
                                   </a>

@@ -120,19 +120,12 @@ if (isset($_GET['user_id'])) {
         <?php if ($users): ?>
             <div class="form-container">
             <h3 class="profimgT">Profile Image</h3>                      
-            <div class="image-upload-container">
-            <div class="image-upload">
-                    <input type="file" name ="profile_img" id="profile_img" class="image-input" accept="image/*" > 
-                    <label for="profile_img"><p class="plus"></p class="add-plus"> + Edit Image</label>
+            <div class="circle-container">
+            <img class="circle-image" id="profile-image" src="<?php echo !empty($users['profile_img']) ? $users['profile_img'] : 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'; ?>" alt="Shop Image">                       <label class="upload-button">
+                        <input accept="image/*" type="file" id="imageInput" name="profile_img">
+                        <i class="bi bi-plus"></i>
+                    </label>
                 </div>
-                <div class="image-preview" id="imagePreview">
-                <?php
-                    $profileImage = !empty($users['profile_img']) ? $users['profile_img'] : '../php/images/default.jpg'; 
-                    echo '<img src="' . $profileImage . '" alt="' . $users['last_name'] . '" class="preview-image">';
-                 ?>
-                </div>
-            </div> 
-            
     
             <h3 class="prodnaT">First Name</h3>
             <input type="text" name="first_name" id="first_name" value="<?php echo $users['first_name']; ?>" required>
@@ -175,41 +168,17 @@ if (isset($_GET['user_id'])) {
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js">
 </script> 
 <script>
-        document.addEventListener("DOMContentLoaded", function () {
-        var imageInputs = document.querySelectorAll(".image-input");
-        var imagePreview = document.getElementById("imagePreview");
+    const circleImage = document.getElementById('profile-image');
+    const uploadInput = document.getElementById('imageInput');
 
-        function displayImages() {
-            imagePreview.innerHTML = "";
-            imageInputs.forEach(function (input) {
-                for (var i = 0; i < input.files.length; i++) {
-                    var file = input.files[i];
-                    if (file.type.startsWith("image/")) {
-                        var imageUrl = URL.createObjectURL(file);
-                        var imageContainer = document.createElement("div");
-                        imageContainer.classList.add("image-container");
-
-                        var imageElement = document.createElement("img");
-                        imageElement.classList.add("preview-image");
-                        imageElement.src = imageUrl;
-
-                        imageContainer.appendChild(imageElement);
-                        imagePreview.appendChild(imageContainer);
-                    }
-                }
-            });
+    uploadInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const imageURL = URL.createObjectURL(file);
+            circleImage.src = imageURL; // Temporarily change the image source for preview
         }
-
-        // Add event listeners to all file inputs
-        imageInputs.forEach(function (input) {
-            input.addEventListener("change", function () {
-                displayImages();
-            });
-        });
     });
-
-
-       </script>
+</script>
          <script>
             function goBack() {
                 window.history.back();

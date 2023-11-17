@@ -23,7 +23,7 @@
         <header>
             <div class="row">
                 <h1 style="font-size: 37px; font-family: 'Poppins';">Welcome to <br></h1>
-                <img src="../images/logo.png" alt="logo" class="img-fluid rounded float-start" style="height: 75px; width: 180px;">
+                <img src="php/images/logo.png" alt="logo" class="img-fluid rounded float-start" style="height: 75px; width: 180px;">
             </div>
         </header>
     </div>
@@ -60,7 +60,7 @@
                         </select>
                         </div>
                         <div class="col">
-                          <input type="tel" class="form-control bg-light rounded" name="phone" id="phone" placeholder="09...." required>
+                        <input type="tel" class="form-control bg-light rounded" name="phone" id="phone" placeholder="09...." required maxlength="11" minlength="11" pattern="^09\d{9}$">
                         </div>
                       </div> 
                     </div>
@@ -81,7 +81,7 @@
                     <div class="form-group">
                       <div class="row">
                         <div class="col">
-                          <input type="text" class="form-control bg-light rounded" name="zipcode" id="zipcode" placeholder="Zip Code" required>
+                          <input type="number" class="form-control bg-light rounded" name="zipcode" id="zipcode" placeholder="Zip Code" required>
                         </div>
                       </div>
                     </div>

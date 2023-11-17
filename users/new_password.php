@@ -21,7 +21,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Check if the new password matches the confirm password
     if ($newPassword === $confirmPassword) {
-        // Hash the password using MD5 hashing algorithm
+        
         $hashedPassword = md5($newPassword);
 
         // Retrieve the email from the session variable

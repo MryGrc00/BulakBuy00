@@ -45,7 +45,6 @@ if (isset($_GET['user_id'])) {
                 $stmt->bindParam(':address', $address);
                 $stmt->bindParam(':profile_img', $profileImg);
                 $stmt->bindParam(':user_id', $userID);
-
                 $stmt->execute();
 
                 header("Location: vendor_home.php"); // Redirect after successful update

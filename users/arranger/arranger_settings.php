@@ -46,7 +46,7 @@ $conn = null;
                             <form class="form-inline my-2 my-lg-0">
                                 <a href=""><i class="fa fa-search"></i></a>
                                 <input type="text"  class="form-control form-input" placeholder="Search">
-                                <a href="arranger_home.html"><i class="back fa fa-angle-left" aria-hidden="true"></i></a>
+                                <a href="arranger_home.php"><i class="back fa fa-angle-left" aria-hidden="true"></i></a>
                                 <div id="search-results">Settings</div>
                             </form>
                         </li>
@@ -64,17 +64,17 @@ $conn = null;
                         </div>
                         <i class="bi bi-toggle-on" id="services-toggle"></i> 
                     </a>
-                    <a href="#">
+                    <a href="../forgot_password.php">
                         <div class="link-content">
                             <i class="bi bi-key"></i>
                             <span class="label1">Change Password</span>
                         </div>
                         <i class="bi bi-chevron-right"></i>
                     </a>
-                    <a href="manage_address.html">
+                    <a href="edit_shop.php">
                         <div class="link-content">
                             <i class="bi bi-house-door"></i>
-                            <span class="label1">Manage Address</span>
+                            <span class="label1">Change Shop Details</span>
                         </div>
                         <i class="bi bi-chevron-right"></i>
                     </a>

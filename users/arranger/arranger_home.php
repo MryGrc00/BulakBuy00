@@ -1,33 +1,42 @@
 <?php
+
+
 session_start();
+include '../php/dbhelper.php';
+$pdo = dbconnect();
 if (isset($_SESSION["user_id"]) && isset($_SESSION["role"])) {
     $user_id = $_SESSION["user_id"];
     $role = $_SESSION["role"];
 
-    include '../php/dbhelper.php';
-
-
+    $isShopEmpty = is_shop_empty($user_id);
     $users = get_record_by_user($user_id) ;
-    // The rest of your HTML code remains the same...
-}else {
+
+    if ($role == 'seller' && $isShopEmpty) {
+        echo "<script>$(document).ready(function() { $('#shopDetailsModal').modal('show'); });</script>";
+    }
+
+    // Rest of your code
+}
+else {
     // Handle cases where the user is not logged in or role is not set
     echo "User not logged in or role not set.";
     // Optional: Redirect to login page or show a login link
 }
 ?>
 
+
 <!DOCTYPE html> 
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Arranger Home</title>
-    <link href='https://fonts.googleapis.com/css?family=Poppins' rel='stylesheet'>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-pzjw8f+uaex3+ihrbIk8mz07tb2F4F5ssx6kl5v5PmUGp1ELjF8j5+zM1a7z5t2N" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="../../css/arranger_home.css">
+<meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Seller Home</title>
+        <link href='https://fonts.googleapis.com/css?family=Poppins' rel='stylesheet'>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-pzjw8f+uaex3+ihrbIk8mz07tb2F4F5ssx6kl5v5PmUGp1ELjF8j5+zM1a7z5t2N" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+        <link rel="stylesheet" href="../../css/arranger_home.css">
 
 </head>
 
@@ -36,7 +45,7 @@ if (isset($_SESSION["user_id"]) && isset($_SESSION["role"])) {
     <nav class="navbar navbar-expand-lg">
         <!-- Logo -->
         <a class="navbar-brand d-flex align-items-center" href="#">
-          <img src="../../images/logo.png" alt="BulakBuy Logo" class="img-fluid logo">
+        <img src="../php/images/logo.png" alt="BulakBuy Logo" class="img-fluid logo">
       </a>
         <!-- Search Bar -->
         <div class="navbar-collapse justify-content-md-center">
@@ -158,10 +167,7 @@ if (isset($_SESSION["user_id"]) && isset($_SESSION["role"])) {
   <main class="main">
   <?php foreach ($users as $user) : ?>
             <div class="user-info">
-                <?php
-                    $profileImage = !empty($user['profile_img']) ? $user['profile_img'] : '../php/images/default.jpg'; 
-                    echo '<img src="' . $profileImage . '" alt="' . $user['last_name'] . '" class="user-image">';
-                 ?>
+            <img src="<?php echo !empty($user['profile_img']) ? $user['profile_img'] : 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'; ?>" alt="Seller Image" class="user-image">
                 <div class="user-details">
                     <div class="user-name">
                     <?php echo $user['first_name'] . ' ' . $user['last_name']; ?> <a href="edit_profile.php?user_id=<?php echo $user['user_id']; ?>"><i class="bi bi-pencil-square"></i></a>
@@ -217,7 +223,7 @@ if (isset($_SESSION["user_id"]) && isset($_SESSION["role"])) {
             <span class="label">My Products</span>
           </div>
         </a>
-        <a href="arranger_shop.html">
+        <a href="arranger_shop.php">
           <div class="card2">
             <i class="bi bi-shop"></i>
             <span class="label">Shop</span>
@@ -267,6 +273,22 @@ if (isset($_SESSION["user_id"]) && isset($_SESSION["role"])) {
     
     
     </section>
+
+    <div class="modal fade" id="shopDetailsModal" tabindex="-1" aria-labelledby="shopDetailsModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="shopDetailsModalLabel">Shop Details Needed</h5>
+                </div>
+                <div class="modal-body">
+                    You need to fill up your shop details first.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="location.href='edit_shop.php'">Edit Shop Details</button>
+                </div>
+                </div>
+            </div>
+    </div>
     
    
   </main>
@@ -310,6 +332,17 @@ if (isset($_SESSION["user_id"]) && isset($_SESSION["role"])) {
     // Listen for window resize
     window.addEventListener("resize", checkScreenWidth);
 </script>
+<script>
+                $(document).ready(function() {
+                    <?php if ($isShopEmpty): ?>
+                    $('#shopDetailsModal').modal({
+                        backdrop: 'static', // This prevents closing by clicking outside of the modal
+                        keyboard: false // This prevents closing by pressing the escape key
+                    });
+                    <?php endif; ?>
+                });
+
+        </script>
 </body>
 
 </html>

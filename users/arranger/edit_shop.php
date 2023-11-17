@@ -3,8 +3,8 @@ session_start();
 include '../php/dbhelper.php'; // Ensure this path is correct
 
 // Check user login and role
-if (!isset($_SESSION["user_id"]) || $_SESSION["role"] !== "seller") {
-    echo "User not logged in or not a seller.";
+if (!isset($_SESSION["user_id"]) || $_SESSION["role"] !== "arranger") {
+    echo "User not logged in or not a arranger.";
     exit();
 }
 
@@ -74,7 +74,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
         $stmt->execute();
 
         echo "Shop details updated successfully!";
-        header("Location: vendor_shop.php"); // Redirect as needed
+        header("Location: arranger_shop.php"); // Redirect as needed
         exit();
     } catch (PDOException $e) {
         echo "Failed to update shop details: " . $e->getMessage();
@@ -138,7 +138,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
                 <input id="seller-name" name="shop_name" required="" type="text" value="<?php echo htmlspecialchars($shopName); ?>">
 
                 <h3 class="arranger_name">Phone</h3>
-                <input id="arranger-name" name="shop_phone" required="" type="text"value="<?php echo htmlspecialchars($shopPhone); ?>">
+                <input id="arranger-name" name="shop_phone" required="" type="text" value="<?php echo htmlspecialchars($shopPhone); ?>">
 
                 <h3 class="arranger_uname">Address</h3>
                 <input id="arranger-uname" name="shop_address" required="" type="text" value="<?php echo htmlspecialchars($shopAddress); ?>">

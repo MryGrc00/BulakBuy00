@@ -76,8 +76,9 @@ function generateOTP() {
         <div class="container-fluid mt-5">
             <div class="row fw-semibold">
                 <h2>Enter Your Email</h2>
-                <form action="" method="POST" enctype="multipart/form-data" autocomplete="off">
                 <div class="error-text"></div>
+                <div class="success-text"></div>
+                <form action="" method="POST" enctype="multipart/form-data" autocomplete="off">
                 <div class="form-group">
                     <input type="text" class="form-control bg-light rounded" name="email" id="email" placeholder="Email" required>
                 </div>
@@ -96,7 +97,7 @@ function generateOTP() {
     </div>
     </main>
 
-    <script src="forgotpass.js"></script>
+    <script src="js/forgotpass.js"></script>
 
 
 

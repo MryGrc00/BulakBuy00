@@ -1,3 +1,20 @@
+
+<?php
+session_start();
+include '../php/dbhelper.php'; // Ensure this path is correct
+
+
+$user_id = $_SESSION["user_id"] ?? null; // Make sure to get the user_id from session
+
+// Fetching shop details
+$users = get_record('shops', 'owner_id', $user_id) ?? null;
+
+// Fetching product details
+$products = get_products_by_arranger($user_id) ?? [];
+?>
+
+
+
 <!DOCTYPE html> 
 <html lang="en">
     <head>
@@ -40,19 +57,21 @@
         </header>
         <main class="main">
             <div class="seller-info">
-                <img src="https://assets.vogue.com/photos/613a830fa36a9a12a6efc522/master/w_1600%2Cc_limit/E2U_LAFlowerVendors_ArleneMejorado_006.jpg" alt="Seller Image" class="seller-image">
+            <?php if (isset($users) && is_array($users)): ?>
+                <img src="<?php echo htmlspecialchars(!empty($users['shop_img']) ? $users['shop_img'] : 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'); ?>" alt="Seller Image" class="seller-image">
                 <div class="seller-details">
                     <div class="seller-name">
-                        <i class="bi bi-person" aria-hidden="true"></i>John Doe
+                        <i class="bi bi-person" aria-hidden="true"></i><?php echo htmlspecialchars($users['shop_name']); ?><a href="edit_shop.php"><i class="bi bi-pencil-square" style="margin-left: 10px;"></i></a>
                     </div>
                     <div class="seller-contact">
-                        <i class="bi bi-geo-alt" aria-hidden="true"></i> Action Area 11, Newtown
+                        <i class="bi bi-geo-alt" aria-hidden="true"></i> <?php echo htmlspecialchars($users['shop_address']); ?>
                     </div>
                     <div class="seller-contact">
-                        <i class="bi bi-telephone" aria-hidden="true"></i> (+63)9785654543
+                        <i class="bi bi-telephone" aria-hidden="true"></i> <?php echo htmlspecialchars($users['shop_phone']); ?>
+                    </div>
+                <?php endif; ?>
                     </div>
                 </div>
-            </div>
             <section>
                 <div class="button-container">
                     <button class="gallery-btn active">Gallery</button>

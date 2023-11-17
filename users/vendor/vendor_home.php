@@ -1,15 +1,23 @@
 <?php
+
+
 session_start();
+include '../php/dbhelper.php';
+$pdo = dbconnect();
 if (isset($_SESSION["user_id"]) && isset($_SESSION["role"])) {
     $user_id = $_SESSION["user_id"];
     $role = $_SESSION["role"];
 
-    include '../php/dbhelper.php';
-
-
+    $isShopEmpty = is_shop_empty($user_id);
     $users = get_record_by_user($user_id) ;
-    // The rest of your HTML code remains the same...
-}else {
+
+    if ($role == 'seller' && $isShopEmpty) {
+        echo "<script>$(document).ready(function() { $('#shopDetailsModal').modal('show'); });</script>";
+    }
+
+    // Rest of your code
+}
+else {
     // Handle cases where the user is not logged in or role is not set
     echo "User not logged in or role not set.";
     // Optional: Redirect to login page or show a login link
@@ -28,7 +36,7 @@ if (isset($_SESSION["user_id"]) && isset($_SESSION["role"])) {
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
         <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
-        <link rel="stylesheet" href="../../css/seller_home.css">
+        <link rel="stylesheet" href="../../css/vendor_home.css">
     </head>
     <body>
         <header>
@@ -155,7 +163,7 @@ if (isset($_SESSION["user_id"]) && isset($_SESSION["role"])) {
         <main class="main">
         <?php foreach ($users as $user) : ?>
             <div class="user-info">
-            <img src="<?php echo ($user['profile_img'] ?? 'https://assets.vogue.com/photos/613a830fa36a9a12a6efc522/master/w_1600%2Cc_limit/E2U_LAFlowerVendors_ArleneMejorado_006.jpg'); ?>" alt="Seller Image" class="user-image">
+            <img src="<?php echo !empty($user['profile_img']) ? $user['profile_img'] : 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'; ?>" alt="Seller Image" class="user-image">
                 <div class="user-details">
                     <div class="user-name">
                         <?php echo $user['first_name'] . ' ' . $user['last_name']; ?> <a href="edit_profile.php?user_id=<?php echo $user['user_id']; ?>"><i class="bi bi-pencil-square"></i></a>
@@ -251,6 +259,22 @@ if (isset($_SESSION["user_id"]) && isset($_SESSION["role"])) {
                     </a>
                 </div>
             </section>
+ 
+            <div class="modal fade" id="shopDetailsModal" tabindex="-1" aria-labelledby="shopDetailsModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="shopDetailsModalLabel">Shop Details Needed</h5>
+                </div>
+                <div class="modal-body">
+                    You need to fill up your shop details first.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btns" onclick="location.href='edit_shop.php'">Edit Shop Details</button>
+                </div>
+                </div>
+            </div>
+            </div>
 
         </main>
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
@@ -294,5 +318,18 @@ if (isset($_SESSION["user_id"]) && isset($_SESSION["role"])) {
             // Listen for window resize
             window.addEventListener("resize", checkScreenWidth);
         </script>
+         <script>
+                $(document).ready(function() {
+                    <?php if ($isShopEmpty): ?>
+                    $('#shopDetailsModal').modal({
+                        backdrop: 'static', // This prevents closing by clicking outside of the modal
+                        keyboard: false // This prevents closing by pressing the escape key
+                    });
+                    <?php endif; ?>
+                });
+
+        </script>
+
+
     </body>
 </html>
