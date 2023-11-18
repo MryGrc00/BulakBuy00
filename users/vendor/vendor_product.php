@@ -2,18 +2,34 @@
 session_start();
 if (isset($_SESSION["user_id"]) && ($_SESSION["role"] === "seller" || $_SESSION["role"] === "arranger")) {
     $user_id = $_SESSION["user_id"];
-    $role = $_SESSION["role"];
     
-    include '../php/dbhelper.php';
+    include '../php/dbhelper.php'; // Make sure this path is correct
+    $pdo = dbconnect();
 
     // Fetch products from the database
-    $products = get_products_by_seller($user_id);
+    $products = get_products_by_user($user_id, $pdo);
 
 } else {
     echo "Access Denied. User not logged in or not authorized.";
     // Optional: Redirect to login or home page
     // header('Location: login.php');
     exit();
+}
+
+function get_products_by_user($user_id, $pdo) {
+    // Define the SQL query
+    $sql = "SELECT p.* FROM products p
+            INNER JOIN shops s ON p.shop_owner = s.shop_id
+            INNER JOIN users u ON s.owner_id = u.user_id
+            WHERE u.user_id = :user_id AND u.role IN ('seller', 'arranger')";
+
+    // Prepare and execute the query
+    $stmt = $pdo->prepare($sql);
+    $stmt->bindParam(':user_id', $user_id);
+    $stmt->execute();
+
+    // Fetch the products and return them
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 ?>
 

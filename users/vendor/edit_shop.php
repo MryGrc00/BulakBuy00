@@ -74,7 +74,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
         $stmt->execute();
 
         echo "Shop details updated successfully!";
-        header("Location: vendor_shop.php"); // Redirect as needed
+        header("Location: vendor_home.php"); // Redirect as needed
         exit();
     } catch (PDOException $e) {
         echo "Failed to update shop details: " . $e->getMessage();

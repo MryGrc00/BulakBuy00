@@ -5,11 +5,32 @@ include '../php/dbhelper.php'; // Make sure this path is correct
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
     // Check user login and role
     if (!isset($_SESSION["user_id"]) || $_SESSION["role"] !== "seller") {
-        echo "User not logged in or not an seller.";
+        echo "User not logged in or not a seller.";
         exit();
     }
 
     $userId = $_SESSION["user_id"];
+
+    // Retrieve shop_id
+    $shopId = null;
+    try {
+        $pdo = dbconnect();
+        $shopQuery = "SELECT shop_id FROM shops WHERE owner_id = :user_id LIMIT 1";
+        $shopStmt = $pdo->prepare($shopQuery);
+        $shopStmt->bindParam(':user_id', $userId);
+        $shopStmt->execute();
+
+        if ($shopStmt->rowCount() > 0) {
+            $row = $shopStmt->fetch(PDO::FETCH_ASSOC);
+            $shopId = $row['shop_id'];
+        } else {
+            echo "No shop found for this user.";
+            exit();
+        }
+    } catch (PDOException $e) {
+        echo "Error retrieving shop ID: " . $e->getMessage();
+        exit();
+    }
 
     // Retrieve form data
     $productImage = $_FILES['product_img'];
@@ -18,7 +39,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
     $productPrice = $_POST['product_price'];
     $productDesc = $_POST['product_desc'];
 
-    
     // Check if the selected category is 'Other'
     if ($productCategory == 'Other') {
         $other_category = $_POST['other_category'];
@@ -32,15 +52,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
 
     $allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
     if (in_array($productImage['type'], $allowedTypes) && move_uploaded_file($productImage['tmp_name'], $uploadFile)) {
-        // Prepare SQL based on the user's role
-            $sql = "INSERT INTO products (seller_id, product_img, product_name, product_category, product_price, product_desc) VALUES (:user_id, :product_img, :product_name, :product_category, :product_price, :product_desc)";
-
+        // Prepare SQL to insert into products table
+        $sql = "INSERT INTO products (shop_owner, product_img, product_name, product_category, product_price, product_desc) VALUES (:shop_id, :product_img, :product_name, :product_category, :product_price, :product_desc)";
 
         // Insert product data into the database using PDO
         try {
-            $pdo = dbconnect();
             $stmt = $pdo->prepare($sql);
-            $stmt->bindParam(':user_id', $userId);
+            $stmt->bindParam(':shop_id', $shopId);
             $stmt->bindParam(':product_img', $uploadFile);
             $stmt->bindParam(':product_name', $productName);
             $stmt->bindParam(':product_category', $productCategory);
@@ -59,6 +77,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
     }
 }
 ?>
+
+<!-- [Your HTML form goes here] -->
+
 
 
 
