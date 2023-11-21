@@ -3,21 +3,31 @@ session_start();
 
 // Redirect to login page if not logged in
 if (!isset($_SESSION["user_id"])) {
-    header("Location: ../login.php"); // Adjust the path as needed
-    exit(); // It's important to exit here
+    header("Location: ../login.php");
+    exit();
 }
 
-include '../php/dbhelper.php'; // Ensure this path is correct
+include '../php/dbhelper.php';
 $pdo = dbconnect();
 
-$user_id = $_SESSION["user_id"]; // This is now safe to use
+// Fetch shop details based on shop_id from URL
+$shop_id = isset($_GET['shop_id']) ? $_GET['shop_id'] : null;
 
-// Fetching shop details
-$users = get_record('shops', 'owner_id', $user_id);
+if ($shop_id) {
+    $shop = get_record('shops', 'shop_id', $shop_id);
+    $products = get_products_by_shop($shop_id, $pdo);
+} else {
+    echo "Shop ID not provided";
+    exit();
+}
 
-// Fetching product details
-$products = get_products_by_user($user_id, $pdo);
-
+function get_products_by_shop($shop_id, $pdo) {
+    $sql = "SELECT * FROM products WHERE shop_owner = :shop_id";
+    $stmt = $pdo->prepare($sql);
+    $stmt->bindParam(':shop_id', $shop_id);
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
 ?>
 
 
@@ -64,22 +74,23 @@ $products = get_products_by_user($user_id, $pdo);
         </header>
         <main class="main">
             <div class="seller-info">
-            <?php if (isset($users) && is_array($users)): ?>
-                <img src="<?php echo htmlspecialchars(!empty($users['shop_img']) ? $users['shop_img'] : 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'); ?>" alt="Seller Image" class="seller-image">
+            <?php if (isset($shop) && is_array($shop)): ?>
+                <img src="<?php echo htmlspecialchars(!empty($shop['shop_img']) ? $shop['shop_img'] : 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'); ?>" alt="Seller Image" class="seller-image">
                 <div class="seller-details">
                     <div class="seller-name">
-                        <i class="bi bi-person" aria-hidden="true"></i><?php echo htmlspecialchars($users['shop_name']); ?><a href="edit_shop.php"><i class="bi bi-pencil-square" style="margin-left: 10px;"></i></a>
+                        <i class="bi bi-person" aria-hidden="true"></i><?php echo htmlspecialchars($shop['shop_name']); ?>
                     </div>
                     <div class="seller-contact">
-                        <i class="bi bi-geo-alt" aria-hidden="true"></i> <?php echo htmlspecialchars($users['shop_address']); ?>
+                        <i class="bi bi-geo-alt" aria-hidden="true"></i> <?php echo htmlspecialchars($shop['shop_address']); ?>
                     </div>
                     <div class="seller-contact">
-                        <i class="bi bi-telephone" aria-hidden="true"></i> <?php echo htmlspecialchars($users['shop_phone']); ?>
+                        <i class="bi bi-telephone" aria-hidden="true"></i> <?php echo htmlspecialchars($shop['shop_phone']); ?>
                     </div>
                 <?php endif; ?>
                     </div>
                 </div>
             <section>
+                
                 <div class="button-container">
                     <button class="gallery-btn active">Gallery</button>
                     <button class="product-btn">Products</button>
@@ -101,7 +112,6 @@ $products = get_products_by_user($user_id, $pdo);
                     <!-- Add more images as needed -->
                 </div>
                 <div id="addProductContainer">
-                    <a href="add_image.html"><button class="add-product">+ Add Image</button></a>
                 </div>
           
                 <!-- The Modal Overlay -->
@@ -116,143 +126,30 @@ $products = get_products_by_user($user_id, $pdo);
             </section>
             <section>
                 <div class="product-list" id="product-container">
+                <?php foreach ($products as $product) : ?>
                     <div class="product">
-                        <a href="product.html">
-                            <img src="https://www.flowersexpress.ph/cdn/shop/products/PinkPassionFlowerBouquet_1024x1024.jpg?v=1637481564" alt="Product 1">
-                            <div class="product-name">Product 1</div>
-                            <div class="product-category">Category 1</div>
+                    <a href="customer_product.php?product_id=<?php echo $product['product_id']; ?>">
+                  <?php
+                            echo '<img src="' . $product['product_img'] . '" alt="' . $product['product_name'] . '">';
+                        ?>
+                            <div class="product-name"><?php echo $product['product_name']; ?></div>
+                            <div class="product-category"><?php echo $product['product_category']; ?></div>
                             <div class="p">
-                                <div class="product-price">₱ 19.99</div>
+                                <div class="product-price"><?php echo formatPrice($product['product_price']); ?></div>
                                 <div class="product-ratings">4.5 stars</div>
                             </div>
                         </a>
                     </div>
-                    <div class="product">
-                        <a href="product.html">
-                            <img src="https://www.flowersexpress.ph/cdn/shop/products/PinkPassionFlowerBouquet_1024x1024.jpg?v=1637481564" alt="Product 1">
-                            <div class="product-name">Product 1</div>
-                            <div class="product-category">Category 1</div>
-                            <div class="p">
-                                <div class="product-price">₱ 19.99</div>
-                                <div class="product-ratings">4.5 stars</div>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="product">
-                        <a href="product.html">
-                            <img src="https://casajuan.ph/cdn/shop/products/anahawnapkinring.jpg?v=1626910031" alt="Product 1">
-                            <div class="product-name">Product 1</div>
-                            <div class="product-category">Category 1</div>
-                            <div class="p">
-                                <div class="product-price">₱ 19.99</div>
-                                <div class="product-ratings">4.5 stars</div>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="product">
-                        <a href="product.html">
-                            <img src="https://imagedelivery.net/3aWclJA3XiJCb-KKeyLo9Q/b90368d8-14eb-4411-171b-66477b63b900/large" alt="Product 1">
-                            <div class="product-name">Product 1</div>
-                            <div class="product-category">Category 1</div>
-                            <div class="p">
-                                <div class="product-price">₱ 19.99</div>
-                                <div class="product-ratings">4.5 stars</div>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="product">
-                        <a href="product.html">
-                            <img src="https://www.flowersexpress.ph/cdn/shop/products/PinkPassionFlowerBouquet_1024x1024.jpg?v=1637481564" alt="Product 1">
-                            <div class="product-name">Product 1</div>
-                            <div class="product-category">Category 1</div>
-                            <div class="p">
-                                <div class="product-price">₱ 19.99</div>
-                                <div class="product-ratings">4.5 stars</div>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="product">
-                        <a href="product.html">
-                            <img src="https://www.flowersexpress.ph/cdn/shop/products/PinkPassionFlowerBouquet_1024x1024.jpg?v=1637481564" alt="Product 1">
-                            <div class="product-name">Product 1</div>
-                            <div class="product-category">Category 1</div>
-                            <div class="p">
-                                <div class="product-price">₱ 19.99</div>
-                                <div class="product-ratings">4.5 stars</div>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="product">
-                        <a href="product.html">
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/408Radus_White_chrysanthemums_09.jpg/1280px-408Radus_White_chrysanthemums_09.jpg" alt="Product 1">
-                            <div class="product-name">Product 1</div>
-                            <div class="product-category">Category 1</div>
-                            <div class="p">
-                                <div class="product-price">₱ 19.99</div>
-                                <div class="product-ratings">4.5 stars</div>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="product">
-                        <a href="product.html">
-                            <img src="https://www.flowersexpress.ph/cdn/shop/products/PinkPassionFlowerBouquet_1024x1024.jpg?v=1637481564" alt="Product 1">
-                            <div class="product-name">Product 1</div>
-                            <div class="product-category">Category 1</div>
-                            <div class="p">
-                                <div class="product-price">₱ 19.99</div>
-                                <div class="product-ratings">4.5 stars</div>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="product">
-                        <a href="product.html">
-                            <img src="https://casajuan.ph/cdn/shop/products/anahawnapkinring.jpg?v=1626910031" alt="Product 1">
-                            <div class="product-name">Product 1</div>
-                            <div class="product-category">Category 1</div>
-                            <div class="p">
-                                <div class="product-price">₱ 19.99</div>
-                                <div class="product-ratings">4.5 stars</div>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="product">
-                        <a href="product.html">
-                            <img src="https://imagedelivery.net/3aWclJA3XiJCb-KKeyLo9Q/b90368d8-14eb-4411-171b-66477b63b900/large" alt="Product 1">
-                            <div class="product-name">Product 1</div>
-                            <div class="product-category">Category 1</div>
-                            <div class="p">
-                                <div class="product-price">₱ 19.99</div>
-                                <div class="product-ratings">4.5 stars</div>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="product">
-                        <a href="product.html">
-                            <img src="https://www.flowersexpress.ph/cdn/shop/products/PinkPassionFlowerBouquet_1024x1024.jpg?v=1637481564" alt="Product 1">
-                            <div class="product-name">Product 1</div>
-                            <div class="product-category">Category 1</div>
-                            <div class="p">
-                                <div class="product-price">₱ 19.99</div>
-                                <div class="product-ratings">4.5 stars</div>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="product">
-                        <a href="product.html">
-                            <img src="https://casajuan.ph/cdn/shop/products/anahawnapkinring.jpg?v=1626910031" alt="Product 1">
-                            <div class="product-name">Product 1</div>
-                            <div class="product-category">Category 1</div>
-                            <div class="p">
-                                <div class="product-price">₱ 19.99</div>
-                                <div class="product-ratings">4.5 stars</div>
-                            </div>
-                        </a>
-                    </div>
-                    
+                    <?php endforeach; ?>
                 </div>
+                </div>
+                <?php if (empty($products)) : ?>
+                    <p class="p-end">No products found</p><br><br><br>
+                <?php endif; ?>
+
             </section>
-            
-            <br><br><br>
+             <br><br><br>
+
         </main>
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>

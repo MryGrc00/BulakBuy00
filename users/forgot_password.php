@@ -70,7 +70,6 @@ function generateOTP() {
     <title>Verify Email</title>
 </head>
 <body>
-  
 <div class="container">
     <main>
         <div class="container-fluid mt-5">

@@ -1,3 +1,47 @@
+<?php
+session_start();
+include '../php/dbhelper.php';  
+
+$daysLeft = null;
+
+if (isset($_SESSION['user_id'])) {
+    $pdo = dbconnect();
+    $user_id = $_SESSION['user_id'];
+
+    // First, get the shop_id for the logged-in user's shop
+    $shopSql = "SELECT shop_id FROM shops WHERE owner_id = :user_id";
+    $shopStmt = $pdo->prepare($shopSql);
+    $shopStmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+    $shopStmt->execute();
+    $shopResult = $shopStmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($shopResult && isset($shopResult['shop_id'])) {
+        $shop_id = $shopResult['shop_id'];
+
+        // Now, fetch s_start and e_start from the subscription table using the shop_id
+        $subSql = "SELECT s_start, e_start FROM subscription WHERE shop_id = :shop_id";
+        $subStmt = $pdo->prepare($subSql);
+        $subStmt->bindParam(':shop_id', $shop_id, PDO::PARAM_INT);
+        $subStmt->execute();
+        $subscription = $subStmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($subscription) {
+            // Create DateTime objects for the start and end dates
+            $endDate = new DateTime($subscription['e_start']);
+            $today = new DateTime();
+
+            // Calculate the interval and get the number of days left
+            $interval = $today->diff($endDate);
+            $daysLeft = $interval->format('%a');
+
+        } 
+    }
+} else {
+    echo "No active session found. Please log in.";
+}
+?>
+
+
 <!DOCTYPE html> 
 <html lang="en">
     <head>
@@ -25,7 +69,7 @@
                             <form class="form-inline my-2 my-lg-0">
                                 <a href=""><i class="fa fa-search"></i></a>
                                 <input type="text"  class="form-control form-input" placeholder="Search" style="text-align:left;padding-left: 15px;font-size: 16px;">
-                                <a href="vendor_home.html" id="back-link"><i class="back fa fa-angle-left" aria-hidden="true"></i></a>
+                                <a href="vendor_home.php" id="back-link"><i class="back fa fa-angle-left" aria-hidden="true"></i></a>
                                 <div id="search-results">Subscription</div>
                             </form>
                         </li>
@@ -43,13 +87,19 @@
                             <div class="subscript">
                                 <span class="subscription-status">Monthly Subscription</span>
                             </div>
-                            <span class="subscription-expire">Expires in 14 days</span>
+                            <?php if (isset($daysLeft)) { 
+                                echo "<span class='subscription-expire'>Expires in " . $daysLeft . " days</span>";
+                            } ?>
+                        
                             <span class="subscription-description">Boost your flower shop's visibility with BulakBuy's monthly subscription.  With featured listings and banners, vendors gain prime exposure, standing out in search results and category listings. This enhanced online presence effectively markets their shop, leading to greater customer interest and business growth.</span>
                             <hr class="subscription-hr ">
                             <div class="price-renew">
-                                <span class="subscription-price">₱ 249</span>
-                                <button class="subscription-renew">Renew</button>
+                                <span class="subscription-price">₱ 249.00</span>
+                                <a href="../../Payments/index.php">
+                                    <button class="subscription-renew">Renew</button>
+                                </a>
                             </div>
+
                         </div>
                     </div>
                 </div>

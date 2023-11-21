@@ -11,19 +11,21 @@ if (isset($_GET['product_id']) && isset($_SESSION['user_id'])) {
     // Retrieve product details from the database
     $product = get_record('products', 'product_id', $productID);
     
-    // Retrieve user details (seller) from the database
-    $user = get_record('users', 'user_id', $product['seller_id']);
+    // Assuming 'shop_owner' is the field in 'products' that references 'shop_id' in 'shops'
+    $shop = get_record('shops', 'shop_id', $product['shop_owner']);
+    
+    // Retrieve user details (owner of the shop) from the database
+    $user = get_record('users', 'user_id', $shop['owner_id']);
 
-    if ($product && $user && $product['seller_id'] == $userID) {
-        // Product exists, user exists, and the product belongs to the logged-in user
-        // Perform further actions if needed
-        // You can access user details like $user['username'], $user['email'], etc.
+    $isArranger = isset($user['role']) && $user['role'] === 'arranger';
+
+    if ($product && $user && $shop && $shop['owner_id'] == $userID) {
+        // Product exists, user (shop owner) exists, and the product belongs to the logged-in user's shop
     } else {
-        // Product doesn't exist, seller doesn't exist, or the product doesn't belong to the logged-in user
-        // Handle the error or redirect the user to an appropriate page
     }
 }
 ?>
+
 
 
 
@@ -45,7 +47,7 @@ if (isset($_GET['product_id']) && isset($_SESSION['user_id'])) {
             <nav class="navbar navbar-expand-lg">
                 <!-- Logo -->
                 <a class="navbar-brand d-flex align-items-center" href="#">
-                <img src="../../images/logo.png" alt="BulakBuy Logo" class="img-fluid logo">
+                <img src="../php/images/logo.png" alt="BulakBuy Logo" class="img-fluid logo">
                 </a>
                 <!-- Search Bar -->
                 <div class="navbar-collapse justify-content-md-center">
@@ -102,29 +104,43 @@ if (isset($_GET['product_id']) && isset($_SESSION['user_id'])) {
                     <p class="p-category"><?php echo $product['product_category']; ?></p>
                     <p class="p-price"> <?php echo $product['product_price']; ?></p>
                     <p class="p-ratings">4.5 ratings & 35 reviews</p>
+                    <?php if ($isArranger): ?>
                     <div class="f-type">
                         <h4 class="type-label">Flower Type(s)</h4>
-                        <button class="t-btn">Rose</button>
-                        <button class="t-btn">Anthurium</button>
-                        <button class="t-btn">Winter Green</button>
-                        <button class="t-btn">Rose</button>
+                        <?php
+                            // Assuming $product['flower_type'] contains a comma-separated list of flower types
+                            if (!empty($product['flower_type'])) {
+                                // Corrected variable reference from 'flower_type' to 'flower_types'
+                                $flowerTypes = explode(',', $product['flower_type']);
+                                foreach ($flowerTypes as $type) {
+                                    echo '<button class="t-btn">' . htmlspecialchars(trim($type)) . '</button>';
+                                }
+                            }
+                        ?>
                     </div>
                     <div class="ribbon">
                         <h4 class="ribbon-label">Ribbon Color</h4>
-                        <button class="ribbon-btn">Red</button>
-                        <button class="ribbon-btn">Gold</button>
-                        <button class="ribbon-btn">White</button>
-                        <button class="ribbon-btn">Blue</button>
-                        <button class="ribbon-btn">Violet</button>
+                        <?php
+                            // Assuming $product['ribbon_color'] contains a comma-separated list of ribbon colors
+                            if (!empty($product['ribbon_color'])) {
+                                // Corrected variable reference from 'ribbon_color' to 'ribbon_colors'
+                                $ribbonColors = explode(',', $product['ribbon_color']);
+                                foreach ($ribbonColors as $color) {
+                                    echo '<button class="ribbon-btn">' . htmlspecialchars(trim($color)) . '</button>';
+                                }
+                            }
+                        ?>
                     </div>
                     <div class="p-message">
                         <h4 class="m-label">Message</h4>
                         <input type="text" class="message" placeholder="Message">
                     </div>
+                <?php endif; ?>
+
                     <div class="btn-container">
                         <div class="add-btn">
                             <button class="add" id="addOrderBtn"><i class="bi bi-cart3"></i></i>&nbsp;&nbsp;&nbsp;Add to Cart</button>
-                            <a href="../chat.php?user_id=<?php echo $user['user_id']; ?>">
+                            <a href="../chat.php?user_id=<?php echo $shop['owner_id']; ?>">
                             <button class="messenger"><i class="bi bi-messenger"></i></button>
                             </a>
                         </div>
@@ -136,25 +152,29 @@ if (isset($_GET['product_id']) && isset($_SESSION['user_id'])) {
                         </div>
                     </div>
                     <div class="border"></div>
-                    <p class="p-desc-label"><?php echo $product['product_desc']; ?></p>
-                    <p class="p-desc">Funeral flowers are floral arrangements specifically designed and presented as a tribute to the deceased at a funeral or memorial service.  
-                        It is a mixed combination of green and white, it means it is a "purist" natural or green burial, the body is buried, without embalming or a vault, using biodegradable, natural materials, in a natural setting. Any shrouds or caskets used are biodegradable, nontoxic, and of sustainable material. Funeral flowers are floral arrangements specifically designed and presented as a tribute to the deceased at a funeral or memorial service.  
+                    <p class="p-desc-label">Description</p>
+                    <p class="p-desc"><?php echo $product['product_desc']; ?>
                     </p>
                     <div class="border"></div>
                     <div class="shop">
                         <div class="shop-pic">
-                            <img src="https://images.squarespace-cdn.com/content/v1/57451c424c2f85ae9b18f48d/ddcb7ab1-22ab-49dd-8da9-9b3b054393a5/Claudia+Lapena+-+4A4B169D-B766-409B-BD76-AAC2590167F7.jpeg" alt="Customer Profile">
+                            <img src="<?php echo $shop['shop_img']; ?>" alt="Shop Profile">
                         </div>
                         <div class="shop-info">
                             <div class="info">
-                                <p class="s-name">Mary Grace Flower Shop</p>
-                                <p class="s-location"><i class="bi bi-geo-alt"></i> Basak, Pardo, Cebu City</p>
-                                <a href="../vendor/vendor_shop.html">
-                                <button class="view-shop"><i class="bi bi-shop-window"></i>View Shop</button>
+                                <p class="s-name"><?php echo $shop['shop_name']; ?></p>
+                                <p class="s-location"><i class="bi bi-geo-alt"></i> <?php echo $shop['shop_address']; ?></p>
+                                <?php
+                                // Check if the shop owner is a seller or an arranger and set the appropriate link
+                                $link = ($user['role'] === 'seller') ? "vendor_shop.php?shop_id=" . $shop['shop_id'] : "arranger_shop.php?shop_id=" . $shop['shop_id'];
+                                ?>
+                                <a href="<?php echo $link; ?>">
+                                    <button class="view-shop"><i class="bi bi-shop-window"></i>View Shop</button>
                                 </a>
                             </div>
                         </div>
                     </div>
+
                     <div class="reviews">
                         <p class="r-label">Product Ratings</p>
                     </div>

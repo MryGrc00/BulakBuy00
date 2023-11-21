@@ -7,19 +7,21 @@ if (isset($_GET['product_id'])) {
     // Get the product ID from the URL
     $productID = $_GET['product_id'];
 
-    // Check if the product belongs to the currently logged-in seller
+    // Establish database connection
     $pdo = dbconnect();
-    $stmt = $pdo->prepare("SELECT * FROM products WHERE product_id = :product_id AND seller_id = :seller_id");
+
+    // Check if the product belongs to a shop owned by the currently logged-in user
+    $stmt = $pdo->prepare("SELECT p.*, s.owner_id FROM products p 
+                           INNER JOIN shops s ON p.shop_owner = s.shop_id 
+                           WHERE p.product_id = :product_id");
     $stmt->bindParam(':product_id', $productID);
-    $stmt->bindParam(':seller_id', $_SESSION['user_id']);
     $stmt->execute();
     $product = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    if ($product) {
-        // Attempt to delete the product with the provided product ID and seller ID
-        $stmt = $pdo->prepare("DELETE FROM products WHERE product_id = :product_id AND seller_id = :seller_id");
+    if ($product && $product['owner_id'] == $_SESSION['user_id']) {
+        // Attempt to delete the product with the provided product ID
+        $stmt = $pdo->prepare("DELETE FROM products WHERE product_id = :product_id");
         $stmt->bindParam(':product_id', $productID);
-        $stmt->bindParam(':seller_id', $_SESSION['user_id']);
         $stmt->execute();
 
         // Check if the product deletion was successful
@@ -32,7 +34,7 @@ if (isset($_GET['product_id'])) {
             echo "Failed to delete product!";
         }
     } else {
-        // Product does not belong to the currently logged-in seller, handle error
+        // Product does not belong to the currently logged-in user's shop, handle error
         echo "Unauthorized access to delete the product!";
     }
 } else {
@@ -40,3 +42,4 @@ if (isset($_GET['product_id'])) {
     echo "Product ID not provided!";
 }
 ?>
+

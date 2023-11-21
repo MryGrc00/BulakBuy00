@@ -244,7 +244,7 @@ else {
       </div>
       
       <div class="container1">
-        <a href="arranger_subscription.html">
+        <a href="arranger_subscription.php">
           <div class="card2">
             <i class="bi bi-credit-card"></i>
             <span class="label">Subscription</span>

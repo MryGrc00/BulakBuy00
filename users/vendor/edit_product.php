@@ -8,7 +8,11 @@ if (isset($_GET['product_id'])) {
     $productID = $_GET['product_id'];
     $products = get_record('products', 'product_id', $productID);
 
-    if ($products['seller_id'] != $_SESSION['user_id']) {
+    // Retrieve shop details based on the shop_owner field in products
+    $shop = get_record('shops', 'shop_id', $products['shop_owner']);
+
+    // Verify if the current user is the owner of the shop
+    if ($shop['owner_id'] != $_SESSION['user_id']) {
         echo "Unauthorized access!";
         exit();
     }

@@ -1,15 +1,14 @@
 <?php
-
 session_start();
 include '../php/dbhelper.php';
 include '../php/checksession.php';
 
 if (isset($_SESSION["user_id"])) {
     $seller_id = $_SESSION["user_id"];
-    $products = all_record("products");
+    $products = get_latest_products_by_id("products"); 
 }
-
 ?>
+
 
 <!DOCTYPE html> 
 <html lang="en">
@@ -28,7 +27,7 @@ if (isset($_SESSION["user_id"])) {
             <nav class="navbar navbar-expand-lg">
                 <!-- Logo -->
                 <a class="navbar-brand d-flex align-items-center" href="#">
-                <img src="../images/logo.png" alt="BulakBuy Logo" class="img-fluid logo">
+                <img src="../php/images/logo.png" alt="BulakBuy Logo" class="img-fluid logo">
                 </a>
                 <!-- Search Bar -->
                 <div class="navbar-collapse justify-content-md-center">
@@ -218,42 +217,78 @@ if (isset($_SESSION["user_id"])) {
                 </div>
                 <div class="category-list">
                     <div class="category">
-                        <a href="category.html" ><img src="https://assets.florista.ph/uploads/product-pics/1674804112_5022.png" alt="Category 1"></a>
-                        <p>Bouquets</p>
+                        <a href="" ><img src="https://assets.florista.ph/uploads/product-pics/1674804112_5022.png" alt="Category 1"></a>
+                        <p>Birthday</p>
                     </div>
                     <div class="category">
                         <a href="category.html" ><img src="https://pbs.twimg.com/media/D2eAHTFVYAESsQ0.jpg" alt="Category 2"></a>
-                        <p>Flower Bundles</p>
+                        <p>Anniversary</p>
                     </div>
                     <div class="category">
                         <a href="category.html" ><img src="https://img2.chinadaily.com.cn/images/202112/17/61bc1548a310cdd3d82174b3.jpeg" alt="Category 3"></a>
-                        <p>Flower Arranger</p>
+                        <p>Graduationr</p>
                     </div>
                     <div class="category">
                         <a href="category.html" ><img src="https://www.soapcraftz.com/wp-content/uploads/2021/11/candle-additives.webp" alt="Category 1"></a>
-                        <p>Candles</p>
+                        <p>Wedding</p>
                     </div>
                     <div class="category">
                         <a href="category.html" ><img src="https://5.imimg.com/data5/SELLER/Default/2023/5/311880205/FY/ED/MT/181342412/torch-ginger-red-500x500.jpg" alt="Category 2"></a>
-                        <p>Tropical Flowers</p>
+                        <p>Flower Bundle</p>
                     </div>
                     <div class="category">
                         <a href="category.html" ><img src="https://flowermoxiesupply.com/cdn/shop/products/50373055808_8a22415eb2_c.jpg?v=1626454724" alt="Category 3"></a>
-                        <p>Arrangement Materials</p>
+                        <p>Leaves</p>
                     </div>
                     <div class="category">
                         <a href="category.html" ><img src="https://lzd-img-global.slatic.net/g/p/bd2d4e33299f8da2f68553b14d145865.jpg_720x720q80.jpg" alt="Category 1"></a>
-                        <p>Flower Stands</p>
+                        <p>Baskets</p>
                     </div>
                     <div class="category">
                         <a href="category.html" ><img src="https://casajuan.ph/cdn/shop/products/anahawnapkinring.jpg?v=1626910031" alt="Category 3"></a>
-                        <p>Leaves</p>
+                        <p>Tropical Flowers</p>
+                    </div>
+                    <div class="category">
+                        <a href="category.html" ><img src="https://casajuan.ph/cdn/shop/products/anahawnapkinring.jpg?v=1626910031" alt="Category 3"></a>
+                        <p>Other</p>
                     </div>
                 </div>
             </section>
             <section>
                 <div class="label">
-                    <p>Seasonal Discovery</p>
+                    <p>Products</p>
+                    <a href="allproducts.php" class="all">See all<i class="fa fa-long-arrow-right" aria-hidden="true"></i></a>
+                </div>
+                <div class="product-list" id="product-container">
+                    <?php 
+                    $counter = 0;
+                    foreach ($products as $product):
+                        if ($counter >= 6) {
+                            break; // Stop the loop after displaying 6 products
+                        }
+                        ?>
+                        <div class="product">
+                            <a href="customer_product.php?product_id=<?php echo $product['product_id']; ?>">
+                            <?php
+                                echo '<img src="' . $product['product_img'] . '" alt="' . $product['product_name'] . '">';
+                            ?>                        
+                                <div class="product-name"><?php echo $product['product_name']; ?></div>
+                                <div class="product-category"><?php echo $product['product_category']; ?></div>
+                                <div class="p">
+                                    <div class="product-price"><?php echo $product['product_price']; ?></div>
+                                    <div class="product-ratings">4.5 stars</div>
+                                </div>
+                            </a>
+                        </div>
+                        <?php
+                        $counter++; // Increment counter for each displayed product
+                    endforeach; ?>
+                </div>
+            </section>
+
+            <section>
+                <div class="label">
+                    <p>Services</p>
                     <a href="seasonal_discovery.html" class="all">See all<i class="fa fa-long-arrow-right" aria-hidden="true"></i></a>
                 </div>
                 <div class="product-list" id="product-container">

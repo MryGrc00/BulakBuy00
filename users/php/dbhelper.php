@@ -174,43 +174,7 @@ function generateUniqueFileName($originalFileName) {
 }
 
 
-//add
-function get_products_by_seller($user_id) {
-    $conn = dbconnect();
-    if (!$conn) return array();
-
-    try {
-        $stmt = $conn->prepare("SELECT * FROM products WHERE seller_id = :user_id");
-        $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    } catch (PDOException $e) {
-        echo "Error fetching products: " . $e->getMessage();
-        return array();
-    } finally {
-        $conn = null;
-    }
-}
-
-//add
-function get_products_by_arranger($user_id) {
-    $conn = dbconnect();
-    if (!$conn) return array();
-
-    try {
-        $stmt = $conn->prepare("SELECT * FROM products WHERE arranger_id = :user_id");
-        $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    } catch (PDOException $e) {
-        echo "Error fetching products: " . $e->getMessage();
-        return array();
-    } finally {
-        $conn = null;
-    }
-}
-
-//before clicking the shop
+//before entering the vendor_home
     function is_shop_empty($userId) {
         global $pdo; // Ensure that $pdo is your PDO database connection variable
 
@@ -232,4 +196,42 @@ function get_products_by_arranger($user_id) {
         return '₱ ' . number_format($price);
     }
 
+    function get_products_by_user($user_id, $pdo) {
+        // Define the SQL query
+        $sql = "SELECT p.* FROM products p
+                INNER JOIN shops s ON p.shop_owner = s.shop_id
+                INNER JOIN users u ON s.owner_id = u.user_id
+                WHERE u.user_id = :user_id AND u.role IN ('seller', 'arranger')";
+    
+        // Prepare and execute the query
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindParam(':user_id', $user_id);
+        $stmt->execute();
+    
+        // Fetch the products and return them
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    function get_latest_products_by_id($table) {
+        $conn = dbconnect(); 
+        $sql = "SELECT * FROM " . $table . " ORDER BY product_id DESC";
+        
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+        
+        $products = $stmt->fetchAll(PDO::FETCH_ASSOC); 
+    
+        return $products;
+    }
+    
+    function get_price_range() {
+        $conn = dbconnect(); 
+        $query = "SELECT MIN(product_price) AS min_price, MAX(product_price) AS max_price FROM products";
+        $stmt = $conn->prepare($query);
+        $stmt->execute();
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return array($row['min_price'], $row['max_price']);
+    }
+    
+    
 ?>

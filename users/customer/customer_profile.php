@@ -107,7 +107,7 @@ if (isset($_SESSION["user_id"])) {
                     </a>
                 </div>
                 <div class="vertical-container">
-                    <a href="#">
+                <a href="../forgot_password.php">
                         <div class="link-content">
                             <i class="bi bi-key"></i>
                             <span class="label1">Change Password</span>

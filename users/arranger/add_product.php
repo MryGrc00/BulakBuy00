@@ -5,8 +5,8 @@ include '../php/dbhelper.php'; // Make sure this path is correct
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
     // Check user login and role
     if (!isset($_SESSION["user_id"]) || $_SESSION["role"] !== "arranger") {
-        echo "User not logged in or not a arranger.";
-        exit();
+        header("Location: login.php"); 
+        exit(); 
     }
 
     $userId = $_SESSION["user_id"];
@@ -39,6 +39,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
     $productPrice = $_POST['product_price'];
     $productDesc = $_POST['product_desc'];
 
+    $flowerTypes = isset($_POST['flowerTypes']) ? json_decode($_POST['flowerTypes']) : [];
+    $ribbonColors = isset($_POST['ribbonColors']) ? json_decode($_POST['ribbonColors']) : [];
+    $flowerTypeStr = implode(",", $flowerTypes);
+    $ribbonColorStr = implode(",", $ribbonColors);
+
     // Check if the selected category is 'Other'
     if ($productCategory == 'Other') {
         $other_category = $_POST['other_category'];
@@ -53,7 +58,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
     $allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
     if (in_array($productImage['type'], $allowedTypes) && move_uploaded_file($productImage['tmp_name'], $uploadFile)) {
         // Prepare SQL to insert into products table
-        $sql = "INSERT INTO products (shop_owner, product_img, product_name, product_category, product_price, product_desc) VALUES (:shop_id, :product_img, :product_name, :product_category, :product_price, :product_desc)";
+        $sql = "INSERT INTO products (shop_owner, product_img, product_name, product_category, product_price, product_desc, flower_type, ribbon_color) VALUES (:shop_id, :product_img, :product_name, :product_category, :product_price, :product_desc,:flower_type, :ribbon_color)";
 
         // Insert product data into the database using PDO
         try {
@@ -64,6 +69,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
             $stmt->bindParam(':product_category', $productCategory);
             $stmt->bindParam(':product_price', $productPrice);
             $stmt->bindParam(':product_desc', $productDesc);
+            $stmt->bindParam(':flower_type', $flowerTypeStr);
+            $stmt->bindParam(':ribbon_color', $ribbonColorStr);
             $stmt->execute();
 
             echo "Product added successfully!";

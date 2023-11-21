@@ -10,27 +10,10 @@ if (isset($_SESSION["user_id"]) && ($_SESSION["role"] === "seller" || $_SESSION[
     $products = get_products_by_user($user_id, $pdo);
 
 } else {
-    echo "Access Denied. User not logged in or not authorized.";
-    // Optional: Redirect to login or home page
-    // header('Location: login.php');
+    header('Location: ../login.php');
     exit();
 }
 
-function get_products_by_user($user_id, $pdo) {
-    // Define the SQL query
-    $sql = "SELECT p.* FROM products p
-            INNER JOIN shops s ON p.shop_owner = s.shop_id
-            INNER JOIN users u ON s.owner_id = u.user_id
-            WHERE u.user_id = :user_id AND u.role IN ('seller', 'arranger')";
-
-    // Prepare and execute the query
-    $stmt = $pdo->prepare($sql);
-    $stmt->bindParam(':user_id', $user_id);
-    $stmt->execute();
-
-    // Fetch the products and return them
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
-}
 ?>
 
 
@@ -94,10 +77,10 @@ function get_products_by_user($user_id, $pdo) {
                             <a href="edit_product.php?product_id=<?php echo $product['product_id']; ?>">
                                     <button class="edit-button"><i class="bi bi-pen"></i></button>
                                 </a> 
-                                <a href="delete.php?product_id=<?php echo $product['product_id'];?>">                               
-                                     <button class="delete-button"><i class="bi bi-trash"></i></button> </div>
-                                </a>
+                                
+                                <button class="delete-button" onclick="openModal(<?php echo $product['product_id']; ?>)"><i class="bi bi-trash"></i></button>
                              </div>
+                        </div>
                      </a>
                       </div>
 
@@ -107,36 +90,37 @@ function get_products_by_user($user_id, $pdo) {
                         <p class="p-end">No more products found</p><br><br><br>
                     <?php endif; ?>
         </div>
+
+        <!--modal for delete--->
+        <div id="deleteModal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <p>Are you sure you want to delete this product?</p>
+                <form method="POST" action="delete.php">
+                    <input type="hidden" name="product_id" id="modalProductId">
+                    <button type="submit" name="confirm_delete">Yes, Delete it</button>
+                    <button type="button" onclick="closeModal()">Cancel</button>
+                </form>
+            </div>
+        </div>
+        
     </main>
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-        <script>
-
-            $(document).ready(function() {
-            $('.delete-button').click(function() {
-                var productId = $(this).data('productid');
-
-                // Confirm with the user before deleting
-                if (confirm("Are you sure you want to delete this product?")) {
-                    $.ajax({
-                        url: 'delete_product.php', // Change this to the PHP script handling the delete operation
-                        type: 'POST',
-                        data: { product_id: productId },
-                        success: function(response) {
-                            // Refresh the page or update the product list as needed
-                            location.reload();
-                        },
-                        error: function(error) {
-                            console.log(error);
-                        }
-                    });
-                }
-            });
-        });
 
         <script src="js/chat.js"></script>
+        <script>
+        // JavaScript functions
+        function openModal(productId) {
+            document.getElementById('modalProductId').value = productId;
+            document.getElementById('deleteModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('deleteModal').style.display = 'none';
+        }
+    </script>
         <script>
             function goBack() {
                 window.history.back();

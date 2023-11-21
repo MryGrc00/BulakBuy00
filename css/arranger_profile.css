@@ -289,9 +289,7 @@
      font-size: 30px;
      cursor: pointer;
 }
- .product-list {
-     display: none;
-}
+
  .gallery-btn.active + .image-grid, .product-btn.active + .product-list {
      display: flex;
 }

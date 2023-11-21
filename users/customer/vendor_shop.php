@@ -3,21 +3,30 @@ session_start();
 
 // Redirect to login page if not logged in
 if (!isset($_SESSION["user_id"])) {
-    header("Location: ../login.php"); // Adjust the path as needed
-    exit(); // It's important to exit here
+    header("Location: ../login.php");
+    exit();
 }
 
-include '../php/dbhelper.php'; // Ensure this path is correct
+include '../php/dbhelper.php';
 $pdo = dbconnect();
 
-$user_id = $_SESSION["user_id"]; // This is now safe to use
+// Fetch shop details based on shop_id from URL
+$shop_id = isset($_GET['shop_id']) ? $_GET['shop_id'] : null;
+if ($shop_id) {
+    $shop = get_record('shops', 'shop_id', $shop_id);
+    $products = get_products_by_shop($shop_id, $pdo);
+} else {
+    echo "Shop ID not provided";
+    exit();
+}
 
-// Fetching shop details
-$users = get_record('shops', 'owner_id', $user_id);
-
-// Fetching product details
-$products = get_products_by_user($user_id, $pdo);
-
+function get_products_by_shop($shop_id, $pdo) {
+    $sql = "SELECT * FROM products WHERE shop_owner = :shop_id";
+    $stmt = $pdo->prepare($sql);
+    $stmt->bindParam(':shop_id', $shop_id);
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
 ?>
 
 
@@ -60,17 +69,17 @@ $products = get_products_by_user($user_id, $pdo);
         </header>
         <main class="main">
             <div class="seller-info">
-            <?php if (isset($users) && is_array($users)): ?>
-                <img src="<?php echo htmlspecialchars(!empty($users['shop_img']) ? $users['shop_img'] : 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'); ?>" alt="Seller Image" class="seller-image">
+            <?php if (isset($shop) && is_array($shop)): ?>
+                <img src="<?php echo htmlspecialchars(!empty($shop['shop_img']) ? $shop['shop_img'] : 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'); ?>" alt="Seller Image" class="seller-image">
                 <div class="seller-details">
                     <div class="seller-name">
-                        <i class="bi bi-person" aria-hidden="true"></i><?php echo htmlspecialchars($users['shop_name']); ?><a href="edit_shop.php"><i class="bi bi-pencil-square" style="margin-left: 10px;"></i></a>
+                        <i class="bi bi-person" aria-hidden="true"></i><?php echo htmlspecialchars($shop['shop_name']); ?><a href="edit_shop.php"><i class="bi bi-pencil-square" style="margin-left: 10px;"></i></a>
                     </div>
                     <div class="seller-contact">
-                        <i class="bi bi-geo-alt" aria-hidden="true"></i> <?php echo htmlspecialchars($users['shop_address']); ?>
+                        <i class="bi bi-geo-alt" aria-hidden="true"></i> <?php echo htmlspecialchars($shop['shop_address']); ?>
                     </div>
                     <div class="seller-contact">
-                        <i class="bi bi-telephone" aria-hidden="true"></i> <?php echo htmlspecialchars($users['shop_phone']); ?>
+                        <i class="bi bi-telephone" aria-hidden="true"></i> <?php echo htmlspecialchars($shop['shop_phone']); ?>
                     </div>
                 <?php endif; ?>
                     </div>

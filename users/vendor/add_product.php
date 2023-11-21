@@ -2,12 +2,11 @@
 session_start();
 include '../php/dbhelper.php'; // Make sure this path is correct
 
+if (!isset($_SESSION["user_id"]) || $_SESSION["role"] !== "seller") {
+    header("Location: ../login.php"); 
+}
+
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
-    // Check user login and role
-    if (!isset($_SESSION["user_id"]) || $_SESSION["role"] !== "seller") {
-        echo "User not logged in or not a seller.";
-        exit();
-    }
 
     $userId = $_SESSION["user_id"];
 
@@ -78,15 +77,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
 }
 ?>
 
-<!-- [Your HTML form goes here] -->
-
-
-
-
-
-
-
-<!-- Your HTML form goes here -->
 
 
 <!DOCTYPE html> 

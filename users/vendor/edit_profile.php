@@ -57,7 +57,8 @@ if (isset($_GET['user_id'])) {
         echo "User not found!";
     }
 } else {
-    echo "No user specified.";
+    header("Location: login.php"); 
+    exit();
 }
 ?>
 
