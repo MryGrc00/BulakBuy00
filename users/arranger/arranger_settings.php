@@ -57,13 +57,6 @@ $conn = null;
         <main class="main">
             <section>
                 <div class="vertical-container">
-                    <a href="#">
-                        <div class="link-content">
-                            <i class="bi bi-person-plus"></i>
-                            <span class="label1">Allow Services</span>
-                        </div>
-                        <i class="bi bi-toggle-on" id="services-toggle"></i> 
-                    </a>
                     <a href="../forgot_password.php">
                         <div class="link-content">
                             <i class="bi bi-key"></i>

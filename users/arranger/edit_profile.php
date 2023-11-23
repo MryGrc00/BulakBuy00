@@ -20,7 +20,7 @@ if (isset($_GET['user_id'])) {
             $address = htmlspecialchars($_POST['address']);
 
             $imagePath = ''; 
-            $uploadFolder = '../php/images/';
+            $uploadFolder = "../php/images/";
 
             if (!empty($_FILES['profile_img']['name'])) {
                 $file_name = $_FILES['profile_img']['name'];

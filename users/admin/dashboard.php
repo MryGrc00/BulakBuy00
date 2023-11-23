@@ -1,3 +1,32 @@
+<?php
+include '../php/dbhelper.php';
+
+$pdo = dbconnect();
+try {
+    // Total Accounts
+    $stmt = $pdo->query("SELECT COUNT(*) FROM users");
+    $totalAccounts = $stmt->fetchColumn();
+
+    // Total Seller/Arranger Accounts
+    $stmt = $pdo->query("SELECT COUNT(*) FROM users WHERE role = 'seller' OR role = 'arranger'");
+    $totalSellers = $stmt->fetchColumn();
+
+    // Total Customer Accounts
+    $stmt = $pdo->query("SELECT COUNT(*) FROM users WHERE role = 'customer'");
+    $totalCustomers = $stmt->fetchColumn();
+
+    // Total Subscribed Accounts
+    $stmt = $pdo->query("SELECT COUNT(*) FROM subscription");
+    $totalSubscribed = $stmt->fetchColumn();
+
+} catch (PDOException $e) {
+    // Handle exception
+    echo "Database error: " . $e->getMessage();
+    die();
+}
+?>
+
+
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
    <head>
@@ -26,7 +55,7 @@
          </div>
          <ul class="nav-links align-items-center  text-center ">
             <li>
-               <a href="dashboard.html" class="active">
+               <a href="dashboard.php" class="active">
                <i class="fa fa-home" aria-hidden="true"></i>
                <span class="links_name">Dashboard</span>
                </a>
@@ -50,15 +79,9 @@
                </a>
             </li>
             <li>
-               <a href="subscriptions.html">
+               <a href="subscriptions.php">
                <i class="fa fa-credit-card-alt" aria-hidden="true"></i>
                <span class="links_name">Subscriptions</span>
-               </a>
-            </li>
-            <li>
-               <a href="review_accounts.html">
-               <i class="fa fa-users" aria-hidden="true"></i>
-               <span class="links_name">Review Accounts</span>
                </a>
             </li>
             <li>
@@ -142,7 +165,7 @@
                               </div>
                               <div class="stat-content dib">
                                  <div class="stat-text">Total Accounts</div>
-                                 <div class="stat-digit">1,012</div>
+                                 <div class="stat-digit"><?php echo $totalAccounts;?></div>
                               </div>
                            </div>
                         </div>
@@ -154,7 +177,7 @@
                               </div>
                               <div class="stat-content dib">
                                  <div class="stat-text">Seller / Worker Accounts</div>
-                                 <div class="stat-digit">961</div>
+                                 <div class="stat-digit"><?php echo $totalSellers;?></div>
                               </div>
                            </div>
                         </div>
@@ -166,7 +189,7 @@
                               </div>
                               <div class="stat-content dib">
                                  <div class="stat-text">Customer Accounts</div>
-                                 <div class="stat-digit">770</div>
+                                 <div class="stat-digit"><?php echo $totalCustomers;?></div>
                               </div>
                            </div>
                         </div>
@@ -178,7 +201,7 @@
                               </div>
                               <div class="stat-content dib">
                                  <div class="stat-text">Subscribed Accounts</div>
-                                 <div class="stat-digit">1,012</div>
+                                 <div class="stat-digit"><?php echo $totalSubscribed;?></div>
                               </div>
                            </div>
                         </div>

@@ -212,9 +212,28 @@ function generateUniqueFileName($originalFileName) {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    function get_latest_products_by_id($table) {
+    function get_services($servicesTable, $usersTable) {
         $conn = dbconnect(); 
-        $sql = "SELECT * FROM " . $table . " ORDER BY product_id DESC";
+        $sql = "SELECT s.*, u.first_name, u.last_name, u.profile_img FROM " . $servicesTable . " s 
+                JOIN " . $usersTable . " u ON s.arranger_id = u.user_id";
+        
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+        
+        $services = $stmt->fetchAll(PDO::FETCH_ASSOC); 
+    
+        return $services;
+    }
+    
+
+    function get_latest_products_by_id($productsTable, $shopTable, $subscribedTable) {
+        $conn = dbconnect(); 
+    
+        // SQL to join products table with shop and subscribed tables
+        $sql = "SELECT p.* FROM " . $productsTable . " AS p
+                JOIN " . $shopTable . " AS s ON p.shop_owner = s.shop_id
+                LEFT JOIN " . $subscribedTable . " AS sub ON s.shop_id = sub.shop_id
+                ORDER BY (sub.status = 'active') DESC, p.product_id DESC";
         
         $stmt = $conn->prepare($sql);
         $stmt->execute();
@@ -224,7 +243,29 @@ function generateUniqueFileName($originalFileName) {
         return $products;
     }
     
-    function get_price_range() {
+
+    function get_latest_services($servicesTable, $usersTable, $shopTable, $subscribedTable) {
+        $conn = dbconnect(); 
+    
+        // SQL to join services table with users, then users with shops, and finally shops with subscriptions
+        $sql = "SELECT s.*, u.first_name, u.last_name, u.profile_img FROM " . $servicesTable . " AS s
+                JOIN " . $usersTable . " AS u ON s.arranger_id = u.user_id
+                LEFT JOIN " . $shopTable . " AS sh ON u.user_id = sh.owner_id
+                LEFT JOIN " . $subscribedTable . " AS sub ON sh.shop_id = sub.shop_id
+                ORDER BY (sub.status = 'active') DESC, s.service_id DESC";
+        
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+        
+        $services = $stmt->fetchAll(PDO::FETCH_ASSOC); 
+    
+        return $services;
+    }
+    
+    
+    
+    
+    function get_price_range_products() {
         $conn = dbconnect(); 
         $query = "SELECT MIN(product_price) AS min_price, MAX(product_price) AS max_price FROM products";
         $stmt = $conn->prepare($query);
@@ -232,6 +273,175 @@ function generateUniqueFileName($originalFileName) {
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         return array($row['min_price'], $row['max_price']);
     }
+
+    function get_rate_range_service() {
+        $conn = dbconnect(); 
+        $query = "SELECT MIN(service_rate) AS min_price, MAX(service_rate) AS max_price FROM services";
+        $stmt = $conn->prepare($query);
+        $stmt->execute();
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return array($row['min_price'], $row['max_price']);
+    }
+    
+    //service_order.php
+    function get_pending_service_details($servicedetailsTable, $servicesTable, $usersTable, $loggedInUserId) {
+        $conn = dbconnect();
+    
+        // SQL to join servicedetails with services, then with users to get the customer's name
+        $sql = "SELECT sd.*, u.first_name AS customer_first_name, u.last_name AS customer_last_name , u.address AS customer_address, u.profile_img AS customer_profile
+                FROM " . $servicedetailsTable . " AS sd
+                JOIN " . $servicesTable . " AS s ON sd.service_id = s.service_id
+                JOIN " . $usersTable . " AS u ON sd.customer_id = u.user_id
+                WHERE s.arranger_id = :loggedInUserId AND sd.status = 'pending'
+                ORDER BY sd.servicedetails_id DESC"; // Assuming detail_id is the identifier in servicedetails table
+        
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':loggedInUserId', $loggedInUserId, PDO::PARAM_INT);
+        $stmt->execute();
+        
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    function get_count_of_pending_services($salesdetailsTable, $servicesTable, $loggedInUserId) {
+        $conn = dbconnect();
+    
+        // SQL to count the number of pending sales for services offered by the logged-in arranger
+        $sql = "SELECT COUNT(*) as sales_count 
+                FROM " . $salesdetailsTable . " AS sd
+                JOIN " . $servicesTable . " AS s ON sd.service_id = s.service_id
+                WHERE s.arranger_id = :loggedInUserId AND sd.status = 'pending'";
+        
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':loggedInUserId', $loggedInUserId, PDO::PARAM_INT);
+        $stmt->execute();
+        
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $result ? $result['sales_count'] : 0;
+    }
+
+//processing
+    function get_service_details_processing($servicedetailsTable, $servicesTable, $usersTable, $loggedInUserId) {
+        $conn = dbconnect();
+    
+        // SQL to join servicedetails with services and users, filtering for 'processing' status
+        $sql = "SELECT sd.*, u.first_name AS customer_first_name, u.last_name AS customer_last_name, 
+                    u.address AS customer_address, u.profile_img AS customer_profile
+                FROM " . $servicedetailsTable . " AS sd
+                JOIN " . $servicesTable . " AS s ON sd.service_id = s.service_id
+                JOIN " . $usersTable . " AS u ON sd.customer_id = u.user_id
+                WHERE s.arranger_id = :loggedInUserId AND sd.status = 'processing'
+                ORDER BY sd.servicedetails_id DESC"; // Assuming servicedetails_id is the identifier in servicedetails table
+        
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':loggedInUserId', $loggedInUserId, PDO::PARAM_INT);
+        $stmt->execute();
+        
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+//count
+function get_count_of_processing_services($servicedetailsTable, $servicesTable, $loggedInUserId) {
+    $conn = dbconnect();
+
+    // SQL to count the number of service details in 'processing' status for the logged-in user's services
+    $sql = "SELECT COUNT(*) as count
+            FROM " . $servicedetailsTable . " AS sd
+            JOIN " . $servicesTable . " AS s ON sd.service_id = s.service_id
+            WHERE s.arranger_id = :loggedInUserId AND sd.status = 'processing'";
+    
+    $stmt = $conn->prepare($sql);
+    $stmt->bindParam(':loggedInUserId', $loggedInUserId, PDO::PARAM_INT);
+    $stmt->execute();
+    
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    return $result ? $result['count'] : 0;
+}
+
+//intransit
+function get_service_details_intransit($servicedetailsTable, $servicesTable, $usersTable, $loggedInUserId) {
+    $conn = dbconnect();
+
+    // SQL to join servicedetails with services and users, filtering for 'intransit' status
+    $sql = "SELECT sd.*, u.first_name AS customer_first_name, u.last_name AS customer_last_name, 
+                    u.address AS customer_address, u.profile_img AS customer_profile
+            FROM " . $servicedetailsTable . " AS sd
+            JOIN " . $servicesTable . " AS s ON sd.service_id = s.service_id
+            JOIN " . $usersTable . " AS u ON sd.customer_id = u.user_id
+            WHERE s.arranger_id = :loggedInUserId AND sd.status = 'intransit'
+            ORDER BY sd.servicedetails_id DESC"; // Assuming servicedetails_id is the identifier in servicedetails table
+    
+    $stmt = $conn->prepare($sql);
+    $stmt->bindParam(':loggedInUserId', $loggedInUserId, PDO::PARAM_INT);
+    $stmt->execute();
+    
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+//count
+function get_count_of_intransit_services($servicedetailsTable, $servicesTable, $loggedInUserId) {
+    $conn = dbconnect();
+
+    // SQL to count the number of service details in 'intransit' status for the logged-in user's services
+    $sql = "SELECT COUNT(*) as count
+            FROM " . $servicedetailsTable . " AS sd
+            JOIN " . $servicesTable . " AS s ON sd.service_id = s.service_id
+            WHERE s.arranger_id = :loggedInUserId AND sd.status = 'intransit'";
+    
+    $stmt = $conn->prepare($sql);
+    $stmt->bindParam(':loggedInUserId', $loggedInUserId, PDO::PARAM_INT);
+    $stmt->execute();
+    
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    return $result ? $result['count'] : 0;
+}
+
+//completed
+function get_service_details_completed($servicedetailsTable, $servicesTable, $usersTable, $loggedInUserId) {
+    $conn = dbconnect();
+
+    $sql = "SELECT sd.*, u.first_name AS customer_first_name, u.last_name AS customer_last_name , u.address AS customer_address, u.profile_img AS customer_profile
+            FROM " . $servicedetailsTable . " AS sd
+            JOIN " . $servicesTable . " AS s ON sd.service_id = s.service_id
+            JOIN " . $usersTable . " AS u ON sd.customer_id = u.user_id
+            WHERE s.arranger_id = :loggedInUserId AND sd.status = 'completed'
+            ORDER BY sd.servicedetails_id DESC"; 
+    
+    $stmt = $conn->prepare($sql);
+    $stmt->bindParam(':loggedInUserId', $loggedInUserId, PDO::PARAM_INT);
+    $stmt->execute();
+    
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+//count
+function get_count_of_completed_services($servicedetailsTable, $servicesTable, $loggedInUserId) {
+    $conn = dbconnect();
+
+    // SQL to count the number of service details in 'intransit' status for the logged-in user's services
+    $sql = "SELECT COUNT(*) as count
+            FROM " . $servicedetailsTable . " AS sd
+            JOIN " . $servicesTable . " AS s ON sd.service_id = s.service_id
+            WHERE s.arranger_id = :loggedInUserId AND sd.status = 'completed'";
+    
+    $stmt = $conn->prepare($sql);
+    $stmt->bindParam(':loggedInUserId', $loggedInUserId, PDO::PARAM_INT);
+    $stmt->execute();
+    
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    return $result ? $result['count'] : 0;
+}
+
+
+
+
+
+    
+
+    
+    
+    
+    
+    
     
     
 ?>

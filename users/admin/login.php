@@ -1,46 +1,35 @@
 <?php
 session_start();
-include "dbhelper.php";
+require_once "../php/dbhelper.php";
 
+$pdo = dbconnect();
 $alert = "";
 if (isset($_POST["login"])) {
     $username = $_POST["username"];
     $password = $_POST["password"];
 
-    // Retrieve user data from database
-    $password = md5($password);
-    $sql = "SELECT * FROM `users` WHERE username = ? AND password = ? ";
-    $stmt = mysqli_prepare($conn, $sql);
-    mysqli_stmt_bind_param($stmt, "ss", $username, $password);
-    mysqli_stmt_execute($stmt);
-    $result = mysqli_stmt_get_result($stmt);
-    $user = mysqli_fetch_assoc($result);
+    try {
+        // Assuming dbhelper.php returns a PDO instance in $pdo
+        $sql = "SELECT * FROM `admin` WHERE username = :username AND password = :password";
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindParam(':username', $username, PDO::PARAM_STR);
+        $stmt->bindParam(':password', $password, PDO::PARAM_STR);
+        $stmt->execute();
 
-    if (mysqli_num_rows($result) == 1) {
-        // Set the user attribute value in the session
-        $_SESSION["usertype"] = $user["usertype"];
-        $_SESSION["user_id"] = $user["id"];
-        $_SESSION["fname"] = $user["fname"];
-        $_SESSION["lname"] = $user["lname"];
-        $_SESSION["address"] = $user["address"];
-        $_SESSION["gender"] = $user["gender"];
-        $_SESSION["dob"] = $user["dob"];
-        $_SESSION["pnumber"] = $user["pnumber"];
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        // Redirect the user to the appropriate dashboard
-        if ($user["usertype"] == "Seller") {
-            header("Location: seller_product.php");
-            exit();
+        if ($user) {
+            $_SESSION["user_id"] = $user["id"];
+            header("Location: users.php");
         } else {
-            header("Location: home.php");
-            exit();
+            $alert_message = "Invalid username or password.";
         }
-    } else {
-        // User does not exist, show an error message
-        $alert_message = "Invalid username or password.";
+    } catch (PDOException $e) {
+        $alert_message = "Database error: " . $e->getMessage();
     }
 }
 ?>
+
 	
 <!DOCTYPE html>
 <html lang="en">
@@ -50,7 +39,7 @@ if (isset($_POST["login"])) {
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">  
   <script src="https://code.jquery.com/jquery-3.4.0.min.js"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css" /> 
-  <link rel="stylesheet" href="css/login1.css">
+  <link rel="stylesheet" href="../../css/login1.css">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
   <style>
@@ -77,7 +66,7 @@ if (isset($_POST["login"])) {
       <div class="input-box">
         <header>
           <h3>Welcome to</h3>
-          <img src='images/logo.png' alt="BulakBuy Logo">
+          <img src='../php/images/logo.png' alt="BulakBuy Logo">
         </header>
         <?php if (!empty($alert_message)) { ?>
           <div class="alert alert-danger alert-dismissible fade show" role="alert">

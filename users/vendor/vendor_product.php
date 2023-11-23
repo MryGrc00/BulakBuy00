@@ -6,19 +6,55 @@ if (isset($_SESSION["user_id"]) && ($_SESSION["role"] === "seller" || $_SESSION[
     include '../php/dbhelper.php'; // Make sure this path is correct
     $pdo = dbconnect();
 
-    // Fetch products from the database
-    $products = get_products_by_user($user_id, $pdo);
+    // Function to get shop ID for a user
+    function getShopId($user_id, $pdo) {
+        $query = "SELECT shop_id FROM shops WHERE owner_id = :user_id LIMIT 1";
+        $stmt = $pdo->prepare($query);
+        $stmt->bindParam(':user_id', $user_id);
+        $stmt->execute();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return $result ? $result['shop_id'] : null;
+    }
+
+    // Function to check subscription status
+    function isUserSubscribed($shop_id, $pdo) {
+        $query = "SELECT status FROM subscription WHERE shop_id = :shop_id LIMIT 1";
+        $stmt = $pdo->prepare($query);
+        $stmt->bindParam(':shop_id', $shop_id);
+        $stmt->execute();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return $result && $result['status'] === 'active';
+    }
+
+    // Function to count user's products
+    function countUserProducts($shop_id, $pdo) {
+        $query = "SELECT COUNT(*) FROM products WHERE shop_owner = :shop_id";
+        $stmt = $pdo->prepare($query);
+        $stmt->bindParam(':shop_id', $shop_id);
+        $stmt->execute();
+        return $stmt->fetchColumn();
+    }
+
+    $shop_id = getShopId($user_id, $pdo);
+    if ($shop_id) {
+        $isSubscribed = isUserSubscribed($shop_id, $pdo);
+        $productCount = countUserProducts($shop_id, $pdo);
+        $canAddMoreProducts = $isSubscribed || $productCount < 10;
+
+        // Fetch products from the database
+        $products = get_products_by_user($user_id, $pdo); // Ensure this function uses shop_id for fetching products
+    } else {
+        // Handle case where shop ID is not found
+        // For example, display an error or redirect
+    }
 
 } else {
     header('Location: ../login.php');
     exit();
 }
-
 ?>
-
-
-
-
 
 
 <!DOCTYPE html> 
@@ -60,7 +96,16 @@ if (isset($_SESSION["user_id"]) && ($_SESSION["role"] === "seller" || $_SESSION[
             <hr class="nav-hr">
         </header>
         <main>
-        <a href="add_product.php"><button class="add-product"> + Add Product</button></a>
+        <button class="add-product" onclick="<?php echo $canAddMoreProducts ? 'window.location.href=\'add_product.php\'' : 'openModal()'; ?>">+ Add Product</button>
+        <!-- Modal for Premium Subscription -->
+        <div id="premiumModal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal()">&times;</span>
+                <p>You have reached your limit of 10 products. Upgrade to a premium subscription to add more products.</p>
+                <button onclick="window.location.href='../../Payments/index.php'">Go Premium</button>
+            </div>
+        </div>
+
         <div class="product-list" id="product-container">
              <?php foreach ($products as $product) : ?>
                 <div class="product">
@@ -127,6 +172,25 @@ if (isset($_SESSION["user_id"]) && ($_SESSION["role"] === "seller" || $_SESSION[
             }
           </script>
 
+          
+        <script>
+            function openModal() {
+                document.getElementById('premiumModal').style.display = 'block';
+            }
+
+            function closeModal() {
+                document.getElementById('premiumModal').style.display = 'none';
+            }
+
+            // Close the modal if the user clicks outside of it
+            window.onclick = function(event) {
+                var modal = document.getElementById('premiumModal');
+                if (event.target == modal) {
+                    closeModal();
+                }
+            }
+        </script>
+
 
 
 
@@ -136,6 +200,5 @@ if (isset($_SESSION["user_id"]) && ($_SESSION["role"] === "seller" || $_SESSION[
 
 
             
-          </script>
     </body>
 </html>

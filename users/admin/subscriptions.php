@@ -1,3 +1,35 @@
+<?php
+// Include your database connection script
+include '../php/dbhelper.php';
+
+
+$pdo = dbconnect();
+try {
+   // Prepare and execute the query
+   $stmt = $pdo->query("SELECT s.shop_id, s.s_date, s.e_date, s.status, CONCAT(u.first_name, ' ', u.last_name) AS full_name, u.role FROM subscription s JOIN shops sh ON s.shop_id = sh.shop_id JOIN users u ON sh.owner_id = u.user_id");
+   $subscriptions = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+   // Calculate days left and add to each subscription
+   foreach ($subscriptions as $key => $subscription) {
+       $endDate = new DateTime($subscription['e_date']);
+       $today = new DateTime();
+       $interval = $today->diff($endDate);
+       $subscriptions[$key]['days_left'] = $interval->days;
+   }
+
+   // Custom sort function
+   usort($subscriptions, function($a, $b) {
+       return $a['days_left'] <=> $b['days_left'];
+   });
+
+} catch (PDOException $e) {
+   // Handle exception
+   echo "Database error: " . $e->getMessage();
+   die();
+}
+?>
+
+
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
    <head>
@@ -24,7 +56,7 @@
       <div class="sidebar">
          <div class="d-flex flex-column ">
             <div class="logo align-items-center  text-center mt-5">
-               <img src='images/logo.png' alt="BulakBuy Logo">
+               <img src='../php/images/logo.png' alt="BulakBuy Logo">
                <hr>
             </div>
             <div class="profile">
@@ -34,7 +66,7 @@
          </div>
          <ul class="nav-links align-items-center  text-center ">
             <li>
-               <a href="dashboard.html">
+               <a href="dashboard.php">
                   <i class="fa fa-home" aria-hidden="true"></i>
                   <span class="links_name">Dashboard</span>
                </a>
@@ -58,15 +90,9 @@
                </a>
             </li>
             <li>
-               <a href="subscriptions.html" class="active">
+               <a href="subscriptions.php" class="active">
                   <i class="fa fa-credit-card-alt" aria-hidden="true"></i>
                   <span class="links_name">Subscriptions</span>
-               </a>
-            </li>
-            <li>
-               <a href="review_accounts.html">
-                  <i class="fa fa-users" aria-hidden="true"></i>
-                  <span class="links_name">Review Accounts</span>
                </a>
             </li>
             <li>
@@ -146,135 +172,38 @@
                         <table class="table" id="myTable">
                            <thead style="text-align: center;">
                               <tr class="title" style="text-align: center;">
-                                 <th scope="col" class="px-5" style="text-align: center;">IDNO</th>
+                                 <th scope="col" class="px-3" style="text-align: center;">Shop ID</th>
                                  <th scope="col" class="px-5" style="text-align: center;">Name</th>
                                  <th scope="col" class="px-5" style="text-align: center;">Role</th>
                                  <th scope="col" class="px-5" style="text-align: center;">Start Date</th>
                                  <th scope="col" class="px-5" style="text-align: center;">End Date</th>
+                                 <th scope="col" class="px-5" style="text-align: center;">Days Left</th>
                                  <th scope="col" class="px-5" style="text-align: center;">Status</th>
                                  <th scope="col" class="px-5" style="text-align: center;">Action</th>
                               </tr>
                            </thead>
                            <tbody>
-                              
-                              <tr class="name" style="text-align: center;">
-                                 <td class="px-4 py-3" >00003</td>
-                                 <td class="px-5 py-3" style="width:300px;">Maria Mercedez hahahahahha</td>
-                                 <td class="px-5 py-3" style="width:200px;">Seller</td>
-                                 <td class="px-5 py-3" style="width:200px;">08/24/23</td>
-                                 <td class="px-5 py-3" style="width:200px;">09/24/23</td>
-                                 <td class="px-5 py-3"> Active</td>
-                                 <td class="button py- " style="min-width: 240px;">
-                                    <a href="#">
-                                       <button class="btn dib">Notify</button>
-                                    </a>
-                                 </td>
-                              </tr>
-                              <tr class="name" style="text-align: center;">
-                                 <td class="px-4 py-3" >00003</td>
-                                 <td class="px-5 py-3" style="width:300px;" >Maria Mercedez </td>
-                                 <td class="px-5 py-3" style="width:200px;">Seller</td>
-                                 <td class="px-5 py-3" style="width:200px;">08/24/23</td>
-                                 <td class="px-5 py-3" style="width:200px;">09/24/23</td>
-                                 <td class="px-5 py-3"> Active</td>
-                                 <td class="button py-2 " style="min-width: 240px;">
-                                    <a href="#">
-                                       <button class="btn dib">Notify</button>
-                                    </a>
-                                 </td>
-                              </tr>
-                              <tr class="name" style="text-align: center;">
-                                 <td class="px-4 py-3" >00003</td>
-                                 <td class="px-5 py-3" style="width:300px;" >Maria Mercedez </td>
-                                 <td class="px-5 py-3" style="width:200px;">Seller</td>
-                                 <td class="px-5 py-3" style="width:200px;">08/24/23</td>
-                                 <td class="px-5 py-3" style="width:200px;">09/24/23</td>
-                                 <td class="px-5 py-3"> Active</td>
-                                 <td class="button py-2 " style="min-width: 240px;">
-                                    <a href="#">
-                                       <button class="btn dib">Notify</button>
-                                    </a>
-                                 </td>
-                              </tr>
-                              <tr class="name" style="text-align: center;">
-                                 <td class="px-4 py-3" >00003</td>
-                                 <td class="px-5 py-3" style="width:300px;" >Maria Mercedez </td>
-                                 <td class="px-5 py-3" style="width:200px;">Seller</td>
-                                 <td class="px-5 py-3" style="width:200px;">08/24/23</td>
-                                 <td class="px-5 py-3" style="width:200px;">09/24/23</td>
-                                 <td class="px-5 py-3"> Active</td>
-                                 <td class="button py-2 " style="min-width: 240px;">
-                                    <a href="#">
-                                       <button class="btn dib">Notify</button>
-                                    </a>
-                                 </td>
-                              </tr>
-                              <tr class="name" style="text-align: center;">
-                                 <td class="px-4 py-3" >00003</td>
-                                 <td class="px-5 py-3" style="width:300px;" >Maria Mercedez </td>
-                                 <td class="px-5 py-3" style="width:200px;">Seller</td>
-                                 <td class="px-5 py-3" style="width:200px;">08/24/23</td>
-                                 <td class="px-5 py-3" style="width:200px;">09/24/23</td>
-                                 <td class="px-5 py-3"> Active</td>
-                                 <td class="button py-2 " style="min-width: 240px;">
-                                    <a href="#">
-                                       <button class="btn dib">Notify</button>
-                                    </a>
-                                 </td>
-                              </tr>
-                              <tr class="name" style="text-align: center;">
-                                 <td class="px-4 py-3" >00003</td>
-                                 <td class="px-5 py-3" style="width:300px;" >Maria Mercedez </td>
-                                 <td class="px-5 py-3" style="width:200px;">Seller</td>
-                                 <td class="px-5 py-3" style="width:200px;">08/24/23</td>
-                                 <td class="px-5 py-3" style="width:200px;">09/24/23</td>
-                                 <td class="px-5 py-3"> Active</td>
-                                 <td class="button py-2 " style="min-width: 240px;">
-                                    <a href="#">
-                                       <button class="btn dib">Notify</button>
-                                    </a>
-                                 </td>
-                              </tr>
-                              <tr class="name" style="text-align: center;">
-                                 <td class="px-4 py-3" >00003</td>
-                                 <td class="px-5 py-3" style="width:300px;" >Maria Mercedez </td>
-                                 <td class="px-5 py-3" style="width:200px;">Seller</td>
-                                 <td class="px-5 py-3" style="width:200px;">08/24/23</td>
-                                 <td class="px-5 py-3" style="width:200px;">09/24/23</td>
-                                 <td class="px-5 py-3"> Active</td>
-                                 <td class="button py-2 " style="min-width: 240px;">
-                                    <a href="#">
-                                       <button class="btn dib">Notify</button>
-                                    </a>
-                                 </td>
-                              </tr>
-                              <tr class="name" style="text-align: center;">
-                                 <td class="px-4 py-2" >00003</td>
-                                 <td class="px-5 py-2" style="width:300px;" >Maria Mercedez </td>
-                                 <td class="px-5 py-2" style="width:200px;">Customer</td>
-                                 <td class="px-5 py-2" style="width:200px;">08/24/23</td>
-                                 <td class="px-5 py-2" style="width:200px;">09/24/23</td>
-                                 <td class="px-5 py-2"> Active</td>
-                                 <td class="button py-2 " style="min-width: 240px;">
-                                    <a href="#">
-                                       <button class="btn dib">Notify</button>
-                                    </a>
-                                 </td>
-                              </tr>
-                              <tr class="name" style="text-align: center;">
-                                 <td class="px-4 py-2" >00003</td>
-                                 <td class="px-5 py-2" style="width:300px;" >Maria Mercedez </td>
-                                 <td class="px-5 py-2" style="width:200px;">Seller</td>
-                                 <td class="px-5 py-2" style="width:200px;">08/24/31</td>
-                                 <td class="px-5 py-2" style="width:200px;">09/24/23</td>
-                                 <td class="px-5 py-2"> Active</td>
-                                 <td class="button py-2 " style="min-width: 240px;">
-                                    <a href="#">
-                                       <button class="btn dib">Notify</button>
-                                    </a>
-                                 </td>
-                              </tr>
+                           <tbody>
+                              <?php foreach ($subscriptions as $subscription): ?>
+                                 <tr class="name" style="text-align: center;">
+                                       <td class="px-4 py-3"><?php echo htmlspecialchars($subscription['shop_id']); ?></td>
+                                       <td class="px-5 py-3" style="width:300px;"><?php echo htmlspecialchars($subscription['full_name']); ?></td>
+                                       <td class="px-5 py-3" style="width:200px;"><?php echo htmlspecialchars($subscription['role']); ?></td>
+                                       <td class="px-5 py-3" style="width:200px;"><?php echo htmlspecialchars($subscription['s_date']); ?></td>
+                                       <td class="px-5 py-3" style="width:200px;"><?php echo htmlspecialchars($subscription['e_date']); ?></td>
+                                       <td class="px-5 py-2" style="width:200px;"><?php echo $subscription['days_left']; ?></td>
+                                       <td class="px-5 py-3"><?php echo htmlspecialchars($subscription['status']); ?></td>
+                                       <td class="button py-2 " style="min-width: 240px;">
+                                          <a href="#">
+                                             <button class="btn dib">Notify</button>
+                                          </a>
+                                       </td>
+                                 </tr>
+                              <?php endforeach; ?>
                            </tbody>
+
+
+
                         </table>
                      </div>
                   </div>

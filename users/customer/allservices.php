@@ -21,20 +21,21 @@ if (isset($_SESSION["user_id"])) {
 
         // Fetch products within the inputted price range
         if ($min_price_input !== null && $max_price_input !== null) {
-            $products = filter_products_by_price($min_price_input, $max_price_input);
+            $services = filter_products_by_price($min_price_input, $max_price_input);
         } else {
-            $products = get_latest_products_by_id('products','shops','subscription');
+            $services = get_latest_services('services','users','shops','subscription');
         }
     } else {
-        $products = get_latest_products_by_id('products','shops','subscription');
+        $services = get_latest_services('services','users','shops','subscription');
+
     }
 
-    list($min_price, $max_price) = get_price_range_products();
+    list($min_price, $max_price) = get_rate_range_service();
 }
 
-function filter_products_by_price($min, $max) {
+function filter_service_by_price($min, $max) {
     $conn = dbconnect();
-    $query = "SELECT * FROM products WHERE product_price BETWEEN :min AND :max";
+    $query = "SELECT * FROM services WHERE service_rate BETWEEN :min AND :max";
     $stmt = $conn->prepare($query);
     $stmt->bindParam(':min', $min, PDO::PARAM_INT);
     $stmt->bindParam(':max', $max, PDO::PARAM_INT);
@@ -77,7 +78,7 @@ function filter_products_by_price($min, $max) {
                                 <input type="text"  class="form-control form-input" placeholder="Search">
                                 <a href="javascript:void(0);" onclick="goBack()">
                                     <i class="back fa fa-angle-left" aria-hidden="true"></i>
-                                    <div id="search-results">Products</div>
+                                    <div id="search-results">Services</div>
                                   </a>
                             </form>
                         </li>
@@ -129,16 +130,15 @@ function filter_products_by_price($min, $max) {
                 </section>
                 <section>
                 <div class="product-list" id="product-container">
-                <?php foreach ($products as $product): ?>
+                <?php foreach ($services as $service): ?>
                     <div class="product">
-                        <a href="customer_product.php?product_id=<?php echo $product['product_id']; ?>">
+                        <a href="customer_product.php?service_id=<?php echo $service['service_id']; ?>">
                         <?php
-                        echo '<img src="' . $product['product_img'] . '" alt="' . $product['product_name'] . '">';
+                        echo '<img src="' . $service['profile_img'] . '" alt="' . $service['last_name'] . '">';
                     ?>                        
-                           <div class="product-name"><?php echo $product['product_name']; ?></div>
-                            <div class="product-category"><?php echo $product['product_category']; ?></div>
+                            <div class="product-name"><?php echo $service['first_name'] . ' ' . $service['last_name']; ?></div>
                             <div class="p">
-                                <div class="product-price"><?php echo $product['product_price']; ?></div>
+                                <div class="product-price"><?php echo $service['service_rate']; ?></div>
                                 <div class="product-ratings">4.5 stars</div>
                             </div>
                         </a>

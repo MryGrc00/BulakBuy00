@@ -86,12 +86,7 @@ if (isset($_GET['product_id']) && isset($_SESSION['user_id'])) {
                             <div class="carousel-inner">
                                 <div class="carousel-item active" data-target="image1">
                                 <?php
-                                    // Extract the first image URL from the comma-separated string
-                                    $imageUrls = explode(',', $product['product_img']);
-                                    $firstImageUrl = trim($imageUrls[0]); // Get the first image URL
-
-                                    // Display the first image
-                                    echo '<img src="' . $firstImageUrl . '" alt="' . $product['product_name'] . '">';
+                                    echo '<img src="' . $product['product_img'] . '" alt="' . $product['product_name'] . '">';
                                 ?>                                 
                                 </div>
                             </div>

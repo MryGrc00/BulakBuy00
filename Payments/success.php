@@ -9,6 +9,8 @@
 session_start(); 
 include '../users/php/dbhelper.php'; // Adjust the path as needed
 
+date_default_timezone_set('Asia/Manila');
+
 if (isset($_SESSION['user_id'])) {
     $pdo = dbconnect();
     $user_id = $_SESSION['user_id'];
@@ -25,8 +27,8 @@ if (isset($_SESSION['user_id'])) {
         $shop_id = $result['shop_id'];
     
         // Set start and end dates for the subscription
-        $s_start = date('Y-m-d H:i:s'); 
-        $e_start = date('Y-m-d H:i:s', strtotime('+1 month')); // 1 month from today
+        $s_date = date('Y-m-d H:i:s'); 
+        $e_date = date('Y-m-d H:i:s', strtotime('+1 month')); // 1 month from today
     
         // Check if a subscription already exists for the shop_id
         $checkSql = "SELECT * FROM subscription WHERE shop_id = :shop_id";
@@ -37,19 +39,19 @@ if (isset($_SESSION['user_id'])) {
     
         if ($existingSub) {
             // Update the existing subscription record
-            $updateSql = "UPDATE subscription SET s_start = :s_start, e_start = :e_start, status = 'active' WHERE shop_id = :shop_id";
+            $updateSql = "UPDATE subscription SET s_date = :s_date, e_date = :e_date, status = 'active' WHERE shop_id = :shop_id";
             $updateStmt = $pdo->prepare($updateSql);
-            $updateStmt->bindParam(':s_start', $s_start);
-            $updateStmt->bindParam(':e_start', $e_start);
+            $updateStmt->bindParam(':s_date', $s_date);
+            $updateStmt->bindParam(':e_date', $e_date);
             $updateStmt->bindParam(':shop_id', $shop_id, PDO::PARAM_INT);
             $updateStmt->execute();
         } else {
             // Insert a new subscription record
-            $insertSql = "INSERT INTO subscription (shop_id, s_start, e_start, status) VALUES (:shop_id, :s_start, :e_start, 'active')";
+            $insertSql = "INSERT INTO subscription (shop_id, s_date, e_date, status) VALUES (:shop_id, :s_date, :e_date, 'active')";
             $insertStmt = $pdo->prepare($insertSql);
             $insertStmt->bindParam(':shop_id', $shop_id, PDO::PARAM_INT);
-            $insertStmt->bindParam(':s_start', $s_start);
-            $insertStmt->bindParam(':e_start', $e_start);
+            $insertStmt->bindParam(':s_date', $s_date);
+            $insertStmt->bindParam(':e_date', $e_date);
             $insertStmt->execute();
         }
 

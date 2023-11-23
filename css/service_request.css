@@ -67,6 +67,7 @@
 	position: relative;
 	font-size: 30px;
 	color: #666;
+	margin-top: 15px;
 }
 .location-info {
 	flex-direction: column;
@@ -91,7 +92,7 @@
 }
 .number {
 	font-size: 13px;
-	margin-top: 15px;
+	margin-top: 20px;
 }
 .street {
 	font-size: 13px;
@@ -165,7 +166,7 @@
 .cart-item {
 	display: flex;
 	align-items: center;
-	padding: 20px;
+	padding: 15px;
 }
 .shop-info {
 	flex-direction: column;
@@ -321,9 +322,10 @@ input[type="text"] {
 .total-item {
 	display: none;
 }
-.total-price {
+.total-price1 {
 	display: none;
 }
+
 .button-container {
 	display: flex;
 	justify-content: center;
@@ -542,22 +544,21 @@ input[type="text"] {
 		flex-direction: column;
 		line-height: 20%;
 		margin-top: 3%;
-		margin-left: 8px;
 	}
 	.name {
 		font-size: 13px;
-		margin-left: -68px;
 		color: #555;
+		margin-left: -20px;
+
 	}
 	.street {
 		font-size: 12px;
 		margin-top: 20px;
-		margin-left: 3px;
+		margin-left: -40px;
 	}
 	.number {
 		font-size: 12px;
 		margin-top: 20px;
-		margin-left: -100px;
 	}
 	.cart-container {
 		width: 100%;
@@ -627,9 +628,9 @@ input[type="text"] {
 		display: flex;
 	}
 	.cart-item {
-		margin-bottom: 50px;
 		padding: 20px;
 	}
+
 	.shop-info {
 		flex-direction: column;
 		text-align: left;
@@ -679,7 +680,6 @@ input[type="text"] {
 		height: 85px;
 		max-height: 100px;
 		margin-right: 20px;
-		margin-top: 20px;
 		margin-left: 11px;
 	}
 	.item-details {
@@ -690,33 +690,27 @@ input[type="text"] {
 		font-size: 13px;
 		color: #555;
 		margin-left: 45px;
-		margin-top: 5px;
+		margin-top: 30px;
 	}
 	.service-location {
 		color: #777;
 		font-size: 11px;
-		margin-left: -10px;
+		margin-left:20px;
 	}
 	.shop-num {
 		font-size: 11px;
 		color: #777;
-		margin-left: -10px;
+		margin-left: 50px;
+		margin-top:-10px;
+		
 	}
 	.price {
 		color: #ff7e95;
 		font-weight: 500;
 		font-size: 13px;
-		display: flex;
-		position: absolute;
-		left: 46%;
-		transform: translateX(-50%);
-	}
-	.quantity-control {
-		display: flex;
-		position: absolute;
-		margin-top: 5px;
-		left: 79%;
-		transform: translateX(-50%);
+		margin-left:30px;
+		margin-top:-10px;
+
 	}
 	input[type="text"] {
 		width: 40px;
@@ -795,7 +789,7 @@ input[type="text"] {
 	.total-item {
 		display: block;
 	}
-	.total-price {
+	.total-price1 {
 		display: block;
 	}
 	.button-container {
@@ -824,7 +818,11 @@ input[type="text"] {
 	.total-price {
 		font-size: 14px;
 		color: #333;
-		margin-left: 230px;
+	}
+	.total-price1 {
+		font-size: 14px;
+		color: #333;
+		margin-left:200px;
 	}
 	.checkout {
 		background-color: #65A5A5;

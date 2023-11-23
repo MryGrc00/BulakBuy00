@@ -37,7 +37,7 @@ $users = all_record("users");
          </div>
          <ul class="nav-links align-items-center  text-center ">
             <li>
-               <a href="dashboard.html">
+               <a href="dashboard.php">
                <i class="fa fa-home" aria-hidden="true"></i>
                <span class="links_name">Dashboard</span>
                </a>
@@ -61,15 +61,9 @@ $users = all_record("users");
                </a>
             </li>
             <li>
-               <a href="subscriptions.html">
+               <a href="subscriptions.php">
                <i class="fa fa-credit-card-alt" aria-hidden="true"></i>
                <span class="links_name">Subscriptions</span>
-               </a>
-            </li>
-            <li>
-               <a href="review_accounts.html">
-               <i class="fa fa-users" aria-hidden="true"></i>
-               <span class="links_name">Review Accounts</span>
                </a>
             </li>
             <li>
@@ -146,7 +140,7 @@ $users = all_record("users");
                      <table class="table" id="myTable">
                         <thead style="text-align: center;">
                            <tr class="title" style="text-align: center;">
-                              <th scope="col" class="px-5" style="text-align: center;">IDNO</th>
+                              <th scope="col" class="px-5" style="text-align: center;">User ID</th>
                               <th scope="col" class="px-5" style="text-align: center;">Name</th>
                               <th scope="col" class="px-5" style="text-align: center;">Role</th>
                               <th scope="col" class="px-5" style="text-align: center;">Contact No.</th>

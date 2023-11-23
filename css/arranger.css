@@ -160,7 +160,7 @@
 	border-radius: 8px;
 	margin-right: 10px;
 	border: none;
-	margin-top: 25%;
+	margin-top: 40%;
 	font-size: 13px;
 	font-weight: 400;
 
@@ -172,7 +172,7 @@
 	border-radius: 8px;
 	margin-right: 10px;
 	border: none;
-	margin-top: 11%;
+	margin-top: 40%;
 	font-size: 13px;
 	font-weight: 400;
 
@@ -433,7 +433,6 @@
 		border-radius: 5px;
 		font-size: 11px;
 		border: none;
-		margin-top: 57.5%;
 		margin-right: 3px;
 		width:60px;
 		
@@ -446,7 +445,7 @@
 		border-radius: 5px;
 		font-size: 11px;
 		border: none;
-		margin-top: 75.5%;
+		margin-top: 85.5%;
 		margin-right: 3px;
 		width:60px;
 		
@@ -454,10 +453,11 @@
 	}
 	.btn-container{
 		display: flex;
-		margin-top: 12%;
+		margin-top: 10%;
 		position: absolute;
 		left:63%;
 	}
+
 	.service-accept, .service-cancel {
 		background-color: #65A5A5;
 		color: white;

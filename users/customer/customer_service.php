@@ -1,3 +1,51 @@
+<?php
+session_start();
+include '../php/dbhelper.php';
+include '../php/checksession.php';
+
+if (isset($_GET['service_id']) && isset($_SESSION['user_id'])) {
+    $serviceID = $_GET['service_id'];
+    $userID = $_SESSION['user_id'];
+
+    // Keep this line as per your requirement
+    $services = get_services('services', 'users');
+
+    // Connect to the database
+    $pdo = dbconnect();
+
+    // Retrieve service details
+    $stmt = $pdo->prepare("SELECT * FROM services WHERE service_id = :serviceID");
+    $stmt->execute(['serviceID' => $serviceID]);
+    $service = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($service) {
+        // Retrieve shop details based on arranger_id in the service record
+        $stmt = $pdo->prepare("SELECT * FROM shops WHERE owner_id = :arrangerID");
+        $stmt->execute(['arrangerID' => $service['arranger_id']]);
+        $shop = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($shop) {
+            // Retrieve user details (owner of the shop)
+            $stmt = $pdo->prepare("SELECT * FROM users WHERE user_id = :ownerID");
+            $stmt->execute(['ownerID' => $shop['owner_id']]);
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if ($user && $user['user_id'] == $userID) {
+                // Service, Shop, and User exist, and the shop belongs to the logged-in user
+            } else {
+            }
+        } else {
+            echo "Shop not found";
+        }
+    } else {
+        echo "Service not found";
+    }
+}
+?>
+
+
+
+
 <!DOCTYPE html> 
 <html lang="en">
     <head>
@@ -47,91 +95,52 @@
                 <div class="column1">
                     <div class="image-container">
                         <div id="myCarousel" class="carousel slide" >
-                            <!-- Indicators -->
-                            <ol class="carousel-indicators">
-                                <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
-                                <li data-target="#myCarousel" data-slide-to="1"></li>
-                                <li data-target="#myCarousel" data-slide-to="2"></li>
-                                <li data-target="#myCarousel" data-slide-to="3"></li>
-                                <li data-target="#myCarousel" data-slide-to="4"></li>
-                                <li data-target="#myCarousel" data-slide-to="5"></li>
-                            </ol>
-                            <!-- Slides -->
+                    <?php if (isset($user) && isset($service)): ?>
                             <div class="carousel-inner">
                                 <div class="carousel-item active" data-target="image1">
-                                    <img src="https://cdn.shopify.com/s/files/1/0253/8753/2322/products/6_93a5c106-75db-4f41-acc8-4e161b2a2ad6_600x.png?v=1669769833" alt="Image 1">
-                                </div>
-                                <div class="carousel-item" data-target="image2">
-                                    <img src="https://www.flowerchimp.com.ph/cdn/shop/products/0820-JustForYou-Thumbnail-03_1946x.jpg?v=1626848130" alt="Image 2">
-                                </div>
-                                <div class="carousel-item" data-target="image3">
-                                    <img src="https://www.lilysbespokebouquets.co.uk/wp-content/uploads/2022/12/A834B5FC-B1AC-4F71-A28F-5C9A294E11CF.jpeg" alt="Image 3">
-                                </div>
-                                <div class="carousel-item" data-target="image4">
-                                    <img src="https://theflowersexpresslgp.com/cdn/shop/products/28_1024x1024.jpg?v=1615359214" alt="Image 4">
-                                </div>
-                                <div class="carousel-item" data-target="image5">
-                                    <img src="https://flowerboomdallas.com/cdn/shop/products/beautiful-centerpiece-at-an-outdoor-wedding2.jpg?v=1660106147" alt="Image 5">
-                                </div>
-                                <div class="carousel-item" data-target="image6">
-                                    <img src="https://www.flowerchimp.com.ph/cdn/shop/products/0820-JustForYou-Thumbnail-03_1946x.jpg?v=1626848130" alt="Image 6">
-                                </div>
+                                <?php
+                                    echo '<img src="' . $user['profile_img'] . '" alt="' . $user['last_name'] . '">';
+                                ?>                                 </div>
                             </div>
-                            <!-- Left and right controls -->
-                            <a class="carousel-control-prev" href="#myCarousel" data-slide="prev">
-                            <span class="carousel-control-prev-icon"></span>
-                            </a>
-                            <a class="carousel-control-next" href="#myCarousel" data-slide="next">
-                            <span class="carousel-control-next-icon"></span>
-                            </a>
                         </div>
-                    </div>
-                    <div class="image-grid">
-                        <div class="image-row">
-                            <img src="https://cdn.shopify.com/s/files/1/0253/8753/2322/products/6_93a5c106-75db-4f41-acc8-4e161b2a2ad6_600x.png?v=1669769833" alt="Image 1" data-target="image1">
-                            <img src="https://www.flowerchimp.com.ph/cdn/shop/products/0820-JustForYou-Thumbnail-03_1946x.jpg?v=1626848130" alt="Image 2" data-target="image2">
-                            <img src="https://www.lilysbespokebouquets.co.uk/wp-content/uploads/2022/12/A834B5FC-B1AC-4F71-A28F-5C9A294E11CF.jpeg" alt="Image 3" data-target="image3">
-                            <img src="https://theflowersexpresslgp.com/cdn/shop/products/28_1024x1024.jpg?v=1615359214" alt="Image 4" data-target="image4">
-                            <img src="https://flowerboomdallas.com/cdn/shop/products/beautiful-centerpiece-at-an-outdoor-wedding2.jpg?v=1660106147" alt="Image 5" data-target="image5">
-                            <img src="https://www.flowerchimp.com.ph/cdn/shop/products/0820-JustForYou-Thumbnail-03_1946x.jpg?v=1626848130" alt="Image 6" data-target="image6">
-                        </div>
-                        <!-- Add more rows as needed -->
                     </div>
                 </div>
                 <div class="column2">
-                    <!-- Second column with image descriptions -->
-                    <p class="p-name">John Bryan Flower Shop</p>
-                    <p class="p-category">Flower Arranger</p>
-                    <p class="p-price">₱ 350 / hr</p>
-                    <p class="p-ratings">4.5 ratings & 35 reviews</p>
-                    <div class="btn-container">
-                        <div class="add-btn">
-                            <a href="service_request.html">
-                            <button class="add"><i class="bi bi-person-plus"></i>&nbsp;&nbsp;&nbsp;Add Request</button>
-                            </a>
-                            <a href="#">
-                            <button class="messenger"><i class="bi bi-messenger"></i></button>
-                            </a>
+                         <!-- Service and Shop Owner Details -->
+                        <p class="p-name"><?php echo htmlspecialchars($user['first_name'] . ' ' . $user['last_name']); ?></p>
+                        <p class="p-price">₱ <?php echo htmlspecialchars($service['service_rate']); ?> / hr</p>
+                        <p class="p-ratings">4.5 ratings & 35 reviews</p>
+                        <!-- Buttons and Actions -->
+                        <div class="btn-container">
+                            <div class="add-btn">
+                                <a href="service_request.php?service_id=<?php echo htmlspecialchars($service['service_id']); ?>">
+                                    <button class="add"><i class="bi bi-person-plus"></i>&nbsp;&nbsp;&nbsp;Add Request</button>
+                                </a>
+                                <a href="../chat.php?user_id=<?php echo htmlspecialchars($user['user_id']); ?>">
+                                    <button class="messenger"><i class="bi bi-messenger"></i></button>
+                                </a>
+                            </div>
                         </div>
-                    </div>
-                    <hr class="nav-hr">
-                    <p class="p-desc-label">Description</p>
-                    <p class="p-desc">As a passionate and talented flower arranger, I am the top choice for clients seeking breathtaking floral designs. With my keen eye for detail and deep understanding of aesthetics, I have the ability to transform ordinary flowers into extraordinary works of art. From meticulous color coordination to crafting one-of-a-kind arrangements, I pride myself on delivering unforgettable visual experiences that surpass expectations.   
-                    </p>
+                        <hr class="nav-hr">
+                        <p class="p-desc-label">Description</p>
+                        <p class="p-desc"><?php echo htmlspecialchars($service['service_description']); ?></p>   
+                    <?php endif; ?>
+
                     <div class="shop">
                         <div class="shop-pic">
-                            <img src="https://cdn.shopify.com/s/files/1/0253/8753/2322/products/6_93a5c106-75db-4f41-acc8-4e161b2a2ad6_600x.png?v=1669769833" alt="Customer Profile">
+                            <img src="<?php echo $shop['shop_img']; ?>" alt="Shop Profile">
                         </div>
                         <div class="shop-info">
                             <div class="info">
-                                <p class="s-name">John Bryan Flower Shop</p>
-                                <p class="s-location"><i class="bi bi-geo-alt"></i> Basak, Pardo, Cebu City</p>
-                                <a href="arranger_profile.html">
-                                <button class="view-shop"><i class="bi bi-shop-window"></i>View Shop</button>
+                                <p class="s-name"><?php echo $shop['shop_name']; ?></p>
+                                <p class="s-location"><i class="bi bi-geo-alt"></i> <?php echo $shop['shop_address']; ?></p>
+                                <a href="arranger_shop.php?shop_id=<?php echo $shop['shop_id']; ?>">
+                                    <button class="view-shop"><i class="bi bi-shop-window"></i>View Shop</button>
                                 </a>
                             </div>
                         </div>
                     </div>
+
                     <div class="reviews">
                         <p class="r-label">Service Ratings</p>
                     </div>

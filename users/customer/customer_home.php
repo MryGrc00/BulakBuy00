@@ -5,7 +5,9 @@ include '../php/checksession.php';
 
 if (isset($_SESSION["user_id"])) {
     $seller_id = $_SESSION["user_id"];
-    $products = get_latest_products_by_id("products"); 
+    $products = get_latest_products_by_id('products','shops','subscription');
+    $services = get_latest_services('services','users','shops','subscription');
+
 }
 ?>
 
@@ -289,26 +291,31 @@ if (isset($_SESSION["user_id"])) {
             <section>
                 <div class="label">
                     <p>Services</p>
-                    <a href="seasonal_discovery.html" class="all">See all<i class="fa fa-long-arrow-right" aria-hidden="true"></i></a>
+                    <a href="allservices.php" class="all">See all<i class="fa fa-long-arrow-right" aria-hidden="true"></i></a>
                 </div>
                 <div class="product-list" id="product-container">
-                <?php foreach ($products as $product): ?>
-                    <div class="product">
-                        <a href="customer_product.php?product_id=<?php echo $product['product_id']; ?>">
+                <?php 
+                    $counter = 0;
+                    foreach ($services as $service):
+                        if ($counter >= 6) {
+                            break; // Stop the loop after displaying 6 products
+                        }
+                        ?>                        
+                        <div class="product">
+                            <a href="customer_service.php?service_id=<?php echo $service['service_id']; ?>">
+                                <?php
+                                echo '<img src="' . $service['profile_img'] . '" alt="' . $service['last_name'] . '">';
+                                ?>
+                                <div class="product-name"><?php echo $service['first_name'] . ' ' . $service['last_name']; ?></div>
+                                <div class="p">
+                                    <div class="product-price"><?php echo $service['service_rate']; ?></div>
+                                    <div class="product-ratings">4.5 stars</div>
+                                </div>
+                            </a>
+                        </div>
                         <?php
-                        echo '<img src="' . $product['product_img'] . '" alt="' . $product['product_name'] . '">';
-                    ?>                        
-                           <div class="product-name"><?php echo $product['product_name']; ?></div>
-                            <div class="product-category"><?php echo $product['product_category']; ?></div>
-                            <div class="p">
-                                <div class="product-price"><?php echo $product['product_price']; ?></div>
-                                <div class="product-ratings">4.5 stars</div>
-                            </div>
-                        </a>
-                    </div>
-                <?php endforeach; ?>
-                   
-
+                        $counter++; // Increment counter for each displayed product
+                    endforeach; ?>
                 </div>
             </section>
             <p class="p-end">No more products found</p>

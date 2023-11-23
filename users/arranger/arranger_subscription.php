@@ -16,8 +16,8 @@ if (isset($_SESSION['user_id'])) {
     if ($shopResult && isset($shopResult['shop_id'])) {
         $shop_id = $shopResult['shop_id'];
 
-        // Now, fetch s_start and e_start from the subscription table using the shop_id
-        $subSql = "SELECT s_start, e_start FROM subscription WHERE shop_id = :shop_id";
+        // Now, fetch s_date and e_date from the subscription table using the shop_id
+        $subSql = "SELECT s_date, e_date FROM subscription WHERE shop_id = :shop_id";
         $subStmt = $pdo->prepare($subSql);
         $subStmt->bindParam(':shop_id', $shop_id, PDO::PARAM_INT);
         $subStmt->execute();
@@ -25,7 +25,7 @@ if (isset($_SESSION['user_id'])) {
 
         if ($subscription) {
             // Create DateTime objects for the start and end dates
-            $endDate = new DateTime($subscription['e_start']);
+            $endDate = new DateTime($subscription['e_date']);
             $today = new DateTime();
 
             // Calculate the interval and get the number of days left

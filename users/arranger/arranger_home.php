@@ -188,29 +188,50 @@ else {
                   <span class="label">Orders</span>
               </div>
             </a>
-            <a href="service_order.html">
+            <a href="service_order.php">
               <div class="card">
-                  <p class="num-cart1">1 </p>
-                  <i class="bi bi-person-plus"></i>
+              <?php
+              $pendingServiceOrderCount = get_count_of_pending_services('servicedetails', 'services', $user_id);
+              ?>
+               <?php if ($pendingServiceOrderCount > 0): ?>
+                  <p class="num-cart1"><?php echo $pendingServiceOrderCount; ?></p>
+              <?php endif; ?>                  
+              <i class="bi bi-person-plus"></i>
                     <span class="label">Services</span>
               </div>
             </a>
-            <a href="service_process.html">
+            <a href="service_process.php">
               <div class="card">
-                <p class="num-cart1">1 </p>
-                <i class="bi bi-gear"></i>
+              <?php
+              $processServiceOrderCount = get_count_of_processing_services('servicedetails', 'services', $user_id)
+              ?>
+               <?php if ($processServiceOrderCount > 0): ?>
+                  <p class="num-cart1"><?php echo $processServiceOrderCount; ?></p>
+              <?php endif; ?>               
+               <i class="bi bi-gear"></i>
                   <span class="label">Processing</span>
               </div>
             </a>
-            <a href="service_intransit.html">
+            <a href="service_intransit.php">
               <div class="card">
-                <p class="num-cart1">1 </p>
+              <?php
+              $intransitServiceOrderCount = get_count_of_intransit_services('servicedetails', 'services', $user_id)
+              ?>
+               <?php if ($intransitServiceOrderCount > 0): ?>
+                  <p class="num-cart1"><?php echo $intransitServiceOrderCount; ?></p>
+              <?php endif; ?>
                 <i class="bi bi-truck"></i>
                   <span class="label">In Transit</span>
               </div>
             </a>
-            <a href="service_completed.html">
+            <a href="service_completed.php">
               <div class="card  ">
+              <?php
+              $completedServiceOrderCount = get_count_of_completed_services('servicedetails', 'services', $user_id)
+              ?>
+               <?php if ($completedServiceOrderCount > 0): ?>
+                  <p class="num-cart1"><?php echo $completedServiceOrderCount; ?></p>
+              <?php endif; ?>
                 <i class="bi bi-bag-check"></i>
                   <span class="label">Completed</span>
               </div>
@@ -229,21 +250,28 @@ else {
             <span class="label">Shop</span>
           </div>
         </a>
+        <a href="add_service.php?user_id=<?php echo $user['user_id']; ?>">          
+          <div class="card2">
+            <i class="bi bi-person"></i>
+            <span class="label">Services</span>
+          </div>
+        </a>
         <a href="arranger_transaction_history.html">
           <div class="card2">
             <i class="bi bi-file-earmark-text"></i>
             <span class="label">Transaction History</span>
           </div>
         </a>
-        <a href="arranger_total_income.html">
+        
+      </div>
+      
+      <div class="container1">
+      <a href="arranger_total_income.html">
           <div class="card2">
             <i class="bi bi-file-bar-graph"></i>
             <span class="label">Reports</span>
           </div>
         </a>
-      </div>
-      
-      <div class="container1">
         <a href="arranger_subscription.php">
           <div class="card2">
             <i class="bi bi-credit-card"></i>
@@ -262,12 +290,7 @@ else {
             <span class="label">Settings</span>
           </div>
         </a>
-        <a href="#">
-          <div class="card2">
-            <i class="bi bi-question-circle"></i>
-            <span class="label">Help</span>
-          </div>
-        </a>
+       
       </div>
       
     
