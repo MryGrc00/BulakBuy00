@@ -3,8 +3,8 @@
 session_start();
 include '../php/dbhelper.php';
 if (isset($_SESSION["user_id"])) {
-    $seller_id = $_SESSION["user_id"];
-    $users = get_record('users','user_id',$seller_id);
+    $user_id = $_SESSION["user_id"];
+    $users = get_record('users','user_id',$user_id);
 }
 
 
@@ -78,29 +78,50 @@ if (isset($_SESSION["user_id"])) {
                             <span class="label">Orders</span>
                         </div>
                     </a>
-                    <a href="customer_request.html">
+                    <a href="customer_request.php">
                         <div class="card">
-                            <p class="num-cart1">1 </p>
-                            <i class="bi bi-person-plus"></i>
+                        <?php
+                        $OrderCount = get_pending_service_details_count_arranger('servicedetails', 'services','users', $user_id);
+                        ?>
+                        <?php if ($OrderCount > 0): ?>
+                            <p class="num-cart1"><?php echo $OrderCount; ?></p>
+                        <?php endif; ?>                              
+                        <i class="bi bi-person-plus"></i>
                             <span class="label">Services</span>
                         </div>
                     </a>
-                    <a href="customer_process.html">
+                    <a href="customer_process.php">
                         <div class="card">
-                            <p class="num-cart1">1 </p>
+                        <?php
+                        $processCount = get_process_service_details_count_arranger('servicedetails', 'services','users', $user_id);
+                        ?>
+                        <?php if ($processCount > 0): ?>
+                            <p class="num-cart1"><?php echo $processCount; ?></p>
+                        <?php endif; ?> 
                             <i class="bi bi-gear"></i>
                             <span class="label">Processing</span>
                         </div>
                     </a>
-                    <a href="customer_intransit.html">
+                    <a href="customer_intransit.php">
                         <div class="card">
-                            <p class="num-cart1">1 </p>
+                        <?php
+                        $intransitCount = get_intransit_service_details_count_arranger('servicedetails', 'services','users', $user_id);
+                        ?>
+                        <?php if ($intransitCount > 0): ?>
+                            <p class="num-cart1"><?php echo $intransitCount; ?></p>
+                        <?php endif; ?> 
                             <i class="bi bi-truck"></i>
                             <span class="label">In Transit</span>
                         </div>
                     </a>
-                    <a href="customer_completed.html">
+                    <a href="customer_completed.php">
                         <div class="card  ">
+                        <?php
+                        $completedCount = get_completed_service_details_count_arranger('servicedetails', 'services','users', $user_id);
+                        ?>
+                        <?php if ($completedCount > 0): ?>
+                            <p class="num-cart1"><?php echo $completedCount; ?></p>
+                        <?php endif; ?> 
                             <i class="bi bi-bag-check"></i>
                             <span class="label">Completed</span>
                         </div>
@@ -111,13 +132,6 @@ if (isset($_SESSION["user_id"])) {
                         <div class="link-content">
                             <i class="bi bi-key"></i>
                             <span class="label1">Change Password</span>
-                        </div>
-                        <i class="bi bi-chevron-right"></i>
-                    </a>
-                    <a href="manage_address.html">
-                        <div class="link-content">
-                            <i class="bi bi-house-door"></i>
-                            <span class="label1">Manage Address</span>
                         </div>
                         <i class="bi bi-chevron-right"></i>
                     </a>

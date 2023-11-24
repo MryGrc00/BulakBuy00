@@ -20,6 +20,10 @@ if (isset($_POST['service_detail_id']) && isset($_POST['action'])) {
             $newStatus = 'completed';
             $redirectPage = 'service_completed.php';
             break;
+        case 'cancelled':
+                $newStatus = 'cancelled';
+                $redirectPage = 'service_order.php';
+                break;
         default:
             // Handle invalid action
             echo "Invalid action.";

@@ -83,7 +83,7 @@ else {
                     <form method="post" action="update_service_status.php">
                         <input type="hidden" name="service_detail_id" value="<?php echo $order['servicedetails_id']; ?>">
                         <button type="submit" name="action" value="accept" class="service-accept">Accept</button>
-                        <button class="service-cancel">Cancel</button>
+                        <button class="service-cancel" type="submit" name="action" value="cancelled">Cancel</button>
                   </form>
                     </div>
                 </div>

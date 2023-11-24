@@ -2,6 +2,9 @@
 session_start();
 include '../php/dbhelper.php';  // Adjust the path as needed
 
+
+$daysLeft = null;
+
 if (isset($_SESSION['user_id'])) {
     $pdo = dbconnect();
     $user_id = $_SESSION['user_id'];
@@ -32,11 +35,7 @@ if (isset($_SESSION['user_id'])) {
             $interval = $today->diff($endDate);
             $daysLeft = $interval->format('%a');
 
-        } else {
-            echo "Subscription details not found for the shop.";
-        }
-    } else {
-        echo "Shop ID not found for the user.";
+        } 
     }
 } else {
     echo "No active session found. Please log in.";
@@ -89,8 +88,10 @@ if (isset($_SESSION['user_id'])) {
                             <div class="subscript">
                                 <span class="subscription-status">Monthly Subscription</span>
                             </div>
-                            <span class="subscription-expire">Expires in <?php echo $daysLeft;?> days</span>
-                            <span class="subscription-description">Boost your flower shop's visibility with BulakBuy's monthly subscription.  With featured listings and banners, vendors gain prime exposure, standing out in search results and category listings. This enhanced online presence effectively markets their shop, leading to greater customer interest and business growth.</span>
+                            <?php if (isset($daysLeft)) { 
+                                echo "<span class='subscription-expire'>Expires in " . $daysLeft . " days</span>";
+                            } ?>                           
+                             <span class="subscription-description">Boost your flower shop's visibility with BulakBuy's monthly subscription.  With featured listings and banners, vendors gain prime exposure, standing out in search results and category listings. This enhanced online presence effectively markets their shop, leading to greater customer interest and business growth.</span>
                             <hr class="subscription-hr ">
                             <div class="price-renew">
                                 <span class="subscription-price">₱ 249.00</span>

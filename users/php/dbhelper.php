@@ -301,7 +301,7 @@ function generateUniqueFileName($originalFileName) {
         
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-
+//count
     function get_count_of_pending_services($salesdetailsTable, $servicesTable, $loggedInUserId) {
         $conn = dbconnect();
     
@@ -430,6 +430,212 @@ function get_count_of_completed_services($servicedetailsTable, $servicesTable, $
     $result = $stmt->fetch(PDO::FETCH_ASSOC);
     return $result ? $result['count'] : 0;
 }
+//pending for customer side
+function get_pending_service_details_arranger($servicedetailsTable, $servicesTable, $usersTable, $loggedInUserId){
+    $conn = dbconnect();
+    
+    // SQL to join servicedetails with services, then with users to get the arranger's name and details
+    $sql = "SELECT sd.*, u.first_name AS arranger_first_name, u.last_name AS arranger_last_name, u.address AS arranger_address, u.profile_img AS arranger_profile
+            FROM " . $servicedetailsTable . " AS sd
+            JOIN " . $servicesTable . " AS s ON sd.service_id = s.service_id
+            JOIN " . $usersTable . " AS u ON s.arranger_id = u.user_id
+            WHERE sd.customer_id = :loggedInUserId AND sd.status = 'pending'
+            ORDER BY sd.servicedetails_id DESC";
+
+    $stmt = $conn->prepare($sql);
+    $stmt->bindParam(':loggedInUserId', $loggedInUserId, PDO::PARAM_INT);
+    $stmt->execute();
+
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+function get_cancelled_service_details_arranger($servicedetailsTable, $servicesTable, $usersTable, $loggedInUserId){
+    $conn = dbconnect();
+    
+    // SQL to join servicedetails with services, then with users to get the arranger's name and details
+    $sql = "SELECT sd.*, u.first_name AS arranger_first_name, u.last_name AS arranger_last_name, u.address AS arranger_address, u.profile_img AS arranger_profile
+            FROM " . $servicedetailsTable . " AS sd
+            JOIN " . $servicesTable . " AS s ON sd.service_id = s.service_id
+            JOIN " . $usersTable . " AS u ON s.arranger_id = u.user_id
+            WHERE sd.customer_id = :loggedInUserId AND sd.status = 'cancelled'
+            ORDER BY sd.servicedetails_id DESC";
+
+    $stmt = $conn->prepare($sql);
+    $stmt->bindParam(':loggedInUserId', $loggedInUserId, PDO::PARAM_INT);
+    $stmt->execute();
+
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+
+//count
+function get_pending_service_details_count_arranger($servicedetailsTable, $servicesTable, $usersTable, $loggedInUserId) {
+    $conn = dbconnect();
+    
+    // SQL to count the number of pending servicedetails for an arranger
+    $sql = "SELECT COUNT(*) AS pending_count
+            FROM " . $servicedetailsTable . " AS sd
+            JOIN " . $servicesTable . " AS s ON sd.service_id = s.service_id
+            WHERE sd.customer_id = :loggedInUserId AND sd.status = 'pending'";
+
+    $stmt = $conn->prepare($sql);
+    $stmt->bindParam(':loggedInUserId', $loggedInUserId, PDO::PARAM_INT);
+    $stmt->execute();
+
+    // Fetching only one row as it's a COUNT query
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    // Return the count. If there's no record, return 0.
+    return $result ? (int) $result['pending_count'] : 0;
+}
+
+//process for customer side
+
+function get_process_service_details_arranger($servicedetailsTable, $servicesTable, $usersTable, $loggedInUserId){
+    $conn = dbconnect();
+    
+    // SQL to join servicedetails with services, then with users to get the arranger's name and details
+    $sql = "SELECT sd.*, u.first_name AS arranger_first_name, u.last_name AS arranger_last_name, u.address AS arranger_address, u.profile_img AS arranger_profile
+            FROM " . $servicedetailsTable . " AS sd
+            JOIN " . $servicesTable . " AS s ON sd.service_id = s.service_id
+            JOIN " . $usersTable . " AS u ON s.arranger_id = u.user_id
+            WHERE sd.customer_id = :loggedInUserId AND sd.status = 'processing'
+            ORDER BY sd.servicedetails_id DESC";
+
+    $stmt = $conn->prepare($sql);
+    $stmt->bindParam(':loggedInUserId', $loggedInUserId, PDO::PARAM_INT);
+    $stmt->execute();
+
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+//count
+function get_process_service_details_count_arranger($servicedetailsTable, $servicesTable, $usersTable, $loggedInUserId) {
+    $conn = dbconnect();
+    
+    // SQL to count the number of pending servicedetails for an arranger
+    $sql = "SELECT COUNT(*) AS pending_count
+            FROM " . $servicedetailsTable . " AS sd
+            JOIN " . $servicesTable . " AS s ON sd.service_id = s.service_id
+            WHERE sd.customer_id = :loggedInUserId AND sd.status = 'processing'";
+
+    $stmt = $conn->prepare($sql);
+    $stmt->bindParam(':loggedInUserId', $loggedInUserId, PDO::PARAM_INT);
+    $stmt->execute();
+
+    // Fetching only one row as it's a COUNT query
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    // Return the count. If there's no record, return 0.
+    return $result ? (int) $result['pending_count'] : 0;
+}
+
+
+//intransit for customer side
+function get_intransit_service_details_arranger($servicedetailsTable, $servicesTable, $usersTable, $loggedInUserId){
+    $conn = dbconnect();
+    
+    // SQL to join servicedetails with services, then with users to get the arranger's name and details
+    $sql = "SELECT sd.*, u.first_name AS arranger_first_name, u.last_name AS arranger_last_name, u.address AS arranger_address, u.profile_img AS arranger_profile
+            FROM " . $servicedetailsTable . " AS sd
+            JOIN " . $servicesTable . " AS s ON sd.service_id = s.service_id
+            JOIN " . $usersTable . " AS u ON s.arranger_id = u.user_id
+            WHERE sd.customer_id = :loggedInUserId AND sd.status = 'intransit'
+            ORDER BY sd.servicedetails_id DESC";
+
+    $stmt = $conn->prepare($sql);
+    $stmt->bindParam(':loggedInUserId', $loggedInUserId, PDO::PARAM_INT);
+    $stmt->execute();
+
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+//count
+function get_intransit_service_details_count_arranger($servicedetailsTable, $servicesTable, $usersTable, $loggedInUserId) {
+    $conn = dbconnect();
+    
+    // SQL to count the number of pending servicedetails for an arranger
+    $sql = "SELECT COUNT(*) AS pending_count
+            FROM " . $servicedetailsTable . " AS sd
+            JOIN " . $servicesTable . " AS s ON sd.service_id = s.service_id
+            WHERE sd.customer_id = :loggedInUserId AND sd.status = 'intransit'";
+
+    $stmt = $conn->prepare($sql);
+    $stmt->bindParam(':loggedInUserId', $loggedInUserId, PDO::PARAM_INT);
+    $stmt->execute();
+
+    // Fetching only one row as it's a COUNT query
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    // Return the count. If there's no record, return 0.
+    return $result ? (int) $result['pending_count'] : 0;
+}
+
+//completed for customer side
+function get_completed_service_details_arranger($servicedetailsTable, $servicesTable, $usersTable, $loggedInUserId){
+    $conn = dbconnect();
+    
+    // SQL to join servicedetails with services, then with users to get the arranger's name and details
+    $sql = "SELECT sd.*, u.first_name AS arranger_first_name, u.last_name AS arranger_last_name, u.address AS arranger_address, u.profile_img AS arranger_profile
+            FROM " . $servicedetailsTable . " AS sd
+            JOIN " . $servicesTable . " AS s ON sd.service_id = s.service_id
+            JOIN " . $usersTable . " AS u ON s.arranger_id = u.user_id
+            WHERE sd.customer_id = :loggedInUserId AND sd.status = 'completed'
+            ORDER BY sd.servicedetails_id DESC";
+
+    $stmt = $conn->prepare($sql);
+    $stmt->bindParam(':loggedInUserId', $loggedInUserId, PDO::PARAM_INT);
+    $stmt->execute();
+
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+//count
+function get_completed_service_details_count_arranger($servicedetailsTable, $servicesTable, $usersTable, $loggedInUserId) {
+    $conn = dbconnect();
+    
+    // SQL to count the number of pending servicedetails for an arranger
+    $sql = "SELECT COUNT(*) AS pending_count
+            FROM " . $servicedetailsTable . " AS sd
+            JOIN " . $servicesTable . " AS s ON sd.service_id = s.service_id
+            WHERE sd.customer_id = :loggedInUserId AND sd.status = 'completed'";
+
+    $stmt = $conn->prepare($sql);
+    $stmt->bindParam(':loggedInUserId', $loggedInUserId, PDO::PARAM_INT);
+    $stmt->execute();
+
+    // Fetching only one row as it's a COUNT query
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    // Return the count. If there's no record, return 0.
+    return $result ? (int) $result['pending_count'] : 0;
+}
+
+//for order status.
+function getServiceDetails($servicedetailsTable, $servicesTable, $usersTable, $serviceId, $loggedInUserId) {
+    $conn = dbconnect();
+
+    // SQL query to join servicedetails with services, and then join with users twice (once for customer, once for arranger)
+    $sql = "SELECT sd.*, 
+                   cust.first_name AS customer_first_name, cust.last_name AS customer_last_name, cust.profile_img AS customer_profile, cust.address AS customer_address, cust.phone AS customer_phone,
+                   arr.first_name AS arranger_first_name, arr.last_name AS arranger_last_name, arr.profile_img AS arranger_profile
+            FROM " . $servicedetailsTable . " AS sd
+            JOIN " . $servicesTable . " AS s ON sd.service_id = s.service_id
+            JOIN " . $usersTable . " AS cust ON sd.customer_id = cust.user_id
+            JOIN " . $usersTable . " AS arr ON s.arranger_id = arr.user_id
+            WHERE sd.service_id = :serviceId AND sd.customer_id = :loggedInUserId";
+
+    $stmt = $conn->prepare($sql);
+    $stmt->bindParam(':serviceId', $serviceId, PDO::PARAM_INT);
+    $stmt->bindParam(':loggedInUserId', $loggedInUserId, PDO::PARAM_INT);
+    $stmt->execute();
+
+    return $stmt->fetch(PDO::FETCH_ASSOC);
+}
+
+
+
+
 
 
 

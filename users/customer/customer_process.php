@@ -1,15 +1,35 @@
+<?php
+
+session_start();
+include '../php/dbhelper.php';
+$pdo = dbconnect();
+if (isset($_SESSION["user_id"]) && isset($_SESSION["role"])) {
+    $user_id = $_SESSION["user_id"];
+    $role = $_SESSION["role"];
+
+    $users = get_record_by_user($user_id) ;
+
+    $service_order =  get_process_service_details_arranger('servicedetails','services', 'users', $user_id);
+}
+else {
+    // Handle cases where the user is not logged in or role is not set
+    echo "User not logged in or role not set.";
+    // Optional: Redirect to login page or show a login link
+}
+?>
+
+
 <!DOCTYPE html> 
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>In Transit</title>
+    <title>Processing</title>
     <link href='https://fonts.googleapis.com/css?family=Poppins' rel='stylesheet'>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-pzjw8f+uaex3+ihrbIk8mz07tb2F4F5ssx6kl5v5PmUGp1ELjF8j5+zM1a7z5t2N" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="../../css/customer.css">
+    <link rel="stylesheet" href="../../css/arranger.css">
 
 </head>
 
@@ -29,7 +49,7 @@
                             <input type="text"  class="form-control form-input" placeholder="Search">
                             <a href="javascript:void(0);" onclick="goBack()">
                             <i class="back fa fa-angle-left" aria-hidden="true"></i>
-                            <div id="search-results">In Transit</div>
+                            <div id="search-results">Processing</div>
                             </a>
                             
                         </form>
@@ -45,7 +65,7 @@
         <button class="services-button">Services</button>
     </div>
     <div class="products-card" id="productsCard">
-        <div class="single-card " onclick="redirectToAnotherPage()">
+        <div class="single-card ">
             <div class="img-area">
                 <img src="https://assets.florista.ph/uploads/product-pics/5022_86_5022.webp" alt="">
             </div>
@@ -63,13 +83,12 @@
                     <p class="price">₱ 1000.00</p>
                 </div>
                 <div class="text-right">
-                    <i class="bi bi-chevron-right"></i>
                     <p class="count">x 20</p>
-                     
+                    <button class="transit">In Transit</button>
                 </div>
             </div>
         </div>
-        <div class="single-card " onclick="redirectToAnotherPage()">
+        <div class="single-card ">
             <div class="img-area">
                 <img src="https://assets.florista.ph/uploads/product-pics/5022_86_5022.webp" alt="">
             </div>
@@ -87,13 +106,12 @@
                     <p class="price">₱ 1000.00</p>
                 </div>
                 <div class="text-right">
-                    <i class="bi bi-chevron-right"></i>
                     <p class="count">x 20</p>
-                     
+                    <button class="transit">In Transit</button>
                 </div>
             </div>
         </div>
-        <div class="single-card " onclick="redirectToAnotherPage()">
+        <div class="single-card ">
             <div class="img-area">
                 <img src="https://assets.florista.ph/uploads/product-pics/5022_86_5022.webp" alt="">
             </div>
@@ -111,79 +129,37 @@
                     <p class="price">₱ 1000.00</p>
                 </div>
                 <div class="text-right">
-                    <i class="bi bi-chevron-right"></i>
                     <p class="count">x 20</p>
-                     
+                    <button class="transit">In Transit</button>
                 </div>
             </div>
         </div>
     </div>
     <div class="service-list" id="service-container">
-        <div class="single-card " onclick="redirectToAnotherPage()">
+    <?php foreach ($service_order as $order):?>
+        <div class="single-card ">
             <div class="img-area">
-                <img src="https://i.pinimg.com/736x/0a/f6/03/0af60386c63dd4d9361d0a1e629293ac.jpg" alt="">
+                 <img src="<?php echo $order["arranger_profile"]?>" alt="">
             </div>
             <div class="info">
                 <div class="text-left">
-                    <h3>Mary Rose</h3>
-                    <p class="ad">Tugop, Babag II, Cebu City</p>
-                    
+                <h3><?php echo $order["arranger_first_name"]. " " . $order["arranger_last_name"]; ?></h3>
+                    <p class="ad"><?php echo $order["arranger_address"]?></p>
                     <div class="o-date-time">
-                        <span class="date">23 July 2023</span>
-                        <span class="time">7:20 AM</span>
+                        <span class="date"><?php echo $order["date"]?></span>
+                        <span class="time"><?php echo $order["time"]?></span>
                     </div>
-                    <p class="price">₱ 1000.00</p>
+                    <p class="price"><?php echo $order["amount"]?></p>
                 </div>
-                <div class="text-right">
-                    <i class="bi bi-chevron-right"></i>
-                    <p class="interval">10 hrs</p>
-                   
+                <div class="text-right mt-5">
+                <form method="post" action="update_service_status.php">
+                        <input type="hidden" name="service_detail_id" value="<?php echo $order['servicedetails_id']; ?>">
+                        <button type="submit" name="action" value="intransit" class="service-transit">In Transit</button>
+                </form>
                 </div>
             </div>
         </div>
-        <div class="single-card " onclick="redirectToAnotherPage()">
-            <div class="img-area">
-                <img src="https://i.pinimg.com/736x/0a/f6/03/0af60386c63dd4d9361d0a1e629293ac.jpg" alt="">
-            </div>
-            <div class="info">
-                <div class="text-left">
-                    <h3>Mary Rose</h3>
-                    <p class="ad">Tugop, Babag II, Cebu City</p>
-                    <div class="o-date-time">
-                        <span class="date">23 July 2023</span>
-                        <span class="time">7:20 AM</span>
-                    </div>
-                    <p class="price">₱ 1000.00</p>
-                </div>
-                <div class="text-right">
-                    <i class="bi bi-chevron-right"></i>
-                    <p class="interval">10 hrs</p>
-                   
-                </div>
-            </div>
-        </div>
-        <div class="single-card " onclick="redirectToAnotherPage()">
-            <div class="img-area">
-                <img src="https://i.pinimg.com/736x/0a/f6/03/0af60386c63dd4d9361d0a1e629293ac.jpg" alt="">
-            </div>
-            <div class="info">
-                <div class="text-left">
-                    <h3>Mary Rose</h3>
-                    <p class="ad">Tugop, Babag II, Cebu City</p>
-                    <div class="o-date-time">
-                        <span class="date">23 July 2023</span>
-                        <span class="time">7:20 AM</span>
-                    </div>
-                    <p class="price">₱ 1000.00</p>
-                </div>
-                <div class="text-right">
-                    <i class="bi bi-chevron-right"></i>
-                    <p class="interval">10 hrs</p>
-                   
-                </div>
-            </div>
-        </div>
-        
+        <?php endforeach;?>
     </div>
   </div>
   <script>
@@ -245,12 +221,6 @@
         window.history.back();
     }
   </script>
-  <script>
-    function redirectToAnotherPage() {
-        // Redirect the user to another page when the single-card is clicked
-        window.location.href = 'order_status.html';
-    }
-</script>
     
 </body>
 </html>

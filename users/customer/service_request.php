@@ -22,10 +22,11 @@ if (isset($_SESSION['user_id'])) {
 }
 
 if (isset($_GET['service_id'])) {
-    $serviceID = $_GET['service_id'];
-    $stmt = $pdo->prepare("SELECT * FROM services WHERE service_id = :serviceID");
-    $stmt->execute(['serviceID' => $serviceID]);
-    $serviceDetails = $stmt->fetch(PDO::FETCH_ASSOC);
+   $serviceID = $_GET['service_id'];
+   $stmt = $pdo->prepare("SELECT * FROM services WHERE service_id = :serviceID");
+   $stmt->execute(['serviceID' => $serviceID]);
+   $serviceDetails = $stmt->fetch(PDO::FETCH_ASSOC);
+
 
     if ($serviceDetails && isset($serviceDetails['arranger_id'])) {
         $stmt = $pdo->prepare("SELECT * FROM users WHERE user_id = :arrangerID");
@@ -43,11 +44,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
    $customerID = $_SESSION['user_id']; // Get customer ID from session
    $date = $_POST['date'];
    $time = $_POST['time'];
+   $hour = $_POST['hours'];
    $totalAmount = $_POST['total_amount'];
    $status = "pending";
 
-   $stmt = $pdo->prepare("INSERT INTO servicedetails (service_id, customer_id, amount, date, time, status) VALUES (:serviceID, :customerID, :totalAmount, :date, :time, :status)");
-   $stmt->execute(['serviceID' => $serviceID, 'customerID' => $customerID, 'totalAmount' => $totalAmount, 'date' => $date, 'time' => $time, 'status' => $status]);
+   if (!empty($serviceID) && !empty($customerID) && !empty($date) && !empty($time) && !empty($totalAmount)) {
+      $stmt = $pdo->prepare("INSERT INTO servicedetails (service_id, customer_id, amount, date, time, status, hours) VALUES (:serviceID, :customerID, :totalAmount, :date, :time, :status, :hour)");
+      $stmt->execute(['serviceID' => $serviceID, 'customerID' => $customerID, 'totalAmount' => $totalAmount, 'date' => $date, 'time' => $time, 'status' => $status, 'hour' => $hour]);
+  } else {
+      $errorMsg = "All fields are required.";
+  }
 }
 ?>
 
@@ -91,6 +97,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
       </header>
       <main class="main">
          <div class="container">
+         <?php if (!empty($errorMsg)): ?>
+            <p class="error" style="color: red;"><?php echo $errorMsg; ?></p>
+        <?php endif; ?>
             <div class="column1">
             <div class="location">
                <i class="bi bi-geo-alt"></i>
@@ -108,15 +117,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                <input type="hidden" name="service_id" value="<?php echo $serviceID; ?>"> 
                   <div class="datetime-container">
                      <label class="date-label" for="date-input">Schedule</label>
-                     <input type="date" id="date-input" name="date" class="datetime-input" />
+                     <input type="date" id="date-input" name="date" class="datetime-input" required />
                    </div>
                    <div class="datetime-container">
                      <label class="date-label"  for="time-input">Time</label>
-                     <input type="time" id="time-input" name="time" class="datetime-input" />
+                     <input type="time" id="time-input" name="time" class="datetime-input" required />
                    </div>  
                    <div class="datetime-container">
                      <label class="date-label"  for="time-input">Hours</label>
-                     <input type="number" id="hours-input" class="datetime-input" />
+                     <input type="number" id="hours-input" name="hours" class="datetime-input" value="<?php echo $serviceDetails['hours'] ?? ''; ?>" required/>
                    </div>                 
                    <div class="border"></div>
                      <div class="cart-item">
@@ -209,9 +218,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
          const cancelOrderBtn = document.getElementById("cancelOrderBtn");
          const continueShoppingBtn = document.getElementById("continueShoppingBtn"); // Continue Shopping button
 
+         const dateInput = document.getElementById('date-input');
+         const timeInput = document.getElementById('time-input');
+         const hoursInput = document.getElementById('hours-input');
+
          // Show the confirmation modal when the "Place Request" button is clicked
          placeOrderBtn.addEventListener("click", (event) => {
             event.preventDefault(); // Prevent form submission
+            if (!dateInput.value || !timeInput.value || !hoursInput.value) {
+                alert("Please fill in all required fields.");
+                return;
+            }
             confirmationModal.style.display = "block";
          });
 
@@ -276,6 +293,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
          function goBack() {
              window.history.back();
          }
-       </script>
+       </script>  
    </body>
 </html>
