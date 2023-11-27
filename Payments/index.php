@@ -6,11 +6,17 @@ if (!isset($_SESSION["user_id"])) {
 }
 
 $user_id = $_SESSION['user_id'];
-
 include '../users/php/dbhelper.php'; 
 $pdo = dbconnect();
 
-$users = get_record("users","user_id",$user_id);
+$users = get_record("users", "user_id", $user_id);
+$user_role = $users['role']; // Replace 'role' with the actual column name for the user role
+
+// Set default amount for customers, and fixed amount for vendors and arrangers
+$amount = "0"; // Default amount for customers
+if ($user_role == 'vendor' || $user_role == 'arranger') {
+    $amount = 249; // Fixed amount for vendors and arrangers
+}
 
 ?>
 
@@ -90,7 +96,7 @@ $users = get_record("users","user_id",$user_id);
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="amount">Amount</label>
-                            <input type="number" class="form-control" name="amount" value="249" readonly>
+                            <input type="number" class="form-control" name="amount" value="<?php echo $amount; ?>" <?php echo ($user_role == 'vendor' || $user_role == 'arranger') ? 'readonly' : ''; ?>>
                             <div class="invalid-feedback">Please enter the amount to be paid.</div>
                         </div>
                     </div>

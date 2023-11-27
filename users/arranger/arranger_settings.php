@@ -5,6 +5,7 @@ include_once "../php/dbhelper.php"; // Include dbhelper.php which contains the d
 $conn = dbconnect(); // Establish database connection using dbconnect() function from dbhelper.php
 
 if (!isset($_SESSION['user_id'])) {
+    $user_id = $_SESSION['user_id'];
     header("location: login.php");
 }
 
@@ -31,6 +32,8 @@ $conn = null;
         <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
         <link rel="stylesheet" href="../../css/settings.css">
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
     </head>
     <body>
         <header>
@@ -57,6 +60,13 @@ $conn = null;
         <main class="main">
             <section>
                 <div class="vertical-container">
+                    <a>
+                        <div class="link-content">
+                            <i class="bi bi-person-plus"></i>
+                            <span class="label1">Enable Service</span>
+                        </div>
+                        <i class="bi bi-toggle-on" id="services-toggle"></i> 
+                    </a>
                     <a href="../forgot_password.php">
                         <div class="link-content">
                             <i class="bi bi-key"></i>
@@ -81,19 +91,42 @@ $conn = null;
                 </div>
             </section>
         </main>
-        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
         <script>
-            const servicesToggle = document.getElementById('services-toggle');
-            
-            servicesToggle.addEventListener('click', () => {
-            // Toggle the state of the button
-            servicesToggle.classList.toggle('bi-toggle-on');
-            servicesToggle.classList.toggle('bi-toggle-off');
-            
-            });
-            
-        </script>
+        // Ensure that the DOM is fully loaded before executing the script
+        document.addEventListener('DOMContentLoaded', function () {
+            // Select the toggle button using its ID
+            var servicesToggle = document.getElementById('services-toggle');
+
+            // Check if the element exists to avoid null reference errors
+            if (servicesToggle) {
+                servicesToggle.addEventListener('click', function() {
+                    // Toggle the state of the button
+                    servicesToggle.classList.toggle('bi-toggle-on');
+                    servicesToggle.classList.toggle('bi-toggle-off');
+
+                    // Determine the new status based on the toggle class
+                    var status = servicesToggle.classList.contains('bi-toggle-on') ? 'enabled' : 'disabled';
+
+                    // Send an Ajax request to update the status in the database
+                    $.ajax({
+                        type: 'POST',
+                        url: 'toggle_service_status.php', // The PHP file that will handle the update
+                        data: { status: status },
+                        success: function(response) {
+                            console.log('Response:', response); // You can handle the response here
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('An error occurred:', error); // Error handling
+                        }
+                    });
+                });
+            } else {
+                console.error('services-toggle button not found');
+            }
+        });
+    </script>
+
     </body>
 </html>

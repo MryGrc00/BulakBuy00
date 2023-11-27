@@ -179,28 +179,28 @@ if ($role == 'seller' && $isShopEmpty) {
 
             <section class="main-section">
                 <div class="container">
-                    <a href="product_order.html">
+                    <a href="product_order.php">
                         <div class="card">
                             <p class="num-cart1">1 </p>
                             <i class="bi bi-handbag"></i>
                             <span class="label">Orders</span>
                         </div>
                     </a>
-                    <a href="product_process.html">
+                    <a href="product_process.php">
                         <div class="card">
                             <p class="num-cart1">1 </p>
                             <i class="bi bi-gear"></i>
                             <span class="label">Processing</span>
                         </div>
                     </a>
-                    <a href="product_intransit.html">
+                    <a href="product_intransit.php">
                         <div class="card">
                             <p class="num-cart1">1 </p>
                             <i class="bi bi-truck"></i>
                             <span class="label">To Deliver</span>
                         </div>
                     </a>
-                    <a href="product_completed.html">
+                    <a href="product_completed.php">
                         <div class="card  ">
                             <i class="bi bi-bag-check"></i>
                             <span class="label">Completed</span>

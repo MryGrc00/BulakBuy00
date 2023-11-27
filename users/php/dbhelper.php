@@ -248,11 +248,13 @@ function generateUniqueFileName($originalFileName) {
         $conn = dbconnect(); 
     
         // SQL to join services table with users, then users with shops, and finally shops with subscriptions
+        // Added WHERE clause to filter services with status = 'enable' and subscriptions with status = 'active'
         $sql = "SELECT s.*, u.first_name, u.last_name, u.profile_img FROM " . $servicesTable . " AS s
                 JOIN " . $usersTable . " AS u ON s.arranger_id = u.user_id
                 LEFT JOIN " . $shopTable . " AS sh ON u.user_id = sh.owner_id
                 LEFT JOIN " . $subscribedTable . " AS sub ON sh.shop_id = sub.shop_id
-                ORDER BY (sub.status = 'active') DESC, s.service_id DESC";
+                WHERE s.status = 'enabled' AND sub.status = 'active'
+                ORDER BY s.service_id DESC";
         
         $stmt = $conn->prepare($sql);
         $stmt->execute();
@@ -261,6 +263,7 @@ function generateUniqueFileName($originalFileName) {
     
         return $services;
     }
+    
     
     
     

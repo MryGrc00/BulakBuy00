@@ -11,7 +11,7 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
         <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
-        <link rel="stylesheet" href="../../css/order_status.css">
+        <link rel="stylesheet" href="../../css/order_delivered.css">
         <style>
             .quantity{
                 font-size: 13px;
@@ -150,137 +150,103 @@
                             ?>
 
                         <hr class="cart-hr">
-                        <div class="timeline">
+                        
                         <?php
                        
-                        // Check if product_id is set in the URL
-                        if (isset($_GET['product_id'])) {
-                            $product_id = $_GET['product_id'];
+                            // Check if product_id is set in the URL
+                            if (isset($_GET['product_id'])) {
+                                $product_id = $_GET['product_id'];
 
-                            // Fetch status from the sales table
-                            $status = get_order_status($product_id);
+                                // Fetch status from the sales table
+                                $status = get_order_status($product_id);
 
-                    // Display the corresponding HTML based on the status
-                    if ($status === 'Pending') {
-                        echo '<div class="status">
-                                <div class="status-icon">1</div>
-                                <div class="status-info">
-                                    <div class="status-text">Order Placed</div>
-                                    <div class="status-date">on 23 July 20233</div>
-                                </div>
-                               
-                            </div>';
-                    } elseif ($status === 'Processing') {
-                        echo '<div class="status">
-                                <div class="status-icon">1</div>
-                                <div class="status-info">
-                                    <div class="status-text">Order Placed</div>
-                                    <div class="status-date">on 23 July 20233</div>
-                                </div>
-                                <div class="vertical-line"></div>
-                                <!-- Vertical line -->
-                            </div>
-                            <div class="status">
-                                <div class="status-icon">2</div>
-                                <div class="status-info">
-                                    <div class="status-text">Processing</div>
-                                    <div class="status-date">seller is processing order details</div>
-                                </div>
-                            
-                            </div>';
-                    } elseif ($status === 'To Deliver') {
-                        echo '<div class="status">
-                                <div class="status-icon">1</div>
-                                <div class="status-info">
-                                    <div class="status-text">Order Placed</div>
-                                    <div class="status-date">on 23 July 20233</div>
-                                </div>
-                                <div class="vertical-line"></div>
-                                <!-- Vertical line -->
-                            </div>
-                            <div class="status">
-                                <div class="status-icon">2</div>
-                                <div class="status-info">
-                                    <div class="status-text">Processing</div>
-                                    <div class="status-date">seller is processing order details</div>
-                                </div>
-                                <div class="vertical-line"></div>
-                                <!-- Vertical line -->
-                            </div>
-                            <div class="status">
-                                <div class="status-icon">3</div>
-                                <div class="status-info">
-                                    <div class="status-text">In Transit</div>
-                                    <div class="status-date">order is on the way</div>
-                                </div>
-                            
-                            </div>';
-                    } elseif ($status === 'Completed') {
-                        echo '<div class="status">
-                                <div class="status-icon">1</div>
-                                <div class="status-info">
-                                    <div class="status-text">Order Placed</div>
-                                    <div class="status-date">on 23 July 20233</div>
-                                </div>
-                                <div class="vertical-line"></div>
-                                <!-- Vertical line -->
-                            </div>
-                            <div class="status">
-                                <div class="status-icon">2</div>
-                                <div class="status-info">
-                                    <div class="status-text">Processing</div>
-                                    <div class="status-date">seller is processing order details</div>
-                                </div>
-                                <div class="vertical-line"></div>
-                                <!-- Vertical line -->
-                            </div>
-                            <div class="status">
-                                <div class="status-icon">3</div>
-                                <div class="status-info">
-                                    <div class="status-text">In Transit</div>
-                                    <div class="status-date">order is on the way</div>
-                                </div>
-                                <div class="vertical-line"></div>
-                                <!-- Vertical line -->
-                            </div>
-                            <div class="status">
-                                <div class="status-icon">4</div>
-                                <div class="status-info">
-                                    <div class="status-text">Delivered</div>
-                                    <div class="status-date">September 7, 2023</div>
-                                </div>
-                            </div>';
-                    } else {
-                        echo "Invalid status.";
-                    }
-                } else {
-                    echo "Product ID not provided.";
-                }
+                            // Display the corresponding HTML based on the status
+                            if ($status === 'Completed') {
+                                    echo '<div class="timeline">
+                                            <div class="status">
+                                                <div class="status-icon">1</div>
+                                                <div class="status-info">
+                                                    <div class="status-text">Order Placed</div>
+                                                    <div class="status-date">on 23 July 20233</div>
+                                                </div>
+                                                <div class="vertical-line"></div>
+                                                <!-- Vertical line -->
+                                            </div>
+                                            <div class="status">
+                                                <div class="status-icon">2</div>
+                                                <div class="status-info">
+                                                    <div class="status-text">Processing</div>
+                                                    <div class="status-date">seller is processing order details</div>
+                                                </div>
+                                                <div class="vertical-line"></div>
+                                                <!-- Vertical line -->
+                                            </div>
+                                            <div class="status">
+                                                <div class="status-icon">3</div>
+                                                <div class="status-info">
+                                                    <div class="status-text">In Transit</div>
+                                                    <div class="status-date">order is on the way</div>
+                                                </div>
+                                                <div class="vertical-line"></div>
+                                                <!-- Vertical line -->
+                                            </div>
+                                            <div class="status">
+                                                <div class="status-icon">4</div>
+                                                <div class="status-info">
+                                                    <div class="status-text">Delivered</div>
+                                                    <div class="status-date">September 7, 2023</div>
+                                                </div>
+                                            </div>
+                                        </div> ';
+                                } else {
+                                    echo "Invalid status.";
+                                }
+                            } else {
+                                echo "Product ID not provided.";
+                            }
 
-                // Function to fetch order status from the sales table
-                function get_order_status($product_id) {
-                    $conn = dbconnect();
-                    $sql = "SELECT status FROM sales WHERE product_id = ?";
-                    try {
-                        $stmt = $conn->prepare($sql);
-                        $stmt->execute([$product_id]);
-                        $status = $stmt->fetchColumn();
-                        $conn = null;
-                        return $status;
-                    } catch (PDOException $e) {
-                        echo $sql . "<br>" . $e->getMessage();
-                        $conn = null;
-                        return false;
-                    }
-                }
-                ?>
+                            // Function to fetch order status from the sales table
+                            function get_order_status($product_id) {
+                                $conn = dbconnect();
+                                $sql = "SELECT status FROM sales WHERE product_id = ?";
+                                try {
+                                    $stmt = $conn->prepare($sql);
+                                    $stmt->execute([$product_id]);
+                                    $status = $stmt->fetchColumn();
+                                    $conn = null;
+                                    return $status;
+                                } catch (PDOException $e) {
+                                    echo $sql . "<br>" . $e->getMessage();
+                                    $conn = null;
+                                    return false;
+                                }
+                            }
+                        ?>
+                         <div class="all-items">
+                            <h6 class="items-label">Write a Review</h6>
+                        </div>
+                        <!-- Inside your loop where you display product details -->
+                        <div class="write-review">
+                            <div class="stars">
+                                <i class="bi bi-star"></i>
+                                <i class="bi bi-star"></i>
+                                <i class="bi bi-star"></i>
+                                <i class="bi bi-star"></i>
+                                <i class="bi bi-star"></i>
+                                <div class="btn-container">
+                                    <!-- Pass the product_id as a query parameter in the link -->
+                                    <a href="review.php?product_id=<?php echo $product_id; ?>">
+                                        <button class="review-btn">Review</button>
+                                    </a>
 
+                                </div>
+                            </div>
                         </div>
                         <div class="all-items">
                             <h6 class="items-label">Delivery Details</h6>
                         </div>
                         <div class="dev-details">
-                             <?php if (isset($address) && isset($zipcode) && isset($phone)) { ?>
+                            <?php if (isset($address) && isset($zipcode) && isset($phone)) { ?>
                                 <p> <?php echo $address; ?>, <?php echo $zipcode; ?><i class=" fa fa-angle-right" aria-hidden="true"></i></p></p>
                                 <p > <?php echo $phone; ?></p>
                             <?php } else { ?>
@@ -300,34 +266,37 @@
                     </div>
                 </div>
                 <div class="column2">
-                <?php if ($product_details) {
-   
-                            $total_price = $quantity * $product_details['product_price'];
-
-                            // Display the total price in the order summary
-                            echo '<div class="summary-container">
-                                    <div class="order-summary">
-                                        <h6 class="order-label">Order Summary</h6>
-                                    </div>
-                                    <div class="summary-items">
-                                        <div class="sub-total">
-                                            <div class="product-price">
-                                                <p class="product">Product Price</p>
-                                                <p class="order-price">₱ ' . number_format($total_price, 2) . '</p>
-                                                <br>
-                                            </div>
-                                            <div class="total-payment">
-                                                <p class="total">Total</p>
-                                                <p class="t-payment">₱ ' . number_format($total_price, 2) . '</p>
-                                                <br>
-                                            </div>
+                    <div class="summary-container">
+                        <div class="order-summary">
+                            <?php if ($product_details) {
+                            
+                                $total_price = $quantity * $product_details['product_price'];   
+                                    echo '<h6 class="order-label">Order Summary</h6>
                                         </div>
-                                    </div>
-                                </div>';
-                        } else {
-                            echo "Product details not found.";
-                        }
-                        ?>
+                                        <div class="summary-items">
+                                            <div class="sub-total">
+                                                <div class="product-price">
+                                                    <p class="product">Product Price</p>
+                                                    <p class="order-price">₱ ' . number_format($total_price, 2) . '</p>
+                                                    <br>
+                                                </div>
+                                                <div class="total-payment">
+                                                    <p class="total">Total</p>
+                                                    <p class="t-payment">₱ ' . number_format($total_price, 2) . '</p>
+                                                    <br>
+                                                </div>
+                                            </div>';
+                                    } else {
+                                    echo "Product details not found.";
+                                }
+                            ?>
+                            <div class="report-container">
+                                <a href="report.php?product_id=<?php echo $product_id; ?>">
+                                    <button class="report-btn">Report Seller</button>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </main>
@@ -339,5 +308,21 @@
                 window.history.back();
             }
           </script>
+          <!-- Add this script in your review.html file -->
+<script>
+    // Function to get the value of a query parameter from the URL
+    function getQueryParam(name) {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(name);
+    }
+const productId = getQueryParam('product_id');
+
+// Log the entire URL and extracted product_id
+console.log('URL:', window.location.href);
+console.log('Extracted Product ID:', productId);
+
+
+</script>
+
     </body>
 </html>

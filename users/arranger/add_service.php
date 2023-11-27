@@ -79,8 +79,7 @@ if(isset($profileImage)) {
         ]);
     } else {
         // Insert new service
-        $insertServiceQuery = "INSERT INTO services (arranger_id, service_rate, service_description) VALUES (:arrangerID, :serviceRate, :serviceDescription)";
-        $stmt = $pdo->prepare($insertServiceQuery);
+        $insertServiceQuery = "INSERT INTO services (arranger_id, service_rate, service_description, status) VALUES (:arrangerID, :serviceRate, :serviceDescription, 'enabled')";        $stmt = $pdo->prepare($insertServiceQuery);
         $stmt->execute([
             'arrangerID' => $userID,
             'serviceRate' => $serviceRate,
@@ -92,7 +91,6 @@ if(isset($profileImage)) {
     exit;
 }
 
-// HTML and JavaScript code remains the same
 ?>
 
 

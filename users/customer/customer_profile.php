@@ -71,7 +71,7 @@ if (isset($_SESSION["user_id"])) {
             </div>
             <section>
                 <div class="container">
-                    <a href="customer_order.html">
+                    <a href="customer_order.php">
                         <div class="card">
                             <p class="num-cart1">1 </p>
                             <i class="bi bi-handbag"></i>

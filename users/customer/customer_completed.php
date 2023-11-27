@@ -1,23 +1,3 @@
-<?php
-
-session_start();
-include '../php/dbhelper.php';
-$pdo = dbconnect();
-if (isset($_SESSION["user_id"]) && isset($_SESSION["role"])) {
-    $user_id = $_SESSION["user_id"];
-    $role = $_SESSION["role"];
-
-    $users = get_record_by_user($user_id) ;
-
-    $service_order =  get_completed_service_details_arranger('servicedetails','services', 'users', $user_id);
-}
-else {
-    // Handle cases where the user is not logged in or role is not set
-    echo "User not logged in or role not set.";
-    // Optional: Redirect to login page or show a login link
-}
-?>
-
 <!DOCTYPE html> 
 <html lang="en">
 <head>
@@ -59,113 +39,75 @@ else {
         </nav><hr class="nav-hr">
     </header>
 
-  <div class="wrapper">
-    <div class="button-container">
-        <button class="products-btn active">Products</button>
-        <button class="services-button">Services</button>
-    </div>
-    <div class="products-card" id="productsCard">
-        <div class="single-card " onclick="redirectToAnotherPage()">
-            <div class="img-area">
-                <img src="https://assets.florista.ph/uploads/product-pics/5022_86_5022.webp" alt="">
-            </div>
-            <div class="info">
-                <div class="text-left">
-                    <h3>Winter Green</h3>
-                    <div class="flower-type">
-                        <p class="flower">Flower:</p>
-                        <p class="type">Anthurium , White Rose, Assorted Mums, Rose </p>
-                    </div>
-                    <div class="ribbon-color">
-                        <p class="ribbon">Ribbon:</p>
-                        <p class="color"> Violet </p>
-                    </div>
-                    <p class="price">₱ 1000.00</p>
-                </div>
-                <div class="text-right">
-                    <i class="bi bi-chevron-right"></i>
-                    <p class="count">x 20</p>
-                     
-                </div>
-            </div>
-        </div>
-        <div class="single-card " onclick="redirectToAnotherPage()">
-            <div class="img-area">
-                <img src="https://assets.florista.ph/uploads/product-pics/5022_86_5022.webp" alt="">
-            </div>
-            <div class="info">
-                <div class="text-left">
-                    <h3>Winter Green</h3>
-                    <div class="flower-type">
-                        <p class="flower">Flower:</p>
-                        <p class="type">Anthurium , White Rose, Assorted Mums, Rose </p>
-                    </div>
-                    <div class="ribbon-color">
-                        <p class="ribbon">Ribbon:</p>
-                        <p class="color"> Violet </p>
-                    </div>
-                    <p class="price">₱ 1000.00</p>
-                </div>
-                <div class="text-right">
-                    <i class="bi bi-chevron-right"></i>
-                    <p class="count">x 20</p>
-                     
-                </div>
-            </div>
-        </div>
-        <div class="single-card " onclick="redirectToAnotherPage()">
-            <div class="img-area">
-                <img src="https://assets.florista.ph/uploads/product-pics/5022_86_5022.webp" alt="">
-            </div>
-            <div class="info">
-                <div class="text-left">
-                    <h3>Winter Green</h3>
-                    <div class="flower-type">
-                        <p class="flower">Flower:</p>
-                        <p class="type">Anthurium , White Rose, Assorted Mums, Rose </p>
-                    </div>
-                    <div class="ribbon-color">
-                        <p class="ribbon">Ribbon:</p>
-                        <p class="color"> Violet </p>
-                    </div>
-                    <p class="price">₱ 1000.00</p>
-                </div>
-                <div class="text-right">
-                    <i class="bi bi-chevron-right"></i>
-                    <p class="count">x 20</p>
-                     
-                </div>
-            </div>
+    <div class="wrapper">
+        <div class="products-card">
+            <?php
+            session_start();
+            include '../php/dbhelper.php';
+
+            if (isset($_SESSION['user_id'])) {
+                $customer_id = $_SESSION['user_id'];
+
+                // Fetch orders from the sales table for the specific customer with status "Pending"
+                $orders = get_customer_orders($customer_id);
+
+                if ($orders) {
+                    // Loop through the orders and display them
+                    foreach ($orders as $order) {
+                        echo '<div class="single-card" onclick="redirectToOrderStatus(' . $order['product_id'] . ')">';
+                        echo '<div class="img-area">';
+                        echo '<img src="' . $order['product_img'] . '" alt="">';
+                        echo '</div>';
+                        echo '<div class="info">';
+                        echo '<div class="text-left">';
+                        echo '<h3>' . $order['product_name'] . '</h3>';
+                        echo '<div class="flower-type">';
+                        echo '<p class="flower">Flower:</p>';
+                        echo '<p class="type">' . $order['flower_type'] . '</p>';
+                        echo '</div>';
+                        echo '<div class="ribbon-color">';
+                        echo '<p class="ribbon">Ribbon:</p>';
+                        echo '<p class="color">' . $order['ribbon_color'] . '</p>';
+                        echo '</div>';
+                        echo '<p class="price">₱ ' . number_format($order['product_price'], 2) . '</p>';
+                        echo '</div>';
+                        echo '<div class="text-right">';
+                        echo '<i class="bi bi-chevron-right"></i>';
+                        echo '<p class="count">x ' . $order['quantity'] . '</p>';
+                        echo '</div>';
+                        echo '</div>';
+                        echo '</div>';
+                    }
+                } else {
+                    echo "No orders found for this customer.";
+                }
+            }
+
+            // Function to fetch customer orders from the sales table with status "Pending"
+            function get_customer_orders($customer_id) {
+                $conn = dbconnect();
+                $sql = "SELECT p.product_id, p.product_name, p.product_img, p.product_price, SUM(sd.quantity) as quantity, sd.flower_type, sd.ribbon_color
+                FROM sales s
+                JOIN salesdetails sd ON s.product_id = sd.product_id
+                JOIN products p ON sd.product_id = p.product_id
+                WHERE s.customer_id = ? AND s.status = 'Completed'
+                GROUP BY p.product_id, sd.flower_type, sd.ribbon_color;
+                ";
+                try {
+                    $stmt = $conn->prepare($sql);
+                    $stmt->execute([$customer_id]);
+                    $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                    $conn = null;
+                    return $orders;
+                } catch (PDOException $e) {
+                    echo $sql . "<br>" . $e->getMessage();
+                    $conn = null;
+                    return false;
+                }
+            }
+            ?>
         </div>
     </div>
-    <div class="service-list" id="service-container">
-    <?php foreach ($service_order as $order):?>
-        <div class="single-card ">
-            <div class="img-area">
-                 <img src="<?php echo $order["arranger_profile"]?>" alt="">
-            </div>
-            <div class="info">
-                <div class="text-left">
-                <h3><?php echo $order["arranger_first_name"]. " " . $order["arranger_last_name"]; ?></h3>
-                    <p class="ad"><?php echo $order["arranger_address"]?></p>
-                    <div class="o-date-time">
-                        <span class="date"><?php echo $order["date"]?></span>
-                        <span class="time"><?php echo $order["time"]?></span>
-                    </div>
-                    <p class="price"><?php echo $order["amount"]?></p>
-                </div>
-                <div class="text-right mt-5">
-                <form method="post" action="update_service_status.php">
-                        <input type="hidden" name="service_detail_id" value="<?php echo $order['servicedetails_id']; ?>">
-                        <button type="submit" name="action" value="intransit" class="service-transit">In Transit</button>
-                </form>
-                </div>
-            </div>
-        </div>
-        <?php endforeach;?>
-        
-    </div>
-  </div>
   <script>
         // Get the products and services elements
         const products = document.querySelector('.products-card');
@@ -225,10 +167,10 @@ else {
         window.history.back();
     }
   </script>
-  <script>
-    function redirectToAnotherPage() {
-        // Redirect the user to another page when the single-card is clicked
-        window.location.href = 'order_status.html';
+   <script>
+    function redirectToOrderStatus(productId) {
+        // Redirect the user to the order_status.php page with the product id as a parameter
+        window.location.href = 'order_delivered.php?product_id=' + productId;
     }
 </script>
     
