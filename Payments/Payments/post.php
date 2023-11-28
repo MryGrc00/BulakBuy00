@@ -4,18 +4,14 @@ session_start();
 $url = "https://api4wrd-v1.kpa.ph/paymongo/v1/create";
 
 $redirect = [
-    "success" => "http://localhost:80/Bulakbuy00/Payments/success.php",
-    "failed" => "http://localhost:80/Bulakbuy00/Payments/failed.php"
+    "success" => "http://localhost:80/Bulakbuy00/Payments/Payments/success.php",
+    "failed" => "http://localhost:80/Bulakbuy00/Payments/Payments/failed.php"
 ];
 
 $billing = [
     "email" => $_POST["email"],
     "name" =>  $_POST["first_name"] . " " .  $_POST["last_name"],
-    "phone" =>  $_POST["mobile"],
-    "address" => [
-        "line1" =>  $_POST["address"],
-        "postal_code" =>  $_POST["zipcode"]
-    ]
+    "phone" =>  $_POST["mobile"]
 ];
 
 $amount = intval($_POST["amount"]) * 100; // Convert amount to integer

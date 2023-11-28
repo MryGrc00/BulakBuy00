@@ -517,7 +517,7 @@ for (var i = 0; i < selectedProducts.length; i++) {
 
         // Redirect if GCash is selected
         if (isGcashSelected) {
-            window.location.href = '../../Payments/index.php'; // Replace with your redirect URL
+            window.location.href = '../../Payments/Payments/index.php'; // Replace with your redirect URL
         } else {
             // Handle other payment methods or submit the form normally
 

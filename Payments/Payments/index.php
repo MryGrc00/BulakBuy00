@@ -1,22 +1,17 @@
 <?php
 session_start();
 if (!isset($_SESSION["user_id"])) {
-    header('Location: ../login.php');
+    header('Location: ../../login.php');
     exit();
 }
 
 $user_id = $_SESSION['user_id'];
-include '../users/php/dbhelper.php'; 
+include '../../users/php/dbhelper.php'; 
 $pdo = dbconnect();
 
 $users = get_record("users", "user_id", $user_id);
 $user_role = $users['role']; // Replace 'role' with the actual column name for the user role
 
-// Set default amount for customers, and fixed amount for vendors and arrangers
-$amount = "0"; // Default amount for customers
-if ($user_role == 'vendor' || $user_role == 'arranger') {
-    $amount = 249; // Fixed amount for vendors and arrangers
-}
 
 ?>
 
@@ -83,20 +78,20 @@ if ($user_role == 'vendor' || $user_role == 'arranger') {
                         <input type="email" class="form-control" name="email" value="<?php echo $users['email']; ?>">
                         <div class="invalid-feedback">Please enter a valid email address for shipping updates.</div>
                     </div>
+                    <br>
+                    <hr>
                     <div class="mb-3">
-                        <label for="address">Address</label>
-                        <input type="text" class="form-control" name="address" value="<?php echo $users['address']; ?>">
-                        <div class="invalid-feedback">Please enter your shipping address.</div>
+                        <label for="merchantname">Merchant Name</label>
+                        <input type="text" class="form-control" name="merchantname" value="BulakBuy">
                     </div>
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label for="zip">Zip</label>
-                            <input type="text" class="form-control" name="zipcode" value="<?php echo $users['zipcode']; ?>">
-                            <div class="invalid-feedback">Zip code required.</div>
+                            <label for="mobile">Mobile</label>
+                            <input type="number" class="form-control" name="mobile" value="09272063001">
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="amount">Amount</label>
-                            <input type="number" class="form-control" name="amount" value="<?php echo $amount; ?>" <?php echo ($user_role == 'vendor' || $user_role == 'arranger') ? 'readonly' : ''; ?>>
+                            <input type="number" class="form-control" name="amount" value="249">
                             <div class="invalid-feedback">Please enter the amount to be paid.</div>
                         </div>
                     </div>

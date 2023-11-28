@@ -60,75 +60,72 @@ function get_record_with_additional_where($table, $where, $data, $additional_whe
 }
 
 
-    if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["add-to-cart"])) {
-        $product_id = $_POST["product_id"];
-        $customer_id = $_SESSION['user_id'];
-        $selected_flower_types = $_POST["selected_flower_types"];
-        $selected_ribbon_colors = $_POST["selected_ribbon_colors"];
-        $message = $_POST["message"];
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["add-to-cart"])) {
+    $product_id = $_POST["product_id"];
+    $customer_id = $_SESSION['user_id'];
+    $selected_flower_types = $_POST["selected_flower_types"];
+    $selected_ribbon_colors = $_POST["selected_ribbon_colors"];
+    $message = $_POST["message"];
+    $quantity = "1";
 
-        update_or_add_cart_item($product_id, $customer_id, $selected_flower_types, $selected_ribbon_colors, $message);
+    update_or_add_cart_item($product_id, $customer_id, $selected_flower_types, $selected_ribbon_colors, $message, $quantity);
+}
 
-        // Check if the product is already in the cart
-        $cart_item = get_cart_item($product_id, $customer_id);
-
-        if ($cart_item) {
-            // Product is already in the cart, increment the quantity
-            $quantity = $cart_item['quantity'] + 1;
-            // Update the cart item directly with an SQL query
-            $sql = "UPDATE salesdetails SET quantity = :quantity WHERE customer_id = :customer_id AND product_id = :product_id"; // Use correct column name 'customer_id'
-            $conn = dbconnect();
-            try {
-                $stmt = $conn->prepare($sql);
-                $stmt->bindParam(":quantity", $quantity, PDO::PARAM_INT);
-                $stmt->bindParam(":customer_id", $customer_id, PDO::PARAM_INT); // Use correct column name 'customer_id'
-                $stmt->bindParam(":product_id", $product_id, PDO::PARAM_INT);
-                $stmt->execute();
-            } catch (PDOException $e) {
-                echo "Database Error: " . $e->getMessage();
-            }
-            $conn = null;
-        } else {
-            // Product is not in the cart, add a new record
-            $fields = ['customer_id', 'product_id', 'quantity']; // Use correct column name 'customer_id'
-            $data = [$customer_id, $product_id, 1]; // Initialize quantity as 1
-            add_record('salesdetails', $fields, $data);
-        }
-    }
-
-$productAddedByArranger = $product['shop_owner'] == $userID;
-
-function update_or_add_cart_item($product_id, $customer_id, $flower_types, $ribbon_colors, $message) {
+function update_or_add_cart_item($product_id, $customer_id, $flower_types, $ribbon_colors, $message, $quantity) {
     $conn = dbconnect(); // Ensure you have a function to connect to your database
 
-    // Check if the product is already in the cart
-    $sql = "SELECT * FROM salesdetails WHERE product_id = ? AND customer_id = ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->execute([$product_id, $customer_id]);
-    $cart_item = $stmt->fetch(PDO::FETCH_ASSOC);
+    // Convert strings to arrays if necessary
+    if (is_string($flower_types)) {
+        $flower_types = explode(',', $flower_types);
+    }
+    if (is_string($ribbon_colors)) {
+        $ribbon_colors = explode(',', $ribbon_colors);
+    }
 
-    if ($cart_item) {
-        // Product is already in the cart, update the existing cart item
-        $update_sql = "UPDATE salesdetails SET flower_type = :flower_types, ribbon_color = :ribbon_colors, message = :message WHERE product_id = :product_id AND customer_id = :customer_id";
-        $update_stmt = $conn->prepare($update_sql);
-        $update_stmt->execute([
-            ':flower_types' => $flower_types,
-            ':ribbon_colors' => $ribbon_colors,
-            ':message' => $message,
-            ':product_id' => $product_id,
-            ':customer_id' => $customer_id
-        ]);
+    // Sort flower types and ribbon colors
+    sort($flower_types);
+    sort($ribbon_colors);
+
+    // Convert arrays back to strings for storage and comparison
+    $flower_types_str = implode(",", $flower_types);
+    $ribbon_colors_str = implode(",", $ribbon_colors);
+
+    // Only proceed if all parameters are provided
+    if (!empty($flower_types_str) && !empty($ribbon_colors_str) && !empty($message)) {
+        // Check if the same product with the same attributes is already in the cart
+        $sql = "SELECT * FROM salesdetails WHERE product_id = ? AND customer_id = ? AND flower_type = ? AND ribbon_color = ? AND message = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute([$product_id, $customer_id, $flower_types_str, $ribbon_colors_str, $message]);
+        $cart_item = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($cart_item) {
+            // Same product with same attributes exists, update quantity
+            $update_sql = "UPDATE salesdetails SET quantity = quantity + :quantity WHERE product_id = :product_id AND customer_id = :customer_id AND flower_type = :flower_types AND ribbon_color = :ribbon_colors AND message = :message";
+            $update_stmt = $conn->prepare($update_sql);
+            $update_stmt->execute([
+                ':quantity' => $quantity,
+                ':product_id' => $product_id,
+                ':customer_id' => $customer_id,
+                ':flower_types' => $flower_types_str,
+                ':ribbon_colors' => $ribbon_colors_str,
+                ':message' => $message
+            ]);
+        } else {
+            // Either product is not in the cart or attributes are different, add a new cart item
+            $insert_sql = "INSERT INTO salesdetails (product_id, customer_id, flower_type, ribbon_color, message, quantity) VALUES (:product_id, :customer_id, :flower_types, :ribbon_colors, :message, :quantity)";
+            $insert_stmt = $conn->prepare($insert_sql);
+            $insert_stmt->execute([
+                ':product_id' => $product_id,
+                ':customer_id' => $customer_id,
+                ':flower_types' => $flower_types_str,
+                ':ribbon_colors' => $ribbon_colors_str,
+                ':message' => $message,
+                ':quantity' => $quantity
+            ]);
+        }
     } else {
-        // Product is not in the cart, add a new cart item
-        $insert_sql = "INSERT INTO salesdetails (product_id, customer_id, flower_type, ribbon_color, message) VALUES (:product_id, :customer_id, :flower_types, :ribbon_colors, :message)";
-        $insert_stmt = $conn->prepare($insert_sql);
-        $insert_stmt->execute([
-            ':product_id' => $product_id,
-            ':customer_id' => $customer_id,
-            ':flower_types' => $flower_types,
-            ':ribbon_colors' => $ribbon_colors,
-            ':message' => $message
-        ]);
+        // Handle the case where not all information is provided
+        // For example, you could throw an exception or return a specific error message
     }
 }
 
@@ -224,39 +221,34 @@ function update_or_add_cart_item($product_id, $customer_id, $flower_types, $ribb
                     <p class="p-category"><?php echo $product['product_category']; ?></p>
                     <p class="p-price"> <?php echo $product['product_price']; ?></p>
                     <p class="p-ratings">4.5 ratings & 35 reviews</p>
-
+                    <form method="POST" action="">
                     <?php if ($isArranger): ?>
                         <div class="f-type">
                             <h4 class="type-label">Flower Type(s)</h4>
-                            <?php
-                                // Assuming $product['flower_type'] contains a comma-separated list of flower types
+ <!-- Flower Types -->
+                        <?php
                                 if (!empty($product['flower_type'])) {
-                                    // Corrected variable reference from 'flower_type' to 'flower_types'
                                     $flowerTypes = explode(',', $product['flower_type']);
                                     foreach ($flowerTypes as $type) {
-                                        echo '<button class="t-btn" name="selected_flower_types">' . htmlspecialchars(trim($type)) . '</button>';
+                                        echo '<button type="button" class="t-btn" onclick="toggleSelection(\'flower\', \'' . htmlspecialchars(trim($type)) . '\')">' . htmlspecialchars(trim($type)) . '</button>';
                                     }
                                 }
                             ?>
                         </div>
                         <div class="ribbon">
                             <h4 class="ribbon-label">Ribbon Color</h4>
-                            <?php
-                                // Assuming $product['ribbon_color'] contains a comma-separated list of ribbon colors
+                          <?php
                                 if (!empty($product['ribbon_color'])) {
-                                    // Corrected variable reference from 'ribbon_color' to 'ribbon_colors'
                                     $ribbonColors = explode(',', $product['ribbon_color']);
                                     foreach ($ribbonColors as $color) {
-                                        echo '<button class="ribbon-btn" name="selected_ribbon_colors">' . htmlspecialchars(trim($color)) . '</button>';
+                                        echo '<button type="button" class="ribbon-btn" onclick="toggleSelection(\'ribbon\', \'' . htmlspecialchars(trim($color)) . '\')">' . htmlspecialchars(trim($color)) . '</button>';
                                     }
                                 }
                             ?>
                         </div>
-                        <form method="POST" action="">
                         <div class="p-message">
-                            <h4 class="m-label">Message</h4>
                             <input type="text" class="message" name="message" placeholder="Message">
-                        </div>
+                        </div>                       
                     <?php endif; ?>
                     <div class="btn-container">
                         <div class="add-btn">
@@ -511,24 +503,19 @@ function update_or_add_cart_item($product_id, $customer_id, $flower_types, $ribb
                 });
             }
 
-          // Function to handle the selection of a button
-            function toggleSelection(button) {
-                button.classList.toggle("selected");
-                updateSelections();
+            function toggleSelection(type, value) {
+                var selectedValues = document.getElementById(type === 'flower' ? 'selected_flower_types' : 'selected_ribbon_colors').value;
+                var valuesArray = selectedValues ? selectedValues.split(',') : [];
+
+                if (valuesArray.includes(value)) {
+                    valuesArray = valuesArray.filter(val => val !== value); // Remove if already selected
+                } else {
+                    valuesArray.push(value); // Add if not selected
+                }
+
+                document.getElementById(type === 'flower' ? 'selected_flower_types' : 'selected_ribbon_colors').value = valuesArray.join(',');
             }
 
-            // Function to update the hidden input fields based on the selected buttons
-            function updateSelections() {
-                const selectedFlowerTypes = Array.from(document.querySelectorAll('.f-type .t-btn.selected'))
-                                                .map(button => button.textContent.trim())
-                                                .join(',');
-                const selectedRibbonColors = Array.from(document.querySelectorAll('.ribbon .ribbon-btn.selected'))
-                                                .map(button => button.textContent.trim())
-                                                .join(',');
-
-                document.getElementById("selected_flower_types").value = selectedFlowerTypes;
-                document.getElementById("selected_ribbon_colors").value = selectedRibbonColors;
-}
 
 
 

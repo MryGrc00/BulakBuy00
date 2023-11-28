@@ -84,12 +84,17 @@ try {
 function getCurrentQuantityFromDatabase($product_id) {
     $user_id = $_SESSION['user_id'];
     $conn = dbconnect();
-    $sql = "SELECT quantity FROM salesdetails WHERE customer_id = ? AND product_id = ?";
+
+    // Corrected SQL query to match product_id and customer_id
+    $sql = "SELECT quantity FROM salesdetails WHERE product_id = ? AND customer_id = ?";
     $stmt = $conn->prepare($sql);
-    $stmt->execute([$user_id, $product_id]);
+    $stmt->execute([$product_id, $user_id]);
     $result = $stmt->fetchColumn();
-    return $result;
+
+    return $result ? $result : 0; // Return 0 if no matching record is found
 }
+
+
 
 // Get the image file names (or paths) stored in the database
 $imageFileNames = explode(',', $product['product_img']);

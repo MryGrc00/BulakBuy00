@@ -95,7 +95,7 @@ if (isset($_SESSION['user_id'])) {
                             <hr class="subscription-hr ">
                             <div class="price-renew">
                                 <span class="subscription-price">₱ 249.00</span>
-                                <a href="../../Payments/index.php">
+                                <a href="../../Payments/Subscription/index.php">
                                     <button class="subscription-renew">Renew</button>
                                 </a>
                             </div>

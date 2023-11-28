@@ -7,13 +7,14 @@
 
 <?php
 session_start(); 
-include '../users/php/dbhelper.php'; // Adjust the path as needed
+include '../../users/php/dbhelper.php'; // Adjust the path as needed
 
 date_default_timezone_set('Asia/Manila');
 
-if (isset($_SESSION['user_id'])) {
+if (isset($_SESSION['user_id']) && isset($_SESSION['role'])) {
     $pdo = dbconnect();
     $user_id = $_SESSION['user_id'];
+    $userRole = $_SESSION['role'];
 
     // Get the shop_id for the logged-in user
     $sql = "SELECT shop_id FROM shops WHERE owner_id = :user_id";
@@ -59,13 +60,23 @@ if (isset($_SESSION['user_id'])) {
             $paymongo_id = $_GET['paymongo_id'];
         }
 
+        // Fetch user role and decide the redirection URL
+        $backUrl = '';
+        if ($userRole === 'arranger') {
+            $backUrl = '../../users/arranger/arranger_home.php';
+        } elseif ($userRole === 'seller') {
+            $backUrl = '../../users/vendor/vendor_home.php';
+        } else {
+            $backUrl = 'index.php'; // Default redirection if the role is not arranger or vendor
+        }
+
         // Display the success message and details
         echo "<div class='container center'>";
         echo "<div class='alert alert-success'>";
         echo "<strong>Subscription activated successfully for Shop ID: $shop_id</strong>";
         echo "<strong>Reference Code: $paymongo_id</strong>";
         echo "</div>";
-        echo "<a class='btn btn-primary btn-lg' href='http://localhost:80/Bulakbuy00/Paymentsss/index.php'>Back to main</a>";
+        echo "<a class='btn btn-primary btn-lg' href='http://localhost:80/Bulakbuy00/Payments/Subscription/$backUrl'>Back to main</a>";
         echo "</div>";
     } else {
         // Handle case where shop_id is not found
