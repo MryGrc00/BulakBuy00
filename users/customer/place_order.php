@@ -140,173 +140,185 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <label for="cash">Cash on Delivery</label>
                             <input type="radio" id="cash" name="payment" value="cash">
                         </div>
-                        <div class="payment-method">
-                            <img src="https://logos-download.com/wp-content/uploads/2020/06/GCash_Logo.png" alt="GCash Icon">
-                            <label for="gcash">GCash</label>
-                            <input type="radio" id="gcash" name="payment" value="gcash">
-                        </div>
+                        <form>
+                            <div class="payment-method">
+                                <img src="https://logos-download.com/wp-content/uploads/2020/06/GCash_Logo.png" alt="GCash Icon">
+                                <label for="gcash">GCash</label>                                        
+                                <input type="radio" name="paymentMethod" id="gcashRadio" data-shop-id="<?php echo $shop_id; ?>">
+                            </label>
+                            </div>
+                            </form>
                         <div class="border"></div>
                         <!-- place_order.php -->
                         <div class="cart-items">
-                        <?php
-                            $selectedProducts = json_decode($_GET['selected_products'], true);
+                       <?php
+                                $selectedProducts = json_decode($_GET['selected_products'], true);
+                                $selectedShopId = ''; // Initialize an empty variable
+                                $selectedShopName = ''; // Initialize an empty variable
 
-                            if (isset($_SESSION['user_id'])) {
-                                $user_id = $_SESSION['user_id'];
-                                $customer_id = $_SESSION['user_id'];
+                                if (isset($_SESSION['user_id'])) {
+                                    $user_id = $_SESSION['user_id'];
+                                    $customer_id = $_SESSION['user_id'];
 
-                                // Retrieve product details for selected products
-                                $selectedProductIDs = array_map(function ($product) {
-                                    return $product['productId'];
-                                }, $selectedProducts);
+                                    // Retrieve product details for selected products
+                                    $selectedProductIDs = array_map(function ($product) {
+                                        return $product['productId'];
+                                    }, $selectedProducts);
 
-                                $selectedProductsDetails = get_product_details_in_cart($selectedProductIDs, $user_id);
+                                    $selectedProductsDetails = get_product_details_in_cart($selectedProductIDs, $user_id);
 
-                                // Now $selectedProductsDetails contains the details of selected products
+                                    // Now $selectedProductsDetails contains the details of selected products
 
-                              
-                              
-
-                                // Group selected products by shop ID
-                                $groupedProducts = array();
-                                foreach ($selectedProductsDetails as $productDetails) {
-                                    $shopId = $productDetails['shop_owner'];
-                                    $groupedProducts[$shopId][] = $productDetails;
-                                }
-
-                                // Loop through each shop's products and display details
-                                foreach ($groupedProducts as $shop_id => $shop_products) {
-                                    // Retrieve shop details from the database based on shop_id
-                                    $shop = get_record('shops', 'shop_id', $shop_id);
-
-                                    // Display shop details
-                                if ($shop) {
-                                    echo '<div class="shop-info">';
-                                    echo '<img src="' . $shop['shop_img'] . '" alt="Shop Image">';
-                                    echo '<div class="shop-name">';
-                                    echo '<a href="../vendor/vendor_shop.html">';
-                                    echo '<h3>' . $shop['shop_name'] . '</h3>';
-                                    echo '<i class="fa fa-angle-right" aria-hidden="true"></i>';
-                                    echo '</a>';
-                                    echo '</div>';
-                                    echo '</div>';
-                                    echo '<hr class="cart-hr">';
-
-                                    $shopTotalQuantity = 0;
-                                    $totalPrice=0;
-                                    // Display product details for the current shop
-                                    foreach ($shop_products as $productDetails) {
-                                        displayProductDetails($productDetails);
-
-                                        $quantity = $productDetails['quantity'];
-                                        $productPrice = $productDetails['product_price'];
-                                        $subtotal = $quantity * $productPrice;
-
-                                        $totalPrice += $subtotal; // Move this line outside the inner loop
-                                        $shopTotalQuantity += $productDetails['quantity'];
+                                    // Group selected products by shop ID
+                                    foreach ($selectedProductsDetails as $productDetails) {
+                                        $shopId = $productDetails['shop_owner'];
+                                        $groupedProducts[$shopId][] = $productDetails;
                                     }
 
-                                    // Calculate total price and quantity for the shop
-                                    $shopTotalPrice = array_sum(array_map(function ($product) {
-                                        return $product['quantity'] * $product['product_price'];
-                                    }, $shop_products));
+                                    // Loop through each shop's products and display details
+                                    foreach ($groupedProducts as $shop_id => $shop_products) {
+                                        // Retrieve shop details from the database based on shop_id
+                                        $shop = get_record('shops', 'shop_id', $shop_id);
 
-                                    echo '<hr class="cart-hr">';
-                                    echo '<p class="total">Total (' . $shopTotalQuantity . ' item(s))</p>';
-                                    echo '<p class="t-payment">₱ ' . number_format($shopTotalPrice, 2) . '</p>'; // Use $shopTotalPrice instead of $totalPrice
+                                        if ($shop) {
+                                            $selectedShopId = $shop_id; // Store the shop ID in the variable
+                                            $selectedShopName = $shop['shop_name']; // Store the shop name
+                                            $selectedShopPhone = $shop['shop_phone']; // Store the shop name
 
-                                    // Add the border after all products of the current shop have been displayed
-                                    echo '<div class="border"></div>';
-                                } else {
-                                    echo "Shop details not found.";
-                                }
+                                            // Display shop details
+                                            echo '<div class="shop-info">';
+                                            echo '<img src="' . $shop['shop_img'] . '" alt="Shop Image">';
+                                            echo '<div class="shop-name">';
+                                            echo '<a href="../vendor/vendor_shop.html">';
+                                            echo '<h3>' . $shop['shop_name'] . '</h3>';
+                                            echo '<i class="fa fa-angle-right" aria-hidden="true"></i>';
+                                            echo '</a>';
+                                            echo '</div>';
+                                            echo '</div>';
+                                            echo '<hr class="cart-hr">';
 
-                                }
-                            }
+                                            $shopTotalQuantity = 0;
+                                            $totalPrice = 0;
+                                            // Display product details for the current shop
+                                            foreach ($shop_products as $productDetails) {
+                                                displayProductDetails($productDetails);
 
-                            // Function to display product details
-                            function displayProductDetails($productDetails) {
-                                echo '<div class="cart-item">';
-                                echo '<div class="custom-checkbox" style="margin-top:-30px">';
-                                echo '<img src="' . $productDetails['product_img'] . '" alt="' . $productDetails['product_name'] . '">';
-                                echo '</div>';
-                                echo '<div class="item-details">';
-                                echo '<h2>' . $productDetails['product_name'] . '</h2>';
-                                echo '<p class="price">₱ ' . $productDetails['product_price'] . '</p>';
+                                                $quantity = $productDetails['quantity'];
+                                                $productPrice = $productDetails['product_price'];
+                                                $subtotal = $quantity * $productPrice;
 
-                                // Additional details specific to your application can be added here
+                                                $totalPrice += $subtotal; // Move this line outside the inner loop
+                                                $shopTotalQuantity += $productDetails['quantity'];
+                                            }
 
-                                echo '<div class="quantity-control">';
-                                echo '<p class="quantity"> X ' . $productDetails['quantity'] . '</p>';
-                                echo '</div>';
+                                            // Calculate total price and quantity for the shop
+                                            $shopTotalPrice = array_sum(array_map(function ($product) {
+                                                return $product['quantity'] * $product['product_price'];
+                                            }, $shop_products));
+                                            
+                                            // Retrieve shop name based on selected shop ID
+                                            $selectedShopName = $shop['shop_name'];
+                                            
 
-                                echo '</div>';
-                                echo '</div>';
-                            }
+                                            echo '<hr class="cart-hr">';
+                                            echo '<p class="total">Total (' . $shopTotalQuantity . ' item(s))</p>';
+                                            echo '<p class="t-payment">₱ ' . number_format($shopTotalPrice, 2) . '</p>'; // Use $shopTotalPrice instead of $totalPrice
 
-                            function findProductDetails($products, $productId) {
-                                foreach ($products as $product) {
-                                    if (isset($product['product_id']) && $product['product_id'] == $productId) {
-                                        return $product;
+                                            // Add the border after all products of the current shop have been displayed
+                                            echo '<div class="border"></div>';
+                                        } else {
+                                            echo "Shop details not found.";
+                                        }
                                     }
                                 }
-                                return null;
-                            }
 
-                            // Function to get product IDs added to the cart by the user
-                            function get_product_details_in_cart($selectedProductIDs, $userID) {
-                                $conn = dbconnect();
-                                $table = 'salesdetails';
-                                $where = 'customer_id';
+                                // Function to display product details
+                                function displayProductDetails($productDetails)
+                                {
+                                    echo '<div class="cart-item">';
+                                    echo '<div class="custom-checkbox" style="margin-top:-30px">';
+                                    echo '<img src="' . $productDetails['product_img'] . '" alt="' . $productDetails['product_name'] . '">';
+                                    echo '</div>';
+                                    echo '<div class="item-details">';
+                                    echo '<h2>' . $productDetails['product_name'] . '</h2>';
+                                    echo '<p class="price">₱ ' . $productDetails['product_price'] . '</p>';
 
-                                // Placeholder for the question marks in the SQL query
-                                $placeholders = rtrim(str_repeat('?, ', count($selectedProductIDs)), ', ');
+                                    // Additional details specific to your application can be added here
 
-                                $sql = "SELECT p.*, sd.quantity, sd.customer_id 
-                                        FROM products p 
-                                        JOIN salesdetails sd ON p.product_id = sd.product_id
-                                        WHERE sd.customer_id = ? AND sd.product_id IN ($placeholders)";
+                                    echo '<div class="quantity-control">';
+                                    echo '<p class="quantity"> X ' . $productDetails['quantity'] . '</p>';
+                                    echo '</div>';
 
-                                try {
-                                    $stmt = $conn->prepare($sql);
-
-                                    // Bind parameters
-                                    $params = array_merge([$userID], $selectedProductIDs);
-                                    $stmt->execute($params);
-
-                                    $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                                } catch (PDOException $e) {
-                                    echo $sql . "<br>" . $e->getMessage();
-                                    return false;
+                                    echo '</div>';
+                                    echo '</div>';
                                 }
 
-                                $conn = null;
-
-                                return $products;
-                            }
-
-                            // Function to get product details by joining the sales_details and products tables
-
-                            function get_product_details($productID, $userID) {
-                                $conn = dbconnect();
-                                $sql = "SELECT p.*, sd.quantity, sd.customer_id FROM products p 
-                                        JOIN salesdetails sd ON p.product_id = sd.product_id
-                                        WHERE p.product_id = ? AND sd.customer_id = ?";
-
-                                try {
-                                    $stmt = $conn->prepare($sql);
-                                    $stmt->execute([$productID, $userID]);
-                                    $product = $stmt->fetch(PDO::FETCH_ASSOC);
-                                } catch (PDOException $e) {
-                                    echo $sql . "<br>" . $e->getMessage();
-                                    return false;
+                                function findProductDetails($products, $productId)
+                                {
+                                    foreach ($products as $product) {
+                                        if (isset($product['product_id']) && $product['product_id'] == $productId) {
+                                            return $product;
+                                        }
+                                    }
+                                    return null;
                                 }
 
-                                $conn = null;
+                                // Function to get product IDs added to the cart by the user
+                                function get_product_details_in_cart($selectedProductIDs, $userID)
+                                {
+                                    $conn = dbconnect();
+                                    $table = 'salesdetails';
+                                    $where = 'customer_id';
 
-                                return $product;
-                            }
-                            ?>
+                                    // Placeholder for the question marks in the SQL query
+                                    $placeholders = rtrim(str_repeat('?, ', count($selectedProductIDs)), ', ');
+
+                                    $sql = "SELECT p.*, sd.quantity, sd.customer_id 
+                                            FROM products p 
+                                            JOIN salesdetails sd ON p.product_id = sd.product_id
+                                            WHERE sd.customer_id = ? AND sd.product_id IN ($placeholders)";
+
+                                    try {
+                                        $stmt = $conn->prepare($sql);
+
+                                        // Bind parameters
+                                        $params = array_merge([$userID], $selectedProductIDs);
+                                        $stmt->execute($params);
+
+                                        $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                                    } catch (PDOException $e) {
+                                        echo $sql . "<br>" . $e->getMessage();
+                                        return false;
+                                    }
+
+                                    $conn = null;
+
+                                    return $products;
+                                }
+
+                                // Function to get product details by joining the sales_details and products tables
+                                function get_product_details($productID, $userID)
+                                {
+                                    $conn = dbconnect();
+                                    $sql = "SELECT p.*, sd.quantity, sd.customer_id FROM products p 
+                                            JOIN salesdetails sd ON p.product_id = sd.product_id
+                                            WHERE p.product_id = ? AND sd.customer_id = ?";
+
+                                    try {
+                                        $stmt = $conn->prepare($sql);
+                                        $stmt->execute([$productID, $userID]);
+                                        $product = $stmt->fetch(PDO::FETCH_ASSOC);
+                                    } catch (PDOException $e) {
+                                        echo $sql . "<br>" . $e->getMessage();
+                                        return false;
+                                    }
+
+                                    $conn = null;
+
+                                    return $product;
+                                }
+                                ?>
+
 
                             </div>                      
                             
@@ -351,24 +363,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         </div>
                         <div class="button-container">
                             <div class="button-container">
-                                <?php
-                                    if (!empty($selectedProducts)) {
-                                        $totalPrice = 0;
+                            <?php
+if (!empty($selectedProducts)) {
+    $totalPrice = 0;
 
-                                       
-                                        foreach ($selectedProductsDetails as $productDetails) {
-                                                if ($productDetails['customer_id'] == $_SESSION['user_id']) {
-                                                    $quantity = $productDetails['quantity'];
-                                                    $productPrice = $productDetails['product_price'];
-                                                    $subtotal = $quantity * $productPrice;
+    foreach ($selectedProductsDetails as $productDetails) {
+        if ($productDetails['customer_id'] == $_SESSION['user_id']) {
+            $quantity = $productDetails['quantity'];
+            $productPrice = $productDetails['product_price'];
+            $subtotal = $quantity * $productPrice;
 
-                                                    $totalPrice += $subtotal;
-                                                }
-                                            }
-                                        }   
-                                    
+            $totalPrice += $subtotal;
+        }
+    }
+}
+?>
 
-                                ?>
 
                             <div class="total-info">
                                 <p class="total-item">Total (<?php echo array_sum(array_column($selectedProducts, 'quantity')); ?> item(s))</p>
@@ -524,6 +534,22 @@ for (var i = 0; i < selectedProducts.length; i++) {
         }
     });
 </script>
+<script>
+    const gcashRadio = document.getElementById("gcashRadio");
+
+    gcashRadio.addEventListener("change", function () {
+        if (gcashRadio.checked) {
+            const selectedShopId = "<?php echo $selectedShopId; ?>"; // Use the PHP variable
+            const totalSales = "<?php echo $totalPrice; ?>"; // Use the PHP variable for total sales
+            window.location.href = `../../Payments/Payments/index.php?shop_id=${selectedShopId}&total_sales=${totalSales}`;
+        }
+    });
+</script>
+
+
+
+
+
 
 
 

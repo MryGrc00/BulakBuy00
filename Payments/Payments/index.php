@@ -10,112 +10,153 @@ include '../../users/php/dbhelper.php';
 $pdo = dbconnect();
 
 $users = get_record("users", "user_id", $user_id);
-$user_role = $users['role']; // Replace 'role' with the actual column name for the user role
+$user_role = $users['role'];
 
+// Retrieve the shop ID from the query string
+if (isset($_GET['shop_id'])) {
+    $selectedShopId = $_GET['shop_id'];
+} else {
+    $selectedShopId = "BulakBuy"; // Default value
+}
+if (isset($_GET['total_sales'])) {
+    $totalSales = $_GET['total_sales'];
+} else {
+    $totalSales = 0; // Default value
+}
+// Function to retrieve the shop name based on the shop ID
+function getShopName($shopId, $pdo) {
+    $sql = "SELECT shop_name FROM shops WHERE shop_id = ?";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([$shopId]);
+    $shop = $stmt->fetch(PDO::FETCH_ASSOC);
 
+    if ($shop) {
+        return $shop['shop_name'];
+    } else {
+        return "Shop Name Not Found"; // Provide a default value or handle accordingly
+    }
+}
+
+// Function to retrieve the shop phone based on the shop ID
+function getShopPhone($shopId, $pdo) {
+    $sql = "SELECT shop_phone FROM shops WHERE shop_id = ?";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([$shopId]);
+    $shop = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($shop) {
+        return $shop['shop_phone'];
+    } else {
+        return "Shop Phone Not Found"; // Provide a default value or handle accordingly
+    }
+}
+
+$selectedShopName = getShopName($selectedShopId, $pdo);
+$selectedShopPhone = getShopPhone($selectedShopId, $pdo);
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
+    <!DOCTYPE html>
+    <html lang="en">
 
-<head>
-    <title>Payment</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
-        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    <style>
-        @media (min-width: 576px) {
-            .container {
-                max-width: 540px;
+    <head>
+        <title>Payment</title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+            integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <style>
+            @media (min-width: 576px) {
+                .container {
+                    max-width: 540px;
+                }
             }
-        }
 
-        @media (min-width: 768px) {
-            .container {
-                max-width: 720px;
+            @media (min-width: 768px) {
+                .container {
+                    max-width: 720px;
+                }
             }
-        }
 
-        @media (min-width: 992px) {
-            .container {
-                max-width: 960px;
+            @media (min-width: 992px) {
+                .container {
+                    max-width: 960px;
+                }
             }
-        }
 
-        @media (min-width: 1200px) {
-            .container {
-                max-width: 1140px;
+            @media (min-width: 1200px) {
+                .container {
+                    max-width: 1140px;
+                }
             }
-        }
-    </style>
-</head>
+        </style>
+    </head>
 
-<body>
-    <div class="container mt-4">
-        <div class="row">
-            <div class="col-md-12 order-md-1">
-                <h4 class="mb-3">Billing address</h4>
-                <?php if (!empty($users)): ?>
-                <form class="needs-validation" method="POST" action="post.php">
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="firstName">First name</label>
-                            <input type="text" class="form-control" name="first_name" value="<?php echo $users['first_name']; ?>" >
-                            <div class="invalid-feedback">Valid first name is required.</div>
+    <body>
+        <div class="container mt-4">
+            <div class="row">
+                <div class="col-md-12 order-md-1">
+                    <h4 class="mb-3">Billing address</h4>
+                    <?php if (!empty($users)): ?>
+                    <form class="needs-validation" method="POST" action="post.php">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="firstName">First name</label>
+                                <input type="text" class="form-control" name="first_name" value="<?php echo $users['first_name']; ?>" >
+                                <div class="invalid-feedback">Valid first name is required.</div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="lastName">Last name</label>
+                                <input type="text" class="form-control" name="last_name" value="<?php echo $users['last_name']; ?>">
+                                <div class="invalid-feedback">Valid last name is required.</div>
+                            </div>
                         </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="lastName">Last name</label>
-                            <input type="text" class="form-control" name="last_name" value="<?php echo $users['last_name']; ?>">
-                            <div class="invalid-feedback">Valid last name is required.</div>
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <label for="mobile">Mobile</label>
-                        <input type="number" class="form-control" name="phone" value="<?php echo $users['phone']; ?>">
-                        <div class="invalid-feedback">Please enter a valid mobile number for shipping updates.</div>
-                    </div>
-                    <div class="mb-3">
-                        <label for="email">Email</label>
-                        <input type="email" class="form-control" name="email" value="<?php echo $users['email']; ?>">
-                        <div class="invalid-feedback">Please enter a valid email address for shipping updates.</div>
-                    </div>
-                    <br>
-                    <hr>
-                    <div class="mb-3">
-                        <label for="merchantname">Merchant Name</label>
-                        <input type="text" class="form-control" name="merchantname" value="BulakBuy">
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
+                        <div class="mb-3">
                             <label for="mobile">Mobile</label>
-                            <input type="number" class="form-control" name="mobile" value="09272063001">
+                            <input type="number" class="form-control" name="phone" value="<?php echo $users['phone']; ?>">
+                            <div class="invalid-feedback">Please enter a valid mobile number for shipping updates.</div>
                         </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="amount">Amount</label>
-                            <input type="number" class="form-control" name="amount" value="249">
-                            <div class="invalid-feedback">Please enter the amount to be paid.</div>
+                        <div class="mb-3">
+                            <label for="email">Email</label>
+                            <input type="email" class="form-control" name="email" value="<?php echo $users['email']; ?>">
+                            <div class="invalid-feedback">Please enter a valid email address for shipping updates.</div>
                         </div>
-                    </div>
-                    <hr class="mb-4">
-                    <button class="btn btn-primary btn-lg btn-block" type="submit">Continue to checkout</button>
-                </form>
-                <?php else: ?>
-                    <p>User not found.</p>
-                <?php endif; ?>
-            </div>
-        </div>
-        <footer class="my-3 pt-3 text-muted text-center text-small">
-            <p class="mb-1">© <?php echo date("Y"); ?> BulakBuy.ph</p>
-        </footer>
-    </div>
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
-        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
-        crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
-        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
-        crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
-        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
-        crossorigin="anonymous"></script>
-</body>
+                        <br>
+                        <hr>
+                        <div class="mb-3">
+                            <label for="merchantname">Merchant Name</label>
+                            <input type="text" class="form-control" name="merchantname" value="<?php echo $selectedShopName; ?>">
+                        </div>
 
-</html>
+
+                        <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="merchantphone">Merchant Phone</label>
+                            <input type="text" class="form-control" name="merchantphone" value="<?php echo $selectedShopPhone; ?>">
+                        </div>
+                        <div class="mb-3">
+    <label for="amount">Amount</label>
+    <input type="number" class="form-control" name="amount" value="<?php echo $totalSales; ?>">
+    <div class="invalid-feedback">Please enter the amount to be paid.</div>
+</div>
+                        <hr class="mb-4">
+                        <button class="btn btn-primary btn-lg btn-block" type="submit">Continue to checkout</button>
+                    </form>
+                    <?php else: ?>
+                        <p>User not found.</p>
+                    <?php endif; ?>
+                </div>
+            </div>
+            <footer class="my-3 pt-3 text-muted text-center text-small">
+                <p class="mb-1">© <?php echo date("Y"); ?> BulakBuy.ph</p>
+            </footer>
+        </div>
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+            integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+            crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+            crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+            integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+            crossorigin="anonymous"></script>
+    </body>
+
+    </html>
