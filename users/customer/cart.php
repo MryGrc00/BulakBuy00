@@ -12,12 +12,18 @@ if (isset($_SESSION['user_id'])) {
     $productIDs = get_product_ids_in_cart($user_id);
 
     // Fetch product details for each product in the cart
-    foreach ($productIDs as $productID) {
-        $product = get_product_details($productID);
-        if ($product) {
-            $products[] = $product;
-        }
+foreach ($productIDs as $ids) {
+    $productID = $ids['product_id'];
+    $salesdetailsId = $ids['salesdetails_id'];
+
+    $product = get_product_details($productID, $salesdetailsId);
+    if ($product) {
+        // Add the fetched product details to the products array
+        $products[] = $product;
     }
+}
+
+
     if (isset($_SESSION['user_id'])) {
         $user_id = $_SESSION['user_id'];
         
@@ -36,63 +42,78 @@ if (isset($_SESSION['user_id'])) {
 
 // Function to get product IDs added to the cart by the user
 function get_product_ids_in_cart($user_id) {
+    $conn = dbconnect(); // Connect to the database
+
+    // Define the table and where clause
     $table = 'salesdetails';
     $where = 'customer_id';
-    $data = $user_id;
 
-    $productIDs = array();
+    $productIDs = array(); // Initialize an array to hold the product details
 
-    $conn = dbconnect();
-    $sql = "SELECT product_id FROM $table WHERE $where = ?";
-    
+    // Prepare the SQL query to fetch product_id and salesdetails_id
+    $sql = "SELECT product_id, salesdetails_id FROM $table WHERE $where = ?";
+
     try {
+        // Prepare and execute the statement
         $stmt = $conn->prepare($sql);
-        $stmt->execute([$data]);
-        $result = $stmt->fetchAll(PDO::FETCH_COLUMN, 0);
-        $productIDs = array_merge($productIDs, $result);
+        $stmt->execute([$user_id]);
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // Populate the productIDs array with the fetched data
+        foreach ($result as $row) {
+            $productIDs[] = array(
+                'product_id' => $row['product_id'],
+                'salesdetails_id' => $row['salesdetails_id']
+            );
+        }
     } catch (PDOException $e) {
-        echo $sql . "<br>" . $e->getMessage();
+        // Handle any errors
+        echo "Error: " . $e->getMessage();
     }
-    
+
+    // Close the database connection
     $conn = null;
 
-    return $productIDs;
+    return $productIDs; // Return the array of product IDs and salesdetails IDs
 }
+
 
 // Function to get product details by joining the sales_details and products tables
-function get_product_details($productID) {
+// Function to get product details by joining the sales_details and products tables
+function get_product_details($productID, $salesdetailsId) {
     $conn = dbconnect();
+    // Update the SQL query to include salesdetails_id in the WHERE clause
     $sql = "SELECT p.*, sd.quantity FROM products p 
-    JOIN salesdetails sd ON p.product_id = sd.product_id
-    WHERE p.product_id = ?";
+            JOIN salesdetails sd ON p.product_id = sd.product_id
+            WHERE p.product_id = ? AND sd.salesdetails_id = ?";
 
-
-    
-try {
-    $stmt = $conn->prepare($sql);
-    $stmt->execute([$productID]);
-    $product = $stmt->fetch(PDO::FETCH_ASSOC);
-} catch (PDOException $e) {
-    echo $sql . "<br>" . $e->getMessage();
-    return false;
-}
+    try {
+        $stmt = $conn->prepare($sql);
+        // Execute the statement with both productID and salesdetailsId
+        $stmt->execute([$productID, $salesdetailsId]);
+        $product = $stmt->fetch(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        echo $sql . "<br>" . $e->getMessage();
+        return false;
+    }
 
     $conn = null;
-
     return $product;
 }
-function getCurrentQuantityFromDatabase($product_id) {
+
+function getCurrentQuantityFromDatabase($product_id, $salesdetails_id) {
     $user_id = $_SESSION['user_id'];
     $conn = dbconnect();
 
-    // Corrected SQL query to match product_id and customer_id
-    $sql = "SELECT quantity FROM salesdetails WHERE product_id = ? AND customer_id = ?";
+    // Update SQL query to match product_id, salesdetails_id, and customer_id
+    $sql = "SELECT quantity FROM salesdetails WHERE product_id = ? AND salesdetails_id = ? AND customer_id = ?";
     $stmt = $conn->prepare($sql);
-    $stmt->execute([$product_id, $user_id]);
+    $stmt->execute([$product_id, $salesdetails_id, $user_id]);
     $result = $stmt->fetchColumn();
 
     return $result ? $result : 0; // Return 0 if no matching record is found
 }
+
 
 
 
@@ -242,8 +263,7 @@ $productAddedByArranger = $product['product_id'] == $user_id;
                                                 echo '<p class="price">₱ ' . $product['product_price'] . '</p>';
                                                 echo '<div class="quantity-control">';
                                                 echo '<button class="quantity-button" data-product-id="' . $product['product_id'] . '" data-action="decrease">-</button>';
-                                                echo '<input type="text" id="quantity' . $product['product_id'] . '" value="' . getCurrentQuantityFromDatabase($product['product_id']) . '">';
-                                                echo '<button class="quantity-button" data-product-id="' . $product['product_id'] . '" data-action="increase">+</button>';
+                                                echo '<input type="text" id="quantity' . $product['product_id'] . '" value="' . $product['quantity'] . '">';                                                echo '<button class="quantity-button" data-product-id="' . $product['product_id'] . '" data-action="increase">+</button>';
                                                 echo '</div>';
                                                 echo '</div>';
                                                 echo '</div>'; // End of cart-item

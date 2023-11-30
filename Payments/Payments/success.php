@@ -21,7 +21,7 @@ date_default_timezone_set('Asia/Manila');
         echo "<div class='alert alert-success'>";
         echo "<strong>Reference Code: $paymongo_id</strong>";
         echo "</div>";
-        echo "<a class='btn btn-primary btn-lg' href='http://localhost:80/Bulakbuy00/users/customer/customer_home.php'>Back to main</a>";
+        echo "<a class='btn btn-primary btn-lg' href='http://localhost:80/Bulakbuy00/users/customer/place_order.php'>Back to main</a>";
         echo "</div>";
 ?>
 
