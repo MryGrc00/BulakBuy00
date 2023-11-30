@@ -79,6 +79,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["add-to-cart"])) {
 function update_or_add_cart_item($product_id, $customer_id, $flower_types, $ribbon_colors, $message, $quantity) {
     $conn = dbconnect(); // Ensure you have a function to connect to your database
 
+    // Provide default values if no customizations are selected
+    $flower_types = $flower_types ?: ''; // Default to 'None' if empty
+    $ribbon_colors = $ribbon_colors ?: ''; // Default to 'None' if empty
+    $message = $message ?: ''; // Default to 'No Message' if empty
+
     // Convert strings to arrays if necessary
     if (is_string($flower_types)) {
         $flower_types = explode(',', $flower_types);
@@ -95,44 +100,42 @@ function update_or_add_cart_item($product_id, $customer_id, $flower_types, $ribb
     $flower_types_str = implode(",", $flower_types);
     $ribbon_colors_str = implode(",", $ribbon_colors);
 
-    // Only proceed if all parameters are provided
-    if (!empty($flower_types_str) && !empty($ribbon_colors_str) && !empty($message)) {
-        // Check if the same product with the same attributes is already in the cart
-        $sql = "SELECT * FROM salesdetails WHERE product_id = ? AND customer_id = ? AND flower_type = ? AND ribbon_color = ? AND message = ?";
-        $stmt = $conn->prepare($sql);
-        $stmt->execute([$product_id, $customer_id, $flower_types_str, $ribbon_colors_str, $message]);
-        $cart_item = $stmt->fetch(PDO::FETCH_ASSOC);
+    // Check if the same product with the same attributes is already in the cart
+    $sql = "SELECT * FROM salesdetails WHERE product_id = ? AND customer_id = ? AND flower_type = ? AND ribbon_color = ? AND message = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->execute([$product_id, $customer_id, $flower_types_str, $ribbon_colors_str, $message]);
+    $cart_item = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if ($cart_item) {
-            // Same product with same attributes exists, update quantity
-            $update_sql = "UPDATE salesdetails SET quantity = quantity + :quantity WHERE product_id = :product_id AND customer_id = :customer_id AND flower_type = :flower_types AND ribbon_color = :ribbon_colors AND message = :message";
-            $update_stmt = $conn->prepare($update_sql);
-            $update_stmt->execute([
-                ':quantity' => $quantity,
-                ':product_id' => $product_id,
-                ':customer_id' => $customer_id,
-                ':flower_types' => $flower_types_str,
-                ':ribbon_colors' => $ribbon_colors_str,
-                ':message' => $message
-            ]);
-        } else {
-            // Either product is not in the cart or attributes are different, add a new cart item
-            $insert_sql = "INSERT INTO salesdetails (product_id, customer_id, flower_type, ribbon_color, message, quantity) VALUES (:product_id, :customer_id, :flower_types, :ribbon_colors, :message, :quantity)";
-            $insert_stmt = $conn->prepare($insert_sql);
-            $insert_stmt->execute([
-                ':product_id' => $product_id,
-                ':customer_id' => $customer_id,
-                ':flower_types' => $flower_types_str,
-                ':ribbon_colors' => $ribbon_colors_str,
-                ':message' => $message,
-                ':quantity' => $quantity
-            ]);
-        }
+    if ($cart_item) {
+        // Same product with same attributes exists, update quantity
+        $update_sql = "UPDATE salesdetails SET quantity = quantity + :quantity WHERE product_id = :product_id AND customer_id = :customer_id AND flower_type = :flower_types AND ribbon_color = :ribbon_colors AND message = :message";
+        $update_stmt = $conn->prepare($update_sql);
+        $update_stmt->execute([
+            ':quantity' => $quantity,
+            ':product_id' => $product_id,
+            ':customer_id' => $customer_id,
+            ':flower_types' => $flower_types_str,
+            ':ribbon_colors' => $ribbon_colors_str,
+            ':message' => $message
+        ]);
     } else {
-        // Handle the case where not all information is provided
-        // For example, you could throw an exception or return a specific error message
+        // Either product is not in the cart or attributes are different, add a new cart item
+        $insert_sql = "INSERT INTO salesdetails (product_id, customer_id, flower_type, ribbon_color, message, quantity) VALUES (:product_id, :customer_id, :flower_types, :ribbon_colors, :message, :quantity)";
+        $insert_stmt = $conn->prepare($insert_sql);
+        $insert_stmt->execute([
+            ':product_id' => $product_id,
+            ':customer_id' => $customer_id,
+            ':flower_types' => $flower_types_str,
+            ':ribbon_colors' => $ribbon_colors_str,
+            ':message' => $message,
+            ':quantity' => $quantity
+        ]);
     }
+
+    // Close the database connection if necessary
+    // $conn = null;
 }
+
 
 function add_cart_item_without_optional_fields($product_id, $customer_id, $quantity) {
     $conn = dbconnect(); // Ensure you have a function to connect to your database
@@ -507,37 +510,50 @@ function add_cart_item_without_optional_fields($product_id, $customer_id, $quant
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
         <script>
             // Global declaration of addOrderBtn, if it exists
-            var addOrderBtn = document.getElementById("addOrderBtn");
+                var addOrderBtn = document.getElementById("addOrderBtn");
 
-            // Add event listeners to "Add to Cart" buttons
-            const addToCartButtons = document.querySelectorAll(".add-to-cart-button");
-            addToCartButtons.forEach(function(button) {
-                button.addEventListener("click", function() {
-                    console.log("Button clicked");
-                    addToCartAndShowModal();
-                });
-            });
-
-            if (addOrderBtn) {
-                // Add a click event listener to the "Add to Cart" button
-                addOrderBtn.addEventListener("click", function () {
-                    captureMessageInput(); // Capture the message input
-                    updateSelections();
-
-                    // Submit the form
-                    document.querySelector("form").submit();
+                // Add event listeners to "Add to Cart" buttons
+                const addToCartButtons = document.querySelectorAll(".add-to-cart-button");
+                addToCartButtons.forEach(function(button) {
+                    button.addEventListener("click", function() {
+                        console.log("Button clicked");
+                        addToCartAndShowModal();
+                    });
                 });
 
-                // Event listener to show the modal when the button is clicked
-                addOrderBtn.addEventListener("click", () => {
-                    addModal.style.display = "block";
-                    
-                    // Automatically close the modal after 2 seconds
-                    setTimeout(() => {
-                        addModal.style.display = "none";
-                    }, 2000);
-                });
-            }
+                if (addOrderBtn) {
+                    // Modify the updateSelections function
+                    function updateSelections() {
+                        var selectedFlowerTypes = document.getElementById('selected_flower_types');
+                        var selectedRibbonColors = document.getElementById('selected_ribbon_colors');
+                        var messageInput = document.querySelector(".message");
+
+                        // Ensure that the input fields are always submitted, even if empty
+                        selectedFlowerTypes.value = selectedFlowerTypes.value || 'None';
+                        selectedRibbonColors.value = selectedRibbonColors.value || 'None';
+                        messageInput.value = messageInput.value || 'No Message';
+                    }
+
+                    // Add a click event listener to the "Add to Cart" button
+                    addOrderBtn.addEventListener("click", function () {
+                        captureMessageInput(); // Capture the message input
+                        updateSelections();     // Update selections for flower and ribbon
+
+                        // Submit the form
+                        document.querySelector("form").submit();
+                    });
+
+                    // Event listener to show the modal when the button is clicked
+                    addOrderBtn.addEventListener("click", () => {
+                        addModal.style.display = "block";
+                        
+                        // Automatically close the modal after 2 seconds
+                        setTimeout(() => {
+                            addModal.style.display = "none";
+                        }, 2000);
+                    });
+                }
+
 
             function toggleSelection(type, value) {
                 var selectedValues = document.getElementById(type === 'flower' ? 'selected_flower_types' : 'selected_ribbon_colors').value;
