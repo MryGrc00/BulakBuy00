@@ -118,7 +118,7 @@
                </a>
             </li>
             <li>
-               <a href="subscriptions.html">
+               <a href="subscriptions.php">
                <i class="fa fa-credit-card-alt" aria-hidden="true"></i>
                <span class="links_name">Subscriptions</span>
                </a>
@@ -130,7 +130,7 @@
                </a>
             </li>
             <li>
-               <a href="transaction_history.html">
+               <a href="transaction_history.php">
                <i class="fa fa-line-chart" aria-hidden="true"></i>
                <span class="links_name">Transaction History</span>
                </a>
