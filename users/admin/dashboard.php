@@ -55,7 +55,7 @@ try {
       <div class="sidebar">
          <div class="d-flex flex-column ">
             <div class="logo align-items-center  text-center mt-5">
-               <img src='images/logo.png' alt="BulakBuy Logo">
+               <img src='../php/images/logo.png' alt="BulakBuy Logo">
                <hr>
             </div>
             <div class="profile">
