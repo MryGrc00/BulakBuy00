@@ -36,7 +36,7 @@
         }
         .login{
             color:#666;
-            font-size: 18px;
+            font-size: 17px;
             text-align: center;
             letter-spacing: 0.1rem;
             margin-top: 15px;

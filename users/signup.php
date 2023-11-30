@@ -36,7 +36,7 @@
         }
         .signup{
             color:#666;
-            font-size: 20px;
+            font-size: 17px;
             text-align: center;
             letter-spacing: 0.1rem;
             margin-top: 15px;
@@ -64,16 +64,15 @@
             outline:none;
         }
         .form-control1{
-          font-size: 13px;
-            padding: 8px;
-            margin-bottom: 10px;
+            padding: 20px;
             border:none;
             width: 440px;
             background-color: #F5F5F5;
             border-radius:10px;
             letter-spacing: 0.1rem;
             color:#888;
-       
+            margin-top: 10px;
+            font-size: 13px;
             outline: none !important;
         }
         .form-control1::placeholder {
@@ -338,7 +337,13 @@
 <body>
 
   <div class="container">
-    
+  <div class="container-fluid mt-3">
+        <header>
+            <div class="row">
+                <img src="php/images/logo.png" alt="logo" class="img-fluid rounded float-start">
+            </div>
+        </header>
+    </div>
     <main>
         <div class="container-fluid">
             <div class="row fw-semibold">
