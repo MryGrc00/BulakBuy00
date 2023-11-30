@@ -1,35 +1,46 @@
 <?php
 session_start();
-require_once "../php/dbhelper.php";
+include "../php/dbhelper.php";
 
-$pdo = dbconnect();
 $alert = "";
 if (isset($_POST["login"])) {
     $username = $_POST["username"];
     $password = $_POST["password"];
 
-    try {
-        // Assuming dbhelper.php returns a PDO instance in $pdo
-        $sql = "SELECT * FROM `admin` WHERE username = :username AND password = :password";
-        $stmt = $pdo->prepare($sql);
-        $stmt->bindParam(':username', $username, PDO::PARAM_STR);
-        $stmt->bindParam(':password', $password, PDO::PARAM_STR);
-        $stmt->execute();
+    // Retrieve user data from database
+    $password = md5($password);
+    $sql = "SELECT * FROM `users` WHERE username = ? AND password = ? ";
+    $stmt = mysqli_prepare($conn, $sql);
+    mysqli_stmt_bind_param($stmt, "ss", $username, $password);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    $user = mysqli_fetch_assoc($result);
 
-        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+    if (mysqli_num_rows($result) == 1) {
+        // Set the user attribute value in the session
+        $_SESSION["usertype"] = $user["usertype"];
+        $_SESSION["user_id"] = $user["id"];
+        $_SESSION["fname"] = $user["fname"];
+        $_SESSION["lname"] = $user["lname"];
+        $_SESSION["address"] = $user["address"];
+        $_SESSION["gender"] = $user["gender"];
+        $_SESSION["dob"] = $user["dob"];
+        $_SESSION["pnumber"] = $user["pnumber"];
 
-        if ($user) {
-            $_SESSION["user_id"] = $user["id"];
-            header("Location: users.php");
+        // Redirect the user to the appropriate dashboard
+        if ($user["usertype"] == "Seller") {
+            header("Location: seller_product.php");
+            exit();
         } else {
-            $alert_message = "Invalid username or password.";
+            header("Location: home.php");
+            exit();
         }
-    } catch (PDOException $e) {
-        $alert_message = "Database error: " . $e->getMessage();
+    } else {
+        // User does not exist, show an error message
+        $alert_message = "Invalid username or password.";
     }
 }
 ?>
-
 	
 <!DOCTYPE html>
 <html lang="en">

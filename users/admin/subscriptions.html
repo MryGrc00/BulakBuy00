@@ -2,12 +2,13 @@
 <html lang="en" dir="ltr">
    <head>
       <meta charset="UTF-8">
-      <title>Transaction History</title>
+      <title>Subscriptions</title>
       <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
       <!-- Boxicons CDN Link -->
       <link href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css' rel='stylesheet'>
       <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
       <meta name="viewport" content="width=device-width, initial-scale=1">
+      <link rel="stylesheet" href="css/bootstrap.min.css">
       <link rel="stylesheet" href="../../css/admin.css">
       <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
@@ -57,7 +58,7 @@
                </a>
             </li>
             <li>
-               <a href="subscriptions.html">
+               <a href="subscriptions.html" class="active">
                   <i class="fa fa-credit-card-alt" aria-hidden="true"></i>
                   <span class="links_name">Subscriptions</span>
                </a>
@@ -69,7 +70,7 @@
                </a>
             </li>
             <li>
-               <a href="transaction_history.html"   class="active">
+               <a href="transaction_history.html">
                   <i class="fa fa-line-chart" aria-hidden="true"></i>
                   <span class="links_name">Transaction History</span>
                </a>
@@ -83,7 +84,7 @@
          </ul>
       </div>
       
-      <div class="home-section">
+      <header class="home-section">
          <nav class="navbar navbar-expand-lg ">
             <div class="container-fluid">
                <div class="row">
@@ -100,7 +101,7 @@
                                     <ul>
                                        <li>
                                           <a href="#">
-                                             <img class="pull-left m-r-10 avatar-img" src="#" alt="" />
+                                             <img class="pull-left m-r-10 avatar-img" src="images/avatar/3.jpg" alt="" />
                                              <div class="notification-content">
                                                 <small class="notification-timestamp pull-right">02:34 PM</small>
                                                 <div class="notification-heading">Mr. John</div>
@@ -116,8 +117,8 @@
                               </div>
                            </div>
                         </div>
-                        <div class="dib">
-                           <div class="header-icon">
+                        <div class="dropdown dib">
+                           <div class="header-icon" data-toggle="dropdown">
                               <i class="fa fa-commenting-o" aria-hidden="true"></i>
                            </div>
                         </div>
@@ -148,27 +149,130 @@
                                  <th scope="col" class="px-5" style="text-align: center;">IDNO</th>
                                  <th scope="col" class="px-5" style="text-align: center;">Name</th>
                                  <th scope="col" class="px-5" style="text-align: center;">Role</th>
-                                 <th scope="col" class="px-5" style="text-align: center;">Date</th>
-                                 <th scope="col" class="px-5" style="text-align: center;">Time</th>
-                                 <th scope="col" class="px-5" style="text-align: center;">Payments</th>
+                                 <th scope="col" class="px-5" style="text-align: center;">Start Date</th>
+                                 <th scope="col" class="px-5" style="text-align: center;">End Date</th>
+                                 <th scope="col" class="px-5" style="text-align: center;">Status</th>
+                                 <th scope="col" class="px-5" style="text-align: center;">Action</th>
                               </tr>
                            </thead>
                            <tbody>
+                              
                               <tr class="name" style="text-align: center;">
-                                 <td class="px-4 py-2" >00001</td>
-                                 <td class="px-5 py-2" style="width:300px;" >Jefferson Benz Mercedez </td>
-                                 <td class="px-5 py-2" style="width:200px;">Seller</td>
-                                 <td class="px-5 py-2" style="width:200px;">08/24/23</td>
-                                 <td class="px-5 py-2" style="width:200px;"> 07:00 AM</td>
-                                 <td class="px-5 py-2"> ₱ 249.00</td>
+                                 <td class="px-4 py-3" >00003</td>
+                                 <td class="px-5 py-3" style="width:300px;">Maria Mercedez hahahahahha</td>
+                                 <td class="px-5 py-3" style="width:200px;">Seller</td>
+                                 <td class="px-5 py-3" style="width:200px;">08/24/23</td>
+                                 <td class="px-5 py-3" style="width:200px;">09/24/23</td>
+                                 <td class="px-5 py-3"> Active</td>
+                                 <td class="button py- " style="min-width: 240px;">
+                                    <a href="#">
+                                       <button class="btn dib">Notify</button>
+                                    </a>
+                                 </td>
                               </tr>
                               <tr class="name" style="text-align: center;">
-                                 <td class="px-4 py-2" >00001</td>
-                                 <td class="px-5 py-2" style="width:300px;" >Mamapapa KuyaAte </td>
-                                 <td class="px-5 py-2" style="width:200px;">Arranger</td>
-                                 <td class="px-5 py-2" style="width:200px;">07/24/23</td>
-                                 <td class="px-5 py-2" style="width:200px;"> 10:00 AM</td>
-                                 <td class="px-5 py-2"> ₱ 1000.00</td>
+                                 <td class="px-4 py-3" >00003</td>
+                                 <td class="px-5 py-3" style="width:300px;" >Maria Mercedez </td>
+                                 <td class="px-5 py-3" style="width:200px;">Seller</td>
+                                 <td class="px-5 py-3" style="width:200px;">08/24/23</td>
+                                 <td class="px-5 py-3" style="width:200px;">09/24/23</td>
+                                 <td class="px-5 py-3"> Active</td>
+                                 <td class="button py-2 " style="min-width: 240px;">
+                                    <a href="#">
+                                       <button class="btn dib">Notify</button>
+                                    </a>
+                                 </td>
+                              </tr>
+                              <tr class="name" style="text-align: center;">
+                                 <td class="px-4 py-3" >00003</td>
+                                 <td class="px-5 py-3" style="width:300px;" >Maria Mercedez </td>
+                                 <td class="px-5 py-3" style="width:200px;">Seller</td>
+                                 <td class="px-5 py-3" style="width:200px;">08/24/23</td>
+                                 <td class="px-5 py-3" style="width:200px;">09/24/23</td>
+                                 <td class="px-5 py-3"> Active</td>
+                                 <td class="button py-2 " style="min-width: 240px;">
+                                    <a href="#">
+                                       <button class="btn dib">Notify</button>
+                                    </a>
+                                 </td>
+                              </tr>
+                              <tr class="name" style="text-align: center;">
+                                 <td class="px-4 py-3" >00003</td>
+                                 <td class="px-5 py-3" style="width:300px;" >Maria Mercedez </td>
+                                 <td class="px-5 py-3" style="width:200px;">Seller</td>
+                                 <td class="px-5 py-3" style="width:200px;">08/24/23</td>
+                                 <td class="px-5 py-3" style="width:200px;">09/24/23</td>
+                                 <td class="px-5 py-3"> Active</td>
+                                 <td class="button py-2 " style="min-width: 240px;">
+                                    <a href="#">
+                                       <button class="btn dib">Notify</button>
+                                    </a>
+                                 </td>
+                              </tr>
+                              <tr class="name" style="text-align: center;">
+                                 <td class="px-4 py-3" >00003</td>
+                                 <td class="px-5 py-3" style="width:300px;" >Maria Mercedez </td>
+                                 <td class="px-5 py-3" style="width:200px;">Seller</td>
+                                 <td class="px-5 py-3" style="width:200px;">08/24/23</td>
+                                 <td class="px-5 py-3" style="width:200px;">09/24/23</td>
+                                 <td class="px-5 py-3"> Active</td>
+                                 <td class="button py-2 " style="min-width: 240px;">
+                                    <a href="#">
+                                       <button class="btn dib">Notify</button>
+                                    </a>
+                                 </td>
+                              </tr>
+                              <tr class="name" style="text-align: center;">
+                                 <td class="px-4 py-3" >00003</td>
+                                 <td class="px-5 py-3" style="width:300px;" >Maria Mercedez </td>
+                                 <td class="px-5 py-3" style="width:200px;">Seller</td>
+                                 <td class="px-5 py-3" style="width:200px;">08/24/23</td>
+                                 <td class="px-5 py-3" style="width:200px;">09/24/23</td>
+                                 <td class="px-5 py-3"> Active</td>
+                                 <td class="button py-2 " style="min-width: 240px;">
+                                    <a href="#">
+                                       <button class="btn dib">Notify</button>
+                                    </a>
+                                 </td>
+                              </tr>
+                              <tr class="name" style="text-align: center;">
+                                 <td class="px-4 py-3" >00003</td>
+                                 <td class="px-5 py-3" style="width:300px;" >Maria Mercedez </td>
+                                 <td class="px-5 py-3" style="width:200px;">Seller</td>
+                                 <td class="px-5 py-3" style="width:200px;">08/24/23</td>
+                                 <td class="px-5 py-3" style="width:200px;">09/24/23</td>
+                                 <td class="px-5 py-3"> Active</td>
+                                 <td class="button py-2 " style="min-width: 240px;">
+                                    <a href="#">
+                                       <button class="btn dib">Notify</button>
+                                    </a>
+                                 </td>
+                              </tr>
+                              <tr class="name" style="text-align: center;">
+                                 <td class="px-4 py-2" >00003</td>
+                                 <td class="px-5 py-2" style="width:300px;" >Maria Mercedez </td>
+                                 <td class="px-5 py-2" style="width:200px;">Customer</td>
+                                 <td class="px-5 py-2" style="width:200px;">08/24/23</td>
+                                 <td class="px-5 py-2" style="width:200px;">09/24/23</td>
+                                 <td class="px-5 py-2"> Active</td>
+                                 <td class="button py-2 " style="min-width: 240px;">
+                                    <a href="#">
+                                       <button class="btn dib">Notify</button>
+                                    </a>
+                                 </td>
+                              </tr>
+                              <tr class="name" style="text-align: center;">
+                                 <td class="px-4 py-2" >00003</td>
+                                 <td class="px-5 py-2" style="width:300px;" >Maria Mercedez </td>
+                                 <td class="px-5 py-2" style="width:200px;">Seller</td>
+                                 <td class="px-5 py-2" style="width:200px;">08/24/31</td>
+                                 <td class="px-5 py-2" style="width:200px;">09/24/23</td>
+                                 <td class="px-5 py-2"> Active</td>
+                                 <td class="button py-2 " style="min-width: 240px;">
+                                    <a href="#">
+                                       <button class="btn dib">Notify</button>
+                                    </a>
+                                 </td>
                               </tr>
                            </tbody>
                         </table>
@@ -176,8 +280,7 @@
                   </div>
                </div>
             </div>
-         </div>
-      </div>
+         </div> 
       <script>
          function myFunction() {
            var input, filter, table, tr, td, i, j, txtValue;
@@ -213,5 +316,7 @@
            }
          }
          </script>
+     
+     
    </body>
 </html>
