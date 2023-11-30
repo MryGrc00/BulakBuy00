@@ -78,13 +78,13 @@ try {
                </a>
             </li>
             <li>
-               <a href="reported_accounts.html">
+               <a href="reported_accounts.php">
                   <i class="fa fa-user-times" aria-hidden="true"></i>
                   <span class="links_name">Reported Accounts</span>
                </a>
             </li>
             <li>
-               <a href="blocked_accounts.html">
+               <a href="blocked_accounts.php">
                   <i class="fa fa-ban" aria-hidden="true"></i>
                   <span class="links_name">Blocked Accounts</span>
                </a>
@@ -96,7 +96,7 @@ try {
                </a>
             </li>
             <li>
-               <a href="transaction_history.html">
+               <a href="transaction_history.php">
                   <i class="fa fa-line-chart" aria-hidden="true"></i>
                   <span class="links_name">Transaction History</span>
                </a>

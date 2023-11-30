@@ -23,7 +23,7 @@
       <div class="sidebar">
          <div class="d-flex flex-column ">
             <div class="logo align-items-center  text-center mt-5">
-               <img src='../php/images/logo.png' alt="BulakBuy Logo">
+               <img src='images/logo.png' alt="BulakBuy Logo">
                <hr>
             </div>
             <div class="profile">
@@ -45,27 +45,21 @@
                </a>
             </li>
             <li>
-               <a href="reported_accounts.php">
+               <a href="reported_accounts.html">
                   <i class="fa fa-user-times" aria-hidden="true"></i>
                   <span class="links_name">Reported Accounts</span>
                </a>
             </li>
             <li>
-               <a href="blocked_accounts.php">
+               <a href="blocked_accounts.html">
                   <i class="fa fa-ban" aria-hidden="true"></i>
                   <span class="links_name">Blocked Accounts</span>
                </a>
             </li>
             <li>
-               <a href="subscriptions.html">
+               <a href="subscriptions.php">
                   <i class="fa fa-credit-card-alt" aria-hidden="true"></i>
                   <span class="links_name">Subscriptions</span>
-               </a>
-            </li>
-            <li>
-               <a href="reports.php">
-                  <i class="fa fa-users" aria-hidden="true"></i>
-                  <span class="links_name">Reports</span>
                </a>
             </li>
             <li>

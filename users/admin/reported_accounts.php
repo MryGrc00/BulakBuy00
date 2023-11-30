@@ -9,7 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action']) && $_POST['a
 
 function block_shop($shop_id) {
    $conn = dbconnect();
-   $sql = "UPDATE shop SET status = 'Blocked' WHERE shop_id = :shop_id";
+   $sql = "UPDATE shops SET status = 'Blocked' WHERE shop_id = :shop_id";
 
    try {
        $stmt = $conn->prepare($sql);
@@ -27,7 +27,7 @@ function block_shop($shop_id) {
 function get_shop_details($shop_id) {
    $conn = dbconnect();
    // Assuming your shop table has columns like 'shop_id', 'shop_name', etc.
-   $sql = "SELECT * FROM shop WHERE shop_id = :shop_id";
+   $sql = "SELECT * FROM shops WHERE shop_id = :shop_id";
 
    try {
        $stmt = $conn->prepare($sql);
@@ -50,7 +50,7 @@ function get_shop_details($shop_id) {
 function get_filtered_reports() {
     $conn = dbconnect();
     $sql = "SELECT r.*, s.shop_id, s.status FROM reports r
-            LEFT JOIN shop s ON r.defendant_id = s.shop_id
+            LEFT JOIN shops s ON r.defendant_id = s.shop_id
             WHERE s.status = 'Reported'";
 
     try {
@@ -148,7 +148,7 @@ $filtered_reports = get_filtered_reports();
                </a>
             </li>
             <li>
-               <a href="subscriptions.html">
+               <a href="subscriptions.php">
                   <i class="fa fa-credit-card-alt" aria-hidden="true"></i>
                   <span class="links_name">Subscriptions</span>
                </a>
@@ -160,7 +160,7 @@ $filtered_reports = get_filtered_reports();
                </a>
             </li>
             <li>
-               <a href="transaction_history.html">
+               <a href="transaction_history.php">
                   <i class="fa fa-line-chart" aria-hidden="true"></i>
                   <span class="links_name">Transaction History</span>
                </a>
