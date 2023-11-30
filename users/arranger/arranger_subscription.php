@@ -30,16 +30,27 @@ if (isset($_SESSION['user_id'])) {
             // Create DateTime objects for the start and end dates
             $endDate = new DateTime($subscription['e_date']);
             $today = new DateTime();
-
+        
             // Calculate the interval and get the number of days left
             $interval = $today->diff($endDate);
             $daysLeft = $interval->format('%a');
+        
+            // Check if $daysLeft is 0
 
-        } 
+            if ($daysLeft === '0' || $daysLeft === 0) {
+                // Update the status to "Expired"
+                $updateSql = "UPDATE subscription SET status = 'expired' WHERE shop_id = :shop_id";
+                $updateStmt = $pdo->prepare($updateSql);
+                $updateStmt->bindParam(':shop_id', $shop_id, PDO::PARAM_INT);
+                $updateStmt->execute();
+                $daysLeft = null;   
+            }
+        }
     }
 } else {
     echo "No active session found. Please log in.";
 }
+
 ?>
 
 
@@ -88,9 +99,10 @@ if (isset($_SESSION['user_id'])) {
                             <div class="subscript">
                                 <span class="subscription-status">Monthly Subscription</span>
                             </div>
-                            <?php if (isset($daysLeft)) { 
+                            <?php if (isset($daysLeft) && $daysLeft > 0) { 
                                 echo "<span class='subscription-expire'>Expires in " . $daysLeft . " days</span>";
-                            } ?>                           
+                            } ?>
+                                        
                              <span class="subscription-description">Boost your flower shop's visibility with BulakBuy's monthly subscription.  With featured listings and banners, vendors gain prime exposure, standing out in search results and category listings. This enhanced online presence effectively markets their shop, leading to greater customer interest and business growth.</span>
                             <hr class="subscription-hr ">
                             <div class="price-renew">

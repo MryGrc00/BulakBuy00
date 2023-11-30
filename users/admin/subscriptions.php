@@ -2,30 +2,29 @@
 // Include your database connection script
 include '../php/dbhelper.php';
 
-
 $pdo = dbconnect();
 try {
-   // Prepare and execute the query
-   $stmt = $pdo->query("SELECT s.shop_id, s.s_date, s.e_date, s.status, CONCAT(u.first_name, ' ', u.last_name) AS full_name, u.role FROM subscription s JOIN shops sh ON s.shop_id = sh.shop_id JOIN users u ON sh.owner_id = u.user_id");
-   $subscriptions = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    // Prepare and execute the query
+    $stmt = $pdo->query("SELECT s.shop_id, s.s_date, s.e_date, s.status, CONCAT(u.first_name, ' ', u.last_name) AS full_name, u.role FROM subscription s JOIN shops sh ON s.shop_id = sh.shop_id JOIN users u ON sh.owner_id = u.user_id WHERE s.status = 'active'");
+    $subscriptions = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-   // Calculate days left and add to each subscription
-   foreach ($subscriptions as $key => $subscription) {
-       $endDate = new DateTime($subscription['e_date']);
-       $today = new DateTime();
-       $interval = $today->diff($endDate);
-       $subscriptions[$key]['days_left'] = $interval->days;
-   }
+    // Calculate days left and add to each subscription
+    foreach ($subscriptions as $key => $subscription) {
+        $endDate = new DateTime($subscription['e_date']);
+        $today = new DateTime();
+        $interval = $today->diff($endDate);
+        $subscriptions[$key]['days_left'] = $interval->days;
+    }
 
-   // Custom sort function
-   usort($subscriptions, function($a, $b) {
-       return $a['days_left'] <=> $b['days_left'];
-   });
+    // Custom sort function
+    usort($subscriptions, function($a, $b) {
+        return $a['days_left'] <=> $b['days_left'];
+    });
 
 } catch (PDOException $e) {
-   // Handle exception
-   echo "Database error: " . $e->getMessage();
-   die();
+    // Handle exception
+    echo "Database error: " . $e->getMessage();
+    die();
 }
 ?>
 

@@ -237,7 +237,6 @@ $filtered_reports = get_filtered_reports();
                           <table class="table" id="myTable">
                               <thead style="text-align: center;">
                                  <tr class="title " style="text-align: center;">
-                                    <th scope="col" class="px-5" style="text-align: center;">IDNO</th>
                                     <th scope="col" class="px-5" style="text-align: center;">Complainant</th>
                                     <th scope="col" class="px-5" style="text-align: center;">Defendant</th>
                                     <th scope="col" class="px-5" style="text-align: center;">Reason</th>
@@ -256,7 +255,6 @@ $filtered_reports = get_filtered_reports();
                            $shopName = isset($defendant['shop_name']) ? $defendant['shop_name'] : 'N/A';
 
                            echo '<tr class="name" style="text-align: center;">';
-                           echo '<td class="px-4 py-2">' . $report['report_id'] . '</td>';
                            echo '<td class="px-5 py-2" style="width:300px;">' . $complainantFullName . '</td>';
                            echo '<td class="px-5 py-2" style="width:300px;">' . $shopName. '</td>';
                            echo '<td class="px-5 py-2">' . $report['reason'] . '</td>';
@@ -269,6 +267,7 @@ $filtered_reports = get_filtered_reports();
                            echo '</tr>';
                         }
                         ?>
+                        </tbody>
                            </table>
                         </div>
                      </div>
@@ -332,4 +331,4 @@ function blockShop(shopId) {
 </script>
 
    </body>
-</html>
+</html> ]

@@ -34,6 +34,13 @@ $activeCount = $stmtActive->fetchColumn();
 $expiredCount = $stmtExpired->fetchColumn();
 $totalCount = $stmtTotal->fetchColumn();
 
-// Update chart data based on the response
-echo $activeCount . ',' . $expiredCount . ',' . $totalCount;
+// Prepare data for a graph
+$data = [
+    'activeCount' => $activeCount,
+    'expiredCount' => $expiredCount,
+    'totalCount' => $totalCount
+];
+
+// Output the data as JSON for the graph
+echo json_encode($data);
 ?>

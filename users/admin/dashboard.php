@@ -1,3 +1,41 @@
+<?php
+include '../php/dbhelper.php';
+
+$pdo = dbconnect();
+try {
+    // Total Accounts
+    $stmt = $pdo->query("SELECT COUNT(*) FROM users");
+    $totalAccounts = $stmt->fetchColumn();
+
+    // Total Seller/Arranger Accounts
+    $stmt = $pdo->query("SELECT COUNT(*) FROM users WHERE role = 'seller' OR role = 'arranger'");
+    $totalSellers = $stmt->fetchColumn();
+
+    // Total Customer Accounts
+    $stmt = $pdo->query("SELECT COUNT(*) FROM users WHERE role = 'customer'");
+    $totalCustomers = $stmt->fetchColumn();
+
+    // Total Subscribed Accounts
+    $stmt = $pdo->query("SELECT COUNT(*) FROM subscription");
+    $totalSubscribed = $stmt->fetchColumn();
+
+    // Count the number of shops with status 'reported'
+   $stmt = $pdo->prepare("SELECT COUNT(*) FROM shops WHERE status = :status");
+   $stmt->execute(['status' => 'reported']);
+   $countReportedShops = $stmt->fetchColumn();
+
+   $stmt = $pdo->prepare("SELECT COUNT(*) FROM shops WHERE status = :status");
+   $stmt->execute(['status' => 'blocked']);
+   $countBlockedShops = $stmt->fetchColumn();
+
+
+} catch (PDOException $e) {
+    // Handle exception
+    echo "Database error: " . $e->getMessage();
+    die();
+}
+?>
+
 
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
@@ -11,80 +49,13 @@
       <link rel="stylesheet" href="../../css/admin.css">
       <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-      <style>
-        .dropdown2 {
-        position: absolute;
-        display: inline-block;
-        margin-left: 27%; 
-        margin-top:-36px; 
-        
-        }
-        .dropdown1 {
-        position: absolute;
-        display: inline-block;
-        margin-left: 47%; 
-        margin-top:-36px; 
-        
-        }
-    
-    .dropbtn2 {
-      padding: 5px;
-      border-radius: 10px;
-      border: none;
-      background: #fff;
-      color: #666;
-      margin: 0 2px;
-      width: auto;
-      font-size: 15px;
-      cursor: pointer;
-      color: #868e96;
-    }
-    
-    .dropbtn:focus{
-        border:none;
-        outline:none;
-    }
-    .custom-button {
-      background-color: transparent;
-      color: gray;
-      padding: 5px;
-      font-size: 14px;
-      border: none;
-      cursor: pointer;
-      margin: 5px;
-      border-radius: 0pc;
-    }
-
-    
-    .dropdown-content2 {
-      display: none;
-      position: absolute;
-      background-color: rgb(252, 251, 251);
-      border-radius: 10px;
-      min-width: 152px;
-      z-index: 100;
-    }
-    
-    
-    .dropdown-content2 .btn {
-      padding: 10px;
-      text-decoration: none;
-      display: block;
-      text-align: left;
-    }
-    
-    
-    .dropdown2:hover .dropdown-content2 {
-      display: block;
-    }
-      </style>
    </head>
    <body>
       <!---Sidebar-->
       <div class="sidebar">
          <div class="d-flex flex-column ">
             <div class="logo align-items-center  text-center mt-5">
-               <img src='../php/images/logo.png' alt="BulakBuy Logo">
+               <img src='images/logo.png' alt="BulakBuy Logo">
                <hr>
             </div>
             <div class="profile">
@@ -106,7 +77,7 @@
                </a>
             </li>
             <li>
-               <a href="reported_accounts.php">
+               <a href="reported_accounts.html">
                <i class="fa fa-user-times" aria-hidden="true"></i>
                <span class="links_name">Reported Accounts</span>
                </a>
@@ -121,12 +92,6 @@
                <a href="subscriptions.php">
                <i class="fa fa-credit-card-alt" aria-hidden="true"></i>
                <span class="links_name">Subscriptions</span>
-               </a>
-            </li>
-            <li>
-               <a href="reports.php">
-               <i class="fa fa-users" aria-hidden="true"></i>
-               <span class="links_name">Reports</span>
                </a>
             </li>
             <li>
@@ -210,7 +175,7 @@
                               </div>
                               <div class="stat-content dib">
                                  <div class="stat-text">Total Accounts</div>
-                                 <div class="stat-digit">1,012</div>
+                                 <div class="stat-digit"><?php echo $totalAccounts;?></div>
                               </div>
                            </div>
                         </div>
@@ -222,7 +187,7 @@
                               </div>
                               <div class="stat-content dib">
                                  <div class="stat-text">Seller / Worker Accounts</div>
-                                 <div class="stat-digit">961</div>
+                                 <div class="stat-digit"><?php echo $totalSellers;?></div>
                               </div>
                            </div>
                         </div>
@@ -234,7 +199,7 @@
                               </div>
                               <div class="stat-content dib">
                                  <div class="stat-text">Customer Accounts</div>
-                                 <div class="stat-digit">770</div>
+                                 <div class="stat-digit"><?php echo $totalCustomers;?></div>
                               </div>
                            </div>
                         </div>
@@ -246,7 +211,7 @@
                               </div>
                               <div class="stat-content dib">
                                  <div class="stat-text">Subscribed Accounts</div>
-                                 <div class="stat-digit">1,012</div>
+                                 <div class="stat-digit"><?php echo $totalSubscribed;?></div>
                               </div>
                            </div>
                         </div>
@@ -258,7 +223,7 @@
                               </div>
                               <div class="stat-content dib">
                                  <div class="stat-text">Blocked Accounts</div>
-                                 <div class="stat-digit">961</div>
+                                 <div class="stat-digit"><?php echo  $countBlockedShops;?></div>
                               </div>
                            </div>
                         </div>
@@ -270,15 +235,15 @@
                               </div>
                               <div class="stat-content dib">
                                  <div class="stat-text">Reported Accounts</div>
-                                 <div class="stat-digit">770</div>
+                                 <div class="stat-digit"> <?php echo  $countReportedShops;?></div>
                               </div>
                            </div>
                         </div>
                      </div>
                   </div>
                </div>
-               
-
-
+      </section>
+      </div>
+      </div>
    </body>
 </html>

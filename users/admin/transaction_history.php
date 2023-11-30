@@ -1,3 +1,38 @@
+<?php
+// Include your database connection script
+include '../php/dbhelper.php';
+
+
+$pdo = dbconnect();
+try {
+   // Prepare and execute the query
+   $stmt = $pdo->query("SELECT s.shop_id, s.s_date, s.e_date, s.status, CONCAT(u.first_name, ' ', u.last_name) AS full_name, u.role FROM subscription s JOIN shops sh ON s.shop_id = sh.shop_id JOIN users u ON sh.owner_id = u.user_id");
+   $subscriptions = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+   // Calculate days left and add to each subscription
+   foreach ($subscriptions as $key => $subscription) {
+       $endDate = new DateTime($subscription['e_date']);
+       $today = new DateTime();
+       $interval = $today->diff($endDate);
+       $subscriptions[$key]['days_left'] = $interval->days;
+
+       $sDate = new DateTime($subscription['s_date']);
+       $subscriptions[$key]['s_date_date'] = $sDate->format('Y-m-d'); 
+       $subscriptions[$key]['s_date_time'] = $sDate->format('H:i:s'); 
+
+       $amount = 249;
+   }
+
+} catch (PDOException $e) {
+   // Handle exception
+   echo "Database error: " . $e->getMessage();
+   die();
+}
+?>
+
+
+
+
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
    <head>
@@ -23,7 +58,7 @@
       <div class="sidebar">
          <div class="d-flex flex-column ">
             <div class="logo align-items-center  text-center mt-5">
-               <img src='images/logo.png' alt="BulakBuy Logo">
+            <img src='../php/images/logo.png' alt="BulakBuy Logo">
                <hr>
             </div>
             <div class="profile">
@@ -45,13 +80,13 @@
                </a>
             </li>
             <li>
-               <a href="reported_accounts.html">
+               <a href="reported_accounts.php">
                   <i class="fa fa-user-times" aria-hidden="true"></i>
                   <span class="links_name">Reported Accounts</span>
                </a>
             </li>
             <li>
-               <a href="blocked_accounts.html">
+               <a href="blocked_accounts.php">
                   <i class="fa fa-ban" aria-hidden="true"></i>
                   <span class="links_name">Blocked Accounts</span>
                </a>
@@ -63,7 +98,7 @@
                </a>
             </li>
             <li>
-               <a href="transaction_history.html"   class="active">
+               <a href="transaction_history.php"   class="active">
                   <i class="fa fa-line-chart" aria-hidden="true"></i>
                   <span class="links_name">Transaction History</span>
                </a>
@@ -139,7 +174,6 @@
                         <table class="table" id="myTable">
                            <thead style="text-align: center;">
                               <tr class="title" style="text-align: center;">
-                                 <th scope="col" class="px-5" style="text-align: center;">IDNO</th>
                                  <th scope="col" class="px-5" style="text-align: center;">Name</th>
                                  <th scope="col" class="px-5" style="text-align: center;">Role</th>
                                  <th scope="col" class="px-5" style="text-align: center;">Date</th>
@@ -148,22 +182,15 @@
                               </tr>
                            </thead>
                            <tbody>
-                              <tr class="name" style="text-align: center;">
-                                 <td class="px-4 py-2" >00001</td>
-                                 <td class="px-5 py-2" style="width:300px;" >Jefferson Benz Mercedez </td>
-                                 <td class="px-5 py-2" style="width:200px;">Seller</td>
-                                 <td class="px-5 py-2" style="width:200px;">08/24/23</td>
-                                 <td class="px-5 py-2" style="width:200px;"> 07:00 AM</td>
-                                 <td class="px-5 py-2"> ₱ 249.00</td>
-                              </tr>
-                              <tr class="name" style="text-align: center;">
-                                 <td class="px-4 py-2" >00001</td>
-                                 <td class="px-5 py-2" style="width:300px;" >Mamapapa KuyaAte </td>
-                                 <td class="px-5 py-2" style="width:200px;">Arranger</td>
-                                 <td class="px-5 py-2" style="width:200px;">07/24/23</td>
-                                 <td class="px-5 py-2" style="width:200px;"> 10:00 AM</td>
-                                 <td class="px-5 py-2"> ₱ 1000.00</td>
-                              </tr>
+                           <?php foreach ($subscriptions as $subscription): ?>
+                                 <tr class="name" style="text-align: center;">
+                                 <td class="px-5 py-3" style="width:300px;"><?php echo htmlspecialchars($subscription['full_name']); ?></td>
+                                       <td class="px-5 py-3" style="width:200px;"><?php echo htmlspecialchars($subscription['role']); ?></td>
+                                       <td class="px-5 py-3"><?php echo htmlspecialchars($subscription['s_date_date']); ?></td> 
+                                       <td class="px-5 py-3"><?php echo htmlspecialchars($subscription['s_date_time']); ?></td> 
+                                       <td class="px-5 py-3"><?php echo $amount; ?></td> 
+                                 </tr>
+                              <?php endforeach; ?>
                            </tbody>
                         </table>
                      </div>

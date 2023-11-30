@@ -34,7 +34,16 @@ if (isset($_SESSION['user_id'])) {
             $interval = $today->diff($endDate);
             $daysLeft = $interval->format('%a');
 
-        } 
+            if ($daysLeft === '0' || $daysLeft === 0) {
+                // Update the status to "Expired"
+                $updateSql = "UPDATE subscription SET status = 'expired' WHERE shop_id = :shop_id";
+                $updateStmt = $pdo->prepare($updateSql);
+                $updateStmt->bindParam(':shop_id', $shop_id, PDO::PARAM_INT);
+                $updateStmt->execute();
+                $daysLeft = null;   
+
+            }
+        }
     }
 } else {
     echo "No active session found. Please log in.";
@@ -87,7 +96,7 @@ if (isset($_SESSION['user_id'])) {
                             <div class="subscript">
                                 <span class="subscription-status">Monthly Subscription</span>
                             </div>
-                            <?php if (isset($daysLeft)) { 
+                            <?php if (isset($daysLeft) && $daysLeft > 0) { 
                                 echo "<span class='subscription-expire'>Expires in " . $daysLeft . " days</span>";
                             } ?>
                         

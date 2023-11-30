@@ -1,3 +1,100 @@
+<?php
+session_start();
+include("../php/dbhelper.php");
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action']) && $_POST['action'] == 'unblock_shop') {
+   $shop_id = $_POST['shop_id'];
+   unblock_shop($shop_id);
+}
+
+function unblock_shop($shop_id) {
+   $conn = dbconnect();
+   $sql = "UPDATE shops SET status = '' WHERE shop_id = :shop_id";
+
+   try {
+       $stmt = $conn->prepare($sql);
+       $stmt->bindParam(':shop_id', $shop_id, PDO::PARAM_INT);
+       $stmt->execute();
+       $conn = null;
+       
+       echo "Shop Unblocked successfully";
+   } catch (PDOException $e) {
+       echo "Error: " . $e->getMessage();
+       $conn = null;
+   }
+   exit;
+}
+
+function get_shop_details($shop_id) {
+   $conn = dbconnect();
+   // Assuming your shop table has columns like 'shop_id', 'shop_name', etc.
+   $sql = "SELECT * FROM shops WHERE shop_id = :shop_id";
+
+   try {
+       $stmt = $conn->prepare($sql);
+       // Bind the shop_id parameter to protect against SQL injection
+       $stmt->bindParam(':shop_id', $shop_id, PDO::PARAM_INT);
+       $stmt->execute();
+
+       // Fetch the shop details
+       $shop_details = $stmt->fetch(PDO::FETCH_ASSOC);
+       $conn = null;
+
+       return $shop_details;
+   } catch (PDOException $e) {
+       echo "Error: " . $e->getMessage();
+       $conn = null;
+       return null;
+   }
+}
+
+function getBlockedShopsAndOwners() {
+   $conn = dbconnect();
+   $sql = "SELECT s.*, u.* 
+           FROM shops s
+           LEFT JOIN users u ON s.owner_id = u.user_id
+           WHERE s.status = 'Blocked'";
+
+   try {
+       $stmt = $conn->prepare($sql);
+       $stmt->execute();
+       $blockedShops = $stmt->fetchAll(PDO::FETCH_ASSOC);
+       $conn = null;
+       return $blockedShops;
+   } catch (PDOException $e) {
+       echo "Error: " . $e->getMessage();
+       $conn = null;
+       return [];
+   }
+}
+
+
+
+
+function get_user_details($user_id) {
+   $conn = dbconnect();
+   // Assuming your users table has 'first_name' and 'last_name' columns
+   $sql = "SELECT first_name, last_name FROM users WHERE user_id = :user_id";
+
+   try {
+       $stmt = $conn->prepare($sql);
+       $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+       $stmt->execute();
+
+       $user_details = $stmt->fetch(PDO::FETCH_ASSOC);
+       $conn = null;
+
+       return $user_details;
+   } catch (PDOException $e) {
+       echo "Error: " . $e->getMessage();
+       $conn = null;
+       return null;
+   }
+}
+$filtered_blocked = getBlockedShopsAndOwners();
+
+?>
+
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
    <head>
@@ -57,7 +154,7 @@
                </a>
             </li>
             <li>
-               <a href="subscriptions.html">
+               <a href="subscriptions.php">
                   <i class="fa fa-credit-card-alt" aria-hidden="true"></i>
                   <span class="links_name">Subscriptions</span>
                </a>
@@ -69,7 +166,7 @@
                </a>
             </li>
             <li>
-               <a href="transaction_history.html">
+               <a href="transaction_history.php">
                   <i class="fa fa-line-chart" aria-hidden="true"></i>
                   <span class="links_name">Transaction History</span>
                </a>
@@ -150,8 +247,8 @@
                           <table class="table" id="myTable">
                               <thead style="text-align: center;">
                                  <tr class="title" style="text-align: center;">
-                                    <th scope="col" class="px-5" style="text-align: center;">IDNO</th>
                                     <th scope="col" class="px-5" style="text-align: center;">Name</th>
+                                    <th scope="col" class="px-5" style="text-align: center;">Shop Name</th>
                                     <th scope="col" class="px-5" style="text-align: center;">Role</th>
                                     <th scope="col" class="px-5" style="text-align: center;">Contact No.</th>
                                     <th scope="col" class="px-5" style="text-align: center;">Address</th>
@@ -159,151 +256,26 @@
                                  </tr>
                               </thead>
                               <tbody>
-                                 <tr class="name" style="text-align: center;">
-                                    <td class="px-4 py-4" >00003</td>
-                                    <td class="px-5 py-4" style="width:300px;" >Maria Mercedez hahahahahhahahahahahahahahahahahaah</td>
-                                    <td class="px-5 py-4" style="width:200px;">Seller ahahahahhahahahahahahahahhaha</td>
-                                    <td class="px-5 py-4" style="width:200px;">(+63) 9123456789</td>
-                                    <td class="px-5 py-4"> Villa San Pedro 1, Basak Pardo, Cebu City</td>
-                                    <td class="button py-2" style="min-width: 240px;">
-                                       <a href="#">
-                                          <button class="btn dib">Unblock</button>
-                                       </a>
-                                    </td>
-                                 </tr>
-                                 <tr class="name" style="text-align: center;">
-                                    <td class="px-4 py-2" >00003</td>
-                                    <td class="px-5 py-2" style="width:300px;" >Maria Mercedez </td>
-                                    <td class="px-5 py-2" style="width:200px;">Seller</td>
-                                    <td class="px-5 py-2" style="width:200px;">(+63) 9123456789</td>
-                                    <td class="px-5 py-2"> Villa San Pedro 1, Basak Pardo, Cebu City</td>
-                                   <td class="button py-2 " style="min-width: 240px;">
-                                       <a href="#">
-                                          <button class="btn dib">Unblock</button>
-                                       </a>
-                                    </td>
-                                 </tr>
-                                 <tr class="name" style="text-align: center;">
-                                    <td class="px-4 py-2" >00003</td>
-                                    <td class="px-5 py-2" style="width:300px;" >Maria Mercedez </td>
-                                    <td class="px-5 py-2" style="width:200px;">Seller</td>
-                                    <td class="px-5 py-2" style="width:200px;">(+63) 9123456789</td>
-                                    <td class="px-5 py-2"> Villa San Pedro 1, 6000, Basak Pardo, Cebu City</td>
-                                   <td class="button py-2 " style="min-width: 240px;">
-                                       <a href="#">
-                                          <button class="btn dib">Unblock</button>
-                                       </a>
-                                    </td>
-                                 </tr>
-                                 <tr class="name" style="text-align: center;">
-                                    <td class="px-4 py-2" >00003</td>
-                                    <td class="px-5 py-2" style="width:300px;" >Maria Mercedez </td>
-                                    <td class="px-5 py-2" style="width:200px;">Seller</td>
-                                    <td class="px-5 py-2" style="width:200px;">(+63) 9123456789</td>
-                                    <td class="px-5 py-2 "> Villa San Pedro 1, Basak Pardo, Cebu City</td>
-                                   <td class="button py-2 " style="min-width: 240px;">
-                                       <a href="#">
-                                          <button class="btn dib">Unblock</button>
-                                       </a>
-                                    </td>
-                                 </tr>
-                                 <tr class="name" style="text-align: center;">
-                                    <td class="px-4 py-2" >00003</td>
-                                    <td class="px-5 py-2" style="width:300px;" >Maria Mercedez </td>
-                                    <td class="px-5 py-2" style="width:200px;">Seller</td>
-                                    <td class="px-5 py-2" style="width:200px;">(+63) 9123456789</td>
-                                    <td class="px-5 py-2 "> Villa San Pedro 1, Basak Pardo, Cebu City</td>
-                                   <td class="button py-2 " style="min-width: 240px;">
-                                       <a href="#">
-                                          <button class="btn dib">Unblock</button>
-                                       </a>
-                                    </td>
-                                 </tr>
-                                 <tr class="name" style="text-align: center;">
-                                    <td class="px-4 py-2" >00003</td>
-                                    <td class="px-5 py-2" style="width:300px;" >Maria Mercedez </td>
-                                    <td class="px-5 py-2" style="width:200px;">Seller</td>
-                                    <td class="px-5 py-2" style="width:200px;">(+63) 9123456789</td>
-                                    <td class="px-5 py-2 "> Villa San Pedro 1, Basak Pardo, Cebu City</td>
-                                   <td class="button py-2 " style="min-width: 240px;">
-                                       <a href="#">
-                                          <button class="btn dib">Unblock</button>
-                                       </a>
-                                    </td>
-                                 </tr>
-                                 <tr class="name" style="text-align: center;">
-                                    <td class="px-4 py-2" >00003</td>
-                                    <td class="px-5 py-2" style="width:300px;" >Maria Mercedez </td>
-                                    <td class="px-5 py-2" style="width:200px;">Seller</td>
-                                    <td class="px-5 py-2" style="width:200px;">(+63) 9123456789</td>
-                                    <td class="px-5 py-2 "> Villa San Pedro 1, Basak Pardo, Cebu City</td>
-                                   <td class="button py-2 " style="min-width: 240px;">
-                                       <a href="#">
-                                          <button class="btn dib">Unblock</button>
-                                       </a>
-                                    </td>
-                                 </tr>
-                                 <tr class="name" style="text-align: center;">
-                                    <td class="px-4 py-2" >00003</td>
-                                    <td class="px-5 py-2" style="width:300px;" >Maria Mercedez </td>
-                                    <td class="px-5 py-2" style="width:200px;">Seller</td>
-                                    <td class="px-5 py-2" style="width:200px;">(+63) 9123456789</td>
-                                    <td class="px-5 py-2 "> Villa San Pedro 1, Basak Pardo, Cebu City</td>
-                                   <td class="button py-2 " style="min-width: 240px;">
-                                       <a href="#">
-                                          <button class="btn dib">Unblock</button>
-                                       </a>
-                                    </td>
-                                 </tr>
-                                 <tr class="name" style="text-align: center;">
-                                    <td class="px-4 py-2" >00003</td>
-                                    <td class="px-5 py-2" style="width:300px;" >Maria Mercedez </td>
-                                    <td class="px-5 py-2" style="width:200px;">Seller</td>
-                                    <td class="px-5 py-2" style="width:200px;">(+63) 9123456789</td>
-                                    <td class="px-5 py-2 "> Villa San Pedro 1, Basak Pardo, Cebu City</td>
-                                   <td class="button py-2 " style="min-width: 240px;">
-                                       <a href="#">
-                                          <button class="btn dib">Unblock</button>
-                                       </a>
-                                    </td>
-                                 </tr>
-                                 <tr class="name" style="text-align: center;">
-                                    <td class="px-4 py-2" >00003</td>
-                                    <td class="px-5 py-2" style="width:300px;" >Maria Mercedez </td>
-                                    <td class="px-5 py-2" style="width:200px;">Seller</td>
-                                    <td class="px-5 py-2" style="width:200px;">(+63) 9123456789</td>
-                                    <td class="px-5 py-2 "> Villa San Pedro 1, Basak Pardo, Cebu City</td>
-                                   <td class="button py-2 " style="min-width: 240px;">
-                                       <a href="#">
-                                          <button class="btn dib">Unblock</button>
-                                       </a>
-                                    </td>
-                                 </tr>
-                                 <tr class="name" style="text-align: center;">
-                                    <td class="px-4 py-2" >00003</td>
-                                    <td class="px-5 py-2" style="width:300px;" >Maria Mercedez </td>
-                                    <td class="px-5 py-2" style="width:200px;">Seller</td>
-                                    <td class="px-5 py-2" style="width:200px;">(+63) 9123456789</td>
-                                    <td class="px-5 py-2 "> Villa San Pedro 1, Basak Pardo, Cebu City</td>
-                                   <td class="button py-2 " style="min-width: 240px;">
-                                       <a href="#">
-                                          <button class="btn dib">Unblock</button>
-                                       </a>
-                                    </td>
-                                 </tr>
-                                 <tr class="name" style="text-align: center;">
-                                    <td class="px-4 py-2" >00003</td>
-                                    <td class="px-5 py-2" style="width:300px;" >Maria Mercedez </td>
-                                    <td class="px-5 py-2" style="width:200px;">Seller</td>
-                                    <td class="px-5 py-2" style="width:200px;">(+63) 9123456789</td>
-                                    <td class="px-5 py-2 "> Villa San Pedro 1, Basak Pardo, Cebu City</td>
-                                   <td class="button py-2 " style="min-width: 240px;">
-                                       <a href="#">
-                                          <button class="btn dib">Unblock</button>
-                                       </a>
-                                    </td>
-                                 </tr>
+                                 <?php
+                              foreach ($filtered_blocked as $blocked) {            
+                       
+                         // Fetch shop details
+                         $FullName = $blocked['first_name'] . ' ' . $blocked['last_name'];
 
+
+                           echo '<tr class="name" style="text-align: center;">';
+                           echo '<td class="px-5 py-2" style="width:300px;">' . $FullName . '</td>';
+                           echo '<td class="px-5 py-2" style="width:300px;">' . $blocked['shop_name'] . '</td>';
+                           echo '<td class="px-5 py-2" style="width:200px;">' . $blocked['role']. '</td>';
+                           echo '<td class="px-5 py-2">' . $blocked['phone'] . '</td>';
+                           echo '<td class="px-5 py-2">' . $blocked['address'] . '</td>';
+                           echo '<td class="button py-2" style="min-width: 240px;">';
+                           echo '<button class="btn dib" onclick="unblockShop(' . $blocked['shop_id'] . ')">Unblock</button>';
+                           echo '</a>';
+                           echo '</td>';
+                           echo '</tr>';
+                        }
+                        ?>
 
                               </tbody>
                            </table>
@@ -349,6 +321,25 @@
            }
          }
          </script>
+         <script>
+         function unblockShop(shopId) {
+            if(confirm("Are you sure you want to unblock this shop?")) {
+               $.ajax({
+                     url: 'blocked_accounts.php', // Adjusted URL
+                     type: 'POST',
+                     data: { 'shop_id': shopId, 'action': 'unblock_shop' },
+                     success: function(response) {
+                        alert("Shop has been unblocked successfully.");
+                        location.reload(); // Reloads the current page
+                     },
+                     error: function(xhr, status, error) {
+                        console.error("Error blocking shop:", error);
+                     }
+               });
+            }
+         }
+         </script>
+
      
      
    </body>

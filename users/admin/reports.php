@@ -1,9 +1,4 @@
-<?php
-include("update_data.php");
-include("update_table_data.php");
-include("update_seller_graph.php");
-include("update_service_graph.php");
-?>
+
 
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
@@ -211,8 +206,8 @@ include("update_service_graph.php");
                     <div style="width:580px;height:500px;background-color:white;padding:30px;margin-left:60px;margin-top:40px;border-radius:20px">
                         <p style="color: #868e96;font-size:15px">Subscribers</p>
                         <form id="filterForm1">
-                            <label for="monthSelect" style="color:#666;font-weight:400">Month:</label>
-                            <select id="monthSelect" class="btn custom-button month-button">
+                            <label for="monthSelect" onchange="updateChartData()" style="color:#666;font-weight:400">Month:</label>
+                            <select id="monthSelect"onchange="updateChartData()" class="btn custom-button month-button">
                                 <option value="1">January</option>
                                 <option value="2">February</option>
                                 <option value="3">March</option>
@@ -469,58 +464,97 @@ include("update_service_graph.php");
       <script src="../js/jquery.js"></script>
   <script src="../js/Chart.min.js"></script>
   <script type="text/javascript">
-    // Assuming PHP is outputting the counts into JavaScript variables
-    var activeCount = <?php echo json_encode($activeCount); ?>;
-    var expiredCount = <?php echo json_encode($expiredCount); ?>;
-    var totalCount = <?php echo json_encode($totalCount); ?>;  // Total subscriptions count
+    var myChartSales;
+    // Use AJAX to fetch the data from your PHP script
+    fetch('update_data.php')
+        .then(response => response.json())
+        .then(data => {
+            var activeCount = data.activeCount;
+            var expiredCount = data.expiredCount;
+            var totalCount = data.totalCount;
 
-    var ctxSales = document.getElementById("chartjs_bar").getContext('2d');
-    var myChartSales = new Chart(ctxSales, {
-        type: 'bar',
-        data: {
-            labels: ['Active', 'Expired', 'Total Subscribed'],
-            datasets: [{
-                label: 'Subscription Status',
-                backgroundColor: ["#95C3C3", "#B7D7D7", "#f0f0f0"],
-                data: [activeCount, expiredCount, totalCount],
-            }]
-        },
-        options: {
-            responsive: true,
-            legend: {
-                display: true,
-                position: 'top',
-                labels: {
-                    fontColor: '#868e96',
-                    fontFamily: 'Poppins',
-                    fontSize: 14,
+            var ctxSales = document.getElementById("chartjs_bar").getContext('2d');
+            myChartSales = new Chart(ctxSales, {
+                type: 'bar',
+                data: {
+                    labels: ['Active', 'Expired', 'Total Subscribed'],
+                    datasets: [{
+                        label: 'Subscription Status',
+                        backgroundColor: ["#95C3C3", "#B7D7D7", "#f0f0f0"],
+                        data: [activeCount, expiredCount, totalCount],
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    legend: {
+                        display: true,
+                        position: 'top',
+                        labels: {
+                            fontColor: '#868e96',
+                            fontFamily: 'Poppins',
+                            fontSize: 14,
+                        }
+                    },
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true,
+                                fontColor: '#868e96',
+                                fontFamily: 'Poppins',
+                                fontSize: 14,
+                            }
+                        }],
+                        xAxes: [{
+                            ticks: {
+                                fontColor: '#868e96',
+                                fontFamily: 'Poppins',
+                                fontSize: 14,
+                            }
+                        }]
+                    },
+                    tooltips: {
+                        enabled: true,
+                        mode: 'index',
+                        intersect: false,
+                    }
                 }
+            });
+        })
+        .catch(error => {
+            console.error('Error fetching data:', error);
+        });
+        function updateChartData() {
+        var selectedMonth = document.getElementById('monthSelect').value;
+        var selectedYear = document.getElementById('yearSelect1').value;
+
+
+        // Send selected month and year to the server using AJAX
+        fetch('update_data.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
             },
-            scales: {
-                yAxes: [{
-                    ticks: {
-                        beginAtZero: true,
-                        fontColor: '#868e96',
-                        fontFamily: 'Poppins',
-                        fontSize: 14,
-                    }
-                }],
-                xAxes: [{
-                    ticks: {
-                        fontColor: '#868e96',
-                        fontFamily: 'Poppins',
-                        fontSize: 14,
-                    }
-                }]
-            },
-            tooltips: {
-                enabled: true,
-                mode: 'index',
-                intersect: false,
+            body: 'selectedMonth=' + encodeURIComponent(selectedMonth) + '&selectedYear=' + encodeURIComponent(selectedYear),
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
             }
-        }
-    });
-</script>
+            return response.json(); // Assuming the response is JSON. Adjust if necessary.
+        })
+        .then(data => {
+            // Update chart data based on the response
+            myChartSales.data.datasets[0].data[0] = data.activeCount; // Update with new data
+            myChartSales.data.datasets[0].data[1] = data.expiredCount;
+            myChartSales.data.datasets[0].data[2] = data.totalCount;
+            myChartSales.update();
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+    </script>
+
 <script type="text/javascript">
    // Second Graph
    var ctxSalesDetails = document.getElementById("seller").getContext('2d');
@@ -658,37 +692,9 @@ var myChartService= new Chart(ctxService, {
     }
 });
 
-</script>
-<script>
-// Function to update chart data based on selected month and year
-function updateChartData() {
-    var selectedMonth = document.getElementById('monthSelect').value;
-    var selectedYear = document.getElementById('yearSelect1').value;
 
-    // Send selected month and year to the server using AJAX
-    fetch('update_data.php', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: 'selectedMonth=' + encodeURIComponent(selectedMonth) + '&selectedYear=' + encodeURIComponent(selectedYear),
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        return response.text();
-    })
-    .then(data => {
-        // Update chart data based on the response
-        var dataArray = data.split(','); // Split the data into an array
-        myChartSales.data.datasets[0].data = dataArray;
-        myChartSales.update();
-    })
-    .catch(error => {
-        console.error('Error:', error);
-    });
-}
+// Function to update chart data based on selected month and year
+
 
 
 </script>
