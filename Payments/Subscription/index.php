@@ -13,6 +13,7 @@ $users = get_record("users", "user_id", $user_id);
 $user_role = $users['role']; // Replace 'role' with the actual column name for the user role
 
 
+
 ?>
 
 <!DOCTYPE html>

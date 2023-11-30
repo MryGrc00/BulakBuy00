@@ -132,22 +132,22 @@ $selectedShopPhone = getShopPhone($selectedShopId, $pdo);
                             <input type="text" class="form-control" name="merchantphone" value="<?php echo $selectedShopPhone; ?>">
                         </div>
                         <div class="mb-3">
-    <label for="amount">Amount</label>
-    <input type="number" class="form-control" name="amount" value="<?php echo $totalSales; ?>">
-    <div class="invalid-feedback">Please enter the amount to be paid.</div>
-</div>
+                            <label for="amount">Amount</label>
+                            <input type="number" class="form-control" name="amount" value="<?php echo $totalSales; ?>">
+                            <div class="invalid-feedback">Please enter the amount to be paid.</div>
+                        </div>
                         <hr class="mb-4">
                         <button class="btn btn-primary btn-lg btn-block" type="submit">Continue to checkout</button>
                     </form>
                     <?php else: ?>
                         <p>User not found.</p>
                     <?php endif; ?>
+                    </div>
+                    </div>
+                    <footer class="my-3 pt-3 text-muted text-center text-small">
+                        <p class="mb-1">© <?php echo date("Y"); ?> BulakBuy.ph</p>
+                    </footer>
                 </div>
-            </div>
-            <footer class="my-3 pt-3 text-muted text-center text-small">
-                <p class="mb-1">© <?php echo date("Y"); ?> BulakBuy.ph</p>
-            </footer>
-        </div>
         <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
             integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
             crossorigin="anonymous"></script>

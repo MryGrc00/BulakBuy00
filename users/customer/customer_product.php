@@ -63,13 +63,18 @@ function get_record_with_additional_where($table, $where, $data, $additional_whe
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["add-to-cart"])) {
     $product_id = $_POST["product_id"];
     $customer_id = $_SESSION['user_id'];
-    $selected_flower_types = $_POST["selected_flower_types"];
-    $selected_ribbon_colors = $_POST["selected_ribbon_colors"];
-    $message = $_POST["message"];
     $quantity = "1";
 
-    update_or_add_cart_item($product_id, $customer_id, $selected_flower_types, $selected_ribbon_colors, $message, $quantity);
+    if (isset($_POST["selected_flower_types"]) && isset($_POST["selected_ribbon_colors"]) && isset($_POST["message"])) {
+        $selected_flower_types = $_POST["selected_flower_types"];
+        $selected_ribbon_colors = $_POST["selected_ribbon_colors"];
+        $message = $_POST["message"];
+        update_or_add_cart_item($product_id, $customer_id, $selected_flower_types, $selected_ribbon_colors, $message, $quantity);
+    } else {
+        add_cart_item_without_optional_fields($product_id, $customer_id, $quantity);
+    }
 }
+
 
 function update_or_add_cart_item($product_id, $customer_id, $flower_types, $ribbon_colors, $message, $quantity) {
     $conn = dbconnect(); // Ensure you have a function to connect to your database
@@ -128,6 +133,37 @@ function update_or_add_cart_item($product_id, $customer_id, $flower_types, $ribb
         // For example, you could throw an exception or return a specific error message
     }
 }
+
+function add_cart_item_without_optional_fields($product_id, $customer_id, $quantity) {
+    $conn = dbconnect(); // Ensure you have a function to connect to your database
+
+    // Check if the product is already in the cart
+    $sql = "SELECT * FROM salesdetails WHERE product_id = ? AND customer_id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->execute([$product_id, $customer_id]);
+    $cart_item = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($cart_item) {
+        // Product exists, update quantity
+        $update_sql = "UPDATE salesdetails SET quantity = quantity + :quantity WHERE product_id = :product_id AND customer_id = :customer_id";
+        $update_stmt = $conn->prepare($update_sql);
+        $update_stmt->execute([
+            ':quantity' => $quantity,
+            ':product_id' => $product_id,
+            ':customer_id' => $customer_id
+        ]);
+    } else {
+        // Product is not in the cart, add a new cart item
+        $insert_sql = "INSERT INTO salesdetails (product_id, customer_id, quantity) VALUES (:product_id, :customer_id, :quantity)";
+        $insert_stmt = $conn->prepare($insert_sql);
+        $insert_stmt->execute([
+            ':product_id' => $product_id,
+            ':customer_id' => $customer_id,
+            ':quantity' => $quantity
+        ]);
+    }
+}
+
 
 
 
@@ -592,14 +628,18 @@ function update_or_add_cart_item($product_id, $customer_id, $flower_types, $ribb
             const addOrderBtn = document.getElementById("addOrderBtn");
             
             // Event listener to show the modal when the button is clicked
-            addOrderBtn.addEventListener("click", () => {
-                // Collect data from the data attributes
-                const productId = addOrderBtn.getAttribute("data-product-id");
-                const customerId = addOrderBtn.getAttribute("data-customer-id");
-                const flowerType = addOrderBtn.getAttribute("data-flower-type");
-                const ribbonColor = addOrderBtn.getAttribute("data-ribbon-color");
-                const message = document.querySelector(".message").value; // Get the message from the input field
+            document.querySelectorAll(".add-to-cart-button").forEach(button => {
+             button.addEventListener("click", function(event) {
+            event.preventDefault(); // Prevent form submission
 
+            // Gather data from form elements
+            var formData = new FormData();
+            formData.append('product_id', this.getAttribute('data-product-id'));
+            formData.append('customer_id', "<?php echo $_SESSION['user_id']; ?>");
+            formData.append('selected_flower_types', document.getElementById('selected_flower_types').value);
+            formData.append('selected_ribbon_colors', document.getElementById('selected_ribbon_colors').value);
+            formData.append('message', document.querySelector('.message').value);
+            formData.append('add-to-cart', true); 
                 // Send the data to a PHP script using fetch or AJAX
                 fetch("../php/add_to_cart.php", {
                     method: "POST",
@@ -633,6 +673,7 @@ function update_or_add_cart_item($product_id, $customer_id, $flower_types, $ribb
                     console.error("Error:", error);
                 });
             });
+        });
         </script>
         <script>
     // Add event listeners to "Add to Cart" buttons

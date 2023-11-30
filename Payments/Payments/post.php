@@ -11,9 +11,12 @@ $redirect = [
 $billing = [
     "email" => $_POST["email"],
     "name" =>  $_POST["first_name"] . " " .  $_POST["last_name"],
-    "phone" =>  $_POST["mobile"]
+    "phone" =>  $_POST["mobile"],
+    "mname" => $_POST["merchantname"],
+    "mphone" => $_POST["merchantphone"]
 ];
 
+$shop_id = $_POST["shopid"];
 $amount = intval($_POST["amount"]) * 100; // Convert amount to integer
 
 $attributes = [
