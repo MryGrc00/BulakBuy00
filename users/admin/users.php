@@ -1,7 +1,11 @@
 <?php
-include('../php/dbhelper.php'); // Include the dbhelper file to use its functions.
+include('checksession.php'); 
+include('../php/dbhelper.php'); 
+
+
 $users = all_record("users");
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
@@ -79,7 +83,7 @@ $users = all_record("users");
                </a>
             </li>
             <li>
-            <a href="../php/logout.php?logout_id=<?php echo $user['user_id']; ?>">
+            <a href="logout.php">
                <i class="fa fa-sign-out" aria-hidden="true"></i> 
                <span class="links_name">Logout</span>
                </a>

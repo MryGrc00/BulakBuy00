@@ -1,6 +1,10 @@
 <?php
-include '../php/dbhelper.php';
-
+include('checksession.php'); 
+include('../php/dbhelper.php'); 
+if (isset($_SESSION["admin_id"])) {
+   $admin_id = $_SESSION["admin_id"];
+   $users = get_record('admin','admin_id',$admin_id);
+}
 $pdo = dbconnect();
 try {
     // Total Accounts
@@ -59,8 +63,12 @@ try {
                <hr>
             </div>
             <div class="profile">
-               <img src='https://media.istockphoto.com/id/517528555/photo/trendy-young-man-smiling-on-white-background.jpg?s=1024x1024&w=is&k=20&c=FJijfaHuhjDH_byYfFku4oclIL5oepIO5ZCA4y_iav0=' alt="Admin Profile">
-               <h6>Dan Mark</h6>
+            <?php
+                    $profileImage = !empty($users['profile_img']) ? $users['profile_img'] : '../php/images/default.jpg'; 
+                    echo '<img src="' . $profileImage . '" alt="' . $users['last_name'] . '" class="user-image">';
+                 ?>               
+                 <br><?php echo $users['first_name'] . ' ' . $users['last_name']; ?> 
+               <a href="edit_profile.php?user_id=<?php echo $users['admin_id']; ?>"><i class="bi bi-pencil-square"></i></a>
             </div>
          </div>
          <ul class="nav-links align-items-center  text-center ">
@@ -101,7 +109,7 @@ try {
                </a>
             </li>
             <li>
-               <a href="login.php">
+               <a href="logout.php">
                <i class="fa fa-sign-out" aria-hidden="true"></i> 
                <span class="links_name">Logout</span>
                </a>

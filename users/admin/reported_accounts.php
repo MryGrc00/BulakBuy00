@@ -1,6 +1,7 @@
 <?php
-session_start();
-include("../php/dbhelper.php");
+include('checksession.php'); 
+include('../php/dbhelper.php');
+
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action']) && $_POST['action'] == 'block_shop') {
    $shop_id = $_POST['shop_id'];
@@ -166,7 +167,7 @@ $filtered_reports = get_filtered_reports();
                </a>
             </li>
             <li>
-               <a href="login.php">
+               <a href="logout.php">
                   <i class="fa fa-sign-out" aria-hidden="true"></i> 
                   <span class="links_name">Logout</span>
                </a>

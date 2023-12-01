@@ -1,3 +1,9 @@
+<?php
+
+include('checksession.php'); 
+include('../php/dbhelper.php'); // Include the dbhelper file to use its functions.
+
+?>
 
 
 <!DOCTYPE html>
@@ -137,7 +143,7 @@
                </a>
             </li>
             <li>
-               <a href="login.php">
+               <a href="logout.php">
                <i class="fa fa-sign-out" aria-hidden="true"></i> 
                <span class="links_name">Logout</span>
                </a>

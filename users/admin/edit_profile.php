@@ -1,0 +1,162 @@
+<?php
+session_start();
+include('../php/dbhelper.php'); 
+
+$pdo = dbconnect();
+
+if (isset($_GET['admin_id'])) {
+    $admin_id= $_GET['admin_id'];
+    $admin = get_record('admin', 'admin_id', $admin_id);
+
+    if ($admin) {
+        $profileImg = $admin['admin_img']; // Default to existing image path
+
+        if ($_SERVER["REQUEST_METHOD"] == "POST") {
+            $firstname = htmlspecialchars($_POST['first_name']);
+            $lastname = htmlspecialchars($_POST['last_name']);
+            $email = htmlspecialchars($_POST['email']);
+
+
+            // Process and upload profile image
+            $uploadDir = '../php/images/';
+            if (isset($_FILES['admin_img']) && $_FILES['admin_img']['error'] == 0) {
+                $profileImage = $_FILES['admin_img'];
+                $uploadFile = $uploadDir . basename($profileImage['name']);
+                $allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+
+                if (in_array($profileImage['type'], $allowedTypes) && move_uploaded_file($profileImage['tmp_name'], $uploadFile)) {
+                    $profileImg = $uploadDir . basename($profileImage['name']); // Update the image path
+                } else {
+                    echo "Invalid file type or upload failed.";
+                }
+            }
+
+            try {
+                $stmt = $pdo->prepare("UPDATE admin SET first_name = :first_name, last_name = :last_name, email = :email, admin_img = :admin_img WHERE admin_id = :admin_id");
+                $stmt->bindParam(':first_name', $firstname);
+                $stmt->bindParam(':last_name', $lastname);
+                $stmt->bindParam(':email', $email);
+                $stmt->bindParam(':admin_img', $profileImg);
+                $stmt->bindParam(':admin_id', $admin_id);
+                $stmt->execute();
+
+                header("Location: dashboard.php"); // Redirect after successful update
+                exit();
+            } catch (PDOException $e) {
+                echo "Error updating user record: " . $e->getMessage();
+            }
+        }
+    } else {
+        echo "User not found!";
+    }
+} else {
+    header("Location: login.php"); 
+    exit();
+}
+?>
+
+
+
+
+
+
+
+<!DOCTYPE html> 
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Profile</title>
+    <link href='https://fonts.googleapis.com/css?family=Poppins' rel='stylesheet'>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-pzjw8f+uaex3+ihrbIk8mz07tb2F4F5ssx6kl5v5PmUGp1ELjF8j5+zM1a7z5t2N" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../css/edit_profile.css">
+    <link rel="stylesheet" href="../../css/addproduct.css">
+
+   
+
+</head>
+
+<body>
+  <header>
+    <nav class="navbar navbar-expand-lg">
+        <!-- Logo -->
+        <a class="navbar-brand d-flex align-items-center" href="#">
+        <img src="../php/images/logo.png" alt="BulakBuy Logo" class="img-fluid logo">
+      </a>
+        <!-- Search Bar -->
+        <div class="navbar-collapse justify-content-md-center">
+            <ul class="navbar-nav dib">
+                <li class="nav-item">
+                    <form class="form-inline my-2 my-lg-0">
+                        <a href=""><i class="fa fa-search"></i></a>
+                        <input type="text"  class="form-control form-input" placeholder="Search">
+                        <a href="javascript:void(0);" onclick="goBack()">
+                          <i class="back fa fa-angle-left" aria-hidden="true"></i>
+                          <div id="search-results">Edit Profile</div>
+                        </a>
+                    </form>
+                </li>     
+            </ul>
+        </div>
+    </nav><hr class="nav-hr">
+</header>
+<div class="wrapper">
+    <form action="" enctype="multipart/form-data" method="post">
+        <?php if ($users): ?>
+            <div class="form-container">
+            <h3 class="profimgT">Profile Image</h3>                      
+            <div class="circle-container">
+            <img class="circle-image" id="profile-image" src="<?php echo !empty($users['profile_img']) ? $users['profile_img'] : 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'; ?>" alt="Shop Image">                       <label class="upload-button">
+                        <input accept="image/*" type="file" id="imageInput" name="profile_img">
+                        <i class="bi bi-plus"></i>
+                    </label>
+                </div>
+            
+    
+            <h3 class="prodnaT">First Name</h3>
+            <input type="text" name="first_name" id="first_name" value="<?php echo $users['first_name']; ?>" required>
+             
+            <h3 class="prodnaT">Last Name</h3>
+            <input type="text" name="last_name" id="last_name" value="<?php echo $users['last_name']; ?>" required>
+             
+            <h3 class="prodnaT">Email</h3>
+            <input type="text" name="email" id="email" value="<?php echo $users['email']; ?>" required>
+
+            <div class="submit-btn">
+                <button class="addbtn" type="submit" value="Save">Save</button>
+            </div>
+        </div>
+        <?php else: ?>
+            <p>User not found.</p>
+        <?php endif; ?>
+    </form>
+</div>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js">
+</script> 
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js">
+</script> 
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js">
+</script> 
+<script>
+    const circleImage = document.getElementById('profile-image');
+    const uploadInput = document.getElementById('imageInput');
+
+    uploadInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const imageURL = URL.createObjectURL(file);
+            circleImage.src = imageURL; // Temporarily change the image source for preview
+        }
+    });
+</script>
+         <script>
+            function goBack() {
+                window.history.back();
+            }
+          </script>
+   
+</body>
+</html>
