@@ -154,7 +154,7 @@ $productAddedByArranger = $product['product_id'] == $user_id;
             .item-details h2 {
                 font-size: 16px;
                 color:#555;
-                margin-top: -65px;
+                margin-top: -20px;
             }
             .all-items .item-checkbox {
                 margin-left: 10px;
@@ -162,6 +162,37 @@ $productAddedByArranger = $product['product_id'] == $user_id;
             .sub-price{
                 color:#555;
                 margin-left:200px;
+            }
+            .cart-item img {
+                width: 100px;
+                height: 230px;
+                margin-right: 20px;
+            }
+            .flower-type{
+                display: flex;
+                gap:10px;
+                margin-top:10px;
+            }
+            .flower{
+                font-size: 13px;
+                color:#777;
+            }
+            .type{
+                font-size: 13px;
+                color:#666;
+            }
+            .ribbon-color{
+                display: flex;
+                gap:10px;
+                margin-top:-5px;
+            }
+            .ribbon{
+                font-size: 13px;
+                color:#777;
+            }
+            .color{
+                font-size: 13px;
+                color:#666;
             }
         </style>
     </head>
@@ -207,8 +238,7 @@ $productAddedByArranger = $product['product_id'] == $user_id;
                     </div>
                     <div class="cart-container">
                         <div class="all-items">
-                            <input type="checkbox" class="item-checkbox" id="selectAllItems" data-product-price="<?= $totalPriceOfAllItems ?>">
-                            <h6 class="items-label">All Items</h6>
+                            <h6 class="items-label">Products</h6>
                             <button class="edit"><i class="bi bi-trash"></i></button>
                         </div>
                       
@@ -259,11 +289,25 @@ $productAddedByArranger = $product['product_id'] == $user_id;
                                         
                                                 // Rest of your product display code...
                                                 echo '<div class="item-details">';
-                                                echo '<h2>' . $product['product_name'] . '</h2>';
+                                                echo '<h2>' . $product['product_name'] . '</h2>';                
+                                                $flowerType = $product['flower_type'];
+                                                $ribbonColor = $product['ribbon_color'];
+                                                
+                                                if (!empty($flowerType) && !empty($ribbonColor)) {
+                                                    echo '<div class="flower-type">';
+                                                    echo '<p class="flower">Flower:</p>';
+                                                    echo '<p class="type">' . $flowerType . '</p>';
+                                                    echo '</div>';
+                                                    echo '<div class="ribbon-color">';
+                                                    echo '<p class="ribbon">Ribbon:</p>';
+                                                    echo '<p class="color">' . $ribbonColor. '</p>';
+                                                    echo '</div>';
+                                                }
                                                 echo '<p class="price">₱ ' . $product['product_price'] . '</p>';
                                                 echo '<div class="quantity-control">';
                                                 echo '<button class="quantity-button" data-product-id="' . $product['product_id'] . '" data-action="decrease">-</button>';
-                                                echo '<input type="text" id="quantity' . $product['product_id'] . '" value="' . $product['quantity'] . '">';                                                echo '<button class="quantity-button" data-product-id="' . $product['product_id'] . '" data-action="increase">+</button>';
+                                                echo '<input type="text" id="quantity' . $product['product_id'] . '" value="' . $product['quantity'] . '">';
+                                                echo '<button class="quantity-button" data-product-id="' . $product['product_id'] . '" data-action="increase">+</button>';
                                                 echo '</div>';
                                                 echo '</div>';
                                                 echo '</div>'; // End of cart-item
@@ -342,20 +386,7 @@ $productAddedByArranger = $product['product_id'] == $user_id;
                 updateSubtotal();
             }
 
-            // Function to send an AJAX request to update the quantity on the server
-            function updateQuantityOnServer(action, productId, newQuantity) {
-                const xhr = new XMLHttpRequest();
-                xhr.open('POST', '../php/update_quantity.php', true);
-                xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-                xhr.onload = function () {
-                    if (xhr.status === 200) {
-                        // Quantity updated successfully on the server
-                    }
-                };
-
-                const data = `action=${action}&product_id=${productId}&quantity=${newQuantity}`;
-                xhr.send(data);
-            }
+           
         <?php } ?>
     </script>
 
@@ -372,27 +403,46 @@ $productAddedByArranger = $product['product_id'] == $user_id;
                     return state === 'checked';
                 }
 
-                // JavaScript to toggle all checkboxes when "All Items" is clicked
-                const selectAllItemsCheckbox = document.getElementById('selectAllItems');
+             
+                            // Function to save the checkbox state in local storage
+                function saveCheckboxState(id, isChecked) {
+                    localStorage.setItem(id, isChecked ? 'checked' : 'unchecked');
+                }
+
+                // Function to load the checkbox state from local storage
+                function loadCheckboxState(id) {
+                    const state = localStorage.getItem(id);
+                    return state === 'checked';
+                }
+
+                const shopCheckboxes = {}; // Object to store shop checkboxes
+
                 const itemCheckboxes = document.querySelectorAll('.item-checkbox');
-
-                selectAllItemsCheckbox.addEventListener('change', function () {
-                    const isChecked = this.checked;
-
-                    itemCheckboxes.forEach(checkbox => {
-                        checkbox.checked = isChecked;
-                        saveCheckboxState(checkbox.id, isChecked); // Save state in local storage
-                    });
-
-                    updateSubtotal();
-                });
 
                 // Handle checkbox changes
                 itemCheckboxes.forEach(checkbox => {
                     checkbox.addEventListener('change', function () {
-                        saveCheckboxState(checkbox.id, this.checked); // Save state in local storage
+                        const shopId = this.dataset.shopid; // Ensure camelCase here
+
+                        // Uncheck checkboxes in other shops
+                        for (const id in shopCheckboxes) {
+                            if (id !== shopId) {
+                                shopCheckboxes[id].forEach(otherCheckbox => {
+                                    otherCheckbox.checked = false;
+                                    saveCheckboxState(otherCheckbox.id, false);
+                                });
+                            }
+                        }
+
                         updateSubtotal();
                     });
+
+                    // Store checkboxes in the shopCheckboxes object
+                    const shopId = checkbox.dataset.shopid; // Ensure camelCase here
+                    if (!shopCheckboxes[shopId]) {
+                        shopCheckboxes[shopId] = [];
+                    }
+                    shopCheckboxes[shopId].push(checkbox);
                 });
 
                 // JavaScript to reset checkboxes on page load and load their state from local storage
@@ -400,30 +450,55 @@ $productAddedByArranger = $product['product_id'] == $user_id;
                     itemCheckboxes.forEach(checkbox => {
                         const isChecked = loadCheckboxState(checkbox.id);
                         checkbox.checked = isChecked; // Set checkboxes based on local storage
+
+                        const shopId = checkbox.dataset.shopid;
+                        if (!shopCheckboxes[shopId]) {
+                            shopCheckboxes[shopId] = [];
+                        }
+                        shopCheckboxes[shopId].push(checkbox);
                     });
 
                     updateSubtotal();
                 });
-            // JavaScript to handle quantity changes for all products
-            const quantityButtons = document.querySelectorAll('.quantity-button');
 
-            quantityButtons.forEach(button => {
-                button.addEventListener('click', function () {
-                    const quantityInput = this.parentNode.querySelector('input[type="text"]');
-                    let currentQuantity = parseInt(quantityInput.value);
+                const quantityButtons = document.querySelectorAll('.quantity-button');
 
-                    if (this.classList.contains('quantity-increase')) {
-                        currentQuantity++;
-                    } else if (this.classList.contains('quantity-decrease')) {
-                        if (currentQuantity > 1) {
-                            currentQuantity--;
+                quantityButtons.forEach(button => {
+                    button.addEventListener('click', function () {
+                        const quantityInput = this.parentNode.querySelector('input[type="text"]');
+                        let currentQuantity = parseInt(quantityInput.value);
+                        const productId = this.dataset.productId;
+                        const action = this.dataset.action; // Assuming you set a data-action attribute
+
+                        if (action === 'increase') {
+                            currentQuantity++;
+                        } else if (action === 'decrease') {
+                            if (currentQuantity > 1) {
+                                currentQuantity--;
+                            }
                         }
-                    }
 
-                    quantityInput.value = currentQuantity;
-                    updateSubtotal();
+                        quantityInput.value = currentQuantity;
+                        updateQuantityOnServer(action, productId, currentQuantity);
+                        // Call your update function here if needed
+                    });
                 });
-            });
+                
+                // Function to send an AJAX request to update the quantity on the server
+                function updateQuantityOnServer(action, productId, newQuantity) {
+                                const xhr = new XMLHttpRequest();
+                                xhr.open('POST', '../php/update_quantity.php', true);
+                                xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                                xhr.onload = function () {
+                                    if (xhr.status === 200) {
+                                        // Quantity updated successfully on the server
+                                        // You can update other UI elements here if needed
+                                    }
+                                };
+
+                                const data = `action=${action}&product_id=${productId}&quantity=${newQuantity}`;
+                                xhr.send(data);
+                            }
 
             // JavaScript to calculate and update the sub-total price
             function updateSubtotal() {

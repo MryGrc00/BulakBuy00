@@ -64,15 +64,16 @@
             outline:none;
         }
         .form-control1{
-            padding: 20px;
+             font-size: 13px;
+            padding: 8px;
+            margin-bottom: 10px;
             border:none;
             width: 440px;
             background-color: #F5F5F5;
             border-radius:10px;
             letter-spacing: 0.1rem;
             color:#888;
-            margin-top: 10px;
-            font-size: 13px;
+       
             outline: none !important;
         }
         .form-control1::placeholder {
