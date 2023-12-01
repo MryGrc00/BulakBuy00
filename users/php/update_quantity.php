@@ -2,16 +2,17 @@
 session_start();
 include '../php/dbhelper.php';
 
-if (isset($_SESSION['user_id']) && isset($_POST['action']) && isset($_POST['product_id']) && isset($_POST['quantity'])) {
+if (isset($_SESSION['user_id']) && isset($_POST['action']) && isset($_POST['product_id']) && isset($_POST['salesdetails_id']) && isset($_POST['quantity'])) {
     $user_id = $_SESSION['user_id'];
     $action = $_POST['action'];
     $product_id = $_POST['product_id'];
+    $salesdetails_id = $_POST['salesdetails_id'];
     $new_quantity = $_POST['quantity'];
 
     // Validate the action (increase or decrease)
     if ($action === 'increase' || $action === 'decrease') {
         // Update the quantity in the database
-        $success = update_product_quantity($user_id, $product_id, $action, $new_quantity);
+        $success = update_product_quantity($user_id, $product_id, $salesdetails_id, $action, $new_quantity);
 
         if ($success) {
             // Return a success response
@@ -23,7 +24,7 @@ if (isset($_SESSION['user_id']) && isset($_POST['action']) && isset($_POST['prod
     }
 }
 
-function update_product_quantity($user_id, $product_id, $action, $new_quantity) {
+function update_product_quantity($user_id, $product_id, $salesdetails_id, $action, $new_quantity) {
     $conn = dbconnect();
 
     try {
@@ -31,8 +32,8 @@ function update_product_quantity($user_id, $product_id, $action, $new_quantity) 
         $conn->beginTransaction();
 
         // Ensure that the current user owns the product in the cart
-        if (user_owns_product($conn, $user_id, $product_id)) {
-            $current_quantity = get_current_quantity($conn, $user_id, $product_id);
+        if (user_owns_product($conn, $user_id, $product_id, $salesdetails_id)) {
+            $current_quantity = get_current_quantity($conn, $user_id, $product_id, $salesdetails_id);
 
             if ($action === 'increase') {
                 // Increase the quantity by 1
@@ -43,9 +44,9 @@ function update_product_quantity($user_id, $product_id, $action, $new_quantity) 
             }
 
             // Update the quantity in the database
-            $sql = "UPDATE salesdetails SET quantity = ? WHERE customer_id = ? AND product_id = ?";
+            $sql = "UPDATE salesdetails SET quantity = ? WHERE customer_id = ? AND product_id = ? AND salesdetails_id = ?";
             $stmt = $conn->prepare($sql);
-            $stmt->execute([$new_quantity, $user_id, $product_id]);
+            $stmt->execute([$new_quantity, $user_id, $product_id, $salesdetails_id]);
 
             // Commit the transaction if everything was successful
             $conn->commit();
@@ -65,25 +66,25 @@ function update_product_quantity($user_id, $product_id, $action, $new_quantity) 
     }
 }
 
-function user_owns_product($conn, $user_id, $product_id) {
+function user_owns_product($conn, $user_id, $product_id, $salesdetails_id) {
     // Check if the user owns the product in the cart
-    $sql = "SELECT COUNT(*) FROM salesdetails WHERE customer_id = ? AND product_id = ?";
+    $sql = "SELECT COUNT(*) FROM salesdetails WHERE customer_id = ? AND product_id = ? AND salesdetails_id = ?";
     $stmt = $conn->prepare($sql);
-    $stmt->execute([$user_id, $product_id]);
+    $stmt->execute([$user_id, $product_id, $salesdetails_id]);
     $result = $stmt->fetchColumn();
 
     // If the count is greater than 0, the user owns the product
     return $result > 0;
 }
 
-
-function get_current_quantity($conn, $user_id, $product_id) {
+function get_current_quantity($conn, $user_id, $product_id, $salesdetails_id) {
     // Query the current quantity from the database
-    $sql = "SELECT quantity FROM salesdetails WHERE customer_id = ? AND product_id = ?";
+    $sql = "SELECT quantity FROM salesdetails WHERE customer_id = ? AND product_id = ? AND salesdetails_id = ?";
     $stmt = $conn->prepare($sql);
-    $stmt->execute([$user_id, $product_id]);
+    $stmt->execute([$user_id, $product_id, $salesdetails_id]);
     $result = $stmt->fetchColumn();
 
     return $result;
 }
+
 ?>

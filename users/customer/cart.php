@@ -79,11 +79,10 @@ function get_product_ids_in_cart($user_id) {
 
 
 // Function to get product details by joining the sales_details and products tables
-// Function to get product details by joining the sales_details and products tables
 function get_product_details($productID, $salesdetailsId) {
     $conn = dbconnect();
-    // Update the SQL query to include salesdetails_id in the WHERE clause
-    $sql = "SELECT p.*, sd.quantity FROM products p 
+    // Update the SQL query to include salesdetails_id in the SELECT statement
+    $sql = "SELECT p.*, sd.quantity, sd.salesdetails_id FROM products p 
             JOIN salesdetails sd ON p.product_id = sd.product_id
             WHERE p.product_id = ? AND sd.salesdetails_id = ?";
 
@@ -305,9 +304,9 @@ $productAddedByArranger = $product['product_id'] == $user_id;
                                                 }
                                                 echo '<p class="price">₱ ' . $product['product_price'] . '</p>';
                                                 echo '<div class="quantity-control">';
-                                                echo '<button class="quantity-button" data-product-id="' . $product['product_id'] . '" data-action="decrease">-</button>';
+                                                echo '<button class="quantity-button" data-product-id="' . $product['product_id'] . '" data-salesdetails-id="' . $product['salesdetails_id'] . '" data-action="decrease">-</button>';
                                                 echo '<input type="text" id="quantity' . $product['product_id'] . '" value="' . $product['quantity'] . '">';
-                                                echo '<button class="quantity-button" data-product-id="' . $product['product_id'] . '" data-action="increase">+</button>';
+                                                echo '<button class="quantity-button" data-product-id="' . $product['product_id'] . '" data-salesdetails-id="' . $product['salesdetails_id'] . '" data-action="increase">+</button>';
                                                 echo '</div>';
                                                 echo '</div>';
                                                 echo '</div>'; // End of cart-item
@@ -468,7 +467,8 @@ $productAddedByArranger = $product['product_id'] == $user_id;
                         const quantityInput = this.parentNode.querySelector('input[type="text"]');
                         let currentQuantity = parseInt(quantityInput.value);
                         const productId = this.dataset.productId;
-                        const action = this.dataset.action; // Assuming you set a data-action attribute
+                        const salesdetailsId = this.dataset.salesdetailsId; // Add this line
+                        const action = this.dataset.action;
 
                         if (action === 'increase') {
                             currentQuantity++;
@@ -479,26 +479,29 @@ $productAddedByArranger = $product['product_id'] == $user_id;
                         }
 
                         quantityInput.value = currentQuantity;
-                        updateQuantityOnServer(action, productId, currentQuantity);
+                        updateQuantityOnServer(action, productId, salesdetailsId, currentQuantity); // Update this line
                         // Call your update function here if needed
                     });
                 });
-                
-                // Function to send an AJAX request to update the quantity on the server
-                function updateQuantityOnServer(action, productId, newQuantity) {
-                                const xhr = new XMLHttpRequest();
-                                xhr.open('POST', '../php/update_quantity.php', true);
-                                xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-                                xhr.onload = function () {
-                                    if (xhr.status === 200) {
-                                        // Quantity updated successfully on the server
-                                        // You can update other UI elements here if needed
-                                    }
-                                };
 
-                                const data = `action=${action}&product_id=${productId}&quantity=${newQuantity}`;
-                                xhr.send(data);
-                            }
+                // Function to send an AJAX request to update the quantity on the server
+                function updateQuantityOnServer(action, productId, salesdetailsId, newQuantity) {
+                    const xhr = new XMLHttpRequest();
+                    xhr.open('POST', '../php/update_quantity.php', true);
+                    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                    xhr.onload = function () {
+                        if (xhr.status === 200) {
+                            // Quantity updated successfully on the server
+                            // You can update other UI elements here if needed
+                        }
+                    };
+
+                    const data = `action=${action}&product_id=${productId}&salesdetails_id=${salesdetailsId}&quantity=${newQuantity}`;
+                    xhr.send(data);
+                }
+
+
+
 
             // JavaScript to calculate and update the sub-total price
             function updateSubtotal() {
