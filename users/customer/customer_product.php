@@ -577,30 +577,30 @@ function add_cart_item_without_optional_fields($product_id, $customer_id, $quant
                 }
 
                 function toggleSelection(type, value) {
-    var selectedValues = document.getElementById(type === 'flower' ? 'selected_flower_types' : 'selected_ribbon_colors').value;
-    var valuesArray = selectedValues ? selectedValues.split(',') : [];
+                        var selectedValues = document.getElementById(type === 'flower' ? 'selected_flower_types' : 'selected_ribbon_colors').value;
+                        var valuesArray = selectedValues ? selectedValues.split(',') : [];
 
-    // Check if the value is already selected
-    var isSelected = valuesArray.includes(value);
+                        // Check if the value is already selected
+                        var isSelected = valuesArray.includes(value);
 
-    if (isSelected) {
-        // Unselect the value by removing it from the array
-        valuesArray = valuesArray.filter(val => val !== value);
-    } else {
-        // Select the value by adding it to the array
-        valuesArray.push(value);
-    }
+                        if (isSelected) {
+                            // Unselect the value by removing it from the array
+                            valuesArray = valuesArray.filter(val => val !== value);
+                        } else {
+                            // Select the value by adding it to the array
+                            valuesArray.push(value);
+                        }
 
-    document.getElementById(type === 'flower' ? 'selected_flower_types' : 'selected_ribbon_colors').value = valuesArray.join(',');
+                        document.getElementById(type === 'flower' ? 'selected_flower_types' : 'selected_ribbon_colors').value = valuesArray.join(',');
 
-    // Toggle the class for the clicked button
-    var buttons = document.querySelectorAll('.' + type + '-btn');
-    buttons.forEach(function (button) {
-        if (button.textContent.trim() === value) {
-            button.classList.toggle('selected-btn', !isSelected); // Toggle the class based on the current selection status
-        }
-    });
-}
+                        // Toggle the class for the clicked button
+                        var buttons = document.querySelectorAll('.' + type + '-btn');
+                        buttons.forEach(function (button) {
+                            if (button.textContent.trim() === value) {
+                                button.classList.toggle('selected-btn', !isSelected); // Toggle the class based on the current selection status
+                            }
+                        });
+                    }
 
 
 

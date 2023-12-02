@@ -18,8 +18,10 @@
             background-color:#f5f5f5;
         }
         .container{
+          
             width:500px;
             margin:auto;
+            margin-top: 70px;
             font-family: 'Poppins';
             background-color: white;
             box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);

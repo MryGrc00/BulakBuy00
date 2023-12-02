@@ -305,7 +305,7 @@ $productAddedByArranger = $product['product_id'] == $user_id;
                                             foreach ($shopProducts as $product) {
                                                 echo '<div class="cart-item">';
                                                 echo '<div class="custom-checkbox" style="margin-top: -30px">';
-                                                echo '<input type="checkbox" class="item-checkbox" data-shopId="' . $shopId . '" data-productId="' . $product['product_id'] . '" data-productName="' . $product['product_name'] . '" data-productPrice="' . $product['product_price'] . '" data-quantity="' . $product['quantity'] . '">';
+                                                echo '<input type="checkbox" class="item-checkbox" data-shopId="' . $shopId . '" data-productId="' . $product['product_id'] . '" data-productName="' . $product['product_name'] . '" data-productPrice="' . $product['product_price'] . '" data-quantity="' . $product['quantity'] . '" data-salesdetails-id="' . $product['salesdetails_id'] . '">';
                                                 echo '<img src="' . $product['product_img'] . '" alt="' . $product['product_name'] . '">';
                                                 echo '</div>';
                                         
@@ -324,7 +324,8 @@ $productAddedByArranger = $product['product_id'] == $user_id;
                                                     echo '<p class="ribbon">Ribbon:</p>';
                                                     echo '<p class="color">' . $salesDetails['ribbon_color'] . '</p>';
                                                     echo '</div>';
-                                                }                                  echo '<p class="price">₱ ' . $product['product_price'] . '</p>';
+                                                }                                 
+                                                echo '<p class="price">₱ ' . $product['product_price'] . '</p>';
                                                 echo '<div class="quantity-control">';
                                                 echo '<button class="quantity-button" data-product-id="' . $product['product_id'] . '" data-salesdetails-id="' . $product['salesdetails_id'] . '" data-action="decrease">-</button>';
                                                 echo '<input type="text" id="quantity' . $product['product_id'] . '" value="' . $product['quantity'] . '">';
@@ -561,30 +562,32 @@ $productAddedByArranger = $product['product_id'] == $user_id;
             }
 
             function getSelectedProducts() {
-                const itemCheckboxes = document.querySelectorAll('.item-checkbox');
-                const selectedProducts = [];
+    const itemCheckboxes = document.querySelectorAll('.item-checkbox');
+    const selectedProducts = [];
 
-                itemCheckboxes.forEach(checkbox => {
-                    if (checkbox.checked) {
-                        const shopId = checkbox.getAttribute('data-shopId'); // Add this line
-                        const productId = checkbox.getAttribute('data-productId');
-                        const productName = checkbox.getAttribute('data-productName');
-                        const productPrice = parseFloat(checkbox.getAttribute('data-productPrice'));
-                        const quantity = parseInt(checkbox.getAttribute('data-quantity'));
+    itemCheckboxes.forEach(checkbox => {
+        if (checkbox.checked) {
+            const shopId = checkbox.getAttribute('data-shopId');
+            const productId = checkbox.getAttribute('data-productId');
+            const productName = checkbox.getAttribute('data-productName');
+            const productPrice = parseFloat(checkbox.getAttribute('data-productPrice'));
+            const quantity = parseInt(checkbox.getAttribute('data-quantity'));
+            const salesdetailsId = checkbox.getAttribute('data-salesdetails-id'); // Add this line
 
-                        const productDetails = {
-                            shopId: shopId, // Add this line
-                            productId: productId,
-                            productName: productName,
-                            productPrice: productPrice,
-                            quantity: quantity
-                        };
-                        selectedProducts.push(productDetails);
-                    }
-                });
+            const productDetails = {
+                shopId: shopId,
+                productId: productId,
+                productName: productName,
+                productPrice: productPrice,
+                quantity: quantity,
+                salesdetailsId: salesdetailsId // Add this line
+            };
+            selectedProducts.push(productDetails);
+        }
+    });
 
-                return selectedProducts;
-            }
+    return selectedProducts;
+}
 
 
 
