@@ -427,50 +427,16 @@
 	margin-top: 6%;
 	margin-bottom: 4%;
 }
-.t-btn {
-	align-items: center;
-	padding: 5px 9px;
-	border-radius: 10px;
-	border: 1px solid #65A5A5;
-	background: #FFF;
-	color: #666;
-	;
-	margin: 5px 6px;
-	cursor: pointer;
-	width: auto;
-	font-size: 14px;
-}
-.t-btn:focus {
-	outline: none;
-	border: none;
-	background-color: #65A5A5;
-	color: white;
-}
+
+
 .ribbon-label {
 	font-size: 16px;
 	color: #666;
 	margin-top: 6%;
 	margin-bottom: 4%;
 }
-.ribbon-btn {
-	align-items: center;
-	padding: 5px 9px;
-	border-radius: 10px;
-	border: 1px solid #65A5A5;
-	background: #FFF;
-	color: #666;
-	;
-	margin: 5px 6px;
-	cursor: pointer;
-	width: auto;
-	font-size: 14px;
-}
-.ribbon-btn:focus {
-	outline: none;
-	border: none;
-	background-color: #65A5A5;
-	color: white;
-}
+
+
 .m-label {
 	font-size: 16px;
 	color: #666;

@@ -196,6 +196,29 @@ function add_cart_item_without_optional_fields($product_id, $customer_id, $quant
                 border-radius: 20px;
                 margin-top: 30px;
             }
+            .flower-btn,
+                .ribbon-btn {
+                    align-items: center;
+                    padding: 5px 9px;
+                    border-radius: 10px;
+                    border: 1px solid #65A5A5;
+                    background: #FFF;
+                    color: #666;
+                    margin: 5px 6px;
+                    cursor: pointer;
+                    width: auto;
+                    font-size: 14px;
+                }
+
+                .flower-btn:focus,
+                .ribbon-btn:focus,
+                .selected-btn {
+                    outline: none;
+                    border: none;
+                    background-color: #65A5A5;
+                    color: white;
+                }
+
         </style>
     </head>
     <body>
@@ -260,54 +283,53 @@ function add_cart_item_without_optional_fields($product_id, $customer_id, $quant
                     <p class="p-category"><?php echo $product['product_category']; ?></p>
                     <p class="p-price"> <?php echo $product['product_price']; ?></p>
                     <p class="p-ratings">4.5 ratings & 35 reviews</p>
-                    <form method="POST" action="">
-                    <?php if ($isArranger): ?>
-                        <div class="f-type">
-                            <h4 class="type-label">Flower Type(s)</h4>
- <!-- Flower Types -->
-                        <?php
+                    <form method="POST" action=""id="myForm">
+                        <?php if ($isArranger): ?>
+                            <div class="f-type">
+                                <h4 class="type-label">Flower Type(s)</h4>
+                                <?php
                                 if (!empty($product['flower_type'])) {
                                     $flowerTypes = explode(',', $product['flower_type']);
                                     foreach ($flowerTypes as $type) {
-                                        echo '<button type="button" class="t-btn" onclick="toggleSelection(\'flower\', \'' . htmlspecialchars(trim($type)) . '\')">' . htmlspecialchars(trim($type)) . '</button>';
+                                        echo '<button type="button" class="flower-btn" onclick="toggleSelection(\'flower\', \'' . htmlspecialchars(trim($type)) . '\')">' . htmlspecialchars(trim($type)) . '</button>';
                                     }
                                 }
-                            ?>
-                        </div>
-                        <div class="ribbon">
-                            <h4 class="ribbon-label">Ribbon Color</h4>
-                          <?php
-                                if (!empty($product['ribbon_color'])) {
-                                    $ribbonColors = explode(',', $product['ribbon_color']);
-                                    foreach ($ribbonColors as $color) {
-                                        echo '<button type="button" class="ribbon-btn" onclick="toggleSelection(\'ribbon\', \'' . htmlspecialchars(trim($color)) . '\')">' . htmlspecialchars(trim($color)) . '</button>';
+                                ?>
+                            </div>
+                            <div class="ribbon">
+                                <h4 class="ribbon-label">Ribbon Color</h4>
+                            <?php
+                                    if (!empty($product['ribbon_color'])) {
+                                        $ribbonColors = explode(',', $product['ribbon_color']);
+                                        foreach ($ribbonColors as $color) {
+                                            echo '<button type="button" class="ribbon-btn" onclick="toggleSelection(\'ribbon\', \'' . htmlspecialchars(trim($color)) . '\')">' . htmlspecialchars(trim($color)) . '</button>';
+                                        }
                                     }
-                                }
-                            ?>
-                        </div>
-                        <div class="p-message">
-                            <input type="text" class="message" name="message" placeholder="Message">
-                        </div>                       
-                    <?php endif; ?>
-                    <div class="btn-container">
-                        <div class="add-btn">
-                            <input type="hidden" name="product_id" value="<?= $product['product_id'] ?>">
-                            <!-- Hidden fields for selected flower types and ribbon colors -->
-                            <input type="hidden" name="selected_flower_types" id="selected_flower_types" value="">
-                            <input type="hidden" name="selected_ribbon_colors" id="selected_ribbon_colors" value="">
-                            <button class="add add-to-cart-button" name="add-to-cart" data-product-id="<?= $product['product_id'] ?>">Add to Cart</button>
+                                ?>
+                            </div>
+                            <div class="p-message">
+                                <input type="text" class="message" name="message" placeholder="Message">
+                            </div>                       
+                        <?php endif; ?>
+                            <div class="btn-container">
+                                <div class="add-btn">
+                                    <input type="hidden" name="product_id" value="<?= $product['product_id'] ?>">
+                                    <!-- Hidden fields for selected flower types and ribbon colors -->
+                                    <input type="hidden" name="selected_flower_types" id="selected_flower_types" value="">
+                                    <input type="hidden" name="selected_ribbon_colors" id="selected_ribbon_colors" value="">
+                                    <button class="add add-to-cart-button" name="add-to-cart" data-product-id="<?= $product['product_id'] ?>">Add to Cart</button>
                         </form>
                    
                                 <a href="chat.php?user_id=<?php echo $user['user_id']; ?>">
-                                <button class="messenger"><i class="bi bi-messenger"></i></button>
-                            </a>
+                                    <button class="messenger"><i class="bi bi-messenger"></i></button>
+                                </a>
                         </div>
-                        <div id="addModal" class="modal">
-                            <div class="modal-content">
-                                <i class="bi bi-check-circle"></i>
-                                <p class="confirm-order">Added to Cart</p>
+                            <div id="addModal" class="modal">
+                                <div class="modal-content">
+                                    <i class="bi bi-check-circle"></i>
+                                    <p class="confirm-order">Added to Cart</p>
+                                </div>
                             </div>
-                        </div>
                     </div>
                         <p class="p-desc-label">Description</p>
                         <p class="p-desc"><?php echo $product['product_desc']; ?></p>   
@@ -554,19 +576,32 @@ function add_cart_item_without_optional_fields($product_id, $customer_id, $quant
                     });
                 }
 
+                function toggleSelection(type, value) {
+    var selectedValues = document.getElementById(type === 'flower' ? 'selected_flower_types' : 'selected_ribbon_colors').value;
+    var valuesArray = selectedValues ? selectedValues.split(',') : [];
 
-            function toggleSelection(type, value) {
-                var selectedValues = document.getElementById(type === 'flower' ? 'selected_flower_types' : 'selected_ribbon_colors').value;
-                var valuesArray = selectedValues ? selectedValues.split(',') : [];
+    // Check if the value is already selected
+    var isSelected = valuesArray.includes(value);
 
-                if (valuesArray.includes(value)) {
-                    valuesArray = valuesArray.filter(val => val !== value); // Remove if already selected
-                } else {
-                    valuesArray.push(value); // Add if not selected
-                }
+    if (isSelected) {
+        // Unselect the value by removing it from the array
+        valuesArray = valuesArray.filter(val => val !== value);
+    } else {
+        // Select the value by adding it to the array
+        valuesArray.push(value);
+    }
 
-                document.getElementById(type === 'flower' ? 'selected_flower_types' : 'selected_ribbon_colors').value = valuesArray.join(',');
-            }
+    document.getElementById(type === 'flower' ? 'selected_flower_types' : 'selected_ribbon_colors').value = valuesArray.join(',');
+
+    // Toggle the class for the clicked button
+    var buttons = document.querySelectorAll('.' + type + '-btn');
+    buttons.forEach(function (button) {
+        if (button.textContent.trim() === value) {
+            button.classList.toggle('selected-btn', !isSelected); // Toggle the class based on the current selection status
+        }
+    });
+}
+
 
 
 
@@ -700,6 +735,16 @@ function add_cart_item_without_optional_fields($product_id, $customer_id, $quant
             addToCartAndShowModal();
         });
     });
+</script>
+<script>
+    function clearForm() {
+        // Clear form fields
+        document.getElementById("myForm").reset();
+        
+        // You may also want to reset the values of hidden fields if needed
+        document.getElementById("selected_flower_types").value = "";
+        document.getElementById("selected_ribbon_colors").value = "";
+    }
 </script>
 
       

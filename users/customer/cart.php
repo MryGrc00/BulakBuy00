@@ -99,6 +99,29 @@ function get_product_details($productID, $salesdetailsId) {
     $conn = null;
     return $product;
 }
+// Example function to fetch sales details based on product ID
+function get_salesdetails($productID) {
+    // Replace this with your database connection code
+    $conn = dbconnect();
+
+    // Replace this query with your actual query to fetch sales details
+    $sql = "SELECT flower_type, ribbon_color FROM salesdetails WHERE product_id = :productID";
+
+    try {
+        $stmt = $conn->prepare($sql);
+        // Bind the parameter and execute the statement
+        $stmt->bindParam(':productID', $productID, PDO::PARAM_INT);
+        $stmt->execute();
+        $product = $stmt->fetch(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        echo $sql . "<br>" . $e->getMessage();
+        return false;
+    }
+
+    $conn = null;
+    return $product;
+}
+
 
 function getCurrentQuantityFromDatabase($product_id, $salesdetails_id) {
     $user_id = $_SESSION['user_id'];
@@ -289,20 +312,19 @@ $productAddedByArranger = $product['product_id'] == $user_id;
                                                 // Rest of your product display code...
                                                 echo '<div class="item-details">';
                                                 echo '<h2>' . $product['product_name'] . '</h2>';                
-                                                $flowerType = $product['flower_type'];
-                                                $ribbonColor = $product['ribbon_color'];
-                                                
-                                                if (!empty($flowerType) && !empty($ribbonColor)) {
+                                                //Retrieve flower type and ribbon color from salesdetails table
+                                                $salesDetails = get_salesdetails($product['product_id']); // Replace with your function to fetch salesdetails
+
+                                                if ($salesDetails) {
                                                     echo '<div class="flower-type">';
                                                     echo '<p class="flower">Flower:</p>';
-                                                    echo '<p class="type">' . $flowerType . '</p>';
+                                                    echo '<p class="type">' . $salesDetails['flower_type'] . '</p>';
                                                     echo '</div>';
                                                     echo '<div class="ribbon-color">';
                                                     echo '<p class="ribbon">Ribbon:</p>';
-                                                    echo '<p class="color">' . $ribbonColor. '</p>';
+                                                    echo '<p class="color">' . $salesDetails['ribbon_color'] . '</p>';
                                                     echo '</div>';
-                                                }
-                                                echo '<p class="price">₱ ' . $product['product_price'] . '</p>';
+                                                }                                  echo '<p class="price">₱ ' . $product['product_price'] . '</p>';
                                                 echo '<div class="quantity-control">';
                                                 echo '<button class="quantity-button" data-product-id="' . $product['product_id'] . '" data-salesdetails-id="' . $product['salesdetails_id'] . '" data-action="decrease">-</button>';
                                                 echo '<input type="text" id="quantity' . $product['product_id'] . '" value="' . $product['quantity'] . '">';
