@@ -1,16 +1,8 @@
 <?php
 session_start();
 
-// Include dbhelper.php to use the dbconnect() function
 include_once "php/dbhelper.php";
 
-// Check if user is logged in
-if (isset($_SESSION['user_id'])) {
-    header("Location: new_password.php"); 
-} else {
-    header("Location: forgot_password.php"); 
-    exit();
-}
 // Establish database connection using dbconnect() function
 $conn = dbconnect();
 
@@ -21,7 +13,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Check if the new password matches the confirm password
     if ($newPassword === $confirmPassword) {
-        
         $hashedPassword = md5($newPassword);
 
         // Retrieve the email from the session variable
@@ -33,8 +24,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt->bindParam(':email', $email);
 
         if ($stmt->execute()) {
-            // Password updated successfully, you can redirect to a success page or login page
-            header("Location: login.php");
+            // Password updated successfully
+
+            // Retrieve the user's role from the session variable
+            $userRole = $_SESSION["role"];
+
+            // Redirect based on the user's role
+            if ($userRole == "admin") {
+                header("Location: admin/index.php");
+            } else {
+                header("Location: login.php");
+            }
             exit();
         } else {
             // Error updating password, handle it accordingly
@@ -46,6 +46,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 ?>
+
 
 
 

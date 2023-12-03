@@ -38,7 +38,7 @@ if (!empty($input) && !empty($password)) {
 
                 if ($updateStatus) {
                     $_SESSION['user_id'] = $row['user_id'];
-                    $_SESSION['role'] = $row['role'];  // Store the user's role in the session
+                    $_SESSION['role'] = $row['role'];  
 
                     // Redirect based on the user role
                     if ($row['role'] === 'customer') {

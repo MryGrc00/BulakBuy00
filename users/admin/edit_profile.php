@@ -1,15 +1,16 @@
 <?php
-session_start();
+include('checksession.php'); 
 include('../php/dbhelper.php'); 
+
 
 $pdo = dbconnect();
 
-if (isset($_GET['admin_id'])) {
-    $admin_id= $_GET['admin_id'];
-    $admin = get_record('admin', 'admin_id', $admin_id);
+if (isset($_GET['user_id'])) {
+    $user_id= $_GET['user_id'];
+    $admin = get_record('users', 'user_id', $user_id);
 
     if ($admin) {
-        $profileImg = $admin['admin_img']; // Default to existing image path
+        $profileImg = $admin['profile_img']; // Default to existing image path
 
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $firstname = htmlspecialchars($_POST['first_name']);
@@ -19,8 +20,8 @@ if (isset($_GET['admin_id'])) {
 
             // Process and upload profile image
             $uploadDir = '../php/images/';
-            if (isset($_FILES['admin_img']) && $_FILES['admin_img']['error'] == 0) {
-                $profileImage = $_FILES['admin_img'];
+            if (isset($_FILES['profile_img']) && $_FILES['profile_img']['error'] == 0) {
+                $profileImage = $_FILES['profile_img'];
                 $uploadFile = $uploadDir . basename($profileImage['name']);
                 $allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
 
@@ -32,12 +33,12 @@ if (isset($_GET['admin_id'])) {
             }
 
             try {
-                $stmt = $pdo->prepare("UPDATE admin SET first_name = :first_name, last_name = :last_name, email = :email, admin_img = :admin_img WHERE admin_id = :admin_id");
+                $stmt = $pdo->prepare("UPDATE users SET first_name = :first_name, last_name = :last_name, email = :email, profile_img = :profile_img WHERE user_id = :user_id");
                 $stmt->bindParam(':first_name', $firstname);
                 $stmt->bindParam(':last_name', $lastname);
                 $stmt->bindParam(':email', $email);
-                $stmt->bindParam(':admin_img', $profileImg);
-                $stmt->bindParam(':admin_id', $admin_id);
+                $stmt->bindParam(':profile_img', $profileImg);
+                $stmt->bindParam(':user_id', $user_id);
                 $stmt->execute();
 
                 header("Location: dashboard.php"); // Redirect after successful update
@@ -49,9 +50,6 @@ if (isset($_GET['admin_id'])) {
     } else {
         echo "User not found!";
     }
-} else {
-    header("Location: login.php"); 
-    exit();
 }
 ?>
 
@@ -105,11 +103,11 @@ if (isset($_GET['admin_id'])) {
 </header>
 <div class="wrapper">
     <form action="" enctype="multipart/form-data" method="post">
-        <?php if ($users): ?>
+        <?php if ($admin): ?>
             <div class="form-container">
             <h3 class="profimgT">Profile Image</h3>                      
             <div class="circle-container">
-            <img class="circle-image" id="profile-image" src="<?php echo !empty($users['profile_img']) ? $users['profile_img'] : 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'; ?>" alt="Shop Image">                       <label class="upload-button">
+            <img class="circle-image" id="profile-image" src="<?php echo !empty($admin['profile_img']) ? $admin['profile_img'] : 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'; ?>" alt="Shop Image">                       <label class="upload-button">
                         <input accept="image/*" type="file" id="imageInput" name="profile_img">
                         <i class="bi bi-plus"></i>
                     </label>
@@ -117,13 +115,13 @@ if (isset($_GET['admin_id'])) {
             
     
             <h3 class="prodnaT">First Name</h3>
-            <input type="text" name="first_name" id="first_name" value="<?php echo $users['first_name']; ?>" required>
+            <input type="text" name="first_name" id="first_name" value="<?php echo $admin['first_name']; ?>" required>
              
             <h3 class="prodnaT">Last Name</h3>
-            <input type="text" name="last_name" id="last_name" value="<?php echo $users['last_name']; ?>" required>
+            <input type="text" name="last_name" id="last_name" value="<?php echo $admin['last_name']; ?>" required>
              
             <h3 class="prodnaT">Email</h3>
-            <input type="text" name="email" id="email" value="<?php echo $users['email']; ?>" required>
+            <input type="text" name="email" id="email" value="<?php echo $admin['email']; ?>" required>
 
             <div class="submit-btn">
                 <button class="addbtn" type="submit" value="Save">Save</button>

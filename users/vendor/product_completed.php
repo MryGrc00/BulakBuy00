@@ -39,7 +39,7 @@
         </nav><hr class="nav-hr">
     </header>
 <?php
-session_start();
+include('../php/checksession.php'); 
 include '../php/dbhelper.php';
 
 if (isset($_SESSION['user_id'])) {

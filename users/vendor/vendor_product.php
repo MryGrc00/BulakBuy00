@@ -1,5 +1,5 @@
 <?php
-session_start();
+include('../php/checksession.php'); 
 if (isset($_SESSION["user_id"]) && ($_SESSION["role"] === "seller" || $_SESSION["role"] === "arranger")) {
     $user_id = $_SESSION["user_id"];
     

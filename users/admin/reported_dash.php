@@ -151,7 +151,7 @@ $filtered_reports = get_filtered_reports();
                </a>
             </li>
             <li>
-               <a href="reported_accounts.php" class="active">
+               <a href="reported_accounts.php">
                <i class="fa fa-user-times" aria-hidden="true"></i>
                <span class="links_name">Reported Accounts</span>
                </a>
@@ -258,36 +258,59 @@ $filtered_reports = get_filtered_reports();
                           <table class="table" id="myTable">
                               <thead style="text-align: center;">
                                  <tr class="title " style="text-align: center;">
-                                    <th scope="col" class="px-5" style="text-align: center;">Complainant</th>
-                                    <th scope="col" class="px-5" style="text-align: center;">Defendant</th>
-                                    <th scope="col" class="px-5" style="text-align: center;">Reason</th>
+                                    <th scope="col" class="px-5" style="text-align: center;">Name</th>
+                                    <th scope="col" class="px-5" style="text-align: center;">Shop Name</th>
+                                    <th scope="col" class="px-5" style="text-align: center;">Count</th>
                                     <th scope="col" class="px-5" style="text-align: center;">Action</th>
                                  </tr>
                               </thead>
                               <tbody>
                               <?php
-                        foreach ($filtered_reports as $report) {
-                           // Assuming you have user details fetch function like get_user_details()
-                           $complainant = get_user_details($report['complainant_id']);
-                           $complainantFullName = $complainant['first_name'] . ' ' . $complainant['last_name'];
-                       
-                         // Fetch shop details
-                           $defendant = get_shop_details($report['defendant_id']); // Assuming this function exists
-                           $shopName = isset($defendant['shop_name']) ? $defendant['shop_name'] : 'N/A';
 
-                           echo '<tr class="name" style="text-align: center;">';
-                           echo '<td class="px-5 py-2" style="width:300px;">' . $complainantFullName . '</td>';
-                           echo '<td class="px-5 py-2" style="width:300px;">' . $shopName. '</td>';
-                           echo '<td class="px-5 py-2">' . $report['reason'] . '</td>';
-                           echo '<td class="button py-2" style="min-width: 240px;">';
-                           echo '&nbsp;<a href="../chat.php?user_id=' . $report['complainant_id'] . '">';                           echo '<button class="btn dib"><i class="fa fa-comments" aria-hidden="true"></i> Complainant</button>';
-                           echo '</a>';
-                           echo '&nbsp;<a href="../chat.php?user_id=' . $defendant['owner_id'] . '">';                           echo '<button class="btn dib"><i class="fa fa-comments" aria-hidden="true"></i> Defendant</button>';
-                           echo '</a>';
-                           echo '</td>';
-                           echo '</tr>';
-                        }
-                        ?>
+                                        $shopReportCounts = [];
+                                        foreach ($filtered_reports as $report) {
+                                            $shopId = $report['defendant_id'];
+                                            if (!isset($shopReportCounts[$shopId])) {
+                                                $shopReportCounts[$shopId] = 1;
+                                            } else {
+                                                $shopReportCounts[$shopId]++;
+                                            }
+                                        }
+                                        foreach ($shopReportCounts as $shopId => $count) {
+                                            $defendant = get_shop_details($shopId);
+                                            $shopName = isset($defendant['shop_name']) ? $defendant['shop_name'] : 'N/A';
+                                        
+                                            if (isset($defendant['owner_id'])) {
+                                                $ownerId = $defendant['owner_id'];
+                                                $ownerDetails = get_user_details($ownerId);
+                                                $ownerFullName = isset($ownerDetails['first_name']) && isset($ownerDetails['last_name']) ? $ownerDetails['first_name'] . ' ' . $ownerDetails['last_name'] : 'N/A';
+                                            }
+
+                                        $defendant = get_shop_details($report['defendant_id']); 
+                                        $shopId = $defendant['shop_id']; 
+
+                                        // Assuming you have user details fetch function like get_user_details()
+                                        $complainant = get_user_details($report['complainant_id']);
+                                        $complainantFullName = $complainant['first_name'] . ' ' . $complainant['last_name'];
+
+                                        $defendant = get_shop_details($report['defendant_id']); 
+                                        $shopName = isset($defendant['shop_name']) ? $defendant['shop_name'] : 'N/A';
+                                        
+                                        
+                                        
+                                       
+                                        
+                                        echo '<tr class="name" style="text-align: center;">';
+                                        echo '<td class="px-5 py-2" style="width: 300px;">' . htmlspecialchars($ownerFullName) . '</td>';
+                                        echo '<td class="px-5 py-2" style="width: 300px;">' . htmlspecialchars($shopName) . '</td>';
+                                        echo '<td class="px-5 py-2">' . $shopReportCounts[$shopId] . '</td>';
+                                        echo '<td class="button py-2" style="min-width: 240px;">';
+                                        echo '<button class="btn dib"  onclick="blockShop(' . $report['defendant_id'] . ')">Block</button>';
+                                        echo '</td>';
+                                        echo '</tr>';
+                                    }
+                                ?>
+
                         </tbody>
                            </table>
                         </div>
@@ -350,6 +373,26 @@ function blockShop(shopId) {
     }
 }
 </script>
+
+<script>
+function deleteShop(shopId) {
+    if(confirm("Are you sure you want to delete this shop and its owner?")) {
+        $.ajax({
+            url: 'delete_shop.php',
+            type: 'POST',
+            data: { 'shop_id': shopId, 'action': 'delete_shop' },
+            success: function(response) {
+                alert(response);
+                location.reload();
+            },
+            error: function(xhr, status, error) {
+                console.error("Error deleting shop:", error);
+            }
+        });
+    }
+}
+</script>
+
 
    </body>
 </html> ]

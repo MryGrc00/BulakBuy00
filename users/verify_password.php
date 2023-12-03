@@ -162,7 +162,7 @@ form button:hover {
         <i class="bx bxs-check-shield"></i>
     </header>
     <h4>Enter OTP Code</h4>
-    <form id="otp-form" action="php/verify_otp1.php" method="post">
+    <form id="otp-form" action="../php/verify_otp1.php" method="post">
         <div class="error-text"></div>
         <div class="input-field">
             <input type="number" maxlength="1"/>

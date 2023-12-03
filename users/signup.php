@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="../css/login.css">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css" /> 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity= "sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -36,7 +36,7 @@
         }
         .signup{
             color:#666;
-            font-size: 17px;
+            font-size: 20px;
             text-align: center;
             letter-spacing: 0.1rem;
             margin-top: 15px;
@@ -64,15 +64,16 @@
             outline:none;
         }
         .form-control1{
-            padding: 20px;
+          font-size: 13px;
+            padding: 8px;
+            margin-bottom: 10px;
             border:none;
             width: 440px;
             background-color: #F5F5F5;
             border-radius:10px;
             letter-spacing: 0.1rem;
             color:#888;
-            margin-top: 10px;
-            font-size: 13px;
+       
             outline: none !important;
         }
         .form-control1::placeholder {

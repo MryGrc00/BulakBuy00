@@ -29,7 +29,7 @@ if (isset($_SESSION['user_id']) && isset($_SESSION['role'])) {
     
         // Set start and end dates for the subscription
         $s_date = date('Y-m-d H:i:s'); 
-        $e_date = date('Y-m-d H:i:s', strtotime('+1 month')); // 1 month from today
+        $e_date = date('Y-m-d H:i:s', strtotime('+30 days')); // 1 month from today
     
         // Check if a subscription already exists for the shop_id
         $checkSql = "SELECT * FROM subscription WHERE shop_id = :shop_id";

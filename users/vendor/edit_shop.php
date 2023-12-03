@@ -1,5 +1,5 @@
 <?php
-session_start();
+include('../php/checksession.php'); 
 include '../php/dbhelper.php'; // Ensure this path is correct
 
 // Check user login and role

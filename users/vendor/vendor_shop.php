@@ -1,13 +1,8 @@
 <?php
-session_start();
-
-// Redirect to login page if not logged in
-if (!isset($_SESSION["user_id"])) {
-    header("Location: ../login.php"); // Adjust the path as needed
-    exit(); // It's important to exit here
-}
-
+include('../php/checksession.php'); 
 include '../php/dbhelper.php'; // Ensure this path is correct
+
+
 $pdo = dbconnect();
 
 $user_id = $_SESSION["user_id"]; // This is now safe to use

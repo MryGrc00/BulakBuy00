@@ -6,32 +6,50 @@ $alert = "";
 
 if (isset($_POST["login"])) {
     $email = $_POST["email"];
-    $pword = $_POST["password"]; // Consider a more secure hashing method
+    $pword = md5($_POST["password"]); 
 
     try {
         $conn = dbconnect();
 
         // Prepare and execute SQL statement for the admin table
-        $stmt = $conn->prepare("SELECT * FROM `admin` WHERE email = :email AND password = :password");
+        $stmt = $conn->prepare("SELECT * FROM `users` WHERE email = :email AND password = :password");
         $stmt->execute(['email' => $email, 'password' => $pword]);
 
         if ($stmt->rowCount() == 1) {
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
             // Set session variables
-            $_SESSION["admin_id"] = $user["admin_id"]; 
+            $_SESSION["user_id"] = $user["user_id"]; 
+            $_SESSION["role"] = $user["role"]; // Set the user's role in the session
 
-            // Redirect to an admin dashboard
-            header("Location: dashboard.php");
-            exit();
+            // Redirect based on the user's role
+            if ($user['role'] != 'admin') {
+                $alert = "Access denied. You are not authorized to access this page.";
+            } else {
+                // Define status
+                $status = 'Active Now';
+
+                // Update last login time and status
+                $updateStmt = $conn->prepare("UPDATE `users` SET status = :status WHERE user_id = :user_id");
+                $updateStmt->execute(['user_id' => $user["user_id"], 'status' => $status]);
+
+                // Redirect to an admin dashboard
+                header("Location: dashboard.php");
+                exit();
+            }
         } else {
-            $alert = "Invalid username or password.";
+            $alert = "Invalid email or password.";
         }
     } catch (PDOException $e) {
         echo "Connection failed: " . $e->getMessage();
     }
 }
+
 ?>
+
+
+
+
 
 
 <!DOCTYPE html>
@@ -45,25 +63,25 @@ if (isset($_POST["login"])) {
   <link rel="stylesheet" href="../../css/login1.css">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
-  <style>
-    <?php if (!empty($alert_message)) { ?>
+<style>
+    <?php if (!empty($alert)) { ?>
       .alert {
-        background-color:lightpink;
+        background-color: #f44336; /* Red background color for error */
         color: white;
         padding: 10px;
-        width:70%;
+        width: 70%;
         border-radius: 15px;
-        border: 2px solid lightpink;
-        background-color: transparent;
-        margin-top:40px;
-        margin-bottom:-2px;
+        border: 2px solid #d32f2f; /* Darker red border color */
+        margin-top: 40px;
+        margin-bottom: -2px;
       }
 
       .alert button.close {
         color: white;
       }
     <?php } ?>
-  </style>
+</style>
+
 <body>
     <div class="content-container">
       <div class="input-box">
@@ -71,22 +89,24 @@ if (isset($_POST["login"])) {
           <h3>Welcome to</h3>
           <img src='../php/images/logo.png' alt="BulakBuy Logo">
         </header>
-        <?php if (!empty($alert_message)) { ?>
-          <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-            <?php echo $alert_message; ?>
-          </div>
-        <?php } ?>
+        <?php if (!empty($alert)) { ?>
+            <div id="alert" class="alert alert-danger alert-dismissible fade show" role="alert">
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+              <?php echo $alert; ?>
+            </div>
+          <?php } ?>
         <br>
         <form action="" method="post"> 
           <div class="form-group">
             <input type="text" class="input form-control" name="email" id="email" required placeholder="Email"> 
           </div>
           <div class="form-group">
-            <input type="password" class="input form-control" name="password" id="password" required placeholder="Password"> 
-            <i class="bi bi-eye-slash" id="togglePassword"></i>
+          <input type="password" class="input form-control" name="password" id="password" placeholder="Password" required>
+              <span class="toggle-password" id="togglePassword">
+                  <i class="bi bi-eye-slash"></i>
+              </span>
           </div>
           <div class="text-center">
             <button type="submit" class="btn" name="login" value="LOGIN">Login</button>
@@ -94,29 +114,22 @@ if (isset($_POST["login"])) {
         </form>
       </div>
     </div>  
-    <script>
-      //event listener for the close button
-      document.querySelector('.close').addEventListener('click', function() {
-        this.parentNode.parentNode.removeChild(this.parentNode);
-      });
-    </script>
-    <script>
-      const togglePassword = document.querySelector("#togglePassword");
-      const password = document.querySelector("#password");
+    <script src="../js/show-hide-pass.js"></script>
 
-      togglePassword.addEventListener("click", function () {
-        // toggle the type attribute
-        const type = password.getAttribute("type") === "password" ? "text" : "password";
-        password.setAttribute("type", type);
+  <script>
+    // Function to hide the alert after 5 seconds
+    function hideAlert() {
+      var alert = document.getElementById('alert');
+      if (alert) {
+        setTimeout(function() {
+          alert.style.display = 'none';
+        }, 5000); // 5000 milliseconds (5 seconds)
+      }
+    }
 
-        // toggle the icon
-        this.classList.toggle("bi-eye");
-      });
+    // Call the hideAlert function when the page loads
+    window.onload = hideAlert;
+  </script>
 
-      // prevent form submit only when the eye icon is clicked
-      togglePassword.addEventListener('click', function (e) {
-        e.preventDefault();
-      });
-    </script> 
 </body>
 </html>

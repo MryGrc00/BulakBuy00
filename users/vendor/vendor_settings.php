@@ -1,12 +1,8 @@
 <?php
-session_start();
+include('../php/checksession.php'); 
 include_once "../php/dbhelper.php"; // Include dbhelper.php which contains the dbconnect() function
 
 $conn = dbconnect(); // Establish database connection using dbconnect() function from dbhelper.php
-
-if (!isset($_SESSION['user_id'])) {
-    header("location: login.php");
-}
 
 $sql = $conn->prepare("SELECT * FROM users WHERE user_id = :user_id");
 $sql->bindParam(':user_id', $_SESSION['user_id']);

@@ -1,7 +1,6 @@
 <?php
 session_start();
 include '../php/dbhelper.php';
-include '../php/checksession.php';
 
 if (isset($_SESSION["user_id"])) {
     $seller_id = $_SESSION["user_id"];

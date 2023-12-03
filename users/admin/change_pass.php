@@ -1,49 +1,75 @@
+
+
 <?php
 include('checksession.php'); 
-include('../php/dbhelper.php'); 
-if (isset($_SESSION["user_id"])) {
-   $user_id = $_SESSION["user_id"];
-   $users = get_record('users','user_id',$user_id);
+include('../php/dbhelper.php');
+include_once('../php/mail.php');
+
+if (isset($_SESSION["user_id"]) && ($_GET['email']) ){
+    $user_id = $_SESSION["user_id"];
+    $users = get_record('users','user_id',$user_id);
+    $mail= $_GET['email'];
+    $user = fetchAllExceptAdmin("users");
+ 
+// Establish database connection
+$conn = dbconnect();
+
+if (isset($_POST['submit'])) {
+    $email = $_POST['email'];
+
+    // Check if the email exists in the database
+    $checkStmt = $conn->prepare("SELECT * FROM users WHERE email = :email");
+    $checkStmt->bindParam(':email', $email);
+    $checkStmt->execute();
+
+    if ($checkStmt->rowCount() > 0) {
+        try {
+            // Generate a new OTP
+            $newOTP = generateOTP(); 
+
+            // Update the OTP in the database for the given email
+            $updateStmt = $conn->prepare("UPDATE users SET otp = :otp WHERE email = :email");
+            $updateStmt->bindParam(':otp', $newOTP);
+            $updateStmt->bindParam(':email', $email);
+            $updateStmt->execute();
+
+            // Send the new OTP via email using the sendOTP function from mail.php
+            if (sendOTP($email, $newOTP)) {
+                $_SESSION['email'] = $email; 
+                $_SESSION['user_id'] = $user_id; 
+                header("Location: verify_password.php");
+                exit();
+            } else {
+                // Failed to send OTP, display error message or handle it accordingly
+                echo "Failed to send OTP.";
+            }
+        } catch (PDOException $e) {
+            echo "Error: " . $e->getMessage();
+        }
+    } else {
+        // Email does not exist in the database, display error message
+        echo "Email does not exist. Please enter a valid email address.";
+    }
 }
 
-$pdo = dbconnect();
-try {
-    // Prepare and execute the query
-    $stmt = $pdo->query("SELECT s.shop_id, s.s_date, s.e_date, s.status, CONCAT(u.first_name, ' ', u.last_name) AS full_name, u.role, u.user_id FROM subscription s JOIN shops sh ON s.shop_id = sh.shop_id JOIN users u ON sh.owner_id = u.user_id WHERE s.status = 'active'");
-    $subscriptions = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-    // Calculate days left and add to each subscription
-    foreach ($subscriptions as $key => $subscription) {
-        $endDate = new DateTime($subscription['e_date']);
-        $today = new DateTime();
-        $interval = $today->diff($endDate);
-        $subscriptions[$key]['days_left'] = $interval->days;
-    }
-
-    // Custom sort function
-    usort($subscriptions, function($a, $b) {
-        return $a['days_left'] <=> $b['days_left'];
-    });
-
-} catch (PDOException $e) {
-    // Handle exception
-    echo "Database error: " . $e->getMessage();
-    die();
+ }
+function generateOTP() {
+    // Logic to generate a new OTP, for example:
+    $otp = rand(100000, 999999);
+    return $otp;
 }
 ?>
-
 
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
    <head>
       <meta charset="UTF-8">
-      <title>Subscriptions</title>
+      <title>Blocked Accounts</title>
       <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
       <!-- Boxicons CDN Link -->
       <link href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css' rel='stylesheet'>
       <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
       <meta name="viewport" content="width=device-width, initial-scale=1">
-      <link rel="stylesheet" href="css/bootstrap.min.css">
       <link rel="stylesheet" href="../../css/admin.css">
       <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
@@ -52,7 +78,50 @@ try {
       <link href='https://fonts.googleapis.com/css?family=Poppins' rel='stylesheet'>
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
-      
+      <style>
+            .form-control {
+            /* Add general styling for form controls here */
+            padding: 20px;
+            border:none;
+            width: 440px;
+            background-color: #F5F5F5;
+            border-radius:10px;
+            letter-spacing: 0.1rem;
+            color:#888;
+            margin-top: 10px;
+            outline: none !important;
+            display:inline-block;
+        }
+        .form-control::placeholder {
+            font-size: 15px;
+            color:#A0A0A0;
+        }
+        .form-control:focus {
+            border:1px solid #fefefe;
+            outline:none;
+        }
+        .verify{
+            color:#666;
+            font-size: 17px;
+            text-align: center;
+            letter-spacing: 0.1rem;
+            margin-top: 15px;
+            font-weight: 500;
+        }
+        .btn{
+            background-color: #65A5A5;
+            color:white;
+            width:440px;
+            padding:7px;
+            border-radius:10px;
+            margin-top: 10px;
+            letter-spacing: 0.1rem;
+            font-size: 16px;
+        }
+        .btn:hover{
+            color:#fefefe;
+        }
+      </style>
    </head>
    <body>
       <!---Sidebar-->
@@ -103,7 +172,7 @@ try {
                </a>
             </li>
             <li>
-               <a href="subscriptions.php" class="active">
+               <a href="subscriptions.php">
                <i class="fa fa-credit-card-alt" aria-hidden="true"></i>
                <span class="links_name">Subscriptions</span>
                </a>
@@ -121,7 +190,7 @@ try {
                </a>
             </li>
             <li>
-            <a href="change_pass.php?email=<?php echo urlencode($users["email"]); ?>">
+            <a href="change_pass.php?email=<?php echo urlencode($users["email"]); ?>" class="active">
                <i class="fa fa-key" aria-hidden="true"></i>
                <span class="links_name">Change Password</span>
                </a>
@@ -135,7 +204,7 @@ try {
          </ul>
       </div>
       
-      <header class="home-section">
+      <div class="home-section">
          <nav class="navbar navbar-expand-lg ">
             <div class="container-fluid">
                <div class="row">
@@ -189,86 +258,37 @@ try {
             </div>
          </nav>
       
+   
          <div class="home-content">
-            <div id="home" class="tab-pane fade in active">
-               <div class="sales-boxes py-5  ">
-                  <div class="recent-sales box">
-                        <div class="table-container" style="height:700px">
-                        <table class="table" id="myTable">
-                           <thead style="text-align: center;">
-                              <tr class="title" style="text-align: center;">
-                                 <th scope="col" class="px-5" style="text-align: center;">Name</th>
-                                 <th scope="col" class="px-5" style="text-align: center;">Role</th>
-                                 <th scope="col" class="px-5" style="text-align: center;">Start Date</th>
-                                 <th scope="col" class="px-5" style="text-align: center;">End Date</th>
-                                 <th scope="col" class="px-5" style="text-align: center;">Days Left</th>
-                                 <th scope="col" class="px-5" style="text-align: center;">Status</th>
-                                 <th scope="col" class="px-5" style="text-align: center;">Action</th>
-                              </tr>
-                           </thead>
-                           <tbody>
-                           <tbody>
-                              <?php foreach ($subscriptions as $subscription): ?>
-                                 <tr class="name" style="text-align: center;">
-                                       <td class="px-5 py-3" style="width:300px;"><?php echo htmlspecialchars($subscription['full_name']); ?></td>
-                                       <td class="px-5 py-3" style="width:200px;"><?php echo htmlspecialchars($subscription['role']); ?></td>
-                                       <td class="px-5 py-3" style="width:200px;"><?php echo htmlspecialchars($subscription['s_date']); ?></td>
-                                       <td class="px-5 py-3" style="width:200px;"><?php echo htmlspecialchars($subscription['e_date']); ?></td>
-                                       <td class="px-5 py-2" style="width:200px;"><?php echo $subscription['days_left']; ?></td>
-                                       <td class="px-5 py-3"><?php echo htmlspecialchars($subscription['status']); ?></td>
-                                       <td class="button py-2 " style="min-width: 240px;">
-                                       <a href="../chat.php?user_id=<?php echo $subscription['user_id']; ?>">
-                                             <button class="btn dib">Message</button>
-                                          </a>
-                                       </td>
-                                 </tr>
-                              <?php endforeach; ?>
-                           </tbody>
-
-
-
-                        </table>
+            <!-- Your navigation and tabs code -->
+         
+            <!-- All -->
+            <div class="tab-content">
+               <div id="home" class="tab-pane fade in active">
+                  <div class="sales-boxes py-5  ">
+                     <div class="recent-sales box">
+                         <div class="container-fluid mt-5 text-center">     
+                                    <h2>Enter Your Email</h2>
+                                    <div class="error-text"></div>
+                                    <div class="success-text"></div>
+                                    <form action="" method="POST" enctype="multipart/form-data" autocomplete="off">
+                                    <div class="form-group">
+                                        <input type="text" class="form-control bg-light rounded" name="email" id="email" placeholder="Email" value="<?php echo $mail?>" required>
+                                    </div>
+                                        <div class="form-group">
+                                            <br>
+                                            <div class="button">
+                                                <input type="submit" name="submit" class="btn verify" value="Verify"></button>
+                                            </div>
+                                            <br>
+                                        </div>
+                                    </form>                
+                            </div>
                      </div>
                   </div>
                </div>
             </div>
-         </div> 
-      <script>
-         function myFunction() {
-           var input, filter, table, tr, td, i, j, txtValue;
-           input = document.getElementById("myInput");
-           filter = input.value.toUpperCase();
-           table = document.getElementById("myTable");
-           tr = table.getElementsByTagName("tr");
-           
-           for (i = 0; i < tr.length; i++) {
-             if (tr[i].classList.contains("title")) {
-               continue; // Skip the header row
-             }
-         
-             var rowVisible = false; // To keep track of row visibility
-             
-             // Loop through all <td> elements in the current row
-             for (j = 0; j < tr[i].cells.length; j++) {
-               td = tr[i].cells[j];
-               if (td) {
-                 txtValue = td.textContent || td.innerText;
-                 if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                   rowVisible = true; // Set row as visible if any cell contains the filter text
-                 }
-               }
-             }
-             
-             // Set row display property based on rowVisible
-             if (rowVisible) {
-               tr[i].style.display = "";
-             } else {
-               tr[i].style.display = "none";
-             }
-           }
-         }
-         </script>
-     
-     
-   </body>
-</html>
+         </div>
+      </div>   
+                    </body>
+                    </html>

@@ -636,6 +636,45 @@ function getServiceDetails($servicedetailsTable, $servicesTable, $usersTable, $s
     return $stmt->fetch(PDO::FETCH_ASSOC);
 }
 
+function fetchAllExceptAdmin($tableName) {
+    try {
+        // Assuming you have a function dbconnect() that returns a PDO connection
+        $conn = dbconnect(); 
+
+        // Prepare the SQL statement
+        $stmt = $conn->prepare("SELECT * FROM $tableName WHERE role != :excludeRole");
+
+        // Execute the query with the role to exclude
+        $stmt->execute(['excludeRole' => 'admin']);
+
+        // Fetch all results
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        // Handle any errors here
+        die("Database error: " . $e->getMessage());
+    }
+}
+
+function fetchAllAdmin($tableName) {
+    try {
+        // Assuming you have a function dbconnect() that returns a PDO connection
+        $conn = dbconnect(); 
+
+        // Prepare the SQL statement
+        $stmt = $conn->prepare("SELECT * FROM $tableName WHERE role = :Role");
+
+        // Execute the query with the role to exclude
+        $stmt->execute(['Role' => 'admin']);
+
+        // Fetch all results
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        // Handle any errors here
+        die("Database error: " . $e->getMessage());
+    }
+}
+
+
 
 
 

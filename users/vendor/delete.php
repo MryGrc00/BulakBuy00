@@ -1,6 +1,5 @@
 <?php
-session_start(); // Start or resume the session to access session variables
-
+include('../php/checksession.php'); 
 include '../php/dbhelper.php';
 
 if (isset($_GET['product_id'])) {
@@ -37,9 +36,6 @@ if (isset($_GET['product_id'])) {
         // Product does not belong to the currently logged-in user's shop, handle error
         echo "Unauthorized access to delete the product!";
     }
-} else {
-    // Product ID not provided in the URL, handle error (redirect, display error message, etc.)
-    echo "Product ID not provided!";
 }
 ?>
 

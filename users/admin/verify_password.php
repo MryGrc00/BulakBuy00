@@ -73,7 +73,7 @@ function get_filtered_reports() {
 function get_user_details($user_id) {
    $conn = dbconnect();
    // Assuming your users table has 'first_name' and 'last_name' columns
-   $sql = "SELECT user_id, first_name, last_name FROM users WHERE user_id = :user_id";
+   $sql = "SELECT user_id, first_name, last_name, role, phone, address FROM users WHERE user_id = :user_id";
 
    try {
        $stmt = $conn->prepare($sql);
@@ -114,6 +114,87 @@ $filtered_reports = get_filtered_reports();
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
       
    </head>
+   <style>
+  
+        @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap");
+
+
+        form .input-field {
+        flex-direction: row;
+        column-gap: 10px;
+        }
+        .input-field input {
+        height: 45px;
+        width: 42px;
+        border-radius: 6px;
+        outline: none;
+        font-size: 1.125rem;
+        text-align: center;
+        border: 1px solid #ddd;
+        }
+        .input-field input:focus {
+        box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
+        }
+        .input-field input::-webkit-inner-spin-button,
+        .input-field input::-webkit-outer-spin-button {
+        display: none;
+        }
+        form button {
+        margin-top: 25px;
+        width: 100%;
+        color: #fff;
+        font-size: 1rem;
+        border: none;
+        padding: 9px 0;
+        cursor: pointer;
+        border-radius: 6px;
+        pointer-events: none;
+        background: #6e93f7;
+        transition: all 0.2s ease;
+        }
+        form button.active {
+        background: #4070f4;
+        pointer-events: auto;
+        }
+        form button:hover {
+        background: #0e4bf1;
+        }
+
+        .error-message {
+        color: red;
+        font-weight: bold;
+        margin-top: 10px;
+        display: none;
+        }
+
+        .error-message.visible {
+        display: block;
+        }
+        .verify{
+            color:#666;
+            font-size: 17px;
+            text-align: center;
+            letter-spacing: 0.1rem;
+            margin-top: 15px;
+            font-weight: 500;
+        }
+        .btn{
+            background-color: #65A5A5;
+            color:white;
+            width:440px;
+            padding:7px;
+            border-radius:10px;
+            margin-top: 10px;
+            letter-spacing: 0.1rem;
+            font-size: 16px;
+        }
+        .btn:hover{
+            color:#fefefe;
+        }
+      </style>
+   </head>
+   <body>   
+   </style>
    <body>
       <!---Sidebar-->
       <div class="sidebar">
@@ -151,7 +232,7 @@ $filtered_reports = get_filtered_reports();
                </a>
             </li>
             <li>
-               <a href="reported_accounts.php" class="active">
+               <a href="reported_accounts.php">
                <i class="fa fa-user-times" aria-hidden="true"></i>
                <span class="links_name">Reported Accounts</span>
                </a>
@@ -181,7 +262,7 @@ $filtered_reports = get_filtered_reports();
                </a>
             </li>
             <li>
-            <a href="change_pass.php?email=<?php echo urlencode($users["email"]); ?>">
+               <a href="../forgot_password.php">
                <i class="fa fa-key" aria-hidden="true"></i>
                <span class="links_name">Change Password</span>
                </a>
@@ -253,103 +334,33 @@ $filtered_reports = get_filtered_reports();
             <div class="tab-content">
                <div id="home" class="tab-pane fade in active">
                   <div class="sales-boxes py-5  ">
-                     <div class="recent-sales box">
-                         <div class="table-container" style="height:700px">
-                          <table class="table" id="myTable">
-                              <thead style="text-align: center;">
-                                 <tr class="title " style="text-align: center;">
-                                    <th scope="col" class="px-5" style="text-align: center;">Complainant</th>
-                                    <th scope="col" class="px-5" style="text-align: center;">Defendant</th>
-                                    <th scope="col" class="px-5" style="text-align: center;">Reason</th>
-                                    <th scope="col" class="px-5" style="text-align: center;">Action</th>
-                                 </tr>
-                              </thead>
-                              <tbody>
-                              <?php
-                        foreach ($filtered_reports as $report) {
-                           // Assuming you have user details fetch function like get_user_details()
-                           $complainant = get_user_details($report['complainant_id']);
-                           $complainantFullName = $complainant['first_name'] . ' ' . $complainant['last_name'];
-                       
-                         // Fetch shop details
-                           $defendant = get_shop_details($report['defendant_id']); // Assuming this function exists
-                           $shopName = isset($defendant['shop_name']) ? $defendant['shop_name'] : 'N/A';
-
-                           echo '<tr class="name" style="text-align: center;">';
-                           echo '<td class="px-5 py-2" style="width:300px;">' . $complainantFullName . '</td>';
-                           echo '<td class="px-5 py-2" style="width:300px;">' . $shopName. '</td>';
-                           echo '<td class="px-5 py-2">' . $report['reason'] . '</td>';
-                           echo '<td class="button py-2" style="min-width: 240px;">';
-                           echo '&nbsp;<a href="../chat.php?user_id=' . $report['complainant_id'] . '">';                           echo '<button class="btn dib"><i class="fa fa-comments" aria-hidden="true"></i> Complainant</button>';
-                           echo '</a>';
-                           echo '&nbsp;<a href="../chat.php?user_id=' . $defendant['owner_id'] . '">';                           echo '<button class="btn dib"><i class="fa fa-comments" aria-hidden="true"></i> Defendant</button>';
-                           echo '</a>';
-                           echo '</td>';
-                           echo '</tr>';
-                        }
-                        ?>
-                        </tbody>
-                           </table>
+                     <div class="recent-sales box text-center">
+                     <form id="otp-form" action="../php/verify_otp1.php" method="post">
+                     <header>
+                        <i class="bx bxs-check-shield"></i>
+                    </header>
+                    <h4>Enter OTP Code</h4>
+                        <div class="error-text"></div>
+                        <div class="input-field">
+                            <input type="number" maxlength="1"/>
+                            <input type="number" maxlength="1" disabled />
+                            <input type="number" maxlength="1" disabled />
+                            <input type="number" maxlength="1" disabled />
+                            <input type="number" maxlength="1" disabled />
+                            <input type="number" maxlength="1" disabled />
                         </div>
+                        <button type="submit" id="verify-button" class="btn verify" >Verify OTP</button>
+                    </form>
+
                      </div>
                   </div>
                </div>
             </div>
          </div>
       </div> 
-      <script>
-         function myFunction() {
-           var input, filter, table, tr, td, i, j, txtValue;
-           input = document.getElementById("myInput");
-           filter = input.value.toUpperCase();
-           table = document.getElementById("myTable");
-           tr = table.getElementsByTagName("tr");
-           
-           for (i = 0; i < tr.length; i++) {
-             if (tr[i].classList.contains("title")) {
-               continue; // Skip the header row
-             }
-         
-             var rowVisible = false; // To keep track of row visibility
-             
-             // Loop through all <td> elements in the current row
-             for (j = 0; j < tr[i].cells.length; j++) {
-               td = tr[i].cells[j];
-               if (td) {
-                 txtValue = td.textContent || td.innerText;
-                 if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                   rowVisible = true; // Set row as visible if any cell contains the filter text
-                 }
-               }
-             }
-             
-             // Set row display property based on rowVisible
-             if (rowVisible) {
-               tr[i].style.display = "";
-             } else {
-               tr[i].style.display = "none";
-             }
-           }
-         }
-         </script>
-         <script>
-function blockShop(shopId) {
-    if(confirm("Are you sure you want to block this shop?")) {
-        $.ajax({
-            url: 'reported_accounts.php', // Adjusted URL
-            type: 'POST',
-            data: { 'shop_id': shopId, 'action': 'block_shop' },
-            success: function(response) {
-                alert("Shop has been blocked successfully.");
-                location.reload(); // Reloads the current page
-            },
-            error: function(xhr, status, error) {
-                console.error("Error blocking shop:", error);
-            }
-        });
-    }
-}
-</script>
+      
+      <script src="../js/verify_padmin.js"></script>
+
 
    </body>
-</html> ]
+</html> 

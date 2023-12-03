@@ -56,7 +56,7 @@ function get_filtered_reports() {
     $conn = dbconnect();
     $sql = "SELECT r.*, s.shop_id, s.status FROM reports r
             LEFT JOIN shops s ON r.defendant_id = s.shop_id
-            WHERE s.status = 'Reported'";
+            WHERE s.status = 'blocked'";
 
     try {
         $stmt = $conn->prepare($sql);
@@ -73,7 +73,7 @@ function get_filtered_reports() {
 function get_user_details($user_id) {
    $conn = dbconnect();
    // Assuming your users table has 'first_name' and 'last_name' columns
-   $sql = "SELECT user_id, first_name, last_name FROM users WHERE user_id = :user_id";
+   $sql = "SELECT user_id, first_name, last_name, role, phone, address FROM users WHERE user_id = :user_id";
 
    try {
        $stmt = $conn->prepare($sql);
@@ -151,7 +151,7 @@ $filtered_reports = get_filtered_reports();
                </a>
             </li>
             <li>
-               <a href="reported_accounts.php" class="active">
+               <a href="reported_accounts.php">
                <i class="fa fa-user-times" aria-hidden="true"></i>
                <span class="links_name">Reported Accounts</span>
                </a>
@@ -258,36 +258,51 @@ $filtered_reports = get_filtered_reports();
                           <table class="table" id="myTable">
                               <thead style="text-align: center;">
                                  <tr class="title " style="text-align: center;">
-                                    <th scope="col" class="px-5" style="text-align: center;">Complainant</th>
-                                    <th scope="col" class="px-5" style="text-align: center;">Defendant</th>
-                                    <th scope="col" class="px-5" style="text-align: center;">Reason</th>
+                                    <th scope="col" class="px-5" style="text-align: center;">Name</th>
+                                    <th scope="col" class="px-5" style="text-align: center;">Role</th>
+                                    <th scope="col" class="px-5" style="text-align: center;">Shop Name</th>
+                                    <th scope="col" class="px-5" style="text-align: center;">Phone</th>
+                                    <th scope="col" class="px-5" style="text-align: center;">Address</th>
                                     <th scope="col" class="px-5" style="text-align: center;">Action</th>
                                  </tr>
                               </thead>
                               <tbody>
                               <?php
-                        foreach ($filtered_reports as $report) {
-                           // Assuming you have user details fetch function like get_user_details()
-                           $complainant = get_user_details($report['complainant_id']);
-                           $complainantFullName = $complainant['first_name'] . ' ' . $complainant['last_name'];
-                       
-                         // Fetch shop details
-                           $defendant = get_shop_details($report['defendant_id']); // Assuming this function exists
-                           $shopName = isset($defendant['shop_name']) ? $defendant['shop_name'] : 'N/A';
+                                    foreach ($filtered_reports as $report) {
+                                        // Assuming you have user details fetch function like get_user_details()
+                                        $complainant = get_user_details($report['complainant_id']);
+                                        $complainantFullName = $complainant['first_name'] . ' ' . $complainant['last_name'];
 
-                           echo '<tr class="name" style="text-align: center;">';
-                           echo '<td class="px-5 py-2" style="width:300px;">' . $complainantFullName . '</td>';
-                           echo '<td class="px-5 py-2" style="width:300px;">' . $shopName. '</td>';
-                           echo '<td class="px-5 py-2">' . $report['reason'] . '</td>';
-                           echo '<td class="button py-2" style="min-width: 240px;">';
-                           echo '&nbsp;<a href="../chat.php?user_id=' . $report['complainant_id'] . '">';                           echo '<button class="btn dib"><i class="fa fa-comments" aria-hidden="true"></i> Complainant</button>';
-                           echo '</a>';
-                           echo '&nbsp;<a href="../chat.php?user_id=' . $defendant['owner_id'] . '">';                           echo '<button class="btn dib"><i class="fa fa-comments" aria-hidden="true"></i> Defendant</button>';
-                           echo '</a>';
-                           echo '</td>';
-                           echo '</tr>';
-                        }
-                        ?>
+                                        $defendant = get_shop_details($report['defendant_id']); 
+                                        $shopName = isset($defendant['shop_name']) ? $defendant['shop_name'] : 'N/A';
+                                                                           
+                                        
+                                        
+                                        
+                                        if (isset($defendant['owner_id'])) {
+                                            // You can access user information using $defendant['owner_id']
+                                            $ownerId = $defendant['owner_id'];
+                                            
+                                            // Assuming you have a function to fetch user details by user_id
+                                            $ownerDetails = get_user_details($ownerId);
+                                            $ownerFullName = isset($ownerDetails['first_name']) && isset($ownerDetails['last_name']) ? $ownerDetails['first_name'] . ' ' . $ownerDetails['last_name'] : 'N/A';
+
+                                        
+                                        }
+                                        
+                                        echo '<tr class="name" style="text-align: center;">';
+                                        echo '<td class="px-5 py-2" style="width: 300px;">' . htmlspecialchars($ownerFullName) . '</td>';
+                                        echo '<td class="px-5 py-2" style="width: 300px;">' . htmlspecialchars($ownerDetails['role']) . '</td>';
+                                        echo '<td class="px-5 py-2" style="width: 300px;">' . htmlspecialchars($shopName) . '</td>';
+                                        echo '<td class="px-5 py-2" style="width: 300px;">' . htmlspecialchars($ownerDetails['phone']) . '</td>';
+                                        echo '<td class="px-5 py-2" style="width: 300px;">' . htmlspecialchars($ownerDetails['address']) . '</td>';
+                                        echo '<td class="button py-2" style="min-width: 240px;">';
+                                        echo '<button class="btn dib"  onclick="deleteShop(' . $report['defendant_id'] . ')">Delete</button>';
+                                        echo '</td>';
+                                        echo '</tr>';
+                                    }
+                                ?>
+
                         </tbody>
                            </table>
                         </div>
@@ -332,24 +347,26 @@ $filtered_reports = get_filtered_reports();
            }
          }
          </script>
-         <script>
-function blockShop(shopId) {
-    if(confirm("Are you sure you want to block this shop?")) {
+
+<script>
+function deleteShop(shopId) {
+    if(confirm("Are you sure you want to delete this shop and its owner?")) {
         $.ajax({
-            url: 'reported_accounts.php', // Adjusted URL
+            url: 'delete.php',
             type: 'POST',
-            data: { 'shop_id': shopId, 'action': 'block_shop' },
+            data: { 'shop_id': shopId, 'action': 'delete' },
             success: function(response) {
-                alert("Shop has been blocked successfully.");
-                location.reload(); // Reloads the current page
+                alert(response);
+                location.reload();
             },
             error: function(xhr, status, error) {
-                console.error("Error blocking shop:", error);
+                console.error("Error deleting shop:", error);
             }
         });
     }
 }
 </script>
+
 
    </body>
 </html> ]

@@ -2,103 +2,71 @@
 include('checksession.php'); 
 include('../php/dbhelper.php');
 
-if (isset($_SESSION["user_id"])) {
-   $user_id = $_SESSION["user_id"];
-   $users = get_record('users','user_id',$user_id);
-}
+if (isset($_SESSION["user_id"])){
+    $user_id = $_SESSION["user_id"];
+    $users = get_record('users','user_id',$user_id);
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action']) && $_POST['action'] == 'block_shop') {
-   $shop_id = $_POST['shop_id'];
-   block_shop($shop_id);
-}
-
-function block_shop($shop_id) {
-   $conn = dbconnect();
-   $sql = "UPDATE shops SET status = 'Blocked' WHERE shop_id = :shop_id";
-
-   try {
-       $stmt = $conn->prepare($sql);
-       $stmt->bindParam(':shop_id', $shop_id, PDO::PARAM_INT);
-       $stmt->execute();
-       $conn = null;
-       
-       echo "Shop blocked successfully";
-   } catch (PDOException $e) {
-       echo "Error: " . $e->getMessage();
-       $conn = null;
-   }
-   exit;
-}
-function get_shop_details($shop_id) {
-   $conn = dbconnect();
-   // Assuming your shop table has columns like 'shop_id', 'shop_name', etc.
-   $sql = "SELECT * FROM shops WHERE shop_id = :shop_id";
-
-   try {
-       $stmt = $conn->prepare($sql);
-       // Bind the shop_id parameter to protect against SQL injection
-       $stmt->bindParam(':shop_id', $shop_id, PDO::PARAM_INT);
-       $stmt->execute();
-
-       // Fetch the shop details
-       $shop_details = $stmt->fetch(PDO::FETCH_ASSOC);
-       $conn = null;
-
-       return $shop_details;
-   } catch (PDOException $e) {
-       echo "Error: " . $e->getMessage();
-       $conn = null;
-       return null;
-   }
-}
-
-function get_filtered_reports() {
+    // Establish database connection
     $conn = dbconnect();
-    $sql = "SELECT r.*, s.shop_id, s.status FROM reports r
-            LEFT JOIN shops s ON r.defendant_id = s.shop_id
-            WHERE s.status = 'Reported'";
 
-    try {
-        $stmt = $conn->prepare($sql);
-        $stmt->execute();
-        $reports = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    if (isset($_POST['submit'])) {
+        try {
+            // Use your existing dbconnect function to establish a PDO connection
+            $conn = dbconnect();
+
+            // Get form data
+            $first_name = $_POST['first_name'];
+            $last_name = $_POST['last_name'];
+            $email = $_POST['email'];
+            $password = $_POST['password'];
+            $confirm_password = $_POST['confirm_password'];
+
+            // Check if password and confirm password match
+            if ($password !== $confirm_password) {
+                $_SESSION['alert_message'] = "Passwords do not match.";
+            }
+
+            // Check if email already exists
+            $stmt = $conn->prepare("SELECT user_id FROM users WHERE email = :email");
+            $stmt->bindParam(':email', $email);
+            $stmt->execute();
+
+            if ($stmt->rowCount() > 0) {
+                $_SESSION['alert_message'] = "Email already exists.";
+            } else {
+                // Hash the password using MD5
+                $hashed_password = md5($password);
+                $role = 'admin';
+
+                // Insert new user into the database
+                $sql = "INSERT INTO users (first_name, last_name, email, role, password) VALUES (:first_name, :last_name, :email, :role, :password)";
+                $stmt = $conn->prepare($sql);
+                $stmt->bindParam(':first_name', $first_name);
+                $stmt->bindParam(':last_name', $last_name);
+                $stmt->bindParam(':email', $email);
+                $stmt->bindParam(':role', $role);
+                $stmt->bindParam(':password', $hashed_password);
+
+                $stmt->execute();
+                $_SESSION['alert_message'] = "New record created successfully";
+            }
+        } catch(PDOException $e) {
+            $_SESSION['alert_message'] = "Error: " . $e->getMessage();
+        }
+
+        // Close connection
         $conn = null;
-        return $reports;
-    } catch (PDOException $e) {
-        echo "Error: " . $e->getMessage();
-        $conn = null;
-        return [];
     }
 }
-function get_user_details($user_id) {
-   $conn = dbconnect();
-   // Assuming your users table has 'first_name' and 'last_name' columns
-   $sql = "SELECT user_id, first_name, last_name FROM users WHERE user_id = :user_id";
-
-   try {
-       $stmt = $conn->prepare($sql);
-       $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
-       $stmt->execute();
-
-       $user_details = $stmt->fetch(PDO::FETCH_ASSOC);
-       $conn = null;
-
-       return $user_details;
-   } catch (PDOException $e) {
-       echo "Error: " . $e->getMessage();
-       $conn = null;
-       return null;
-   }
-}
-
-
-$filtered_reports = get_filtered_reports();
 ?>
+
+
+
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
    <head>
       <meta charset="UTF-8">
-      <title>Reported Accounts</title>
+      <title>Add</title>
       <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
       <!-- Boxicons CDN Link -->
       <link href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css' rel='stylesheet'>
@@ -112,7 +80,72 @@ $filtered_reports = get_filtered_reports();
       <link href='https://fonts.googleapis.com/css?family=Poppins' rel='stylesheet'>
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
-      
+      <style>
+            .form-control {
+            /* Add general styling for form controls here */
+            padding: 20px;
+            border:none;
+            width: 440px;
+            background-color: #F5F5F5;
+            border-radius:10px;
+            letter-spacing: 0.1rem;
+            color:#888;
+            margin-top: 10px;
+            outline: none !important;
+            display:inline-block;
+        }
+        .form-control::placeholder {
+            font-size: 15px;
+            color:#A0A0A0;
+        }
+        .form-control:focus {
+            border:1px solid #fefefe;
+            outline:none;
+        }
+        .verify{
+            color:#666;
+            font-size: 17px;
+            text-align: center;
+            letter-spacing: 0.1rem;
+            margin-top: 15px;
+            font-weight: 500;
+        }
+        .btn{
+            background-color: #65A5A5;
+            color:white;
+            width:440px;
+            padding:7px;
+            border-radius:10px;
+            margin-top: 10px;
+            letter-spacing: 0.1rem;
+            font-size: 16px;
+        }
+        .btn:hover{
+            color:#fefefe;
+        }
+         .password-input-container {
+            position: relative;
+        }
+
+        .toggle-password {
+            position: absolute;
+            top: 45%;
+            right: 10px;
+            transform: translateY(-50%);
+            cursor: pointer;
+        }
+
+        /* Eye icon styles */
+        .toggle-password i {
+            font-size: 18px;
+            color: #999;
+        }
+
+        /* Style the eye icon when password is revealed */
+        .password-revealed i {
+            color: #33b5e5;
+        }
+      </style>
    </head>
    <body>
       <!---Sidebar-->
@@ -145,13 +178,13 @@ $filtered_reports = get_filtered_reports();
                </a>
             </li>
             <li>
-               <a href="admins.php">
+               <a href="admins.php" class="active">
                <i class="bi bi-person-vcard"></i>
                <span class="links_name">Admins</span>
                </a>
             </li>
             <li>
-               <a href="reported_accounts.php" class="active">
+               <a href="reported_accounts.php">
                <i class="fa fa-user-times" aria-hidden="true"></i>
                <span class="links_name">Reported Accounts</span>
                </a>
@@ -212,7 +245,7 @@ $filtered_reports = get_filtered_reports();
                                     <ul>
                                        <li>
                                           <a href="#">
-                                             <img class="pull-left m-r-10 avatar-img" src="#" alt="" />
+                                             <img class="pull-left m-r-10 avatar-img" src="images/avatar/3.jpg" alt="" />
                                              <div class="notification-content">
                                                 <small class="notification-timestamp pull-right">02:34 PM</small>
                                                 <div class="notification-heading">Mr. John</div>
@@ -228,8 +261,8 @@ $filtered_reports = get_filtered_reports();
                               </div>
                            </div>
                         </div>
-                        <div class="dib">
-                           <div class="header-icon">
+                        <div class="dropdown dib">
+                           <div class="header-icon" data-toggle="dropdown">
                               <i class="fa fa-commenting-o" aria-hidden="true"></i>
                            </div>
                         </div>
@@ -249,107 +282,71 @@ $filtered_reports = get_filtered_reports();
             </div>
          </nav>
       
+   
          <div class="home-content">
+            <!-- Your navigation and tabs code -->
+         
+            <!-- All -->
             <div class="tab-content">
                <div id="home" class="tab-pane fade in active">
                   <div class="sales-boxes py-5  ">
                      <div class="recent-sales box">
-                         <div class="table-container" style="height:700px">
-                          <table class="table" id="myTable">
-                              <thead style="text-align: center;">
-                                 <tr class="title " style="text-align: center;">
-                                    <th scope="col" class="px-5" style="text-align: center;">Complainant</th>
-                                    <th scope="col" class="px-5" style="text-align: center;">Defendant</th>
-                                    <th scope="col" class="px-5" style="text-align: center;">Reason</th>
-                                    <th scope="col" class="px-5" style="text-align: center;">Action</th>
-                                 </tr>
-                              </thead>
-                              <tbody>
-                              <?php
-                        foreach ($filtered_reports as $report) {
-                           // Assuming you have user details fetch function like get_user_details()
-                           $complainant = get_user_details($report['complainant_id']);
-                           $complainantFullName = $complainant['first_name'] . ' ' . $complainant['last_name'];
-                       
-                         // Fetch shop details
-                           $defendant = get_shop_details($report['defendant_id']); // Assuming this function exists
-                           $shopName = isset($defendant['shop_name']) ? $defendant['shop_name'] : 'N/A';
+                     <div class="container-fluid mt-5 text-center">     
+                            <h2>Admin Registration</h2>
+                            <form action="" method="POST" enctype="multipart/form-data" autocomplete="off">
+                            <div class="form-group">
+                                <input type="text" class="form-control" name="first_name" placeholder="First Name" required>
+                            </div>
+                            <div class="form-group">
+                                <input type="text" class="form-control " name="last_name" placeholder="Last Name" required>
+                            </div>
+                            <div class="form-group">
+                                <input type="email" class="form-control " name="email" placeholder="Email" required>
+                            </div>
+                            <div class="form-group">
+                                <div class="password-input-container mt-4">
+                                <input type="password" class="form-control" name="password" id="password" placeholder="New Password" required>
+                                <span class="toggle-password" id="togglePassword">
+                                    <i class="bi bi-eye-slash"></i>
+                                </span>
+                            </div>
+                                <div class="password-input-container mt-4">
+                                    <input type="password" class="form-control" name="cpassword" id="cpassword" placeholder="Confirm New Password" required>
+                                    <span class="toggle-password" id="togglePassword">
+                                        <i class="bi bi-eye-slash"></i>
+                                    </span>
+                                </div>
+                                <div class="btns text-center" style="display:flex; justify-content: center; gap: 10px;">
+                                    <button type="button" onclick="window.location.href='admins.php';" class="btn verify" style="width:230px;">Cancel</button>
+                                    <input type="submit" name="submit" class="btn verify" style="width:200px;" value="Add Admin">
+                                </div>
+                            </div>
 
-                           echo '<tr class="name" style="text-align: center;">';
-                           echo '<td class="px-5 py-2" style="width:300px;">' . $complainantFullName . '</td>';
-                           echo '<td class="px-5 py-2" style="width:300px;">' . $shopName. '</td>';
-                           echo '<td class="px-5 py-2">' . $report['reason'] . '</td>';
-                           echo '<td class="button py-2" style="min-width: 240px;">';
-                           echo '&nbsp;<a href="../chat.php?user_id=' . $report['complainant_id'] . '">';                           echo '<button class="btn dib"><i class="fa fa-comments" aria-hidden="true"></i> Complainant</button>';
-                           echo '</a>';
-                           echo '&nbsp;<a href="../chat.php?user_id=' . $defendant['owner_id'] . '">';                           echo '<button class="btn dib"><i class="fa fa-comments" aria-hidden="true"></i> Defendant</button>';
-                           echo '</a>';
-                           echo '</td>';
-                           echo '</tr>';
-                        }
-                        ?>
-                        </tbody>
-                           </table>
+                            </form>                
                         </div>
                      </div>
                   </div>
                </div>
             </div>
          </div>
-      </div> 
+      </div>   
+      <script src="../js/show-hide-pass.js"></script>
       <script>
-         function myFunction() {
-           var input, filter, table, tr, td, i, j, txtValue;
-           input = document.getElementById("myInput");
-           filter = input.value.toUpperCase();
-           table = document.getElementById("myTable");
-           tr = table.getElementsByTagName("tr");
-           
-           for (i = 0; i < tr.length; i++) {
-             if (tr[i].classList.contains("title")) {
-               continue; // Skip the header row
-             }
-         
-             var rowVisible = false; // To keep track of row visibility
-             
-             // Loop through all <td> elements in the current row
-             for (j = 0; j < tr[i].cells.length; j++) {
-               td = tr[i].cells[j];
-               if (td) {
-                 txtValue = td.textContent || td.innerText;
-                 if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                   rowVisible = true; // Set row as visible if any cell contains the filter text
-                 }
-               }
-             }
-             
-             // Set row display property based on rowVisible
-             if (rowVisible) {
-               tr[i].style.display = "";
-             } else {
-               tr[i].style.display = "none";
-             }
-           }
-         }
-         </script>
-         <script>
-function blockShop(shopId) {
-    if(confirm("Are you sure you want to block this shop?")) {
-        $.ajax({
-            url: 'reported_accounts.php', // Adjusted URL
-            type: 'POST',
-            data: { 'shop_id': shopId, 'action': 'block_shop' },
-            success: function(response) {
-                alert("Shop has been blocked successfully.");
-                location.reload(); // Reloads the current page
-            },
-            error: function(xhr, status, error) {
-                console.error("Error blocking shop:", error);
-            }
-        });
-    }
-}
-</script>
+            window.onload = function() {
+                // Check if there is an alert message
+                <?php if(!empty($_SESSION['alert_message'])): ?>
+                    var message = "<?php echo $_SESSION['alert_message']; ?>";
+                    alert(message); // Display alert message
 
-   </body>
-</html> ]
+                    // Clear the session message after displaying
+                    <?php unset($_SESSION['alert_message']); ?>
+
+                    // Set a timer to hide the alert after 5 seconds
+                    setTimeout(function() {
+                        alert.style.display = 'none';
+                    }, 5000);
+                <?php endif; ?>
+            }
+        </script>
+                    </body>
+                    </html>

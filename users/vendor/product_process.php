@@ -1,5 +1,5 @@
 <?php
-session_start();
+include('../php/checksession.php'); 
 include '../php/dbhelper.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {

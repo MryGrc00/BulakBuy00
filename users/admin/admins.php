@@ -1,104 +1,22 @@
 <?php
 include('checksession.php'); 
-include('../php/dbhelper.php');
+include('../php/dbhelper.php'); 
 
 if (isset($_SESSION["user_id"])) {
    $user_id = $_SESSION["user_id"];
-   $users = get_record('users','user_id',$user_id);
+   $user = get_record('users', 'user_id', $user_id);
+   $users = fetchAllAdmin("users");
+
 }
-
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action']) && $_POST['action'] == 'block_shop') {
-   $shop_id = $_POST['shop_id'];
-   block_shop($shop_id);
-}
-
-function block_shop($shop_id) {
-   $conn = dbconnect();
-   $sql = "UPDATE shops SET status = 'Blocked' WHERE shop_id = :shop_id";
-
-   try {
-       $stmt = $conn->prepare($sql);
-       $stmt->bindParam(':shop_id', $shop_id, PDO::PARAM_INT);
-       $stmt->execute();
-       $conn = null;
-       
-       echo "Shop blocked successfully";
-   } catch (PDOException $e) {
-       echo "Error: " . $e->getMessage();
-       $conn = null;
-   }
-   exit;
-}
-function get_shop_details($shop_id) {
-   $conn = dbconnect();
-   // Assuming your shop table has columns like 'shop_id', 'shop_name', etc.
-   $sql = "SELECT * FROM shops WHERE shop_id = :shop_id";
-
-   try {
-       $stmt = $conn->prepare($sql);
-       // Bind the shop_id parameter to protect against SQL injection
-       $stmt->bindParam(':shop_id', $shop_id, PDO::PARAM_INT);
-       $stmt->execute();
-
-       // Fetch the shop details
-       $shop_details = $stmt->fetch(PDO::FETCH_ASSOC);
-       $conn = null;
-
-       return $shop_details;
-   } catch (PDOException $e) {
-       echo "Error: " . $e->getMessage();
-       $conn = null;
-       return null;
-   }
-}
-
-function get_filtered_reports() {
-    $conn = dbconnect();
-    $sql = "SELECT r.*, s.shop_id, s.status FROM reports r
-            LEFT JOIN shops s ON r.defendant_id = s.shop_id
-            WHERE s.status = 'Reported'";
-
-    try {
-        $stmt = $conn->prepare($sql);
-        $stmt->execute();
-        $reports = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        $conn = null;
-        return $reports;
-    } catch (PDOException $e) {
-        echo "Error: " . $e->getMessage();
-        $conn = null;
-        return [];
-    }
-}
-function get_user_details($user_id) {
-   $conn = dbconnect();
-   // Assuming your users table has 'first_name' and 'last_name' columns
-   $sql = "SELECT user_id, first_name, last_name FROM users WHERE user_id = :user_id";
-
-   try {
-       $stmt = $conn->prepare($sql);
-       $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
-       $stmt->execute();
-
-       $user_details = $stmt->fetch(PDO::FETCH_ASSOC);
-       $conn = null;
-
-       return $user_details;
-   } catch (PDOException $e) {
-       echo "Error: " . $e->getMessage();
-       $conn = null;
-       return null;
-   }
-}
-
-
-$filtered_reports = get_filtered_reports();
 ?>
+
+
+
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
    <head>
       <meta charset="UTF-8">
-      <title>Reported Accounts</title>
+      <title>Users Account</title>
       <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
       <!-- Boxicons CDN Link -->
       <link href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css' rel='stylesheet'>
@@ -112,23 +30,22 @@ $filtered_reports = get_filtered_reports();
       <link href='https://fonts.googleapis.com/css?family=Poppins' rel='stylesheet'>
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
-      
    </head>
    <body>
       <!---Sidebar-->
       <div class="sidebar">
          <div class="d-flex flex-column ">
             <div class="logo align-items-center  text-center mt-5">
-               <img src='../php/images/logo.png' alt="BulakBuy Logo">
+               <img src='../php/../php/images/logo.png' alt="BulakBuy Logo">
                <hr>
             </div>
             <div class="profile">
             <?php
-                    $profileImage = !empty($users['profile_img']) ? $users['profile_img'] : '../php/images/default.jpg'; 
-                    echo '<img src="' . $profileImage . '" alt="' . $users['last_name'] . '" class="user-image">';
+                    $profileImage = !empty($user['profile_img']) ? $user['profile_img'] : '../php/images/default.jpg'; 
+                    echo '<img src="' . $profileImage . '" alt="' . $user['last_name'] . '" class="user-image">';
                  ?>               
-                 <br><?php echo $users['first_name'] . ' ' . $users['last_name']; ?> 
-               <a href="edit_profile.php?user_id=<?php echo $users['user_id']; ?>"><i class="bi bi-pencil-square"></i></a>
+                 <br><?php echo $user['first_name'] . ' ' . $user['last_name']; ?> 
+               <a href="edit_profile.php?user_id=<?php echo $user['user_id']; ?>"><i class="bi bi-pencil-square"></i></a>
             </div>
          </div>
          <ul class="nav-links align-items-center  text-center ">
@@ -145,13 +62,13 @@ $filtered_reports = get_filtered_reports();
                </a>
             </li>
             <li>
-               <a href="admins.php">
+               <a href="admins.php" class="active">
                <i class="bi bi-person-vcard"></i>
                <span class="links_name">Admins</span>
                </a>
             </li>
             <li>
-               <a href="reported_accounts.php" class="active">
+               <a href="reported_accounts.php">
                <i class="fa fa-user-times" aria-hidden="true"></i>
                <span class="links_name">Reported Accounts</span>
                </a>
@@ -181,7 +98,7 @@ $filtered_reports = get_filtered_reports();
                </a>
             </li>
             <li>
-            <a href="change_pass.php?email=<?php echo urlencode($users["email"]); ?>">
+            <a href="change_pass.php?email=<?php echo urlencode($user["email"]); ?>">
                <i class="fa fa-key" aria-hidden="true"></i>
                <span class="links_name">Change Password</span>
                </a>
@@ -194,7 +111,6 @@ $filtered_reports = get_filtered_reports();
             </li>
          </ul>
       </div>
-      
       <div class="home-section">
          <nav class="navbar navbar-expand-lg ">
             <div class="container-fluid">
@@ -229,9 +145,9 @@ $filtered_reports = get_filtered_reports();
                            </div>
                         </div>
                         <div class="dib">
-                           <div class="header-icon">
-                              <i class="fa fa-commenting-o" aria-hidden="true"></i>
-                           </div>
+                        <button type="button" class="btn btn-primary" onclick="window.location.href='addadmin.php'">
+                        Add Admin
+                  </button>
                         </div>
                         <div class="container dib">
                            <div class="row">
@@ -248,55 +164,44 @@ $filtered_reports = get_filtered_reports();
                </div>
             </div>
          </nav>
-      
-         <div class="home-content">
-            <div class="tab-content">
-               <div id="home" class="tab-pane fade in active">
-                  <div class="sales-boxes py-5  ">
-                     <div class="recent-sales box">
-                         <div class="table-container" style="height:700px">
-                          <table class="table" id="myTable">
-                              <thead style="text-align: center;">
-                                 <tr class="title " style="text-align: center;">
-                                    <th scope="col" class="px-5" style="text-align: center;">Complainant</th>
-                                    <th scope="col" class="px-5" style="text-align: center;">Defendant</th>
-                                    <th scope="col" class="px-5" style="text-align: center;">Reason</th>
-                                    <th scope="col" class="px-5" style="text-align: center;">Action</th>
-                                 </tr>
-                              </thead>
-                              <tbody>
-                              <?php
-                        foreach ($filtered_reports as $report) {
-                           // Assuming you have user details fetch function like get_user_details()
-                           $complainant = get_user_details($report['complainant_id']);
-                           $complainantFullName = $complainant['first_name'] . ' ' . $complainant['last_name'];
-                       
-                         // Fetch shop details
-                           $defendant = get_shop_details($report['defendant_id']); // Assuming this function exists
-                           $shopName = isset($defendant['shop_name']) ? $defendant['shop_name'] : 'N/A';
 
-                           echo '<tr class="name" style="text-align: center;">';
-                           echo '<td class="px-5 py-2" style="width:300px;">' . $complainantFullName . '</td>';
-                           echo '<td class="px-5 py-2" style="width:300px;">' . $shopName. '</td>';
-                           echo '<td class="px-5 py-2">' . $report['reason'] . '</td>';
-                           echo '<td class="button py-2" style="min-width: 240px;">';
-                           echo '&nbsp;<a href="../chat.php?user_id=' . $report['complainant_id'] . '">';                           echo '<button class="btn dib"><i class="fa fa-comments" aria-hidden="true"></i> Complainant</button>';
-                           echo '</a>';
-                           echo '&nbsp;<a href="../chat.php?user_id=' . $defendant['owner_id'] . '">';                           echo '<button class="btn dib"><i class="fa fa-comments" aria-hidden="true"></i> Defendant</button>';
-                           echo '</a>';
-                           echo '</td>';
-                           echo '</tr>';
+         <div class="home-content">
+         <div class="table-container" style="height:700px">
+            <div class="sales-boxes py-5  ">
+               <div class="recent-sales box">
+                  <table class="table" id="myTable">
+                        <thead style="text-align: center;">
+                           <tr class="title" style="text-align: center;">
+                              <th scope="col" class="px-5" style="text-align: center;">Name</th>
+                              <th scope="col" class="px-5" style="text-align: center;">Role</th>
+                              <th scope="col" class="px-5" style="text-align: center;">Status</th>
+                              <th scope="col" class="px-5" style="text-align: center;">Action</th>
+
+                           </tr>
+                        </thead>
+                        <tbody>
+                        <?php
+                        // Fetch user data from the database
+
+                        // Loop through the user data and display it in the table
+                        foreach ($users as $user) {
+                              echo '<tr class="name" style="text-align: center;">';
+                              echo '<td class="px-5 py-3" style="width: 400px; text-align: center;">' . $user['first_name'] . ' ' . $user['last_name'] . '</td>';
+                              echo '<td class="px-5 py-3" style="min-width: 150px; text-align: center;">' . ucfirst($user['role']). '</td>';
+                              echo '<td class="px-5 py-3" style="min-width: 150px; text-align: center;">' . $user['status'] . '</td>';
+                              echo '<td class="button py-2" style="min-width: 240px;">';
+                              echo '<button class="btn dib"  onclick="deleteShop(' . $user['user_id'] . ')">Block</button>';
+                              echo '</td>';
+                              echo '</tr>';
                         }
                         ?>
-                        </tbody>
-                           </table>
-                        </div>
-                     </div>
+                     </tbody>
+                     </table>
                   </div>
                </div>
             </div>
          </div>
-      </div> 
+      </div>
       <script>
          function myFunction() {
            var input, filter, table, tr, td, i, j, txtValue;
@@ -331,25 +236,6 @@ $filtered_reports = get_filtered_reports();
              }
            }
          }
-         </script>
-         <script>
-function blockShop(shopId) {
-    if(confirm("Are you sure you want to block this shop?")) {
-        $.ajax({
-            url: 'reported_accounts.php', // Adjusted URL
-            type: 'POST',
-            data: { 'shop_id': shopId, 'action': 'block_shop' },
-            success: function(response) {
-                alert("Shop has been blocked successfully.");
-                location.reload(); // Reloads the current page
-            },
-            error: function(xhr, status, error) {
-                console.error("Error blocking shop:", error);
-            }
-        });
-    }
-}
-</script>
-
+      </script>
    </body>
-</html> ]
+</html>

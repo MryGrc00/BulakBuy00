@@ -1,6 +1,12 @@
 <?php
 include('checksession.php'); 
 include('../php/dbhelper.php'); // Include the dbhelper file to use its functions.
+if (isset($_SESSION["user_id"])) {
+   $user_id = $_SESSION["user_id"];
+   $users = get_record('users','user_id',$user_id);
+}
+
+
 
 $pdo = dbconnect();
 try {
@@ -61,51 +67,73 @@ try {
                <hr>
             </div>
             <div class="profile">
-               <img src='https://media.istockphoto.com/id/517528555/photo/trendy-young-man-smiling-on-white-background.jpg?s=1024x1024&w=is&k=20&c=FJijfaHuhjDH_byYfFku4oclIL5oepIO5ZCA4y_iav0=' alt="Admin Profile">
-               <h6>Dan Mark</h6>
+            <?php
+                    $profileImage = !empty($users['profile_img']) ? $users['profile_img'] : '../php/images/default.jpg'; 
+                    echo '<img src="' . $profileImage . '" alt="' . $users['last_name'] . '" class="user-image">';
+                 ?>               
+                 <br><?php echo $users['first_name'] . ' ' . $users['last_name']; ?> 
+               <a href="edit_profile.php?user_id=<?php echo $users['user_id']; ?>"><i class="bi bi-pencil-square"></i></a>
             </div>
          </div>
          <ul class="nav-links align-items-center  text-center ">
             <li>
                <a href="dashboard.php">
-                  <i class="fa fa-home" aria-hidden="true"></i>
-                  <span class="links_name">Dashboard</span>
+               <i class="fa fa-home" aria-hidden="true"></i>
+               <span class="links_name">Dashboard</span>
                </a>
             </li>
             <li>
                <a href="users.php">
-                  <i class="fa fa-user-circle-o" aria-hidden="true"></i>
-                  <span class="links_name">Users</span>
+               <i class="fa fa-user-circle-o" aria-hidden="true"></i>
+               <span class="links_name">Users</span>
+               </a>
+            </li>
+            <li>
+               <a href="admins.php">
+               <i class="bi bi-person-vcard"></i>
+               <span class="links_name">Admins</span>
                </a>
             </li>
             <li>
                <a href="reported_accounts.php">
-                  <i class="fa fa-user-times" aria-hidden="true"></i>
-                  <span class="links_name">Reported Accounts</span>
+               <i class="fa fa-user-times" aria-hidden="true"></i>
+               <span class="links_name">Reported Accounts</span>
                </a>
             </li>
             <li>
                <a href="blocked_accounts.php">
-                  <i class="fa fa-ban" aria-hidden="true"></i>
-                  <span class="links_name">Blocked Accounts</span>
+               <i class="fa fa-ban" aria-hidden="true"></i>
+               <span class="links_name">Blocked Accounts</span>
                </a>
             </li>
             <li>
                <a href="subscriptions.php">
-                  <i class="fa fa-credit-card-alt" aria-hidden="true"></i>
-                  <span class="links_name">Subscriptions</span>
+               <i class="fa fa-credit-card-alt" aria-hidden="true"></i>
+               <span class="links_name">Subscriptions</span>
                </a>
             </li>
             <li>
-               <a href="transaction_history.php"   class="active">
-                  <i class="fa fa-line-chart" aria-hidden="true"></i>
-                  <span class="links_name">Transaction History</span>
+               <a href="reports.php">
+               <i class="fa fa-users" aria-hidden="true"></i>
+               <span class="links_name">Reports</span>
+               </a>
+            </li>
+            <li>
+               <a href="transaction_history.php" class="active">
+               <i class="fa fa-line-chart" aria-hidden="true"></i>
+               <span class="links_name">Transaction History</span>
+               </a>
+            </li>
+            <li>
+            <a href="change_pass.php?email=<?php echo urlencode($users["email"]); ?>">
+               <i class="fa fa-key" aria-hidden="true"></i>
+               <span class="links_name">Change Password</span>
                </a>
             </li>
             <li>
                <a href="logout.php">
-                  <i class="fa fa-sign-out" aria-hidden="true"></i> 
-                  <span class="links_name">Logout</span>
+               <i class="fa fa-sign-out" aria-hidden="true"></i> 
+               <span class="links_name">Logout</span>
                </a>
             </li>
          </ul>

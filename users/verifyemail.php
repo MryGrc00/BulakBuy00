@@ -11,7 +11,7 @@ if (isset($_GET['email'])) {
 
     try {
         // Generate a new OTP
-        $newOTP = generateOTP(); // Assuming generateOTP() is a function in mail.php to generate a new OTP
+        $newOTP = generateOTP(); 
 
         // Update the OTP in the database for the given email
         $updateStmt = $conn->prepare("UPDATE users SET otp = :otp WHERE email = :email");

@@ -3,7 +3,7 @@
 <?php
 session_start();
 include_once "php/dbhelper.php";
-include_once "php/mail.php"; // Include the file with the sendOTP function
+include_once "php/mail.php"; 
 
 // Establish database connection
 $conn = dbconnect();
@@ -19,7 +19,7 @@ if (isset($_POST['submit'])) {
     if ($checkStmt->rowCount() > 0) {
         try {
             // Generate a new OTP
-            $newOTP = generateOTP(); // Assuming generateOTP() is a function in mail.php to generate a new OTP
+            $newOTP = generateOTP(); 
 
             // Update the OTP in the database for the given email
             $updateStmt = $conn->prepare("UPDATE users SET otp = :otp WHERE email = :email");
@@ -29,8 +29,8 @@ if (isset($_POST['submit'])) {
 
             // Send the new OTP via email using the sendOTP function from mail.php
             if (sendOTP($email, $newOTP)) {
-                // Redirect to verification.php with the email parameter
-                $_SESSION['email'] = $email; // Store email in session if needed for future use
+                $_SESSION['email'] = $email; 
+                $_SESSION['user_id'] = $user_id; 
                 header("Location: verify_password.php");
                 exit();
             } else {

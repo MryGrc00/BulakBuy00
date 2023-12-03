@@ -1,5 +1,5 @@
 <?php
-session_start();
+include('../php/checksession.php'); 
 include '../php/dbhelper.php'; // Make sure this path is correct
 
 if (!isset($_SESSION["user_id"]) || $_SESSION["role"] !== "seller") {

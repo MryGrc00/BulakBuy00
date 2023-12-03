@@ -1,5 +1,5 @@
 <?php
-session_start();
+include('../php/checksession.php'); 
 include '../php/dbhelper.php';
 
 $pdo = dbconnect();
@@ -56,9 +56,6 @@ if (isset($_GET['user_id'])) {
     } else {
         echo "User not found!";
     }
-} else {
-    header("Location: login.php"); 
-    exit();
 }
 ?>
 
