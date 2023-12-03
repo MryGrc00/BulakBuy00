@@ -190,7 +190,7 @@ if (isset($_SESSION["user_id"])) {
                               echo '<td class="px-5 py-3" style="min-width: 150px; text-align: center;">' . ucfirst($user['role']). '</td>';
                               echo '<td class="px-5 py-3" style="min-width: 150px; text-align: center;">' . $user['status'] . '</td>';
                               echo '<td class="button py-2" style="min-width: 240px;">';
-                              echo '<button class="btn dib"  onclick="deleteShop(' . $user['user_id'] . ')">Block</button>';
+                              echo '<button class="btn dib"  onclick="deleteAdmin(' . $user['user_id'] . ')">Delete</button>';
                               echo '</td>';
                               echo '</tr>';
                         }
@@ -237,5 +237,25 @@ if (isset($_SESSION["user_id"])) {
            }
          }
       </script>
+
+<script>
+function deleteAdmin(adminId) {
+    if(confirm("Are you sure you want to delete this admin?")) {
+        $.ajax({
+            url: 'delete_admin.php', // Adjust the URL to the location of your PHP deletion script
+            type: 'POST',
+            data: { 'user_id': adminId, 'action': 'delete_admin' },
+            success: function(response) {
+                alert(response);
+                location.reload(); // Reloads the current page
+            },
+            error: function(xhr, status, error) {
+                console.error("Error deleting admin:", error);
+            }
+        });
+    }
+}
+</script>
+
    </body>
 </html>
