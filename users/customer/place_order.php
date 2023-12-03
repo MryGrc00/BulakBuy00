@@ -165,7 +165,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                         return $product['productId'];
                                     }, $selectedProducts);
 
-                                    $selectedProductsDetails = get_product_details_in_cart($selectedProductIDs, $user_id);
+                                    $selectedProductsDetails = get_product_details_in_cart($selectedProducts, $user_id);
+
 
                                     // Now $selectedProductsDetails contains the details of selected products
 
@@ -264,25 +265,30 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 }
 
                                 // Function to get product IDs added to the cart by the user
-                                function get_product_details_in_cart($selectedProductIDs, $userID)
+                                function get_product_details_in_cart($selectedProducts, $userID)
                                 {
                                     $conn = dbconnect();
                                     $table = 'salesdetails';
                                     $where = 'customer_id';
 
-                                    // Placeholder for the question marks in the SQL query
-                                    $placeholders = rtrim(str_repeat('?, ', count($selectedProductIDs)), ', ');
+                                    // Extract the salesdetails_id values from selected products
+                                    $selectedSalesDetailsIDs = array_map(function ($product) {
+                                        return $product['salesdetailsId'];
+                                    }, $selectedProducts);
 
-                                    $sql = "SELECT p.*, sd.quantity, sd.customer_id 
+                                    // Placeholder for the question marks in the SQL query
+                                    $placeholders = rtrim(str_repeat('?, ', count($selectedSalesDetailsIDs)), ', ');
+
+                                    $sql = "SELECT p.*, sd.quantity, sd.customer_id, sd.salesdetails_id 
                                             FROM products p 
                                             JOIN salesdetails sd ON p.product_id = sd.product_id
-                                            WHERE sd.customer_id = ? AND sd.product_id IN ($placeholders)";
+                                            WHERE sd.customer_id = ? AND sd.salesdetails_id IN ($placeholders)";
 
                                     try {
                                         $stmt = $conn->prepare($sql);
 
                                         // Bind parameters
-                                        $params = array_merge([$userID], $selectedProductIDs);
+                                        $params = array_merge([$userID], $selectedSalesDetailsIDs);
                                         $stmt->execute($params);
 
                                         $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -295,6 +301,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                                     return $products;
                                 }
+
 
                                 // Function to get product details by joining the sales_details and products tables
                                 function get_product_details($productID, $userID)

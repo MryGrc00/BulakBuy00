@@ -18,8 +18,10 @@
             background-color:#f5f5f5;
         }
         .container{
+          
             width:500px;
             margin:auto;
+            margin-top: 70px;
             font-family: 'Poppins';
             background-color: white;
             box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
@@ -64,7 +66,11 @@
             outline:none;
         }
         .form-control1{
+<<<<<<< HEAD
           font-size: 13px;
+=======
+             font-size: 13px;
+>>>>>>> 4d7b35b7024541d6f22aa0e11dc05b8c5c8db511
             padding: 8px;
             margin-bottom: 10px;
             border:none;
