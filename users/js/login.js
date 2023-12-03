@@ -30,7 +30,7 @@ continueBtn.onclick = () => {
                     errorText.style.display = "block";
                     if (data[0] === "Email not verified!") {
                         // If email is not verified, show error message with verification link
-                        errorText.innerHTML = `${data[0]} <a href='resend_verification.php?email=${encodeURIComponent(data[1])}'>Resend verification email</a>`;
+                        errorText.innerHTML = `${data[0]} <a href='verifyemail.php?email=${encodeURIComponent(data[1])}'>Resend verification email</a>`;
                     } else {
                         // For other error messages, just display the text
                         errorText.textContent = data[0];

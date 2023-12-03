@@ -8,10 +8,6 @@ include_once "php/mail.php";
 // Establish database connection
 $conn = dbconnect();
 
-if (isset($_GET['email'])){
-    $email = $_GET['email'];
-}
-
 if (isset($_POST['submit'])) {
     $email = $_POST['email'];
 
@@ -83,7 +79,7 @@ function generateOTP() {
                 <div class="success-text"></div>
                 <form action="" method="POST" enctype="multipart/form-data" autocomplete="off">
                 <div class="form-group">
-                    <input type="text" class="form-control bg-light rounded" name="email" id="email" value="<?php echo $email;?>" placeholder="Email" required>
+                    <input type="text" class="form-control bg-light rounded" name="email" id="email"     placeholder="Email" required>
                 </div>
                     <div class="form-group">
                         <br>
