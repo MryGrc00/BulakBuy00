@@ -21,7 +21,7 @@
           
             width:500px;
             margin:auto;
-            margin-top: 70px;
+            margin-top: 55px;
             font-family: 'Poppins';
             background-color: white;
             box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
@@ -54,19 +54,21 @@
             letter-spacing: 0.1rem;
             color:#888;
             margin-top: 10px;
-            font-size: 13px;
+            font-size: 15px;
             outline: none !important;
         }
         .form-control::placeholder {
             font-size: 15px;
             color:#A0A0A0;
+      
+
         }
         .form-control:focus {
             border:1px solid #fefefe;
             outline:none;
         }
         .form-control1{
-             font-size: 13px;
+             font-size: 15px;
             padding: 8px;
             margin-bottom: 10px;
             border:none;
@@ -81,7 +83,7 @@
         .form-control1::placeholder {
             font-size: 15px;
             color:#A0A0A0;
-            padding-left: 8px;
+          
         }
         .form-control1:focus {
             border:1px solid #fefefe;
@@ -93,9 +95,9 @@
             width:440px;
             padding:7px;
             border-radius:10px;
-            margin-top: 10px;
-            margin-top: 10px;
+            margin-top: 30px;
             letter-spacing: 0.1rem;
+            font-size: 15px;
         }
         .btn:hover{
             color:#fefefe;
@@ -180,27 +182,33 @@
         }
         .container{
             margin:auto;
-            margin-top:70px;
+            margin-top:20px;
             font-family: 'Poppins';
             padding:20px;
             padding-bottom:30px;
             box-shadow: none;
             border-radius: none;
+            width: 375px;
         }
-
+        .row img{
+            margin:auto;
+            width:200px;
+            height:80px;
+        }
         .signup{
             color:#666;
-            font-size: 20px;
+            font-size: 15px;
             text-align: center;
             letter-spacing: 0.1rem;
-            margin-top: -35px;
+            margin-top: 10px;
             font-weight: 500;
+            
         }
         .form-control{
             /* Add general styling for form controls here */
             padding: 20px;
             border:none;
-            width: 350px;
+            width: 310px;
             background-color: #F5F5F5;
             border-radius:10px;
             letter-spacing: 0.1rem;
@@ -208,10 +216,14 @@
             margin-top: 10px;
             margin-bottom: 15px;
             outline: none !important;
+            font-size: 13px;
+
         }
         .form-control::placeholder {
-            font-size: 15px;
+            font-size: 13px;
             color:#A0A0A0;
+         
+
         }
         .form-control:focus {
             border:1px solid #fefefe;
@@ -222,31 +234,37 @@
           padding: 8px;
           margin-bottom: 10px;
           border:none;
-          width: 350px;
+          width: 310px;
           background-color: #F5F5F5;
           border-radius:10px;
           letter-spacing: 0.1rem;
           color:#888;
-
+          font-size: 13px;
           outline: none !important;
       }
       .form-control1::placeholder {
-          font-size: 15px;
+          font-size: 13px;
           color:#A0A0A0;
-          padding-left: 8px;
+          padding-left: 10px;
       }
       .form-control1:focus {
           border:1px solid #fefefe;
           outline:none;
       }
+      .button{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
         .btn{
             background-color: #65A5A5;
             color:white;
-            width:250px;
+            width:350px;
             padding:7px;
-            border-radius:10px;
-            margin-top: 10px;
+            border-radius:15px;
+            margin-top: 30px;
             letter-spacing: 0.1rem;
+            font-size: 13px;
         }
         .btn:hover{
             color:#fefefe;
@@ -258,7 +276,7 @@
 
         .toggle-password {
             position: absolute;
-            top: 45%;
+            top: 40%;
             right: 10px;
             transform: translateY(-50%);
             cursor: pointer;
@@ -266,7 +284,7 @@
 
         /* Eye icon styles */
         .toggle-password i {
-            font-size: 18px;
+            font-size: 15px;
             color: #999;
         }
 
@@ -282,7 +300,7 @@
         }
         .container1 .row a{
             color:#888;
-            font-size: 14px;
+            font-size: 13px;
             text-align: center;
             text-decoration: none;
             margin-top: 10px;
@@ -293,7 +311,7 @@
             text-align: center;
             border-radius: 5px;
             background: #f8d7da;
-            font-size: 15px;
+            font-size: 13px;
             border: 1px solid #f5c6cb;
             margin-bottom: 20px;
             display: none;
@@ -301,7 +319,7 @@
         }
         .form-select {
             border:none;
-            width: 350px;
+            width: 310px;
             padding: 8px;
             background-color: #F5F5F5;
             border-radius:10px;
@@ -311,7 +329,7 @@
             margin-bottom: 15px;
             outline: none !important;
             padding-left:15px;
-            font-size:15px;
+            font-size:13px;
             color:#A0A0A0;
         }
 

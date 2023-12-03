@@ -1,5 +1,11 @@
 <?php
 session_start();
+$selectedProducts = json_decode($_GET['selected_products'], true);
+$selectedPayment = isset($_GET['selected_payment']) ? $_GET['selected_payment'] : '';
+$_SESSION['selected_products'] = $selectedProducts;
+$_SESSION['selected_payment'] = $selectedPayment;
+
+
 if (!isset($_SESSION["user_id"])) {
     header('Location: ../../login.php');
     exit();
@@ -95,7 +101,7 @@ $selectedShopPhone = getShopPhone($selectedShopId, $pdo);
                 <div class="col-md-12 order-md-1">
                     <h4 class="mb-3">Billing address</h4>
                     <?php if (!empty($users)): ?>
-                    <form class="needs-validation" method="POST" action="post.php">
+                    <form class="needs-validation" method="POST" action="post.php" enctype="multipart/form-data">
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="firstName">First name</label>
@@ -137,7 +143,9 @@ $selectedShopPhone = getShopPhone($selectedShopId, $pdo);
                             <div class="invalid-feedback">Please enter the amount to be paid.</div>
                         </div>
                         <hr class="mb-4">
-                        <button class="btn btn-primary btn-lg btn-block" type="submit">Continue to checkout</button>
+                        <input type="hidden" name="selected_products" value="<?php echo htmlspecialchars(json_encode($selectedProducts), ENT_QUOTES, 'UTF-8'); ?>">
+                        <button class="btn btn-primary btn-lg btn-block" id= "checkoutForm" type="submit">Continue to checkout</button>
+                
                     </form>
                     <?php else: ?>
                         <p>User not found.</p>
@@ -148,15 +156,17 @@ $selectedShopPhone = getShopPhone($selectedShopId, $pdo);
                         <p class="mb-1">© <?php echo date("Y"); ?> BulakBuy.ph</p>
                     </footer>
                 </div>
-        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
-            integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
-            crossorigin="anonymous"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
-            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
-            crossorigin="anonymous"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
-            integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
-            crossorigin="anonymous"></script>
+                <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+                    integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+                    crossorigin="anonymous"></script>
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+                    integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+                    crossorigin="anonymous"></script>
+                <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+                    integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+                    crossorigin="anonymous"></script>
+               
+
     </body>
 
     </html>

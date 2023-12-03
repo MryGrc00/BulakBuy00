@@ -68,13 +68,168 @@ function generateOTP() {
 
     
     <title>Verify Email</title>
+    <style>
+        body{
+            background-color:#f5f5f5;
+        }
+        .container{
+          width:500px;
+          margin:auto;
+          margin-top: 300px;
+          font-family: 'Poppins';
+          background-color: white;
+          box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+          border-radius: 10px;
+          padding:20px;
+          padding-bottom:70px;
+      }
+
+        .enter{
+            color:#666;
+            font-size: 17px;
+            text-align: center;
+            letter-spacing: 0.1rem;
+            margin-top: 15px;
+            font-weight: 500;
+        }
+        .form-control {
+            /* Add general styling for form controls here */
+            padding: 20px;
+            border:none;
+            width: 440px;
+            background-color: #F5F5F5;
+            border-radius:10px;
+            letter-spacing: 0.1rem;
+            color:#888;
+            margin-top: 30px;
+            outline: none !important;
+        }
+        .form-control::placeholder {
+            font-size: 15px;
+            color:#A0A0A0;
+        }
+        .form-control:focus {
+            border:1px solid #fefefe;
+            outline:none;
+        }
+        .btn{
+            background-color: #65A5A5;
+            color:white;
+            width:440px;
+            padding:7px;
+            border-radius:10px;
+            letter-spacing: 0.1rem;
+            font-size: 16px;
+        }
+        .btn:hover{
+            color:#fefefe;
+        }
+       
+
+        .error-text{
+            color: #721c24;
+            padding: 8px 10px;
+            text-align: center;
+            border-radius: 5px;
+            background: #f8d7da;
+            font-size: 15px;
+            border: 1px solid #f5c6cb;
+            margin-bottom: 20px;
+            display: none;
+            font-weight: 300;
+        }
+        @media (max-width: 768px) {
+            body{
+            background-color:transparent;
+            
+        }
+        .container{
+            margin:auto;
+            margin-top:70px;
+            font-family: 'Poppins';
+            padding:20px;
+            padding-bottom:30px;
+            width: 375px;
+            box-shadow: none;
+            border-radius: none;
+      
+        }
+
+      
+        .enter{
+            color:#666;
+            font-size: 15px;
+            text-align: center;
+            letter-spacing: 0.1rem;
+            margin-top: 10px;
+            font-weight: 500;
+        }
+        .form-control {
+            /* Add general styling for form controls here */
+            padding: 20px;
+            border:none;
+            width: 310px;
+            background-color: #F5F5F5;
+            border-radius:10px;
+            letter-spacing: 0.1rem;
+            color:#888;
+            margin-top: 30px;
+            outline: none !important;
+            font-size: 13px;
+            border:none;
+        }
+        .form-control::placeholder {
+            font-size: 13px;
+            color:#A0A0A0;
+        }
+        .form-control:focus {
+            border:1px solid #fefefe;
+            outline:none;
+        }
+        .button{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .btn{
+            background-color: #65A5A5;
+            color:white;
+            width:350px;
+            padding:7px;
+ 
+            border-radius:10px;
+            letter-spacing: 0.1rem;
+            font-size: 13px;
+        }
+        .btn:hover{
+            color:#fefefe;
+        }
+       
+        .container1{
+            margin-top: -10px;
+        }
+       
+        .error-text{
+            color: #721c24;
+            padding: 8px 10px;
+            text-align: center;
+            border-radius: 5px;
+            background: #f8d7da;
+            font-size: 13px;
+            border: 1px solid #f5c6cb;
+            margin-bottom: 25px;
+            display: none;
+            font-weight: 300;
+        }
+        }
+    </style>
 </head>
 <body>
 <div class="container">
     <main>
         <div class="container-fluid mt-5">
             <div class="row fw-semibold">
-                <h2>Enter Your Email</h2>
+                <h2 class="enter">Enter Your Email</h2>
                 <div class="error-text"></div>
                 <div class="success-text"></div>
                 <form action="" method="POST" enctype="multipart/form-data" autocomplete="off">
@@ -84,7 +239,7 @@ function generateOTP() {
                     <div class="form-group">
                         <br>
                         <div class="button">
-                            <input type="submit" name="submit" class="btn btn-primary w-100" value="Verify"></button>
+                            <input type="submit" name="submit" class="btn" value="Verify"></button>
                         </div>
                         <br>
                     </div>

@@ -127,6 +127,7 @@
         @media (max-width: 768px) {
             body{
             background-color:transparent;
+            
         }
         .container{
             margin:auto;
@@ -134,8 +135,10 @@
             font-family: 'Poppins';
             padding:20px;
             padding-bottom:30px;
+            width: 375px;
             box-shadow: none;
             border-radius: none;
+      
         }
 
         .row img{
@@ -155,7 +158,7 @@
             /* Add general styling for form controls here */
             padding: 20px;
             border:none;
-            width: 350px;
+            width: 310px;
             background-color: #F5F5F5;
             border-radius:10px;
             letter-spacing: 0.1rem;
@@ -163,6 +166,7 @@
             margin-top: 20px;
             outline: none !important;
             font-size: 13px;
+            border:none;
         }
         .form-control::placeholder {
             font-size: 13px;
@@ -172,6 +176,11 @@
             border:1px solid #fefefe;
             outline:none;
         }
+        .button{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
         .btn{
             background-color: #65A5A5;
             color:white;
@@ -180,7 +189,7 @@
             border-radius:10px;
             margin-top: 30px;
             letter-spacing: 0.1rem;
-            font-size: 15px;
+            font-size: 13px;
         }
         .btn:hover{
             color:#fefefe;
@@ -226,7 +235,7 @@
             text-align: center;
             border-radius: 5px;
             background: #f8d7da;
-            font-size: 15px;
+            font-size: 13px;
             border: 1px solid #f5c6cb;
             margin-bottom: 25px;
             display: none;

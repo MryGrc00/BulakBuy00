@@ -82,7 +82,8 @@ function get_product_ids_in_cart($user_id) {
 function get_product_details($productID, $salesdetailsId) {
     $conn = dbconnect();
     // Update the SQL query to include salesdetails_id in the SELECT statement
-    $sql = "SELECT p.*, sd.quantity, sd.salesdetails_id FROM products p 
+    $sql = "SELECT p.*, sd.quantity, sd.salesdetails_id, sd.flower_type, sd.ribbon_color, sd.message
+            FROM products p 
             JOIN salesdetails sd ON p.product_id = sd.product_id
             WHERE p.product_id = ? AND sd.salesdetails_id = ?";
 
@@ -99,53 +100,10 @@ function get_product_details($productID, $salesdetailsId) {
     $conn = null;
     return $product;
 }
-// Example function to fetch sales details based on product ID
-function get_salesdetails($productID) {
-    // Replace this with your database connection code
-    $conn = dbconnect();
-
-    // Replace this query with your actual query to fetch sales details
-    $sql = "SELECT flower_type, ribbon_color FROM salesdetails WHERE product_id = :productID";
-
-    try {
-        $stmt = $conn->prepare($sql);
-        // Bind the parameter and execute the statement
-        $stmt->bindParam(':productID', $productID, PDO::PARAM_INT);
-        $stmt->execute();
-        $product = $stmt->fetch(PDO::FETCH_ASSOC);
-    } catch (PDOException $e) {
-        echo $sql . "<br>" . $e->getMessage();
-        return false;
-    }
-
-    $conn = null;
-    return $product;
-}
-
-
-function getCurrentQuantityFromDatabase($product_id, $salesdetails_id) {
-    $user_id = $_SESSION['user_id'];
-    $conn = dbconnect();
-
-    // Update SQL query to match product_id, salesdetails_id, and customer_id
-    $sql = "SELECT quantity FROM salesdetails WHERE product_id = ? AND salesdetails_id = ? AND customer_id = ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->execute([$product_id, $salesdetails_id, $user_id]);
-    $result = $stmt->fetchColumn();
-
-    return $result ? $result : 0; // Return 0 if no matching record is found
-}
 
 
 
 
-// Get the image file names (or paths) stored in the database
-$imageFileNames = explode(',', $product['product_img']);
-
-
-$imageBasePath = 'images'; // Adjust the path as needed
-$isArranger = $user['role'] == 'arranger';
-$productAddedByArranger = $product['product_id'] == $user_id;
 
 ?>
 
@@ -216,6 +174,34 @@ $productAddedByArranger = $product['product_id'] == $user_id;
                 font-size: 13px;
                 color:#666;
             }
+
+            .modal {
+                display: none;
+                position: fixed;
+                z-index: 1;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                overflow: auto;
+            }
+            .modal-content {
+                background-color: #65a5a5e1;
+                margin: 20% auto;
+                padding: 20px;
+                border: none;
+                border-radius: 10px;
+                max-width: 300px;
+                text-align: center;
+                color: white;
+            }
+            .bi-info-circle {
+                font-size: 50px;
+                color: white;
+                margin: auto;
+                margin-top: 5%;
+            }
+
         </style>
     </head>
     <body>
@@ -278,66 +264,87 @@ $productAddedByArranger = $product['product_id'] == $user_id;
                                             }
                                             $productsByShop[$shopId][] = $product;
                                         }
-                                        
-                                        // Loop through each shop and display its products
-                                        foreach ($productsByShop as $shopId => $shopProducts) {
-                                            // Retrieve shop details from the database based on shop_id
-                                            $shop = get_record('shops', 'shop_id', $shopId);
-                                        
-                                            // Display shop details
-                                            if ($shop) {
-                                                echo '<div class="shop-info">';
-                                                echo '<img src="' . $shop['shop_img'] . '" alt="Shop Image">';
-                                                echo '<div class="shop-name">';
-                                                echo '<a href="../vendor/vendor_shop.html">';
-                                                echo '<h3>' . $shop['shop_name'] . '</h3>';
-                                                echo '<i class="fa fa-angle-right" aria-hidden="true"></i>';
-                                                echo '</a>';
-                                                echo '</div>';
-                                                echo '</div>';
-                                            } else {
-                                                echo "Shop details not found.";
-                                            }
-                                        
-                                            // Display products for the current shop
-                                            echo '<hr class="cart-hr">';
-                                            echo '<div class="cart-items">';
-                                            foreach ($shopProducts as $product) {
-                                                echo '<div class="cart-item">';
-                                                echo '<div class="custom-checkbox" style="margin-top: -30px">';
-                                                echo '<input type="checkbox" class="item-checkbox" data-shopId="' . $shopId . '" data-productId="' . $product['product_id'] . '" data-productName="' . $product['product_name'] . '" data-productPrice="' . $product['product_price'] . '" data-quantity="' . $product['quantity'] . '" data-salesdetails-id="' . $product['salesdetails_id'] . '">';
-                                                echo '<img src="' . $product['product_img'] . '" alt="' . $product['product_name'] . '">';
-                                                echo '</div>';
-                                        
-                                                // Rest of your product display code...
-                                                echo '<div class="item-details">';
-                                                echo '<h2>' . $product['product_name'] . '</h2>';                
-                                                //Retrieve flower type and ribbon color from salesdetails table
-                                                $salesDetails = get_salesdetails($product['product_id']); // Replace with your function to fetch salesdetails
+                                        if (empty($productsByShop)) {
+                                            echo 'No products added to cart.';
+                                        } else {
+                                                // Loop through each shop and display its products
+                                                foreach ($productsByShop as $shopId => $shopProducts) {
+                                                    // Retrieve shop details from the database based on shop_id
+                                                    $shop = get_record('shops', 'shop_id', $shopId);
+                                                
+                                                    // Display shop details
+                                                    if ($shop) {
+                                                        echo '<div class="shop-info">';
+                                                        echo '<img src="' . $shop['shop_img'] . '" alt="Shop Image">';
+                                                        echo '<div class="shop-name">';
+                                                        echo '<a href="../vendor/vendor_shop.html">';
+                                                        echo '<h3>' . $shop['shop_name'] . '</h3>';
+                                                        echo '<i class="fa fa-angle-right" aria-hidden="true"></i>';
+                                                        echo '</a>';
+                                                        echo '</div>';
+                                                        echo '</div>';
+                                                    } else {
+                                                        echo "Shop details not found.";
+                                                    }
+                                                
+                                                    // Display products for the current shop
+                                                    echo '<hr class="cart-hr">';
+                                                    echo '<div class="cart-items">';
+                                                    foreach ($shopProducts as $product) {
+                                                        echo '<div class="cart-item">';
+                                                        echo '<div class="custom-checkbox" style="margin-top: -30px">';
+                                                        echo '<input type="checkbox" class="item-checkbox" data-shopId="' . $shopId . '" data-productId="' . $product['product_id'] . '" data-productName="' . $product['product_name'] . '" data-productPrice="' . $product['product_price'] . '" data-quantity="' . $product['quantity'] . '" data-salesdetails-id="' . $product['salesdetails_id'] . '">';
+                                                        echo '<img src="' . $product['product_img'] . '" alt="' . $product['product_name'] . '">';
+                                                        echo '</div>';
+                                                
+                                                        // Rest of your product display code...
+                                                        echo '<div class="item-details">';
+                                                        echo '<h2>' . $product['product_name'] . '</h2>';                
+                                                        //Retrieve flower type and ribbon color from salesdetails table
+                                                        $salesDetails = $product;
 
-                                                if ($salesDetails) {
-                                                    echo '<div class="flower-type">';
-                                                    echo '<p class="flower">Flower:</p>';
-                                                    echo '<p class="type">' . $salesDetails['flower_type'] . '</p>';
-                                                    echo '</div>';
-                                                    echo '<div class="ribbon-color">';
-                                                    echo '<p class="ribbon">Ribbon:</p>';
-                                                    echo '<p class="color">' . $salesDetails['ribbon_color'] . '</p>';
-                                                    echo '</div>';
-                                                }                                 
-                                                echo '<p class="price">₱ ' . $product['product_price'] . '</p>';
-                                                echo '<div class="quantity-control">';
-                                                echo '<button class="quantity-button" data-product-id="' . $product['product_id'] . '" data-salesdetails-id="' . $product['salesdetails_id'] . '" data-action="decrease">-</button>';
-                                                echo '<input type="text" id="quantity' . $product['product_id'] . '" value="' . $product['quantity'] . '">';
-                                                echo '<button class="quantity-button" data-product-id="' . $product['product_id'] . '" data-salesdetails-id="' . $product['salesdetails_id'] . '" data-action="increase">+</button>';
-                                                echo '</div>';
-                                                echo '</div>';
-                                                echo '</div>'; // End of cart-item
+                                                        if ($salesDetails) {
+                                                            // Check if flower type is available
+                                                            if (!empty($salesDetails['flower_type'])) {
+                                                                echo '<div class="flower-type">';
+                                                                echo '<p class="flower">Flower:</p>';
+                                                                echo '<p class="type">' . $salesDetails['flower_type'] . '</p>';
+                                                                echo '</div>';
+                                                            }
+
+                                                            
+
+                                                            // Check if ribbon color is available
+                                                            if (!empty($salesDetails['ribbon_color'])) {
+                                                                echo '<div class="ribbon-color">';
+                                                                echo '<p class="ribbon">Ribbon:</p>';
+                                                                echo '<p class="color">' . $salesDetails['ribbon_color'] . '</p>';
+                                                                echo '</div>';
+                                                            }
+                                                            // Check if ribbon color is available
+                                                            if (!empty($salesDetails['message'])) {
+                                                                echo '<div class="ribbon-color">';
+                                                                echo '<p class="ribbon">Message:</p>';
+                                                                echo '<p class="color">' . $salesDetails['message'] . '</p>';
+                                                                echo '</div>';
+                                                            }
+                                                        }
+
+                                                                    
+                                                        echo '<p class="price">₱ ' . $product['product_price'] . '</p>';
+                                                        echo '<div class="quantity-control">';
+                                                        echo '<button class="quantity-button" data-product-id="' . $product['product_id'] . '" data-salesdetails-id="' . $product['salesdetails_id'] . '" data-action="decrease">-</button>';
+                                                        echo '<input type="text" id="quantity' . $product['product_id'] . '" value="' . $product['quantity'] . '">';
+                                                        echo '<button class="quantity-button" data-product-id="' . $product['product_id'] . '" data-salesdetails-id="' . $product['salesdetails_id'] . '" data-action="increase">+</button>';
+                                                        echo '</div>';
+                                                        echo '</div>';
+                                                        echo '</div>'; // End of cart-item
+                                                    }
+                                                
+                                                    echo '</div>'; // End of cart-items
+                                                    echo '<div class="border"></div>';
+                                                }
                                             }
-                                        
-                                            echo '</div>'; // End of cart-items
-                                            echo '<div class="border"></div>';
-                                        }
                                         ?>
                                  
 
@@ -365,6 +372,12 @@ $productAddedByArranger = $product['product_id'] == $user_id;
                         <div class="button-container">
                        
                             <button class="checkout" onclick="goToPlaceOrder()">Checkout</button>
+                            <div id="confirmationModal" class="modal">
+                                 <div class="modal-content">
+                                    <i class="bi bi-info-circle"></i>                                    
+                                    <p class="confirm-order">No products selected!</p>
+                                </div>
+                            </div>
                         </div>
 
                     </div>
@@ -515,8 +528,7 @@ $productAddedByArranger = $product['product_id'] == $user_id;
                     xhr.onload = function () {
                         if (xhr.status === 200) {
                             // Quantity updated successfully on the server
-                            // You can update other UI elements here if needed
-                        }
+                            location.reload();                        }
                     };
 
                     const data = `action=${action}&product_id=${productId}&salesdetails_id=${salesdetailsId}&quantity=${newQuantity}`;
@@ -544,61 +556,95 @@ $productAddedByArranger = $product['product_id'] == $user_id;
 
                 const subTotalPriceElement = document.getElementById('subTotalPrice');
                 subTotalPriceElement.textContent = '₱ ' + subtotal.toFixed(2); // Format the subtotal price
+
+                
             }
 
-            // Handle checkbox changes
-            itemCheckboxes.forEach(checkbox => {
-                checkbox.addEventListener('change', function () {
-                    updateSubtotal();
+                function updateCheckoutButton() {
+                    // Check if at least one product is selected
+                    const isAtLeastOneProductSelected = Array.from(itemCheckboxes).some(checkbox => checkbox.checked);
+
+                    // Disable or enable the checkout button based on the selection
+                    checkoutButton.disabled = !isAtLeastOneProductSelected;
+
+                    // Change background color of the checkout button
+                    checkoutButton.style.backgroundColor = isAtLeastOneProductSelected ? '#28a745' : '#6c757d';
+                }
+
+                // Handle checkbox changes
+                itemCheckboxes.forEach(checkbox => {
+                    checkbox.addEventListener('change', function () {
+                        updateSubtotal();
+                        updateCheckoutButton();
+                    });
                 });
-            });
+
+                // Function to save and load checkbox state
+                function saveCheckboxState(id, isChecked) {
+                    localStorage.setItem(id, isChecked ? 'checked' : 'unchecked');
+                }
+
+                function loadCheckboxState(id) {
+                    const state = localStorage.getItem(id);
+                    return state === 'checked';
+                }
+                   
             
         </script>
         <script>
-            function goToPlaceOrder() {
+           
+           function goToPlaceOrder() {
+            const isAtLeastOneProductSelected = Array.from(itemCheckboxes).some(checkbox => checkbox.checked);
+            const confirmationModal = document.getElementById('confirmationModal');
+
+            if (isAtLeastOneProductSelected) {
                 const selectedProducts = getSelectedProducts();
                 const selectedProductsParam = encodeURIComponent(JSON.stringify(selectedProducts));
+
+                // Perform any additional actions before showing the modal if needed
+
                 window.location.href = 'place_order.php?selected_products=' + selectedProductsParam;
+            } else {
+                // Display the modal
+                confirmationModal.style.display = 'block';
+
+                // Automatically close the modal after 2 seconds
+                setTimeout(function () {
+                    confirmationModal.style.display = 'none';
+                }, 2000);
             }
+        }
+
+
 
             function getSelectedProducts() {
-    const itemCheckboxes = document.querySelectorAll('.item-checkbox');
-    const selectedProducts = [];
+                const itemCheckboxes = document.querySelectorAll('.item-checkbox');
+                const selectedProducts = [];
 
-    itemCheckboxes.forEach(checkbox => {
-        if (checkbox.checked) {
-            const shopId = checkbox.getAttribute('data-shopId');
-            const productId = checkbox.getAttribute('data-productId');
-            const productName = checkbox.getAttribute('data-productName');
-            const productPrice = parseFloat(checkbox.getAttribute('data-productPrice'));
-            const quantity = parseInt(checkbox.getAttribute('data-quantity'));
-            const salesdetailsId = checkbox.getAttribute('data-salesdetails-id'); // Add this line
+                itemCheckboxes.forEach(checkbox => {
+                    if (checkbox.checked) {
+                        const shopId = checkbox.getAttribute('data-shopId');
+                        const productId = checkbox.getAttribute('data-productId');
+                        const productName = checkbox.getAttribute('data-productName');
+                        const productPrice = parseFloat(checkbox.getAttribute('data-productPrice'));
+                        const quantity = parseInt(checkbox.getAttribute('data-quantity'));
+                        const salesdetailsId = checkbox.getAttribute('data-salesdetails-id');
 
-            const productDetails = {
-                shopId: shopId,
-                productId: productId,
-                productName: productName,
-                productPrice: productPrice,
-                quantity: quantity,
-                salesdetailsId: salesdetailsId // Add this line
-            };
-            selectedProducts.push(productDetails);
-        }
-    });
+                        const productDetails = {
+                            shopId: shopId,
+                            productId: productId,
+                            productName: productName,
+                            productPrice: productPrice,
+                            quantity: quantity,
+                            salesdetailsId: salesdetailsId
+                        };
+                        selectedProducts.push(productDetails);
+                    }
+                });
 
-    return selectedProducts;
-}
+                return selectedProducts;
+            }
 
-
-
-
-
-
-
-
-
-
-            
         </script>
 
             

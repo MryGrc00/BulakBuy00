@@ -59,7 +59,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $salesdetailsId = $selectedProduct['salesdetails_id'];
         $amount = calculate_total_amount($productPrice, $quantity);
         $status = "Pending";
-        $paymode = "cod"; // Set paymode to "cod"
+        $paymode = "gcash"; // Set paymode to "cod"
 
         // Add the sales record to the database
         $success = add_sales_record($salesdetailsId, $productID, $shopID, $customer_id, $quantity, $productPrice, $amount, $status, $paymode);
@@ -75,7 +75,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     echo json_encode(["success" => true, "message" => "Order placed successfully!"]);
     exit();
 }
-
 
 ?>
 
@@ -117,32 +116,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 color: white;
                 margin: auto;
                 margin-top: 5%;
-            }
-            .flower-type{
-                display: flex;
-                gap:10px;
-                margin-top:10px;
-            }
-            .flower{
-                font-size: 13px;
-                color:#777;
-            }
-            .type{
-                font-size: 13px;
-                color:#666;
-            }
-            .ribbon-color{
-                display: flex;
-                gap:10px;
-                margin-top:-5px;
-            }
-            .ribbon{
-                font-size: 13px;
-                color:#777;
-            }
-            .color{
-                font-size: 13px;
-                color:#666;
             }
         </style>
     </head>
@@ -200,10 +173,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <div class="payment-method">
                                 <img src="https://logos-download.com/wp-content/uploads/2020/06/GCash_Logo.png" alt="GCash Icon">
                                 <label for="gcash">GCash</label>
-                                <input type="radio" name="paymentMethod" id="gcashRadio" data-shop-id="<?php echo $shop_id; ?>">
+                                <input type="radio" name="paymentMethod" id="gcashRadio" data-shop-id="<?php echo $shop_id; ?>" <?php echo ($selectedPayment === 'gcash') ? 'checked' : ''; ?>>
                             </div>
+                            <!-- Add other payment methods here -->
                         </form>
-
                         <div class="border"></div>
                         <!-- place_order.php -->
                         <div class="cart-items">
@@ -300,31 +273,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                     echo '</div>';
                                     echo '<div class="item-details">';
                                     echo '<h2>' . $productDetails['product_name'] . '</h2>';
-                                    // Additional details specific to your application can be added here
-                                    if (!empty($productDetails['flower_type'])) {
-                                        echo '<div class="flower-type">';
-                                        echo '<p class="flower">Flower:</p>';
-                                        echo '<p class="type">' . $productDetails['flower_type'] . '</p>';
-                                        echo '</div>';
-                                    }
-
-                                    
-
-                                    // Check if ribbon color is available
-                                    if (!empty($productDetails['ribbon_color'])) {
-                                        echo '<div class="ribbon-color">';
-                                        echo '<p class="ribbon">Ribbon:</p>';
-                                        echo '<p class="color">' . $productDetails['ribbon_color'] . '</p>';
-                                        echo '</div>';
-                                    }
-                                    // Check if ribbon color is available
-                                    if (!empty($productDetails['message'])) {
-                                        echo '<div class="ribbon-color">';
-                                        echo '<p class="ribbon">Message:</p>';
-                                        echo '<p class="color">' . $productDetails['message'] . '</p>';
-                                        echo '</div>';
-                                    }
-                                
                                     echo '<p class="price">₱ ' . $productDetails['product_price'] . '</p>';
 
                                     // Additional details specific to your application can be added here
@@ -349,41 +297,41 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                                 // Function to get product IDs added to the cart by the user
                                 function get_product_details_in_cart($selectedProducts, $userID)
-                                    {
-                                        $conn = dbconnect();
-                                        $table = 'salesdetails';
-                                        $where = 'customer_id';
+                                {
+                                    $conn = dbconnect();
+                                    $table = 'salesdetails';
+                                    $where = 'customer_id';
 
-                                        // Extract the salesdetails_id values from selected products
-                                        $selectedSalesDetailsIDs = array_map(function ($product) {
-                                            return $product['salesdetailsId'];
-                                        }, $selectedProducts);
+                                    // Extract the salesdetails_id values from selected products
+                                    $selectedSalesDetailsIDs = array_map(function ($product) {
+                                        return $product['salesdetailsId'];
+                                    }, $selectedProducts);
 
-                                        // Placeholder for the question marks in the SQL query
-                                        $placeholders = rtrim(str_repeat('?, ', count($selectedSalesDetailsIDs)), ', ');
+                                    // Placeholder for the question marks in the SQL query
+                                    $placeholders = rtrim(str_repeat('?, ', count($selectedSalesDetailsIDs)), ', ');
 
-                                        $sql = "SELECT p.*, sd.quantity, sd.customer_id, sd.salesdetails_id, sd.flower_type, sd.ribbon_color, sd.message
-                                                FROM products p 
-                                                JOIN salesdetails sd ON p.product_id = sd.product_id
-                                                WHERE sd.customer_id = ? AND sd.salesdetails_id IN ($placeholders)";
+                                    $sql = "SELECT p.*, sd.quantity, sd.customer_id, sd.salesdetails_id 
+                                            FROM products p 
+                                            JOIN salesdetails sd ON p.product_id = sd.product_id
+                                            WHERE sd.customer_id = ? AND sd.salesdetails_id IN ($placeholders)";
 
-                                        try {
-                                            $stmt = $conn->prepare($sql);
+                                    try {
+                                        $stmt = $conn->prepare($sql);
 
-                                            // Bind parameters
-                                            $params = array_merge([$userID], $selectedSalesDetailsIDs);
-                                            $stmt->execute($params);
+                                        // Bind parameters
+                                        $params = array_merge([$userID], $selectedSalesDetailsIDs);
+                                        $stmt->execute($params);
 
-                                            $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                                        } catch (PDOException $e) {
-                                            echo $sql . "<br>" . $e->getMessage();
-                                            return false;
-                                        }
-
-                                        $conn = null;
-
-                                        return $products;
+                                        $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                                    } catch (PDOException $e) {
+                                        echo $sql . "<br>" . $e->getMessage();
+                                        return false;
                                     }
+
+                                    $conn = null;
+
+                                    return $products;
+                                }
 
 
                                 // Function to get product details by joining the sales_details and products tables
@@ -588,7 +536,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             });
 
         </script> 
-       <script>
+         <script>
             document.getElementById("confirmOrderBtn").addEventListener("click", function() {
                 // Gather necessary information
                 var selectedProducts = <?php echo json_encode($selectedProducts); ?>;
@@ -640,6 +588,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 xhr.send("selected_products=" + encodeURIComponent(productDetailsJson));
             });
         </script>
+
+    
 
         <script>
             const gcashRadio = document.getElementById("gcashRadio");
