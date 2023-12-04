@@ -1,5 +1,57 @@
 
 
+<?php
+session_start();
+include_once "php/dbhelper.php";
+include_once "php/mail.php"; 
+
+// Establish database connection
+$conn = dbconnect();
+
+if (isset($_POST['submit'])) {
+    $email = $_POST['email'];
+
+    // Check if the email exists in the database
+    $checkStmt = $conn->prepare("SELECT * FROM users WHERE email = :email");
+    $checkStmt->bindParam(':email', $email);
+    $checkStmt->execute();
+
+    if ($checkStmt->rowCount() > 0) {
+        try {
+            // Generate a new OTP
+            $newOTP = generateOTP(); 
+
+            // Update the OTP in the database for the given email
+            $updateStmt = $conn->prepare("UPDATE users SET otp = :otp WHERE email = :email");
+            $updateStmt->bindParam(':otp', $newOTP);
+            $updateStmt->bindParam(':email', $email);
+            $updateStmt->execute();
+
+            // Send the new OTP via email using the sendOTP function from mail.php
+            if (sendOTP($email, $newOTP)) {
+                $_SESSION['email'] = $email; 
+                $_SESSION['user_id'] = $user_id; 
+                header("Location: verify_password.php");
+                exit();
+            } else {
+                // Failed to send OTP, display error message or handle it accordingly
+                echo "Failed to send OTP.";
+            }
+        } catch (PDOException $e) {
+            echo "Error: " . $e->getMessage();
+        }
+    } else {
+        // Email does not exist in the database, display error message
+        echo "Email does not exist. Please enter a valid email address.";
+    }
+}
+
+function generateOTP() {
+    // Logic to generate a new OTP, for example:
+    $otp = rand(100000, 999999);
+    return $otp;
+}
+?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -13,29 +65,27 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href='https://fonts.googleapis.com/css?family=Poppins' rel='stylesheet'>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css"/>
-    <title>Login Account</title>
+
+    
+    <title>Verify Email</title>
     <style>
-         body{
+        <style>
+        body{
             background-color:#f5f5f5;
         }
-        .container{
-            width:500px;
-            margin:auto;
-            margin-top: 180px;
-            font-family: 'Poppins';
-            background-color: white;
-            box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
-            border-radius: 10px;
-            padding:20px;
-            padding-bottom:70px;
-        }
+        .container1{
+          width:500px;
+          margin:auto;
+          margin-top: 300px;
+          font-family: 'Poppins';
+          background-color: white;
+          box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+          border-radius: 10px;
+          padding:20px;
+          padding-bottom:70px;
+      }
 
-        .row img{
-            margin:auto;
-            width:230px;
-            height:90px;
-        }
-        .login{
+        .enter{
             color:#666;
             font-size: 17px;
             text-align: center;
@@ -52,7 +102,7 @@
             border-radius:10px;
              letter-spacing: 0.1rem;
             color:#888;
-            margin-top: 10px;
+            margin-top: 30px;
             outline: none !important;
         }
         .form-control::placeholder {
@@ -69,49 +119,14 @@
             width:440px;
             padding:7px;
             border-radius:10px;
-            margin-top: 10px;
-            margin-top: 10px;
              letter-spacing: 0.1rem;
             font-size: 16px;
         }
         .btn:hover{
             color:#fefefe;
         }
-        .password-input-container {
-            position: relative;
-        }
+       
 
-        .toggle-password {
-            position: absolute;
-            top: 45%;
-            right: 10px;
-            transform: translateY(-50%);
-            cursor: pointer;
-        }
-
-        /* Eye icon styles */
-        .toggle-password i {
-            font-size: 18px;
-            color: #999;
-        }
-
-        /* Style the eye icon when password is revealed */
-        .password-revealed i {
-            color: #33b5e5;
-        }
-        .button{
-            margin-top: -20px;
-        }
-        .container1{
-            margin-top: -10px;
-        }
-        .container1 .row a{
-            color:#888;
-            font-size: 14px;
-            text-align: center;
-            text-decoration: none;
-            margin-top: 10px;
-        }
         .error-text{
             color: #721c24;
             padding: 8px 10px;
@@ -141,12 +156,8 @@
       
         }
 
-        .row img{
-            margin:auto;
-            width:200px;
-            height:80px;
-        }
-        .login{
+      
+        .enter{
             color:#666;
             font-size: 15px;
             text-align: center;
@@ -163,7 +174,7 @@
             border-radius:10px;
              letter-spacing: 0.1rem;
             color:#888;
-            margin-top: 20px;
+            margin-top: 30px;
             outline: none !important;
             font-size: 13px;
             border:none;
@@ -186,49 +197,19 @@
             color:white;
             width:350px;
             padding:7px;
+ 
             border-radius:10px;
-            margin-top: 30px;
              letter-spacing: 0.1rem;
             font-size: 13px;
         }
         .btn:hover{
             color:#fefefe;
         }
-        .password-input-container {
-            position: relative;
-        }
-
-        .toggle-password {
-            position: absolute;
-            top: 45%;
-            right: 10px;
-            transform: translateY(-50%);
-            cursor: pointer;
-        }
-
-        /* Eye icon styles */
-        .toggle-password i {
-            font-size: 18px;
-            color: #999;
-        }
-
-        /* Style the eye icon when password is revealed */
-        .password-revealed i {
-            color: #33b5e5;
-        }
-        .button{
-            margin-top: -20px;
-        }
+       
         .container1{
             margin-top: -10px;
         }
-        .container1 .row a{
-            color:#888;
-            font-size: 13px;
-            text-align: center;
-            text-decoration: none;
-            margin-top: 10px;
-        }
+       
         .error-text{
             color: #721c24;
             padding: 8px 10px;
@@ -245,57 +226,34 @@
     </style>
 </head>
 <body>
-  
-<div class="container">
-    <div class="container-fluid mt-3">
-        <header>
-            <div class="row">
-                <img src="php/images/logo.png" alt="logo" class="img-fluid rounded float-start">
-            </div>
-        </header>
-    </div>
+<div class="container1">
     <main>
-        <div class="container-fluid ">
-            <div class="row">
-                <p class="login">Login to your Account</p>
-                <section class="form login">
-                <form action="#" method="POST" enctype="multipart/form-data" autocomplete="off">
+        <div class="container-fluid mt-5">
+            <div class="row fw-semibold">
+                     <h2 class="enter">Enter Your Email</h2>
                 <div class="error-text"></div>
+                <div class="success-text"></div>
+                <form action="" method="POST" enctype="multipart/form-data" autocomplete="off">
                 <div class="form-group">
-                    <input type="text" class="form-control" name="input" id="input" placeholder="Username or Email" required>
+                    <input type="text" class="form-control bg-light rounded" name="email" id="email"     placeholder="Email" required>
                 </div>
                     <div class="form-group">
-                        <div class="password-input-container mt-4">
-                            <input type="password" class="form-control" name="password" id="password" placeholder="Password" required>
-                            <span class="toggle-password" id="togglePassword">
-                                <i class="bi bi-eye-slash"></i>
-                            </span>
-                        </div>
-                        <br><br>
+                        <br>
                         <div class="button">
-                            <input type="submit" name="submit" class="btn"  value="Login"></button>
+                            <input type="submit" name="submit" class="btn" value="Verify"></button>
                         </div>
                         <br>
                     </div>
                 </form>                
-                <div class="container1">
-                    <div class="row">
-                        <br>
-                        <a href="signup.php" class="link-dark pt-2 text-center">Don't have an account?</a>
-                      <a href="forgot_password.php" class="link-dark pt-2 text-center">Forgot your password?</a>
-                    </div>
-                </div>
-                </section>
+
 
             </div>
         </div>
     </div>
     </main>
 
+    <script src="js/forgotpass.js"></script>
 
-  
-  <script src="js/login.js"></script>
-  <script src="js/show-hide-pass.js"></script>
 
 
 </body>

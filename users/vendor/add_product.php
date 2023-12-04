@@ -142,15 +142,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
                     <h3 class="prodcaT">Product </h3>
                     <select name="product_category" id="product_category" required onchange="checkCategory(this)">
                         <option value="" disabled selected>--Select a Category--</option>
-                        <option value="Birthday">Birthday</option>
-                        <option value="Anniversary">Anniversary</option>
-                        <option value="Graduation">Graduation</option>
-                        <option value="Wedding">Wedding</option>
-                        <option value="Flower Bundles">Flower Bundles</option>
-                        <option value="Leaves">Leaves</option>
-                        <option value="Baskets">Baskets</option>
+                        <option value="Flower Bouquets">Flower Bouquets</option>
+                        <option value="Candles">Candles</option>
                         <option value="Tropical Flowers">Tropical Flowers</option>
-                        <option value="Native Plants">Native Plants</option>
+                        <option value="Flower Bundles">Flower Bundles</option>
+                        <option value="Arrangement Materials">Arrangement Materials</option>
+                        <option value="Flower Stands">Flower Stands</option>
+                        <option value="Leaves">Leaves</option>
                         <option value="Other">Other</option>
                     </select>
                  </div>

@@ -88,7 +88,7 @@ function generateOTP() {
             color:#666;
             font-size: 17px;
             text-align: center;
-            letter-spacing: 0.1rem;
+             letter-spacing: 0.1rem;
             margin-top: 15px;
             font-weight: 500;
         }
@@ -99,7 +99,7 @@ function generateOTP() {
             width: 440px;
             background-color: #F5F5F5;
             border-radius:10px;
-            letter-spacing: 0.1rem;
+             letter-spacing: 0.1rem;
             color:#888;
             margin-top: 30px;
             outline: none !important;
@@ -118,7 +118,7 @@ function generateOTP() {
             width:440px;
             padding:7px;
             border-radius:10px;
-            letter-spacing: 0.1rem;
+             letter-spacing: 0.1rem;
             font-size: 16px;
         }
         .btn:hover{
@@ -160,7 +160,7 @@ function generateOTP() {
             color:#666;
             font-size: 15px;
             text-align: center;
-            letter-spacing: 0.1rem;
+             letter-spacing: 0.1rem;
             margin-top: 10px;
             font-weight: 500;
         }
@@ -171,7 +171,7 @@ function generateOTP() {
             width: 310px;
             background-color: #F5F5F5;
             border-radius:10px;
-            letter-spacing: 0.1rem;
+             letter-spacing: 0.1rem;
             color:#888;
             margin-top: 30px;
             outline: none !important;
@@ -198,7 +198,7 @@ function generateOTP() {
             padding:7px;
  
             border-radius:10px;
-            letter-spacing: 0.1rem;
+             letter-spacing: 0.1rem;
             font-size: 13px;
         }
         .btn:hover{
@@ -239,7 +239,7 @@ function generateOTP() {
                     <div class="form-group">
                         <br>
                         <div class="button">
-                            <input type="submit" name="submit" class="btn" value="Verify"></button>
+                            <input type="submit" name="submit" class="btn " value="Verify"></button>
                         </div>
                         <br>
                     </div>

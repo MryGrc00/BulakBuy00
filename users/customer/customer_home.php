@@ -22,14 +22,777 @@ if (isset($_SESSION["user_id"])) {
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-pzjw8f+uaex3+ihrbIk8mz07tb2F4F5ssx6kl5v5PmUGp1ELjF8j5+zM1a7z5t2N" crossorigin="anonymous">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
         <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-        <link rel="stylesheet" href="../../css/home.css">
+
+        <style>
+            @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap");
+ * {
+     margin: 0;
+     padding: 0;
+     box-sizing: border-box;
+     font-family: "Poppins", sans-serif;
+}
+ .navbar img {
+     padding: 0;
+     width: 195px;
+     height: 100px;
+     margin-top: -10px;
+     margin-left: 186%;
+}
+ .form {
+     position: relative;
+     color: #8e8e8e;
+     left: 130px;
+}
+ .form-inline .fa-search {
+     position: absolute;
+     top: 43px;
+     left: 78%;
+     color: #9ca3af;
+     font-size: 22px;
+}
+ .form-input[type="text"] {
+     height: 50px;
+     width: 500px;
+     background-color: #f0f0f0;
+     border-radius: 10px;
+     margin-left: 430px;
+     margin-top: -10px;
+}
+ .cart {
+     font-size: 30px;
+     padding: 0;
+     color: #65a5a5;
+     margin-top: -5px;
+     left: 50.5%;
+     transform: translateX(-50%);
+     position: absolute;
+}
+ .num-label{
+     background-color: #ff7e95;
+     border-radius: 50px;
+     padding: 2px;
+     margin: auto;
+     width: 20px;
+     height: 20px;
+     font-size: 10px;
+     position: absolute;
+     top: 5px;
+     margin-left: 20.5%;
+     transform: translateX(50%);
+     color: white;
+     text-align: center;
+}
+ .home {
+     background-color: #65a5a5;
+     width: 60%;
+     margin: auto;
+     padding: 5px;
+     border-radius: 8px;
+     margin-top: -20px;
+}
+ .home li a{
+     color:white;
+     font-size: 14px;
+}
+ .icon-list {
+     list-style: none;
+     padding: 0;
+     display: flex;
+     justify-content: center;
+     align-items: flex-end;
+     margin-top: 10px;
+     margin-bottom: 10px;
+     color: white;
+}
+ .icon-list li {
+     text-align: center;
+     margin-left: 50px;
+     position: relative;
+}
+ .icon-list i {
+     font-size: 24px;
+}
+ .h-label {
+     font-size: 14px;
+     display: block;
+     position: relative;
+}
+ .number {
+     background-color: #ff7e95;
+     border-radius: 50px;
+     width: 15px;
+     height: 15px;
+     font-size: 10px;
+     margin-top: -10px;
+     margin-left: 30px;
+     position: absolute;
+     top: 5px;
+     left: 30%;
+     transform: translateX(-50%);
+}
+ .num-cart {
+     background-color: #ff7e95;
+     border-radius: 50px;
+     width: 15px;
+     height: 15px;
+     font-size: 10px;
+     margin-top: -10px;
+     margin-left: 30px;
+     position: absolute;
+     top: 5px;
+     left: 20%;
+     transform: translateX(-50%);
+}
+ .container {
+     max-width: 1170px;
+     margin: 0 auto;
+}
+ .carousel {
+     background-color: #f5f5f5;
+     margin-top: 3%;
+}
+ .carousel-control-prev-icon, .carousel-control-next-icon {
+     color: #000000;
+     margin-top: 10%;
+}
+ .carousel-item {
+     height: 32rem;
+}
+ .carousel-item img {
+     width: 100%;
+     height: 100%;
+}
+ 
+/* categories */
+ .cat-label {
+     color: #666;
+     font-size: 17px;
+     font-style: normal;
+     font-weight: 500;
+     line-height: normal;
+     margin-left: 20%;
+     margin-top: 40px;
+     display: flex;
+     justify-content: space-between;
+     align-items: center;
+     color:#555;
+}
+ .category-list {
+     display: flex;
+     justify-content: center;
+     align-items: flex-start;
+     background-color: #ffffff;
+     padding: 1px;
+}
+ .category {
+     text-align: center;
+     width: calc(5.85% - 1px);
+     margin: 18px;
+     box-sizing: border-box;
+     display: flex;
+     flex-direction: column;
+     align-items: center;
+}
+ .category img {
+     width: 120px;
+     height: 100px;
+     display: block;
+     border-radius: 5%;
+}
+ .category p {
+     margin-top: 10px;
+     font-size: 15px;
+}
+ .label {
+     color: #666;
+     font-size: 19px;
+     font-style: normal;
+     font-weight: 500;
+     line-height: normal;
+     margin-left: 20%;
+     margin-top: 8px;
+     margin-bottom: 30px;
+     display: flex;
+     justify-content: space-between;
+     align-items: center;
+}
+ .all {
+     float: right;
+     margin-right: 26%;
+     font-size: 15px;
+     color: #666;
+     text-decoration: none;
+}
+ .all:hover {
+     color: lightgray;
+     text-decoration: none;
+}
+ .label i {
+     font-size: 18px;
+     margin-left: 5px;
+}
+ .p-label {
+     color: #666;
+     font-size: 19px;
+     font-style: normal;
+     font-weight: 500;
+     line-height: normal;
+     margin-left: 20%;
+     margin-top: 45px;
+     margin-bottom: 30px;
+     display: flex;
+     justify-content: space-between;
+     align-items: center;
+}
+ .p-all {
+     float: right;
+     margin-right: 27%;
+     font-size: 15px;
+     color: #666;
+     text-decoration: none;
+}
+ .p-all:hover {
+     color: lightgray;
+     text-decoration: none;
+}
+ .p-label i {
+     font-size: 18px;
+     margin-left: 5px;
+}
+.product-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 20px;
+    max-width: 1140px;
+    margin: 0 auto;
+}
+
+.product {
+    flex: 0 0 calc(4%);
+    margin-top: -20px;
+    margin-bottom: 20px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    box-sizing: border-box;
+}
+
+.product a:hover {
+    text-decoration: none;
+}
+
+.product:hover {
+    transform: scale(1.05);
+}
+
+.product a img {
+    width: 150px;
+    height: 150px;
+    flex-grow: 1;
+}
+
+.product .product-info {
+    padding: 10px;
+}
+
+.product .product-name {
+    margin-top: 20px;
+    width: 150px;
+    margin-bottom: 5px;
+    font-size: 15px;
+    color: #666;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+ .product .product-category {
+     color: #666;
+     margin-bottom: 5px;
+     font-size: 13px;
+}
+ .product .product-price {
+     color: #666;
+     margin-bottom: 5px;
+     font-size: 13px;
+}
+ .product .product-ratings {
+     color: #acaaaa;
+     font-size: 11px;
+     margin-top: 3px;
+     margin-left: 45px;
+}
+ .product .p {
+     display: flex;
+}
+ .p-end {
+     color: #bebebe;
+     font-size: 14px;
+     text-align: center;
+     margin-top: 30px;
+}
+ .pc-label {
+     color: #666;
+     font-size: 19px;
+     font-style: normal;
+     font-weight: 500;
+     line-height: normal;
+     margin-left: 20%;
+     margin-top: 50px;
+     margin-bottom: 30px;
+     display: flex;
+     justify-content: space-between;
+     align-items: center;
+}
+ .pc-all {
+     float: right;
+     margin-top: -15px;
+     margin-right: 27%;
+     font-size: 15px;
+     color: #666;
+     text-decoration: none;
+}
+ .pc-all:hover {
+     color: lightgray;
+     text-decoration: none;
+}
+ .pc-label i {
+     font-size: 18px;
+     margin-left: 5px;
+}
+ .dropdown {
+     position: relative;
+     display: inline-block;
+     margin-left: 0;
+}
+ .dropbtn {
+     border: 1px solid #65a5a5;
+     background: transparent;
+     color: white;
+     margin: 0 2px;
+     width: auto;
+     font-size: 11px;
+     cursor: pointer;
+     position: relative;
+    /* Add relative positioning */
+}
+ .dropbtn:focus{
+     outline:none;
+     border:none;
+}
+ .dropdown-content {
+     display: none;
+     position: absolute;
+     align-items: center;
+     background: rgb(255, 254, 254);
+     color: #666;
+     border-radius: 5px;
+     min-width: 450px;
+     z-index: 1;
+     padding-right: 17px;
+     top: 60px;
+     left: 50%;
+     max-height: 500px;
+     overflow-y: auto;
+     transform: translateX(-50%);
+}
+ .dropdown-content::-webkit-scrollbar {
+     width: 8px;
+     height:10px;
+}
+ .dropdown-content::-webkit-scrollbar-thumb {
+     background: #f0f0f0;
+     border-radius: 10px;
+}
+ .dropdown-content::-webkit-scrollbar-thumb:hover {
+     background: #e4e4e4;
+}
+ .dropdown-content::before {
+     content: "";
+     position: absolute;
+     top: -10px;
+     left: 50%;
+     transform: translateX(-50%);
+     border-width: 0 10px 10px 10px;
+     border-style: solid;
+     border-color: transparent transparent white transparent;
+}
+ .notification-details {
+     display: flex;
+}
+ .notification-details img {
+     max-width: 80px;
+     max-height: 90px;
+     margin-right: 0px;
+     margin-top: 20px;
+     margin-left: 15px;
+}
+ .text-content {
+     display: flex;
+     flex-direction: column;
+     align-items: flex-start;
+     margin-top: 5px;
+     font-size: 14px;
+     color:#666;
+     flex: 1;
+     padding-left: 10px;
+}
+ .order-status, .order-description, .o-date-time {
+     margin-bottom: 10px;
+}
+ .order-status{
+     color:#222;
+     margin-top: 10px;
+}
+ .order-description{
+     margin-left: -2px;
+     font-size: 13px;
+     text-align: justify;
+}
+ .o-date-time{
+     font-size: 12px;
+}
+ .order-date{
+     margin-right:19px;
+}
+ .notif-hr{
+     width:100%;
+     margin: auto;
+}
+ @media (max-width: 768px) {
+    .navbar{
+        background-color: white;
+         width:100%;
+         z-index: 100;
+    }
+     .navbar img {
+         width: 120px;
+         height: 55px;
+         margin: 0;
+         margin-top:-5px;
+    }
+     .form {
+         text-align: left;
+         margin-top: 1px;
+    }
+     .form-input[type="text"] {
+         height: 45px;
+         width: 100%;
+         background-color: #f0f0f0;
+         border-radius: 10px;
+         margin: 0;
+         margin-top: -10px;
+    }
+     .form-inline .fa-search {
+         font-size: 20px;
+         margin-top: 35px;
+         margin-left: 40px;
+    }
+     ::placeholder {
+         font-size: 14px;
+    }
+     .icon-list {
+         flex-direction: column;
+         align-items: center;
+    }
+     .cart {
+         font-size: 20px;
+         padding: 0;
+         position: absolute;
+         top: 25px;
+         left: 90%;
+         transform: translateX(-50%);
+         color: #65a5a5;
+    }
+     .num-label{
+         background-color: #ff7e95;
+         border-radius: 50px;
+         padding: 2px;
+         margin: auto;
+         width: 17px;
+         height: 17px;
+         font-size: 9px;
+         font-weight: bold;
+         position: absolute;
+         top: 2px;
+         margin-left: 10%;
+         transform: translateX(50%);
+         color: white;
+         text-align: center;
+    }
+     .home {
+         background-color: #65a5a5;
+         width: 92.5%;
+         margin: auto;
+         margin-top: 20px;
+         border-radius: 19px;
+         height: 70px;
+         position: sticky;
+         top: 88%;
+         z-index: 1000;
+    }
+     .icon-list {
+         list-style: none;
+         padding: 0;
+         display: flex;
+         justify-content: center;
+         margin-top: 1px;
+         margin-bottom: 10px;
+         color: white;
+    }
+     .icon-list li {
+         text-align: center;
+    }
+     .icon-list i {
+         font-size: 20px;
+    }
+     .h-label {
+         font-size: 10px;
+         display: block;
+    }
+     .container {
+         max-width: 100%;
+         margin: auto;
+         margin-top: -100px;
+         margin-left: 0;
+    }
+     .carousel {
+         background-color: #f5f5f5;
+    }
+     .carousel-control-prev-icon, .carousel-control-next-icon {
+         color: #000000;
+         margin-top: 10%;
+    }
+     .carousel-item {
+         height: 10rem;
+    }
+     .carousel-item img {
+         width: 400px;
+         height: 160px;
+    }
+     .button-container {
+         display: flex;
+         justify-content: center;
+         margin-top: 18px;
+         margin-left: -10px;
+    }
+     .button {
+         padding: 5px;
+         border-radius: 19px;
+         border: 1px solid #65a5a5;
+         background: #fff;
+         color: #666;
+         margin: 0 25px;
+         width: 80px;
+         font-size: 11px;
+    }
+     .button:focus{
+         outline:none;
+         background-color: #65a5a5;
+         color:white;
+    }
+     .cat-label {
+         color: #666;
+         font-size: 14px;
+         font-style: normal;
+         font-weight: 500;
+         line-height: normal;
+         margin-left: 3%;
+         margin-top: 20px;
+         display: flex;
+         justify-content: space-between;
+         align-items: center;
+    }
+     .category-list {
+         display: flex;
+         flex-wrap: wrap;
+        /* Allow items to wrap to the next line */
+         background-color: #ffffff;
+         padding: 1px;
+    }
+     .category {
+         text-align: center;
+         margin: 0 10px;
+         box-sizing: border-box;
+         display: flex;
+         flex-direction: column;
+         align-items: center;
+    }
+     .category img {
+         width: 80px;
+         height: 70px;
+         display: block;
+         border-radius: 5%;
+    }
+     .category p {
+         margin-top: 10px;
+         font-size: 10px;
+    }
+     .label {
+         color: #666;
+         font-size: 14px;
+         font-style: normal;
+         font-weight: 500;
+         line-height: normal;
+         margin-left: 3%;
+         margin-top: 10px;
+         margin-bottom: 20px;
+         display: flex;
+         justify-content: space-between;
+         align-items: center;
+    }
+     .all {
+         float: right;
+         margin-right: 5%;
+         margin-top: -12px;
+         font-size: 12px;
+         color: #666;
+         text-decoration: none;
+    }
+     .label i {
+         font-size: 13px;
+         margin-left: 5px;
+    }
+     .p-label {
+         color: #666;
+         font-size: 14px;
+         font-style: normal;
+         font-weight: 500;
+         line-height: normal;
+         margin-left: 3%;
+         margin-top: 10px;
+         margin-bottom: 20px;
+         display: flex;
+         justify-content: space-between;
+         align-items: center;
+    }
+     .p-all {
+         float: right;
+         margin-right: 5%;
+         margin-top: -12px;
+         font-size: 12px;
+         color: #666;
+         text-decoration: none;
+    }
+     .p-label i {
+         font-size: 13px;
+         margin-left: 5px;
+    }
+     .product-list {
+         display: flex;
+         flex-wrap: wrap;
+         justify-content: center;
+    }
+     .product {
+         flex: 0 0 calc(2%);
+         padding: 10px;
+         border: 1px solid #ccc;
+         border-radius: 10px;
+         display: flex;
+         flex-direction: column;
+         text-align: left;
+         box-sizing: border-box;
+    }
+     .product img a{
+         max-width: 193px;
+         max-height:150px;
+         flex-grow: 1;
+    }
+     .product .product-info {
+         padding: 10px;
+    }
+     .product .product-name {
+         font-weight: 500;
+         margin-top: 20px;
+         margin-bottom: 5px;
+         font-size: 14px;
+         color: #666;
+    }
+     .product .product-category {
+         color: #666;
+         margin-bottom: 5px;
+         font-size: 11px;
+    }
+     .product .product-price {
+         color: #666;
+         margin-bottom: 5px;
+         font-size: 15px;
+    }
+     .product .product-ratings {
+         color: #acaaaa;
+         font-size: 11px;
+         margin-top: 3px;
+         margin-left: 45px;
+    }
+     .product .p {
+         display: flex;
+    }
+     .p-end {
+         color: #bebebe;
+         font-size: 12px;
+         text-align: center;
+         margin-top: 10px;
+         margin-bottom: 40px;
+    }
+     .pc-label {
+         color: #666;
+         font-size: 14px;
+         font-style: normal;
+         font-weight: 500;
+         line-height: normal;
+         margin-left: 3%;
+         margin-top: 10px;
+         margin-bottom: 20px;
+         display: flex;
+         justify-content: space-between;
+         align-items: center;
+    }
+     .pc-all {
+         float: right;
+         margin-right: 5%;
+         margin-top: -12px;
+         font-size: 12px;
+         color: #666;
+         text-decoration: none;
+    }
+     .pc-label i {
+         font-size: 13px;
+         margin-left: 5px;
+    }
+     .dropdown-content{
+         display:none;
+    }
+    /* Media query to adjust alignment for smaller screens */
+     @media (max-width: 768px) {
+         .icon-list {
+             flex-direction: row;
+             align-items: center;
+        }
+         .icon-list li {
+             margin: 12px;
+        }
+         .category {
+             width: calc(19% - 1px);
+            /* Two items in a row */
+        }
+         .product-list{
+             gap: 10px;
+        }
+    }
+}
+ 
+        </style>
     </head>
     <body>
         <header>
             <nav class="navbar navbar-expand-lg">
                 <!-- Logo -->
-                <a class="navbar-brand d-flex align-items-center" href="#">
-                <img src="../php/images/logo.png" alt="BulakBuy Logo" class="img-fluid logo">
+                <a class="navbar-brand d-flex align-items-center" href="customer_home.php">
+                    <img src="../php/images/logo.png" alt="BulakBuy Logo" class="img-fluid logo">
                 </a>
                 <!-- Search Bar -->
                 <div class="navbar-collapse justify-content-md-center">
@@ -218,40 +981,37 @@ if (isset($_SESSION["user_id"])) {
                     <p>Categories</p>
                 </div>
                 <div class="category-list">
+                    
                     <div class="category">
-                        <a href="" ><img src="https://assets.florista.ph/uploads/product-pics/1674804112_5022.png" alt="Category 1"></a>
-                        <p>Birthday</p>
+                        <a href="category.php?category=Flower Bouquets" ><img src="https://assets.florista.ph/uploads/product-pics/5022_86_5022.webp" alt="Category 3"></a>
+                        <p>Flower Bouquets</p>
                     </div>
                     <div class="category">
-                        <a href="category.html" ><img src="https://pbs.twimg.com/media/D2eAHTFVYAESsQ0.jpg" alt="Category 2"></a>
-                        <p>Anniversary</p>
+                        <a href="category.php?category=Candles" ><img src="https://www.soapcraftz.com/wp-content/uploads/2021/11/candle-additives.webp" alt="Category 1"></a>
+                        <p>Candles</p>
                     </div>
                     <div class="category">
-                        <a href="category.html" ><img src="https://img2.chinadaily.com.cn/images/202112/17/61bc1548a310cdd3d82174b3.jpeg" alt="Category 3"></a>
-                        <p>Graduationr</p>
-                    </div>
-                    <div class="category">
-                        <a href="category.html" ><img src="https://www.soapcraftz.com/wp-content/uploads/2021/11/candle-additives.webp" alt="Category 1"></a>
-                        <p>Wedding</p>
-                    </div>
-                    <div class="category">
-                        <a href="category.html" ><img src="https://5.imimg.com/data5/SELLER/Default/2023/5/311880205/FY/ED/MT/181342412/torch-ginger-red-500x500.jpg" alt="Category 2"></a>
-                        <p>Flower Bundle</p>
-                    </div>
-                    <div class="category">
-                        <a href="category.html" ><img src="https://flowermoxiesupply.com/cdn/shop/products/50373055808_8a22415eb2_c.jpg?v=1626454724" alt="Category 3"></a>
-                        <p>Leaves</p>
-                    </div>
-                    <div class="category">
-                        <a href="category.html" ><img src="https://lzd-img-global.slatic.net/g/p/bd2d4e33299f8da2f68553b14d145865.jpg_720x720q80.jpg" alt="Category 1"></a>
-                        <p>Baskets</p>
-                    </div>
-                    <div class="category">
-                        <a href="category.html" ><img src="https://casajuan.ph/cdn/shop/products/anahawnapkinring.jpg?v=1626910031" alt="Category 3"></a>
+                        <a href="category.php?category=Tropical Flowers" ><img src="https://5.imimg.com/data5/SELLER/Default/2023/5/311880205/FY/ED/MT/181342412/torch-ginger-red-500x500.jpg" alt="Category 2"></a>
                         <p>Tropical Flowers</p>
                     </div>
                     <div class="category">
-                        <a href="category.html" ><img src="https://casajuan.ph/cdn/shop/products/anahawnapkinring.jpg?v=1626910031" alt="Category 3"></a>
+                        <a href="category.php?category=Flower Bundles" ><img src="https://gumlet.assettype.com/sunstar%2Fimport%2Fuploads%2Fimages%2F2019%2F10%2F29%2F187066.jpg?format=auto" alt="Category 2"></a>
+                        <p>Flower Bundles</p>
+                    </div>
+                    <div class="category">
+                        <a href="category.php?category=Arrangement Materials" ><img src="https://flowermoxiesupply.com/cdn/shop/products/50373055808_8a22415eb2_c.jpg?v=1626454724" alt="Category 3"></a>
+                        <p>Arrangemnent Materials</p>
+                    </div>
+                    <div class="category">
+                        <a href="category.php?category=Flower Stands" ><img src="https://img2.chinadaily.com.cn/images/202112/17/61bc1548a310cdd3d82174b3.jpeg" alt="Category 1"></a>
+                        <p>Flower Stands</p>
+                    </div>
+                    <div class="category">
+                        <a href="category.php?category=Leaves" ><img src="https://casajuan.ph/cdn/shop/products/anahawnapkinring.jpg?v=1626910031" alt="Category 3"></a>
+                        <p>Leaves</p>
+                    </div>
+                    <div class="category">
+                        <a href="category.php?category=Other" ><img src="https://casajuan.ph/cdn/shop/products/anahawnapkinring.jpg?v=1626910031" alt="Category 3"></a>
                         <p>Other</p>
                     </div>
                 </div>
@@ -277,8 +1037,8 @@ if (isset($_SESSION["user_id"])) {
                                 <div class="product-name"><?php echo $product['product_name']; ?></div>
                                 <div class="product-category"><?php echo $product['product_category']; ?></div>
                                 <div class="p">
-                                    <div class="product-price"><?php echo $product['product_price']; ?></div>
-                                    <div class="product-ratings">4.5 stars</div>
+                                    <div class="product-price"><?php echo '₱ '. $product['product_price']; ?></div>
+                                  
                                 </div>
                             </a>
                         </div>
@@ -308,8 +1068,7 @@ if (isset($_SESSION["user_id"])) {
                                 ?>
                                 <div class="product-name"><?php echo $service['first_name'] . ' ' . $service['last_name']; ?></div>
                                 <div class="p">
-                                    <div class="product-price"><?php echo $service['service_rate']; ?></div>
-                                    <div class="product-ratings">4.5 stars</div>
+                                    <div class="product-price"><?php echo '₱ '. $service['service_rate']; ?></div>
                                 </div>
                             </a>
                         </div>

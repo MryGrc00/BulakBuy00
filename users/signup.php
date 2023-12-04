@@ -40,7 +40,7 @@
             color:#666;
             font-size: 17px;
             text-align: center;
-            letter-spacing: 0.1rem;
+             letter-spacing: 0.1rem;
             margin-top: 15px;
             font-weight: 500;
         }
@@ -51,7 +51,7 @@
             width: 440px;
             background-color: #F5F5F5;
             border-radius:10px;
-            letter-spacing: 0.1rem;
+             letter-spacing: 0.1rem;
             color:#888;
             margin-top: 10px;
             font-size: 15px;
@@ -75,7 +75,7 @@
             width: 440px;
             background-color: #F5F5F5;
             border-radius:10px;
-            letter-spacing: 0.1rem;
+             letter-spacing: 0.1rem;
             color:#888;
        
             outline: none !important;
@@ -96,7 +96,7 @@
             padding:7px;
             border-radius:10px;
             margin-top: 30px;
-            letter-spacing: 0.1rem;
+             letter-spacing: 0.1rem;
             font-size: 15px;
         }
         .btn:hover{
@@ -156,7 +156,7 @@
             padding: 8px;
             background-color: #F5F5F5;
             border-radius:10px;
-            letter-spacing: 0.1rem;
+             letter-spacing: 0.1rem;
             color:#A0A0A0;
             margin-top: 10px;
             outline: none !important;
@@ -199,7 +199,7 @@
             color:#666;
             font-size: 15px;
             text-align: center;
-            letter-spacing: 0.1rem;
+             letter-spacing: 0.1rem;
             margin-top: 10px;
             font-weight: 500;
             
@@ -211,7 +211,7 @@
             width: 310px;
             background-color: #F5F5F5;
             border-radius:10px;
-            letter-spacing: 0.1rem;
+             letter-spacing: 0.1rem;
             color:#888;
             margin-top: 10px;
             margin-bottom: 15px;
@@ -237,7 +237,7 @@
           width: 310px;
           background-color: #F5F5F5;
           border-radius:10px;
-          letter-spacing: 0.1rem;
+           letter-spacing: 0.1rem;
           color:#888;
           font-size: 13px;
           outline: none !important;
@@ -261,9 +261,9 @@
             color:white;
             width:350px;
             padding:7px;
-            border-radius:15px;
+            border-radius:10px;
             margin-top: 30px;
-            letter-spacing: 0.1rem;
+             letter-spacing: 0.1rem;
             font-size: 13px;
         }
         .btn:hover{
@@ -323,7 +323,7 @@
             padding: 8px;
             background-color: #F5F5F5;
             border-radius:10px;
-            letter-spacing: 0.1rem;
+             letter-spacing: 0.1rem;
     
             margin-top: -5px;
             margin-bottom: 15px;

@@ -123,9 +123,17 @@ function filter_products_by_price($min, $max) {
  .back{
      display: none;
 }
+.upper{
+    display: flex;
+    margin-top: 15px;
+}
+.history{
+    color:#bebebe;
+    margin-left:20%;
+}
  .filter{
-     margin-top: 15px;
-     margin-left:78%;
+    
+     margin-left:50%;
      font-size: 25px;
      color: #8e8e8e;
 }
@@ -735,9 +743,12 @@ function filter_products_by_price($min, $max) {
                         </form>
                     </div>
                 </div>
-                <div class="modal-overlay" id="modalOverlay"></div>
-                <div class="filter" id="openModal">
-                    <i class="fa fa-sliders" aria-hidden="true"></i>
+                <div class="upper">
+                    <p class="history">Home > Category</p>
+                    <div class="modal-overlay" id="modalOverlay"></div>
+                    <div class="filter" id="openModal">
+                        <i class="fa fa-sliders" aria-hidden="true"></i>
+                    </div>
                 </div>
                 </section>
                 <section>

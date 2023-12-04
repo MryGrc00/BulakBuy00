@@ -160,15 +160,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <div class="form-group col-md-6 prodca">
                     <h3 class="prodcaT">Product Category</h3>
                     <select name="product_category" id="product_category" required onchange="toggleOtherCategoryInput(this)">
-                        <option value="Birthday"<?php if ($products['product_category'] == 'Birthday') echo 'selected'; ?>>Birthday</option>
-                        <option value="Anniversary"<?php if ($products['product_category'] == 'Anniversary') echo 'selected'; ?>>Anniversary</option>
-                        <option value="Graduation"<?php if ($products['product_category'] == 'Graduation') echo 'selected'; ?>>Graduation</option>
-                        <option value="Wedding"<?php if ($products['product_category'] == 'Wedding') echo 'selected'; ?>>Wedding</option>
-                        <option value="Flower Bundles"<?php if ($products['product_category'] == 'Flower Bundles') echo 'selected'; ?>>Flower Bundles</option>
-                        <option value="Leaves"<?php if ($products['product_category'] == 'Leaves') echo 'selected'; ?>>Leaves</option>
-                        <option value="Baskets"<?php if ($products['product_category'] == 'Baskets') echo 'selected'; ?>>Baskets</option>
+                        <option value="Flower Bouquets"<?php if ($products['product_category'] == 'Flower Bouquets') echo 'selected'; ?>>Flower Bouquets</option>
+                        <option value="Candles"<?php if ($products['product_category'] == 'Candles') echo 'selected'; ?>>Candles</option>
                         <option value="Tropical Flowers"<?php if ($products['product_category'] == 'Tropical Flowers') echo 'selected'; ?>>Tropical Flowers</option>
-                        <option value="Native Plants<?php if ($products['product_category'] == 'Native Plants') echo 'selected'; ?>">Native Plants</option>
+                        <option value="Flower Bundles"<?php if ($products['product_category'] == 'Flower Bundles') echo 'selected'; ?>>Flower Bundles</option>
+                        <option value="Arrangement Materials"<?php if ($products['product_category'] == 'Arrangement Materials') echo 'selected'; ?>>Arrangement Materials</option>
+                        <option value="Flower Stands"<?php if ($products['product_category'] == 'Flower Stands') echo 'selected'; ?>>Flower Stands</option>
+                        <option value="Leaves"<?php if ($products['product_category'] == 'Leaves') echo 'selected'; ?>>Leaves</option>
                         <option value="Other"<?php if ($products['product_category'] == 'Other') echo 'selected'; ?>>Other</option>
                     </select>
                  </div>

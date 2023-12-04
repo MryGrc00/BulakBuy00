@@ -40,7 +40,7 @@
         color:#666;
         font-size: 17px;
         text-align: center;
-        letter-spacing: 0.1rem;
+         letter-spacing: 0.1rem;
         margin-top: 30px;
         font-weight: 500;
       }
@@ -87,7 +87,7 @@
         border-radius:10px;
         margin-top: 10px;
         margin-top: 10px;
-        letter-spacing: 0.1rem;
+         letter-spacing: 0.1rem;
         font-size: 15px;
         border:none;
       }
@@ -149,7 +149,7 @@
           margin-top:10px;
           font-weight: 500;
           color:#555;
-          letter-spacing: 0.1rem;
+           letter-spacing: 0.1rem;
       }
 
       .c-shopping{
@@ -159,7 +159,7 @@
         padding:7px;
         border-radius:10px;
         margin-top: 30px;
-        letter-spacing: 0.1rem;
+         letter-spacing: 0.1rem;
         font-size: 15px;
       }
       .c-shopping:focus{
@@ -189,7 +189,7 @@
           color:#666;
             font-size: 15px;
             text-align: center;
-            letter-spacing: 0.1rem;
+             letter-spacing: 0.1rem;
             margin-top: 10px;
             font-weight: 500;
       }
@@ -236,7 +236,7 @@
         padding:7px;
         border-radius:10px;
         margin-top: 10px;
-        letter-spacing: 0.1rem;
+         letter-spacing: 0.1rem;
         font-size: 13px;
       }
       form button.active {
@@ -295,7 +295,7 @@
           margin-top:10px;
           font-weight: 500;
           color:#555;
-          letter-spacing: 0.1rem;
+           letter-spacing: 0.1rem;
       }
 
       .c-shopping{
@@ -305,7 +305,7 @@
         padding:7px;
         border-radius:10px;
         margin-top: 30px;
-        letter-spacing: 0.1rem;
+         letter-spacing: 0.1rem;
         font-size: 13px;
       }
       .c-shopping:focus{

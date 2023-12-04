@@ -60,108 +60,312 @@ if (isset($_GET['email']) && isset($_POST['submit'])) {
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
 
   <style>
-   /* Import Google font - Poppins */
-@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap");
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: "Poppins", sans-serif;
-}
-body {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #4070f4;
-}
-:where(.container, form, .input-field, header) {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-.container {
-  background: #fff;
-  padding: 30px 65px;
-  border-radius: 12px;
-  row-gap: 20px;
-  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
-}
-.container header {
-  height: 65px;
-  width: 65px;
-  background: #4070f4;
-  color: #fff;
-  font-size: 2.5rem;
-  border-radius: 50%;
-}
-.container h4 {
-  font-size: 1.25rem;
-  color: #333;
-  font-weight: 500;
-}
-form .input-field {
-  flex-direction: row;
-  column-gap: 10px;
-}
-.input-field input {
-  height: 45px;
-  width: 42px;
-  border-radius: 6px;
-  outline: none;
-  font-size: 1.125rem;
-  text-align: center;
-  border: 1px solid #ddd;
-}
-.input-field input:focus {
-  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
-}
-.input-field input::-webkit-inner-spin-button,
-.input-field input::-webkit-outer-spin-button {
-  display: none;
-}
-form button {
-  margin-top: 25px;
-  width: 100%;
-  color: #fff;
-  font-size: 1rem;
-  border: none;
-  padding: 9px 0;
-  cursor: pointer;
-  border-radius: 6px;
-  pointer-events: none;
-  background: #6e93f7;
-  transition: all 0.2s ease;
-}
-form button.active {
-  background: #4070f4;
-  pointer-events: auto;
-}
-form button:hover {
-  background: #0e4bf1;
-}
+        /* Import Google font - Poppins */
+      @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap");
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Poppins", sans-serif;
+      }
+      body{
+          background-color:#f5f5f5;
+      }
 
-.error-message {
-  color: red;
-  font-weight: bold;
-  margin-top: 10px;
-  display: none;
-}
+      .container1{
+          width:500px;
+          margin:auto;
+          margin-top: 300px;
+          font-family: 'Poppins';
+          background-color: white;
+          box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+          border-radius: 10px;
+          padding:20px;
+          padding-bottom:70px;
+      }
+      .enter {
+        color:#666;
+        font-size: 17px;
+        text-align: center;
+         letter-spacing: 0.1rem;
+        margin-top: 30px;
+        font-weight: 500;
+      }
+      form .input-field {
+        flex-direction: row;
+        column-gap: 25px; 
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 40px;
 
-.error-message.visible {
-  display: block;
-}
 
+      }
+      .input-field input {
+        height: 49px;
+        width: 49px;
+        border-radius: 6px;
+        outline: none;
+        font-size: 15px;
+        text-align: center;
+        border: 1px solid #ddd;
+        color:#666;
+      
+      }
+      .input-field input:focus {
+        box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
+      }
+      .input-field input::-webkit-inner-spin-button,
+      .input-field input::-webkit-outer-spin-button {
+        display: none;
+      }
+      .center-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 40px;
+      }
+      form button {
+   
+        background-color: #65A5A5;
+        color:white;
+        width: 420px;
+        padding:10px;
+        border-radius:10px;
+        margin-top: 10px;
+        margin-top: 10px;
+         letter-spacing: 0.1rem;
+        font-size: 15px;
+        border:none;
+      }
+
+      form button.active {
+        border:none;
+        outline:none;
+        pointer-events: auto;
+      }
+
+
+      .error-text {
+        color: #721c24;
+        padding: 8px 10px;
+        text-align: center;
+        border-radius: 5px;
+        background: #f8d7da;
+        font-size: 15px;
+        border: 1px solid #f5c6cb;
+        margin-bottom: 20px;
+        margin-top: 30px;
+        display: none;
+        font-weight: 300;
+      }
+
+      .error-text.visible {
+        display: block;
+      }
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 999;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.5);
+      }
+      .modal-content {
+          background-color: #fff;
+          margin: 17.3% auto;
+          padding: 20px;
+          border: 1px solid #888;
+          border-radius: 10px;
+          width: 100%;
+          max-width: 330px;
+          text-align: center;
+      }
+      
+      .bi-check-circle{
+          font-size: 50px;
+          color:#65A5A5;
+          margin:auto;
+          margin-top:5%;
+      }
+      .confirmed{
+          font-size: 16px;
+          margin-top:10px;
+          font-weight: 500;
+          color:#555;
+           letter-spacing: 0.1rem;
+      }
+
+      .c-shopping{
+        background-color: #65A5A5;
+        color:white;
+        width:270px;
+        padding:7px;
+        border-radius:10px;
+        margin-top: 30px;
+         letter-spacing: 0.1rem;
+        font-size: 15px;
+      }
+      .c-shopping:focus{
+          outline:none;
+          border:none;
+      }
+      @media (max-width: 768px) {
+        body{
+          background-color:transparent;
+        }
+        .row img{
+            margin:auto;
+            width:200px;
+            height:80px;
+        }
+        .container1{
+           margin:auto;
+            margin-top:90px;
+            font-family: 'Poppins';
+            padding:20px;
+            padding-bottom:30px;
+            box-shadow: none;
+            border-radius: none;
+            width: 375px;
+        }
+        .enter {
+          color:#666;
+            font-size: 15px;
+            text-align: center;
+             letter-spacing: 0.1rem;
+            margin-top: 10px;
+            font-weight: 500;
+      }
+      form .input-field {
+        flex-direction: row;
+        column-gap: 15px; 
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 50px;
+
+
+      }
+      .input-field input {
+        height: 40px;
+        width: 40px;
+        border-radius: 6px;
+        outline: none;
+        font-size: 13px;
+        text-align: center;
+        border: 1px solid #ddd;
+        color:#666;
+      
+      }
+      .input-field input:focus {
+        box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
+      }
+      .input-field input::-webkit-inner-spin-button,
+      .input-field input::-webkit-outer-spin-button {
+        display: none;
+      }
+      .center-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 40px;
+
+      }
+      form button {
+   
+        background-color: #65A5A5;
+        color:white;
+        width: 350px;
+        padding:7px;
+        border-radius:10px;
+        margin-top: 10px;
+         letter-spacing: 0.1rem;
+        font-size: 13px;
+      }
+      form button.active {
+        border:none;
+    
+        pointer-events: auto;
+      }
+
+
+      .error-text {
+        color: #721c24;
+        padding: 8px 10px;
+        text-align: center;
+        border-radius: 5px;
+        background: #f8d7da;
+        font-size: 13px;
+        border: 1px solid #f5c6cb;
+        margin-bottom: 25px;
+        display: none;
+        font-weight: 300;
+      }
+
+      .error-text.visible {
+        display: block;
+      }
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 999;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.5);
+      }
+      .modal-content {
+          background-color: #fff;
+          margin: 50% auto;
+          padding: 20px;
+          border: 1px solid #888;
+          border-radius: 10px;
+          width: 75%;
+          max-width: 300px;
+          text-align: center;
+      }
+      
+      .bi-check-circle{
+          font-size: 40px;
+          color:#65A5A5;
+          margin:auto;
+          margin-top:5%;
+      }
+      .confirmed{
+          font-size: 13px;
+          margin-top:10px;
+          font-weight: 500;
+          color:#555;
+           letter-spacing: 0.1rem;
+      }
+
+      .c-shopping{
+        background-color: #65A5A5;
+        color:white;
+        width:200px;
+        padding:7px;
+        border-radius:10px;
+        margin-top: 30px;
+         letter-spacing: 0.1rem;
+        font-size: 13px;
+      }
+      .c-shopping:focus{
+          outline:none;
+          border:none;
+      }
+      }
   </style>
 </head>
 <body>
 
-<div class="container">
-    <header>
-        <i class="bx bxs-check-shield"></i>
-    </header>
-    <h4>Enter OTP Code</h4>
+<div class="container1">
+    <h4 class="enter">Enter OTP Code</h4>
     <form id="otp-form" action="php/verify_otp1.php" method="post">
         <div class="error-text"></div>
         <div class="input-field">
@@ -172,7 +376,9 @@ form button:hover {
             <input type="number" maxlength="1" disabled />
             <input type="number" maxlength="1" disabled />
         </div>
-        <button type="submit" id="verify-button" >Verify OTP</button>
+        <div class="center-container">
+          <button type="submit" id="verify-button">Verify OTP</button>
+        </div>
     </form>
 
       
