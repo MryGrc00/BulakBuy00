@@ -1,3 +1,9 @@
+<?php 
+// Start the session (if not started already)
+session_start();
+include '../php/dbhelper.php';
+
+?>
 <!DOCTYPE html> 
 <html lang="en">
     <head>
@@ -16,7 +22,7 @@
             <nav class="navbar navbar-expand-lg">
                 <!-- Logo -->
                 <a class="navbar-brand d-flex align-items-center" href="#">
-                <img src="../../images/logo.png" alt="BulakBuy Logo" class="img-fluid logo">
+                <img src="../php/images/logo.png" alt="BulakBuy Logo" class="img-fluid logo">
                 </a>
                 <!-- Search Bar -->
                 <div class="navbar-collapse justify-content-md-center">
@@ -39,354 +45,131 @@
         <main class="main">
             <div class="container">
                 <div class="column2">
-                    <div class="p-review">
-                        <div class="review-pic">
-                            <img src="https://i.pinimg.com/736x/2e/59/24/2e5924495141cd8a39ad9deca8acad0e.jpg" alt="Customer Profile">
-                        </div>
-                        <div class="review-info">
-                            <div class="review-text">
-                                <p class="c-name">N**ya</p>
-                                <p class="r-star">
-                                    <i class="fa fa-star" aria-hidden="true"></i>
-                                    <i class="fa fa-star" aria-hidden="true"></i>
-                                    <i class="fa fa-star" aria-hidden="true"></i>
-                                    <i class="fa fa-star" aria-hidden="true"></i>
-                                    <i class="fa fa-star" aria-hidden="true"></i> 5 stars
-                                </p>
-                                <p class="r-date">February 27, 2023</p>
+                <?php
+
+
+function get_shop_id_by_seller_id($owner_id)
+{
+    $conn = dbconnect();
+    $sql = "SELECT shop_id FROM shops WHERE owner_id = ?";
+    try {
+        $stmt = $conn->prepare($sql);
+        $stmt->execute([$owner_id]);
+        $shop_id = $stmt->fetchColumn();
+        $conn = null;
+        return $shop_id;
+    } catch (PDOException $e) {
+        echo $sql . "<br>" . $e->getMessage();
+        $conn = null;
+        return false;
+    }
+}
+
+if (isset($_SESSION['user_id'])) {
+    $owner_id = $_SESSION['user_id'];
+
+    // Fetch shop_id by matching seller_id
+    $shop_id = get_shop_id_by_seller_id($owner_id);
+
+    if ($shop_id) {
+        // Fetch feedback and ratings for the specific shop
+        $feedbackAndRatings = get_feedback_and_ratings($shop_id);
+
+        if ($feedbackAndRatings) {
+            foreach ($feedbackAndRatings as $feedback) {
+                // Fetch customer details
+                $customer = get_customer_details($feedback['customer_id']);
+                $fullName = $customer['first_name'] . ' ' . $customer['last_name'];
+                $reviewImagePath = '../php/images/' . $feedback['review_image'];
+
+                // Display customer details if there is feedback and ratings
+                if ($customer && $feedback['rating'] > 0) {
+                    echo '<div class="p-review">
+                            <div class="review-pic">
+                                <img src="' . $customer['profile_img'] . '" alt="Customer Profile">
+                            </div>
+                            <div class="review-info">
+                                <div class="review-text">
+                                    <p class="c-name">' . $fullName . '</p>
+                                    <p class="r-star">' . generate_star_rating($feedback['rating']) . '&nbsp;' . $feedback['rating'] . '&nbsp;stars</p>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="r-details">
-                        <p class="c-review">I just receive my order this afternoon, the flower was very fresh and arrived in good shape and the flower smells good, the seller is very  accommodating and the delivery is very fast. Thank you seller.</p>
-                    </div>
-                    <div class="image-preview">
-                        <img src="https://cdn1.1800flowers.com/wcsstore/Flowers/images/catalog/148707xlx.jpg?height=456&width=418&sharpen=a0.5,r1,t1&quality=80&auto=webp&optimize={medium}" alt="Image 1">
-                        <img src="https://fyf.tac-cdn.net/images/products/small/BN91208.jpg?auto=webp&quality=60&width=650" alt="Image 2" >
-                        <img src="https://cdn1.1800flowers.com/wcsstore/Flowers/images/catalog/148707xlx.jpg?height=456&width=418&sharpen=a0.5,r1,t1&quality=80&auto=webp&optimize={medium}" alt="Image 1">
-                        <img src="https://fyf.tac-cdn.net/images/products/small/BN91208.jpg?auto=webp&quality=60&width=650" alt="Image 2" >
-                        <img src="https://cdn1.1800flowers.com/wcsstore/Flowers/images/catalog/148707xlx.jpg?height=456&width=418&sharpen=a0.5,r1,t1&quality=80&auto=webp&optimize={medium}" alt="Image 1">
-                    </div>
-                    <hr>
-                    <div class="p-review">
-                        <div class="review-pic">
-                            <img src="https://i.pinimg.com/736x/2e/59/24/2e5924495141cd8a39ad9deca8acad0e.jpg" alt="Customer Profile">
-                        </div>
-                        <div class="review-info">
-                            <div class="review-text">
-                                <p class="c-name">N**ya</p>
-                                <p class="r-star">
-                                    <i class="fa fa-star" aria-hidden="true"></i>
-                                    <i class="fa fa-star" aria-hidden="true"></i>
-                                    <i class="fa fa-star" aria-hidden="true"></i>
-                                    <i class="fa fa-star" aria-hidden="true"></i>
-                                    <i class="fa fa-star" aria-hidden="true"></i> 5 stars
-                                </p>
-                                <p class="r-date">February 27, 2023</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="r-details">
-                        <p class="c-review">I just receive my order this afternoon, the flower was very fresh and arrived in good shape and the flower smells good, the seller is very  accommodating and the delivery is very fast. Thank you seller.</p>
-                    </div>
-                    <div class="image-preview">
-                        <img src="https://cdn1.1800flowers.com/wcsstore/Flowers/images/catalog/148707xlx.jpg?height=456&width=418&sharpen=a0.5,r1,t1&quality=80&auto=webp&optimize={medium}" alt="Image 1">
-                        <img src="https://fyf.tac-cdn.net/images/products/small/BN91208.jpg?auto=webp&quality=60&width=650" alt="Image 2" >
-                        <img src="https://cdn1.1800flowers.com/wcsstore/Flowers/images/catalog/148707xlx.jpg?height=456&width=418&sharpen=a0.5,r1,t1&quality=80&auto=webp&optimize={medium}" alt="Image 1">
-                        <img src="https://fyf.tac-cdn.net/images/products/small/BN91208.jpg?auto=webp&quality=60&width=650" alt="Image 2" >
-                        <img src="https://cdn1.1800flowers.com/wcsstore/Flowers/images/catalog/148707xlx.jpg?height=456&width=418&sharpen=a0.5,r1,t1&quality=80&auto=webp&optimize={medium}" alt="Image 1">
-                    </div>
-                    <hr>
-                    <div class="p-review">
-                        <div class="review-pic">
-                            <img src="https://i.pinimg.com/736x/2e/59/24/2e5924495141cd8a39ad9deca8acad0e.jpg" alt="Customer Profile">
-                        </div>
-                        <div class="review-info">
-                            <div class="review-text">
-                                <p class="c-name">N**ya</p>
-                                <p class="r-star">
-                                    <i class="fa fa-star" aria-hidden="true"></i>
-                                    <i class="fa fa-star" aria-hidden="true"></i>
-                                    <i class="fa fa-star" aria-hidden="true"></i>
-                                    <i class="fa fa-star" aria-hidden="true"></i>
-                                    <i class="fa fa-star" aria-hidden="true"></i> 5 stars
-                                </p>
-                                <p class="r-date">February 27, 2023</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="r-details">
-                        <p class="c-review">I just receive my order this afternoon, the flower was very fresh and arrived in good shape and the flower smells good, the seller is very  accommodating and the delivery is very fast. Thank you seller.</p>
-                    </div>
-                    <div class="image-preview">
-                        <img src="https://cdn1.1800flowers.com/wcsstore/Flowers/images/catalog/148707xlx.jpg?height=456&width=418&sharpen=a0.5,r1,t1&quality=80&auto=webp&optimize={medium}" alt="Image 1">
-                        <img src="https://fyf.tac-cdn.net/images/products/small/BN91208.jpg?auto=webp&quality=60&width=650" alt="Image 2" >
-                        <img src="https://cdn1.1800flowers.com/wcsstore/Flowers/images/catalog/148707xlx.jpg?height=456&width=418&sharpen=a0.5,r1,t1&quality=80&auto=webp&optimize={medium}" alt="Image 1">
-                        <img src="https://fyf.tac-cdn.net/images/products/small/BN91208.jpg?auto=webp&quality=60&width=650" alt="Image 2" >
-                        <img src="https://cdn1.1800flowers.com/wcsstore/Flowers/images/catalog/148707xlx.jpg?height=456&width=418&sharpen=a0.5,r1,t1&quality=80&auto=webp&optimize={medium}" alt="Image 1">
-                    </div>
-                    <hr>
-                    <div class="p-review">
-                        <div class="review-pic">
-                            <img src="https://i.pinimg.com/736x/2e/59/24/2e5924495141cd8a39ad9deca8acad0e.jpg" alt="Customer Profile">
-                        </div>
-                        <div class="review-info">
-                            <div class="review-text">
-                                <p class="c-name">N**ya</p>
-                                <p class="r-star">
-                                    <i class="fa fa-star" aria-hidden="true"></i>
-                                    <i class="fa fa-star" aria-hidden="true"></i>
-                                    <i class="fa fa-star" aria-hidden="true"></i>
-                                    <i class="fa fa-star" aria-hidden="true"></i>
-                                    <i class="fa fa-star" aria-hidden="true"></i> 5 stars
-                                </p>
-                                <p class="r-date">February 27, 2023</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="r-details">
-                        <p class="c-review">I just receive my order this afternoon, the flower was very fresh and arrived in good shape and the flower smells good, the seller is very  accommodating and the delivery is very fast. Thank you seller.</p>
-                    </div>
-                    <div class="image-preview">
-                        <img src="https://cdn1.1800flowers.com/wcsstore/Flowers/images/catalog/148707xlx.jpg?height=456&width=418&sharpen=a0.5,r1,t1&quality=80&auto=webp&optimize={medium}" alt="Image 1">
-                        <img src="https://fyf.tac-cdn.net/images/products/small/BN91208.jpg?auto=webp&quality=60&width=650" alt="Image 2" >
-                        <img src="https://cdn1.1800flowers.com/wcsstore/Flowers/images/catalog/148707xlx.jpg?height=456&width=418&sharpen=a0.5,r1,t1&quality=80&auto=webp&optimize={medium}" alt="Image 1">
-                        <img src="https://fyf.tac-cdn.net/images/products/small/BN91208.jpg?auto=webp&quality=60&width=650" alt="Image 2" >
-                        <img src="https://cdn1.1800flowers.com/wcsstore/Flowers/images/catalog/148707xlx.jpg?height=456&width=418&sharpen=a0.5,r1,t1&quality=80&auto=webp&optimize={medium}" alt="Image 1">
-                    </div>
-                    <hr>
-                    <div class="p-review">
-                        <div class="review-pic">
-                            <img src="https://i.pinimg.com/736x/2e/59/24/2e5924495141cd8a39ad9deca8acad0e.jpg" alt="Customer Profile">
-                        </div>
-                        <div class="review-info">
-                            <div class="review-text">
-                                <p class="c-name">N**ya</p>
-                                <p class="r-star">
-                                    <i class="fa fa-star" aria-hidden="true"></i>
-                                    <i class="fa fa-star" aria-hidden="true"></i>
-                                    <i class="fa fa-star" aria-hidden="true"></i>
-                                    <i class="fa fa-star" aria-hidden="true"></i>
-                                    <i class="fa fa-star" aria-hidden="true"></i> 5 stars
-                                </p>
-                                <p class="r-date">February 27, 2023</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="r-details">
-                        <p class="c-review">I just receive my order this afternoon, the flower was very fresh and arrived in good shape and the flower smells good, the seller is very  accommodating and the delivery is very fast. Thank you seller.</p>
-                    </div>
-                    <div class="image-preview">
-                        <img src="https://cdn1.1800flowers.com/wcsstore/Flowers/images/catalog/148707xlx.jpg?height=456&width=418&sharpen=a0.5,r1,t1&quality=80&auto=webp&optimize={medium}" alt="Image 1">
-                        <img src="https://fyf.tac-cdn.net/images/products/small/BN91208.jpg?auto=webp&quality=60&width=650" alt="Image 2" >
-                        <img src="https://cdn1.1800flowers.com/wcsstore/Flowers/images/catalog/148707xlx.jpg?height=456&width=418&sharpen=a0.5,r1,t1&quality=80&auto=webp&optimize={medium}" alt="Image 1">
-                        <img src="https://fyf.tac-cdn.net/images/products/small/BN91208.jpg?auto=webp&quality=60&width=650" alt="Image 2" >
-                        <img src="https://cdn1.1800flowers.com/wcsstore/Flowers/images/catalog/148707xlx.jpg?height=456&width=418&sharpen=a0.5,r1,t1&quality=80&auto=webp&optimize={medium}" alt="Image 1">
-                    </div>
-                    <hr>
-                    <div class="p-review">
-                        <div class="review-pic">
-                            <img src="https://i.pinimg.com/736x/2e/59/24/2e5924495141cd8a39ad9deca8acad0e.jpg" alt="Customer Profile">
-                        </div>
-                        <div class="review-info">
-                            <div class="review-text">
-                                <p class="c-name">N**ya</p>
-                                <p class="r-star">
-                                    <i class="fa fa-star" aria-hidden="true"></i>
-                                    <i class="fa fa-star" aria-hidden="true"></i>
-                                    <i class="fa fa-star" aria-hidden="true"></i>
-                                    <i class="fa fa-star" aria-hidden="true"></i>
-                                    <i class="fa fa-star" aria-hidden="true"></i> 5 stars
-                                </p>
-                                <p class="r-date">February 27, 2023</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="r-details">
-                        <p class="c-review">I just receive my order this afternoon, the flower was very fresh and arrived in good shape and the flower smells good, the seller is very  accommodating and the delivery is very fast. Thank you seller.</p>
-                    </div>
-                    <div class="image-preview">
-                        <img src="https://cdn1.1800flowers.com/wcsstore/Flowers/images/catalog/148707xlx.jpg?height=456&width=418&sharpen=a0.5,r1,t1&quality=80&auto=webp&optimize={medium}" alt="Image 1">
-                        <img src="https://fyf.tac-cdn.net/images/products/small/BN91208.jpg?auto=webp&quality=60&width=650" alt="Image 2" >
-                        <img src="https://cdn1.1800flowers.com/wcsstore/Flowers/images/catalog/148707xlx.jpg?height=456&width=418&sharpen=a0.5,r1,t1&quality=80&auto=webp&optimize={medium}" alt="Image 1">
-                        <img src="https://fyf.tac-cdn.net/images/products/small/BN91208.jpg?auto=webp&quality=60&width=650" alt="Image 2" >
-                        <img src="https://cdn1.1800flowers.com/wcsstore/Flowers/images/catalog/148707xlx.jpg?height=456&width=418&sharpen=a0.5,r1,t1&quality=80&auto=webp&optimize={medium}" alt="Image 1">
-                    </div>
-                    <hr>
-                    <div class="p-review">
-                        <div class="review-pic">
-                            <img src="https://i.pinimg.com/736x/2e/59/24/2e5924495141cd8a39ad9deca8acad0e.jpg" alt="Customer Profile">
-                        </div>
-                        <div class="review-info">
-                            <div class="review-text">
-                                <p class="c-name">N**ya</p>
-                                <p class="r-star">
-                                    <i class="fa fa-star" aria-hidden="true"></i>
-                                    <i class="fa fa-star" aria-hidden="true"></i>
-                                    <i class="fa fa-star" aria-hidden="true"></i>
-                                    <i class="fa fa-star" aria-hidden="true"></i>
-                                    <i class="fa fa-star" aria-hidden="true"></i> 5 stars
-                                </p>
-                                <p class="r-date">February 27, 2023</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="r-details">
-                        <p class="c-review">I just receive my order this afternoon, the flower was very fresh and arrived in good shape and the flower smells good, the seller is very  accommodating and the delivery is very fast. Thank you seller.</p>
-                    </div>
-                    <div class="image-preview">
-                        <img src="https://cdn1.1800flowers.com/wcsstore/Flowers/images/catalog/148707xlx.jpg?height=456&width=418&sharpen=a0.5,r1,t1&quality=80&auto=webp&optimize={medium}" alt="Image 1">
-                        <img src="https://fyf.tac-cdn.net/images/products/small/BN91208.jpg?auto=webp&quality=60&width=650" alt="Image 2" >
-                        <img src="https://cdn1.1800flowers.com/wcsstore/Flowers/images/catalog/148707xlx.jpg?height=456&width=418&sharpen=a0.5,r1,t1&quality=80&auto=webp&optimize={medium}" alt="Image 1">
-                        <img src="https://fyf.tac-cdn.net/images/products/small/BN91208.jpg?auto=webp&quality=60&width=650" alt="Image 2" >
-                        <img src="https://cdn1.1800flowers.com/wcsstore/Flowers/images/catalog/148707xlx.jpg?height=456&width=418&sharpen=a0.5,r1,t1&quality=80&auto=webp&optimize={medium}" alt="Image 1">
-                    </div>
-                    <hr>
-                    <div class="p-review">
-                        <div class="review-pic">
-                            <img src="https://i.pinimg.com/736x/2e/59/24/2e5924495141cd8a39ad9deca8acad0e.jpg" alt="Customer Profile">
-                        </div>
-                        <div class="review-info">
-                            <div class="review-text">
-                                <p class="c-name">N**ya</p>
-                                <p class="r-star">
-                                    <i class="fa fa-star" aria-hidden="true"></i>
-                                    <i class="fa fa-star" aria-hidden="true"></i>
-                                    <i class="fa fa-star" aria-hidden="true"></i>
-                                    <i class="fa fa-star" aria-hidden="true"></i>
-                                    <i class="fa fa-star" aria-hidden="true"></i> 5 stars
-                                </p>
-                                <p class="r-date">February 27, 2023</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="r-details">
-                        <p class="c-review">I just receive my order this afternoon, the flower was very fresh and arrived in good shape and the flower smells good, the seller is very  accommodating and the delivery is very fast. Thank you seller.</p>
-                    </div>
-                    <div class="image-preview">
-                        <img src="https://cdn1.1800flowers.com/wcsstore/Flowers/images/catalog/148707xlx.jpg?height=456&width=418&sharpen=a0.5,r1,t1&quality=80&auto=webp&optimize={medium}" alt="Image 1">
-                        <img src="https://fyf.tac-cdn.net/images/products/small/BN91208.jpg?auto=webp&quality=60&width=650" alt="Image 2" >
-                        <img src="https://cdn1.1800flowers.com/wcsstore/Flowers/images/catalog/148707xlx.jpg?height=456&width=418&sharpen=a0.5,r1,t1&quality=80&auto=webp&optimize={medium}" alt="Image 1">
-                        <img src="https://fyf.tac-cdn.net/images/products/small/BN91208.jpg?auto=webp&quality=60&width=650" alt="Image 2" >
-                        <img src="https://cdn1.1800flowers.com/wcsstore/Flowers/images/catalog/148707xlx.jpg?height=456&width=418&sharpen=a0.5,r1,t1&quality=80&auto=webp&optimize={medium}" alt="Image 1">
-                    </div>
-                    <hr>
-                    <div class="p-review">
-                        <div class="review-pic">
-                            <img src="https://i.pinimg.com/736x/2e/59/24/2e5924495141cd8a39ad9deca8acad0e.jpg" alt="Customer Profile">
-                        </div>
-                        <div class="review-info">
-                            <div class="review-text">
-                                <p class="c-name">N**ya</p>
-                                <p class="r-star">
-                                    <i class="fa fa-star" aria-hidden="true"></i>
-                                    <i class="fa fa-star" aria-hidden="true"></i>
-                                    <i class="fa fa-star" aria-hidden="true"></i>
-                                    <i class="fa fa-star" aria-hidden="true"></i>
-                                    <i class="fa fa-star" aria-hidden="true"></i> 5 stars
-                                </p>
-                                <p class="r-date">February 27, 2023</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="r-details">
-                        <p class="c-review">I just receive my order this afternoon, the flower was very fresh and arrived in good shape and the flower smells good, the seller is very  accommodating and the delivery is very fast. Thank you seller.</p>
-                    </div>
-                    <div class="image-preview">
-                        <img src="https://cdn1.1800flowers.com/wcsstore/Flowers/images/catalog/148707xlx.jpg?height=456&width=418&sharpen=a0.5,r1,t1&quality=80&auto=webp&optimize={medium}" alt="Image 1">
-                        <img src="https://fyf.tac-cdn.net/images/products/small/BN91208.jpg?auto=webp&quality=60&width=650" alt="Image 2" >
-                        <img src="https://cdn1.1800flowers.com/wcsstore/Flowers/images/catalog/148707xlx.jpg?height=456&width=418&sharpen=a0.5,r1,t1&quality=80&auto=webp&optimize={medium}" alt="Image 1">
-                        <img src="https://fyf.tac-cdn.net/images/products/small/BN91208.jpg?auto=webp&quality=60&width=650" alt="Image 2" >
-                        <img src="https://cdn1.1800flowers.com/wcsstore/Flowers/images/catalog/148707xlx.jpg?height=456&width=418&sharpen=a0.5,r1,t1&quality=80&auto=webp&optimize={medium}" alt="Image 1">
-                    </div>
-                    <hr>
-                    <div class="p-review">
-                        <div class="review-pic">
-                            <img src="https://i.pinimg.com/736x/2e/59/24/2e5924495141cd8a39ad9deca8acad0e.jpg" alt="Customer Profile">
-                        </div>
-                        <div class="review-info">
-                            <div class="review-text">
-                                <p class="c-name">N**ya</p>
-                                <p class="r-star">
-                                    <i class="fa fa-star" aria-hidden="true"></i>
-                                    <i class="fa fa-star" aria-hidden="true"></i>
-                                    <i class="fa fa-star" aria-hidden="true"></i>
-                                    <i class="fa fa-star" aria-hidden="true"></i>
-                                    <i class="fa fa-star" aria-hidden="true"></i> 5 stars
-                                </p>
-                                <p class="r-date">February 27, 2023</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="r-details">
-                        <p class="c-review">I just receive my order this afternoon, the flower was very fresh and arrived in good shape and the flower smells good, the seller is very  accommodating and the delivery is very fast. Thank you seller.</p>
-                    </div>
-                    <div class="image-preview">
-                        <img src="https://cdn1.1800flowers.com/wcsstore/Flowers/images/catalog/148707xlx.jpg?height=456&width=418&sharpen=a0.5,r1,t1&quality=80&auto=webp&optimize={medium}" alt="Image 1">
-                        <img src="https://fyf.tac-cdn.net/images/products/small/BN91208.jpg?auto=webp&quality=60&width=650" alt="Image 2" >
-                        <img src="https://cdn1.1800flowers.com/wcsstore/Flowers/images/catalog/148707xlx.jpg?height=456&width=418&sharpen=a0.5,r1,t1&quality=80&auto=webp&optimize={medium}" alt="Image 1">
-                        <img src="https://fyf.tac-cdn.net/images/products/small/BN91208.jpg?auto=webp&quality=60&width=650" alt="Image 2" >
-                        <img src="https://cdn1.1800flowers.com/wcsstore/Flowers/images/catalog/148707xlx.jpg?height=456&width=418&sharpen=a0.5,r1,t1&quality=80&auto=webp&optimize={medium}" alt="Image 1">
-                    </div>
-                    <hr>
-                    <div class="p-review">
-                        <div class="review-pic">
-                            <img src="https://i.pinimg.com/736x/2e/59/24/2e5924495141cd8a39ad9deca8acad0e.jpg" alt="Customer Profile">
-                        </div>
-                        <div class="review-info">
-                            <div class="review-text">
-                                <p class="c-name">N**ya</p>
-                                <p class="r-star">
-                                    <i class="fa fa-star" aria-hidden="true"></i>
-                                    <i class="fa fa-star" aria-hidden="true"></i>
-                                    <i class="fa fa-star" aria-hidden="true"></i>
-                                    <i class="fa fa-star" aria-hidden="true"></i>
-                                    <i class="fa fa-star" aria-hidden="true"></i> 5 stars
-                                </p>
-                                <p class="r-date">February 27, 2023</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="r-details">
-                        <p class="c-review">I just receive my order this afternoon, the flower was very fresh and arrived in good shape and the flower smells good, the seller is very  accommodating and the delivery is very fast. Thank you seller.</p>
-                    </div>
-                    <div class="image-preview">
-                        <img src="https://cdn1.1800flowers.com/wcsstore/Flowers/images/catalog/148707xlx.jpg?height=456&width=418&sharpen=a0.5,r1,t1&quality=80&auto=webp&optimize={medium}" alt="Image 1">
-                        <img src="https://fyf.tac-cdn.net/images/products/small/BN91208.jpg?auto=webp&quality=60&width=650" alt="Image 2" >
-                        <img src="https://cdn1.1800flowers.com/wcsstore/Flowers/images/catalog/148707xlx.jpg?height=456&width=418&sharpen=a0.5,r1,t1&quality=80&auto=webp&optimize={medium}" alt="Image 1">
-                        <img src="https://fyf.tac-cdn.net/images/products/small/BN91208.jpg?auto=webp&quality=60&width=650" alt="Image 2" >
-                        <img src="https://cdn1.1800flowers.com/wcsstore/Flowers/images/catalog/148707xlx.jpg?height=456&width=418&sharpen=a0.5,r1,t1&quality=80&auto=webp&optimize={medium}" alt="Image 1">
-                    </div>
-                    <hr>
-                    <div class="p-review">
-                        <div class="review-pic">
-                            <img src="https://i.pinimg.com/736x/2e/59/24/2e5924495141cd8a39ad9deca8acad0e.jpg" alt="Customer Profile">
-                        </div>
-                        <div class="review-info">
-                            <div class="review-text">
-                                <p class="c-name">N**ya</p>
-                                <p class="r-star">
-                                    <i class="fa fa-star" aria-hidden="true"></i>
-                                    <i class="fa fa-star" aria-hidden="true"></i>
-                                    <i class="fa fa-star" aria-hidden="true"></i>
-                                    <i class="fa fa-star" aria-hidden="true"></i>
-                                    <i class="fa fa-star" aria-hidden="true"></i> 5 stars
-                                </p>
-                                <p class="r-date">February 27, 2023</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="r-details">
-                        <p class="c-review">I just receive my order this afternoon, the flower was very fresh and arrived in good shape and the flower smells good, the seller is very  accommodating and the delivery is very fast. Thank you seller.</p>
-                    </div>
-                    <div class="image-preview">
-                        <img src="https://cdn1.1800flowers.com/wcsstore/Flowers/images/catalog/148707xlx.jpg?height=456&width=418&sharpen=a0.5,r1,t1&quality=80&auto=webp&optimize={medium}" alt="Image 1">
-                        <img src="https://fyf.tac-cdn.net/images/products/small/BN91208.jpg?auto=webp&quality=60&width=650" alt="Image 2" >
-                        <img src="https://cdn1.1800flowers.com/wcsstore/Flowers/images/catalog/148707xlx.jpg?height=456&width=418&sharpen=a0.5,r1,t1&quality=80&auto=webp&optimize={medium}" alt="Image 1">
-                        <img src="https://fyf.tac-cdn.net/images/products/small/BN91208.jpg?auto=webp&quality=60&width=650" alt="Image 2" >
-                        <img src="https://cdn1.1800flowers.com/wcsstore/Flowers/images/catalog/148707xlx.jpg?height=456&width=418&sharpen=a0.5,r1,t1&quality=80&auto=webp&optimize={medium}" alt="Image 1">
-                    </div>
-                </div>
+                        <div class="r-details">
+                            <p class="c-review">' . $feedback['feedback'] . '</p>';
+
+                    // Display review image if available
+                    if (!empty($feedback['review_image'])) {
+                        echo '<div class="image-preview">
+                                <img src="' . $reviewImagePath . '" alt="Review Image">
+                            </div>';
+                    }
+                    echo '</div>';
+                    echo '<hr>';
+                } else {
+                    // If there is no feedback and ratings or the rating is 0, don't display user details
+                    echo "No feedback and ratings available.";
+                }
+            }
+        } 
+    
+    }
+
+}
+// Function to fetch feedback and ratings from the sales table
+function get_feedback_and_ratings($shop_id)
+{
+    $conn = dbconnect();
+    $sql = "SELECT * FROM sales WHERE shop_id = ?";
+    try {
+        $stmt = $conn->prepare($sql);
+        $stmt->execute([$shop_id]);
+        $feedbackAndRatings = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $conn = null;
+        return $feedbackAndRatings;
+    } catch (PDOException $e) {
+        echo $sql . "<br>" . $e->getMessage();
+        $conn = null;
+        return false;
+    }
+}
+
+// Rest of your code...
+// Function to fetch customer details
+function get_customer_details($customer_id)
+{
+    $conn = dbconnect();
+    $sql = "SELECT * FROM users WHERE user_id = ?";
+    try {
+        $stmt = $conn->prepare($sql);
+        $stmt->execute([$customer_id]);
+        $customerDetails = $stmt->fetch(PDO::FETCH_ASSOC);
+        $conn = null;
+        return $customerDetails;
+    } catch (PDOException $e) {
+        echo $sql . "<br>" . $e->getMessage();
+        $conn = null;
+        return false;
+    }
+}
+
+// Function to generate star rating HTML based on the rating value
+function generate_star_rating($rating)
+{
+    $starRatingHTML = '<i class="fa fa-star" aria-hidden="true"></i>';
+    $emptyStarHTML = '<i class="fa fa-star-o" aria-hidden="true"></i>';
+
+    $fullStars = floor($rating);
+    $emptyStars = 5 - $fullStars;
+
+    $ratingHTML = str_repeat($starRatingHTML, $fullStars) . str_repeat($emptyStarHTML, $emptyStars);
+
+    return $ratingHTML;
+}
+
+?>
+
+                    
                 <!-- Add this to your HTML -->
                 <div id="imageModal" class="modal1">
                     <span class="close">&times;</span>

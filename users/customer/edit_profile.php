@@ -95,9 +95,9 @@ if (isset($_GET['user_id'])) {
   <header>
     <nav class="navbar navbar-expand-lg">
         <!-- Logo -->
-        <a class="navbar-brand d-flex align-items-center" href="#">
-          <img src="../../images/logo.png" alt="BulakBuy Logo" class="img-fluid logo">
-      </a>
+        <a class="navbar-brand d-flex align-items-center" href="customer_home.php">
+                    <img src="../php/images/logo.png" alt="BulakBuy Logo" class="img-fluid logo">
+                </a>
         <!-- Search Bar -->
         <div class="navbar-collapse justify-content-md-center">
             <ul class="navbar-nav dib">
