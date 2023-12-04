@@ -286,7 +286,7 @@ function handle_image_upload($product_id) {
 								<div class="image-upload-container">
                                     <div class="image-upload">
                                         <input accept="image/*" id="imageInput" name="images[]" multiple type="file">
-                                        <label for="imageInput">+ Add Images</label>
+                                        <label for="imageInput">+ Add Image</label>
                                     </div>
                                     <div class="image-preview" id="imagePreview">
                                         <!-- Selected images will be displayed here -->

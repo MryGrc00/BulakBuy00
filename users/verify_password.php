@@ -46,6 +46,7 @@ if (isset($_GET['email']) && isset($_POST['submit'])) {
 }
 ?>
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -366,7 +367,7 @@ if (isset($_GET['email']) && isset($_POST['submit'])) {
 
 <div class="container1">
     <h4 class="enter">Enter OTP Code</h4>
-    <form id="otp-form" action="php/verify_otp1.php" method="post">
+    <form id="otp-form" action="../php/verify_otp1.php" method="post">
         <div class="error-text"></div>
         <div class="input-field">
             <input type="number" maxlength="1"/>
@@ -377,7 +378,7 @@ if (isset($_GET['email']) && isset($_POST['submit'])) {
             <input type="number" maxlength="1" disabled />
         </div>
         <div class="center-container">
-          <button type="submit" id="verify-button">Verify OTP</button>
+          <button type="submit" class="center-container" id="verify-button">Verify OTP</button>
         </div>
     </form>
 

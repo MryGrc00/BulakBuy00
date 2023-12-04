@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", function() {
     form.addEventListener("submit", function(event) {
         event.preventDefault();
 
-        const email = emailInput.value;
+        const email = emailInput.value.trim(); // Trim whitespace from the email input
 
         // Create a FormData object to send the email via AJAX
         const formData = new FormData();
@@ -17,24 +17,29 @@ document.addEventListener("DOMContentLoaded", function() {
             method: "POST",
             body: formData
         })
-        .then(response => response.text())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json(); // Parse the JSON response
+        })
         .then(data => {
-            // Handle the response from the server
-            if (data === "Email does not exist. Please enter a valid email address.") {
-                errorText.textContent = data;
-                errorText.classList.add("visible"); // Show error message
-            } else if (data === "Failed to send OTP.") {
-                errorText.textContent = data;
-                errorText.style.display = "block";
-            } else if (data === "success") {
-                // Redirect or perform other actions based on the response
-                // For example, redirect to a verification page
-                window.location.href = "verify_password.php";
+            if (data.error) {
+                errorText.textContent = data.error;
+                errorText.classList.add("visible");
+            } else if (data.success) {
+                window.location.href = 'verify_password.php'; 
+            } else {
+                // Handle unexpected responses
+                errorText.textContent = "An unexpected error occurred. Please try again.";
+                errorText.classList.add("visible");
             }
         })
         .catch(error => {
             // Handle any errors that occurred during the fetch.
             console.error("Error:", error);
+            errorText.textContent = "An error occurred while processing your request.";
+            errorText.classList.add("visible");
         });
     });
 });

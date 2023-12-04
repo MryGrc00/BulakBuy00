@@ -1,12 +1,15 @@
 
-
 <?php
 session_start();
 include_once "php/dbhelper.php";
-include_once "php/mail.php"; // Include the file with the sendOTP function
+include_once "php/mail.php"; 
 
 // Establish database connection
 $conn = dbconnect();
+
+if (isset($_GET['email'])){
+    $email = $_GET['email'];
+}
 
 if (isset($_POST['submit'])) {
     $email = $_POST['email'];
@@ -19,7 +22,7 @@ if (isset($_POST['submit'])) {
     if ($checkStmt->rowCount() > 0) {
         try {
             // Generate a new OTP
-            $newOTP = generateOTP(); // Assuming generateOTP() is a function in mail.php to generate a new OTP
+            $newOTP = generateOTP(); 
 
             // Update the OTP in the database for the given email
             $updateStmt = $conn->prepare("UPDATE users SET otp = :otp WHERE email = :email");
@@ -29,8 +32,8 @@ if (isset($_POST['submit'])) {
 
             // Send the new OTP via email using the sendOTP function from mail.php
             if (sendOTP($email, $newOTP)) {
-                // Redirect to verification.php with the email parameter
-                $_SESSION['email'] = $email; // Store email in session if needed for future use
+                $_SESSION['email'] = $email; 
+                $_SESSION['user_id'] = $user_id; 
                 header("Location: verify_password.php");
                 exit();
             } else {
@@ -52,7 +55,6 @@ function generateOTP() {
     return $otp;
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -226,20 +228,20 @@ function generateOTP() {
 </head>
 <body>
 <div class="container">
-    <main>
+<main>
         <div class="container-fluid mt-5">
             <div class="row fw-semibold">
-                <h2 class="enter">Enter Your Email</h2>
+                <h2>Enter Your Email</h2>
                 <div class="error-text"></div>
                 <div class="success-text"></div>
                 <form action="" method="POST" enctype="multipart/form-data" autocomplete="off">
                 <div class="form-group">
-                    <input type="text" class="form-control bg-light rounded" name="email" id="email" placeholder="Email" required>
+                    <input type="text" class="form-control bg-light rounded" name="email" id="email" value="<?php echo $email;?>" placeholder="Email" required>
                 </div>
                     <div class="form-group">
                         <br>
                         <div class="button">
-                            <input type="submit" name="submit" class="btn " value="Verify"></button>
+                            <input type="submit" name="submit" class="btn btn-primary w-100" value="Verify"></button>
                         </div>
                         <br>
                     </div>

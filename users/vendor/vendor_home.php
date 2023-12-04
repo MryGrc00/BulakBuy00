@@ -220,13 +220,13 @@ if ($role == 'seller' && $isShopEmpty) {
                             <span class="label">Shop</span>
                         </div>
                     </a>
-                    <a href="vendor_transaction_history.html">
+                    <a href="vendor_transaction_history.php">
                         <div class="card2">
                             <i class="bi bi-file-earmark-text"></i>
                             <span class="label">Transaction History</span>
                         </div>
                     </a>
-                    <a href="vendor_total_income.html">
+                    <a href="vendor_total_income.php">
                         <div class="card2">
                             <i class="bi bi-file-bar-graph"></i>
                             <span class="label">Reports</span>
@@ -240,7 +240,7 @@ if ($role == 'seller' && $isShopEmpty) {
                             <span class="label">Subscription</span>
                         </div>
                     </a>
-                    <a href="vendor_feedbacks.html">
+                    <a href="vendor_feedbacks.php">
                         <div class="card2">
                             <i class="bi bi-chat-dots"></i>
                             <span class="label">Feedback</span>

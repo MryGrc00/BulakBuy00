@@ -1,23 +1,15 @@
 <?php
-session_start();
-include_once "../php/dbhelper.php"; // Include dbhelper.php which contains the dbconnect() function
+include('../php/checksession.php'); 
+include_once "../php/dbhelper.php"; 
 
-$conn = dbconnect(); // Establish database connection using dbconnect() function from dbhelper.php
 
-if (!isset($_SESSION['user_id'])) {
-    header("location: login.php");
+if (isset($_SESSION["user_id"])){
+        $user_id = $_SESSION["user_id"];
+        $users = get_record('users','user_id',$user_id);
+
 }
 
-$sql = $conn->prepare("SELECT * FROM users WHERE user_id = :user_id");
-$sql->bindParam(':user_id', $_SESSION['user_id']);
-$sql->execute();
 
-if ($sql->rowCount() > 0) {
-    $row = $sql->fetch(PDO::FETCH_ASSOC);
-}
-
-// Close the database connection
-$conn = null;
 ?>
 
 <!DOCTYPE html> 
@@ -59,7 +51,7 @@ $conn = null;
         <main class="main">
             <section>
                 <div class="vertical-container">
-                    <a href="../forgot_password.php">
+                    <a href="../forgot_password.php?email=<?php echo $users['email'];?>">
                         <div class="link-content">
                             <i class="bi bi-key"></i>
                             <span class="label1">Change Password</span>
@@ -73,7 +65,7 @@ $conn = null;
                         </div>
                         <i class="bi bi-chevron-right"></i>
                     </a>
-                    <a href="../php/logout.php?logout_id=<?php echo $row['user_id']; ?>">
+                    <a href="../php/logout.php?logout_id=<?php echo $users['user_id']; ?>">
                         <div class="link-content">
                             <i class="bi bi-box-arrow-right logout"></i>
                             <span class="label1">Logout</span>

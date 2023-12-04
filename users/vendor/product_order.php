@@ -60,7 +60,7 @@ if (isset($_SESSION['user_id'])) {
             echo '<div class="text-left">';
             echo '<h3>' . $order['product_name'] . '</h3>';
             echo '<p class="price">₱ ' . number_format($order['product_price'], 2) . '</p>';
-            echo '<p class="price">COD</p>';
+            echo '<p class="price">'.$order['paymode'].'</p>';
             
             // Fetch and display the quantity from the sales_details table
             $quantity = get_quantity_for_product($order['product_id'], $seller_id);
@@ -88,7 +88,7 @@ if (isset($_SESSION['user_id'])) {
 // Function to fetch seller orders from the sales table// Function to fetch seller orders from the sales table with status "pending"
 function get_seller_orders($seller_id) {
     $conn = dbconnect();
-    $sql = "SELECT s.amount, s.sales_date, p.product_id, p.product_name, p.product_img, p.product_price, s.customer_id
+    $sql = "SELECT s.amount, s.sales_date, s.paymode, p.product_id, p.product_name, p.product_img, p.product_price, s.customer_id
             FROM sales s
             JOIN products p ON s.product_id = p.product_id
             JOIN shops sh ON p.shop_owner = sh.shop_id
