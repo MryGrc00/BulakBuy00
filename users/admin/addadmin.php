@@ -19,7 +19,7 @@ if (isset($_SESSION["user_id"])){
             $last_name = $_POST['last_name'];
             $email = $_POST['email'];
             $password = $_POST['password'];
-            $confirm_password = $_POST['confirm_password'];
+            $confirm_password = $_POST['cpassword'];
 
             // Check if password and confirm password match
             if ($password !== $confirm_password) {
@@ -312,7 +312,7 @@ if (isset($_SESSION["user_id"])){
                             </div>
                                 <div class="password-input-container mt-4">
                                     <input type="password" class="form-control" name="cpassword" id="cpassword" placeholder="Confirm New Password" required>
-                                    <span class="toggle-password" id="togglePassword">
+                                    <span class="toggle-password" id="toggleCPassword">
                                         <i class="bi bi-eye-slash"></i>
                                     </span>
                                 </div>

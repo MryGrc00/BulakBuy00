@@ -113,7 +113,7 @@ if (isset($_SESSION["user_id"])) {
       </div>
       <div class="home-section">
          <nav class="navbar navbar-expand-lg ">
-            <div class="container-fluid">
+            <div class="container-fluid" style="width:0;">
                <div class="row">
                   <div class="col-lg-12">
                      <div class=" head ">
@@ -144,11 +144,7 @@ if (isset($_SESSION["user_id"])) {
                               </div>
                            </div>
                         </div>
-                        <div class="dib">
-                        <button type="button" class="btn btn-primary" onclick="window.location.href='addadmin.php'">
-                        Add Admin
-                  </button>
-                        </div>
+
                         <div class="container dib">
                            <div class="row">
                               <div class="col-lg-5">
@@ -166,6 +162,11 @@ if (isset($_SESSION["user_id"])) {
          </nav>
 
          <div class="home-content">
+         <div class="dib mt-5">
+                        <button type="button" class="btn btn-primary" onclick="window.location.href='addadmin.php'">
+                        Add Admin
+                  </button>
+                        </div>
          <div class="table-container" style="height:700px">
             <div class="sales-boxes py-5  ">
                <div class="recent-sales box">
