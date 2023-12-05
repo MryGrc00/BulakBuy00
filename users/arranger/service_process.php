@@ -12,11 +12,11 @@ if (isset($_SESSION["user_id"]) && isset($_SESSION["role"])) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $productId = $_POST['productId'];
+    $salesId = $_POST['salesId'];
     $customerId = $_POST['customerId'];
 
     // Update the status in the sales table for the specific product and customer
-    $result = update_status($productId, $customerId);
+    $result = update_status($salesId, $customerId); 
 
     if ($result) {
         echo 'Status updated successfully.';
@@ -25,15 +25,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 
-
-
-function update_status($productId, $customerId) {
+function update_status($salesId, $customerId) {
     $conn = dbconnect();
-    $sql = "UPDATE sales SET status = 'Intransit' WHERE product_id = ? AND customer_id = ?";
+    $sql = "UPDATE sales SET status = 'Intransit' WHERE sales_id = ? AND customer_id = ?";
     
     try {
         $stmt = $conn->prepare($sql);
-        $stmt->execute([$productId, $customerId]);
+        $stmt->execute([$salesId, $customerId]);
         $conn = null;
         return true;
     } catch (PDOException $e) {
@@ -45,24 +43,31 @@ function update_status($productId, $customerId) {
 
 
 function get_seller_orders($seller_id) {
+    // Establish a database connection
     $conn = dbconnect();
-    $sql = "SELECT s.amount, s.sales_date, s.paymode, p.product_id, p.product_name, p.product_img, p.product_price, sd.flower_type, sd.ribbon_color, s.customer_id
+
+    // Updated SQL query to fetch order details including sales_id
+    $sql = "SELECT s.sales_id, s.amount, s.sales_date, s.paymode, p.product_id, p.product_name, p.product_img, p.product_price, p.flower_type, p.ribbon_color, s.customer_id
             FROM sales s
             JOIN products p ON s.product_id = p.product_id
-            JOIN salesdetails sd ON p.product_id = sd.product_id
             JOIN shops sh ON p.shop_owner = sh.shop_id
             WHERE sh.owner_id = ? AND s.status = 'Processing'";
 
     try {
+        // Prepare and execute the statement
         $stmt = $conn->prepare($sql);
         $stmt->execute([$seller_id]);
+
+        // Fetch and return the orders
         $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        $conn = null;
         return $orders;
     } catch (PDOException $e) {
-        echo $sql . "<br>" . $e->getMessage();
+        // Handle any exceptions (log the error and return false)
+        error_log("Database query error: " . $e->getMessage()); // Log the error
+        return false; // Return false indicating failure
+    } finally {
+        // Close the database connection
         $conn = null;
-        return false;
     }
 }
 
@@ -162,7 +167,7 @@ function get_quantity_for_product($product_id, $seller_id) {
                 $quantityText = $quantity ? 'x ' . $quantity : 'Quantity not available';
                 ?>
                 <p class="count"><?php echo $quantityText; ?></p>
-                <button class="product-accept transit" data-product-id="<?php echo $order['product_id']?>" data-customer-id="<?php echo $order['customer_id']?>" name="intransit">In Transit</button>           
+                <button class="product-intransit transit" data-sales-id="<?php echo $order['sales_id']?>" data-customer-id="<?php echo $order['customer_id']?>" name="intransit">In Transit</button>           
                  </div>
             </div>
         </div>
@@ -189,7 +194,7 @@ function get_quantity_for_product($product_id, $seller_id) {
                 
                 <div class="text-right">
                     <div class="btn-container order">
-                    <button class="service-accept" data-service-id="<?php echo $order['service_id']; ?>" data-customer-id="<?php echo $order['customer_id'];?>">In Transit</button>
+                    <button class="service-intransit transit" data-service-id="<?php echo $order['service_id']; ?>" data-customer-id="<?php echo $order['customer_id'];?>">In Transit</button>
                     </div>
                 </div>
             </div>
@@ -236,15 +241,15 @@ function get_quantity_for_product($product_id, $seller_id) {
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <script>
     $(document).ready(function() {
-    $(".product-accept").click(function() {
-        var productId = $(this).data("product-id");
+    $(".product-intransit").click(function() {
+        var salesId = $(this).data("sales-id");
         var customerId = $(this).data("customer-id"); // Add this line to get the customer ID
 
         // Send AJAX request to update the status
         $.ajax({
             url: 'service_process.php',
             method: 'POST',
-            data: { productId: productId, customerId: customerId }, // Include customer ID in the data
+            data: { salesId: salesId, customerId: customerId }, 
             success: function(response) {
                 // Handle the response if needed
                 console.log(response);
@@ -264,7 +269,7 @@ function get_quantity_for_product($product_id, $seller_id) {
 </script>
 <script>
     $(document).ready(function() {
-    $(".service-accept").click(function() {
+    $(".service-intransit").click(function() {
         var serviceId = $(this).data("service-id");
         var customerId = $(this).data("customer-id"); // Add this line to get the customer ID
 

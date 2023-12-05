@@ -188,7 +188,7 @@
                                 </div>
                             
                             </div>';
-                    } elseif ($status === 'To Deliver') {
+                    } elseif ($status === 'Intransit') {
                         echo '<div class="status">
                                 <div class="status-icon">1</div>
                                 <div class="status-info">

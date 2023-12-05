@@ -81,7 +81,7 @@
         $quantityText = $quantity ? 'x ' . $quantity : 'Quantity not available';
         echo '<p class="count">' . $quantityText . '</p>';
 
-        echo '<button class="product-accept" data-sales-id="' . $order['sales_id'] .'"data-product-id"'.$order['product_id']. '" data-customer-id="' . $order['customer_id'] . '">Accept</button>';
+        echo '<button class="product-accept accept" data-sales-id="' . $order['sales_id'] .'"data-product-id"'.$order['product_id']. '" data-customer-id="' . $order['customer_id'] . '">Accept</button>';
         echo '</div>';
         echo '</div>';
         echo '</div>';
@@ -94,26 +94,34 @@
 
     // Function to fetch seller orders from the sales table// Function to fetch seller orders from the sales table with status "pending"
     function get_seller_orders($seller_id) {
+        // Establish a database connection
         $conn = dbconnect();
-        $sql = "SELECT s.amount, s.sales_date, s.paymode,s.sales_id, p.product_id, p.product_name, p.product_img, p.product_price, sd.flower_type, sd.ribbon_color, s.customer_id
+
+        // Updated SQL query to fetch order details including sales_id
+        $sql = "SELECT s.sales_id, s.amount, s.sales_date, s.paymode, p.product_id, p.product_name,p.flower_type,p.ribbon_color, p.product_img, p.product_price, s.customer_id
                 FROM sales s
                 JOIN products p ON s.product_id = p.product_id
-                JOIN salesdetails sd ON p.product_id = sd.product_id
                 JOIN shops sh ON p.shop_owner = sh.shop_id
-                WHERE sh.owner_id = ? AND s.status = 'pending'";
+                WHERE sh.owner_id = ? AND s.status = 'Pending'";
 
         try {
+            // Prepare and execute the statement
             $stmt = $conn->prepare($sql);
             $stmt->execute([$seller_id]);
+
+            // Fetch and return the orders
             $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            $conn = null;
             return $orders;
         } catch (PDOException $e) {
-            echo $sql . "<br>" . $e->getMessage();
+            // Handle any exceptions (log the error and return false)
+            error_log("Database query error: " . $e->getMessage()); // Log the error
+            return false; // Return false indicating failure
+        } finally {
+            // Close the database connection
             $conn = null;
-            return false;
         }
     }
+
 
 
     // Function to get quantity from sales_details table
@@ -135,9 +143,7 @@
             return 0;
         }
     }
-    
-
-    ?>
+?>
     
     
       
@@ -148,15 +154,14 @@
 <script>
     $(document).ready(function() {
     $(".product-accept").click(function() {
-        var productId = $(this).data("product-id");
-        var customerId = $(this).data("customer-id"); 
         var salesId = $(this).data("sales-id");
+        var customerId = $(this).data("customer-id");
 
         // Send AJAX request to update the status
         $.ajax({
             url: '../php/update_status.php',
             method: 'POST',
-            data: { productId: productId,salesId: salesId, customerId: customerId }, // Include customer ID in the data
+            data: { salesId: salesId, customerId: customerId }, 
             success: function(response) {
                 // Handle the response if needed
                 console.log(response);

@@ -105,7 +105,7 @@ function update_status($serviceId, $customerId) {
                 
                 <div class="text-right">
                     <div class="btn-container order">
-                        <button class="service-accept" data-service-id="<?php echo $order['service_id']; ?>" data-customer-id="<?php echo $order['customer_id'];?>">Accept</button>
+                        <button class="service-accept accept" data-service-id="<?php echo $order['service_id']; ?>" data-customer-id="<?php echo $order['customer_id'];?>">Accept</button>
                         <button class="service-cancel"data-service-id="<?php echo $order['service_id']; ?>" data-customer-id="<?php echo $order['customer_id'];?>">Cancel</button>
                     </div>
                 </div>

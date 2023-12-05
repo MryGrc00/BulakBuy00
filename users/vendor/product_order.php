@@ -73,7 +73,7 @@ if (isset($_SESSION['user_id'])) {
             $quantity = isset($quantity) ? $quantity : 'Quantity not available';
             
             echo '<p class="count">x ' . $quantity . '</p>';
-            echo '<button class="product-accept" data-sales-id="' . $order['sales_id'] . '" data-customer-id="' . $order['customer_id'] . '">Accept</button>';
+            echo '<button class="product-accept accept" data-sales-id="' . $order['sales_id'] . '" data-customer-id="' . $order['customer_id'] . '">Accept</button>';
             echo '</div>';
             echo '</div>';
             echo '</div>';

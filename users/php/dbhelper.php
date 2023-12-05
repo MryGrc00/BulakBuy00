@@ -388,14 +388,14 @@ function get_count_of_processing_services($servicedetailsTable, $servicesTable, 
 function get_service_details_intransit($servicedetailsTable, $servicesTable, $usersTable, $loggedInUserId) {
     $conn = dbconnect();
 
-    // SQL to join servicedetails with services and users, filtering for 'intransit' status
+    // SQL to join servicedetails with services and users, filtering for 'processing' status
     $sql = "SELECT sd.*, u.first_name AS customer_first_name, u.last_name AS customer_last_name, 
-                    u.address AS customer_address, u.profile_img AS customer_profile
+                u.address AS customer_address, u.profile_img AS customer_profile
             FROM " . $servicedetailsTable . " AS sd
             JOIN " . $servicesTable . " AS s ON sd.service_id = s.service_id
             JOIN " . $usersTable . " AS u ON sd.customer_id = u.user_id
-            WHERE s.arranger_id = :loggedInUserId AND sd.status = 'intransit'
-            ORDER BY sd.servicedetails_id DESC"; // Assuming servicedetails_id is the identifier in servicedetails table
+            WHERE s.arranger_id = :loggedInUserId AND sd.status = 'Intransit'
+            ORDER BY sd.servicedetails_id DESC"; 
     
     $stmt = $conn->prepare($sql);
     $stmt->bindParam(':loggedInUserId', $loggedInUserId, PDO::PARAM_INT);
@@ -403,6 +403,7 @@ function get_service_details_intransit($servicedetailsTable, $servicesTable, $us
     
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
+
 
 //count
 function get_count_of_intransit_services($servicedetailsTable, $servicesTable, $loggedInUserId) {
