@@ -1,5 +1,6 @@
 <?php
 session_start(); 
+$user_id = $_SESSION['user_id'];
 
 $url = "https://api4wrd-v1.kpa.ph/paymongo/v1/create";
 

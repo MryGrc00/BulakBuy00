@@ -10,7 +10,7 @@ if (!isset($_SESSION["user_id"]) || $_SESSION["role"] !== "arranger") {
 
 $userId = $_SESSION["user_id"];
 
-function getSales( $userId) {
+function getProductSales( $userId) {
     $pdo = dbConnect(); // Assuming dbConnect() returns a PDO connection
     $sql = "SELECT sales.*, 
                    CONCAT(customers.first_name, ' ', customers.last_name) AS customer_name,
@@ -28,6 +28,26 @@ function getSales( $userId) {
 
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
+function getServiceSales($userId) {
+    $pdo = dbConnect(); // Assuming dbConnect() returns a PDO connection
+    $sql = "SELECT servicedetails.*, 
+                   CONCAT(customers.first_name, ' ', customers.last_name) AS customer_name,
+                   DATE_FORMAT(servicedetails.date, '%Y-%m-%d') AS service_date, 
+                   DATE_FORMAT(servicedetails.time, '%H:%i:%s') AS service_time
+            FROM servicedetails 
+            JOIN services ON servicedetails.service_id = services.service_id 
+            JOIN users AS customers ON servicedetails.customer_id = customers.user_id 
+            JOIN users AS arrangers ON services.arranger_id = arrangers.user_id
+            WHERE arrangers.user_id = :userId";
+
+    $stmt = $pdo->prepare($sql);
+    $stmt->bindParam(':userId', $userId, PDO::PARAM_INT);
+    $stmt->execute();
+
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+
 
 
 function getSubscriptions($userId) {
@@ -49,8 +69,42 @@ function getSubscriptions($userId) {
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
-$sales = getSales($userId);
+function getUnifiedDate($item) {
+    // Checking the type of transaction and returning the appropriate date
+    if ($item['type'] == 'product') {
+        return $item['sale_date'];
+    } else if ($item['type'] == 'service') {
+        return $item['service_date'];
+    } else {
+        // Assuming subscription type
+        return $item['start_date'];
+    }
+}
+
+$products = getProductSales($userId);
 $subscriptions = getSubscriptions($userId);
+$services = getServiceSales($userId);
+
+// Add a type identifier to each item
+foreach ($products as $key => $value) {
+    $products[$key]['type'] = 'product';
+}
+foreach ($services as $key => $value) {
+    $services[$key]['type'] = 'service';
+}
+foreach ($subscriptions as $key => $value) {
+    $subscriptions[$key]['type'] = 'subscription';
+}
+
+// Merge the arrays
+$allTransactions = array_merge($products, $services, $subscriptions);
+
+usort($allTransactions, function($a, $b) {
+    $dateA = getUnifiedDate($a);
+    $dateB = getUnifiedDate($b);
+    return strtotime($dateB) - strtotime($dateA); // Compare in reverse order
+});
+
 
 
 ?>
@@ -92,49 +146,43 @@ $subscriptions = getSubscriptions($userId);
         </header>
         <main class="main">
             <div class="container">
-            <?php foreach ($sales as $sale): ?>                    
-                <div class="column1">
-                    <div class="transaction-details">
-                        <img src="https://logos-download.com/wp-content/uploads/2020/06/GCash_Logo.png" alt="Product Image">
-                        <div class="text-content">
-                            <div class="transact">
-                                <span class="transaction-status">Receive</span>
-                                <span class="transaction-price">₱ <?php echo htmlspecialchars($sale['amount']); ?></span>
-                            </div>
-                            <div class="status">
-                                <span class="transaction-description">From <?php echo htmlspecialchars($sale['customer_name']); ?></span>
-                                <span class="transact-status">Successful</span>
-                            </div>
-                            <div class="o-date-time">
-                                <span class="transaction-date"> <?php echo htmlspecialchars($sale['sale_date']); ?></span>
-                                <span class="transaction-time"> <?php echo htmlspecialchars($sale['sale_time']); ?></span>
-                            </div>
-                        </div>
-                    </div>
-                    <hr class="transaction-hr">
-                    <?php endforeach; ?>
-                    <?php foreach ($subscriptions as $subscription): ?>                    
-                    <div class="transaction-details">
-                        <img src="https://logos-download.com/wp-content/uploads/2020/06/GCash_Logo.png" alt="Product Image">
-                        <div class="text-content">
-                            <div class="transact">
-                                <span class="transaction-status">Sent</span>
-                                <span class="transaction-price">₱ 249</span>
-                            </div>
-                            <div class="status">
-                                <span class="transaction-description">To BulakBuy</span>
-                                <span class="transact-status">Successful</span>
-                            </div>
-                            <div class="o-date-time">
-                                <span class="transaction-date"> <?php echo htmlspecialchars($subscription['start_date']); ?></span>
-                                <span class="transaction-time"><?php echo htmlspecialchars($subscription['start_time']); ?></span>
+            <?php foreach ($allTransactions as $transaction): ?>
+                    <div class="column1">
+                        <div class="transaction-details">
+                            <!-- Check transaction type and display appropriate image -->
+                            <?php if ($transaction['type'] == 'product' && $transaction['paymode'] == 'gcash'): ?>
+                                <img src="../php/images/gcash.png" alt="GCash Logo">
+                            <?php elseif ($transaction['type'] == 'product'): ?>
+                                <!-- Display a default image for COD or other paymodes -->
+                                <img src="../php/images/cod.jpg" alt="Default Image">
+                            <?php else: ?>
+                                <!-- Display a generic image for services and subscriptions -->
+                                <img src="https://logos-download.com/wp-content/uploads/2020/06/GCash_Logo.png" alt="Transaction Image">
+                            <?php endif; ?>
+                            
+                            <div class="text-content">
+                                <!-- Transaction details based on type -->
+                                <div class="transact">
+                                    <span class="transaction-status"><?php echo $transaction['type'] == 'subscription' ? 'Sent' : 'Receive'; ?></span>
+                                    <span class="transaction-price">₱ <?php echo htmlspecialchars($transaction['amount'] ?? 249); // Default amount for subscriptions ?></span>
+                                </div>
+                                <div class="status">
+                                    <span class="transaction-description"><?php echo htmlspecialchars($transaction['customer_name'] ?? 'To BulakBuy'); // Default for subscriptions ?></span>
+                                    <span class="transact-status">Successful</span>
+                                </div>
+                                <div class="o-date-time">
+                                    <!-- Display date and time based on transaction type -->
+                                    <span class="transaction-date"><?php echo htmlspecialchars($transaction['sale_date'] ?? $transaction['service_date'] ?? $transaction['start_date']); ?></span>
+                                    <span class="transaction-time"><?php echo htmlspecialchars($transaction['sale_time'] ?? $transaction['service_time'] ?? $transaction['start_time']); ?></span>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                        <hr class="transaction-hr">
                     <?php endforeach; ?>
                 </div>
             </div>
         </main>
+        <!-- ...
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

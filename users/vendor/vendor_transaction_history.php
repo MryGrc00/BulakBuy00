@@ -52,6 +52,25 @@ function getSubscriptions($userId) {
 $sales = getSales($userId);
 $subscriptions = getSubscriptions($userId);
 
+// Add a type identifier to each sale
+foreach ($sales as $key => $value) {
+    $sales[$key]['type'] = 'sale';
+}
+
+// Add a type identifier to each subscription
+foreach ($subscriptions as $key => $value) {
+    $subscriptions[$key]['type'] = 'subscription';
+}
+
+// Merge the arrays
+$allTransactions = array_merge($sales, $subscriptions);
+
+// Sort the array based on the date in descending order
+usort($allTransactions, function($a, $b) {
+    $dateA = isset($a['sale_date']) ? $a['sale_date'] : $a['start_date'];
+    $dateB = isset($b['sale_date']) ? $b['sale_date'] : $b['start_date'];
+    return strtotime($dateB) - strtotime($dateA); // Sort by latest date first
+});
 
 ?>
 
@@ -94,50 +113,38 @@ $subscriptions = getSubscriptions($userId);
         </header>
         <main class="main">
             <div class="container">
-            <?php foreach ($sales as $sale): ?>                    
-                <div class="column1">
-                    <div class="transaction-details">
-                    <?php if ($sale['paymode'] == 'gcash'): ?>
-                        <img src="../php/images/gcash.png" alt="GCash Logo">
-                    <?php else: ?>
-                        <!-- Display a default image for COD or other paymodes -->
-                        <img src="../php/images/cod.jpg" alt="Default Image">
-                    <?php endif; ?>                       
-                     <div class="text-content">
-                            <div class="transact">
-                                <span class="transaction-status">Receive</span>
-                                <span class="transaction-price">₱ <?php echo htmlspecialchars($sale['amount']); ?></span>
-                            </div>
-                            <div class="status">
-                                <span class="transaction-description">From <?php echo htmlspecialchars($sale['customer_name']); ?></span>
-                                <span class="transact-status">Successful</span>
-                            </div>
-                            <div class="o-date-time">
-                                <span class="transaction-date"> <?php echo htmlspecialchars($sale['sale_date']); ?></span>
-                                <span class="transaction-time"> <?php echo htmlspecialchars($sale['sale_time']); ?></span>
-                            </div>
-                        </div>
-                    </div>
-                    <hr class="transaction-hr">
-                    <?php endforeach; ?>
-                    <?php foreach ($subscriptions as $subscription): ?>                    
-                    <div class="transaction-details">
-                        <img src="https://logos-download.com/wp-content/uploads/2020/06/GCash_Logo.png" alt="Product Image">
-                        <div class="text-content">
-                            <div class="transact">
-                                <span class="transaction-status">Sent</span>
-                                <span class="transaction-price">₱ 249</span>
-                            </div>
-                            <div class="status">
-                                <span class="transaction-description">To BulakBuy</span>
-                                <span class="transact-status">Successful</span>
-                            </div>
-                            <div class="o-date-time">
-                                <span class="transaction-date"> <?php echo htmlspecialchars($subscription['start_date']); ?></span>
-                                <span class="transaction-time"><?php echo htmlspecialchars($subscription['start_time']); ?></span>
+            <?php foreach ($allTransactions as $transaction): ?>
+                    <div class="column1">
+                        <div class="transaction-details">
+                            <!-- Check transaction type and display appropriate image -->
+                            <?php if ($transaction['type'] == 'product' && $transaction['paymode'] == 'gcash'): ?>
+                                <img src="../php/images/gcash.png" alt="GCash Logo">
+                            <?php elseif ($transaction['type'] == 'product'): ?>
+                                <!-- Display a default image for COD or other paymodes -->
+                                <img src="../php/images/cod.jpg" alt="Default Image">
+                            <?php else: ?>
+                                <!-- Display a generic image for services and subscriptions -->
+                                <img src="https://logos-download.com/wp-content/uploads/2020/06/GCash_Logo.png" alt="Transaction Image">
+                            <?php endif; ?>
+                            
+                            <div class="text-content">
+                                <!-- Transaction details based on type -->
+                                <div class="transact">
+                                    <span class="transaction-status"><?php echo $transaction['type'] == 'subscription' ? 'Sent' : 'Receive'; ?></span>
+                                    <span class="transaction-price">₱ <?php echo htmlspecialchars($transaction['amount'] ?? 249); // Default amount for subscriptions ?></span>
+                                </div>
+                                <div class="status">
+                                    <span class="transaction-description"><?php echo htmlspecialchars($transaction['customer_name'] ?? 'To BulakBuy'); // Default for subscriptions ?></span>
+                                    <span class="transact-status">Successful</span>
+                                </div>
+                                <div class="o-date-time">
+                                    <!-- Display date and time based on transaction type -->
+                                    <span class="transaction-date"><?php echo htmlspecialchars($transaction['sale_date'] ?? $transaction['service_date'] ?? $transaction['start_date']); ?></span>
+                                    <span class="transaction-time"><?php echo htmlspecialchars($transaction['sale_time'] ?? $transaction['service_time'] ?? $transaction['start_time']); ?></span>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                        <hr class="transaction-hr">
                     <?php endforeach; ?>
                 </div>
             </div>
