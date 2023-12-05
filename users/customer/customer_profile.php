@@ -136,7 +136,7 @@ if (isset($_SESSION["user_id"])) {
                         </div>
                         <i class="bi bi-chevron-right"></i>
                     </a>
-                    <a href="customer_transaction_history.html">
+                    <a href="customer_transaction_history.php">
                         <div class="link-content">
                             <i class="bi bi-clock-history"></i>
                             <span class="label1">Transaction History</span>
