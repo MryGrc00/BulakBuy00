@@ -1,14 +1,14 @@
 <?php
 session_start();
-include 'dbhelper.php';
+include '../php/dbhelper.php';
+
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $productId = $_POST['productId'];
+    $serviceId= $_POST['serviceId'];
     $customerId = $_POST['customerId'];
-    $salesId = $_POST['salesId'];
 
     // Update the status in the sales table for the specific product and customer
-    $result = update_status($salesId,$productId, $customerId);
+    $result = update_status($serviceId, $customerId);
 
     if ($result) {
         echo 'Status updated successfully.';
@@ -17,13 +17,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 
-function update_status($salesId, $productId, $customerId) {
+function update_status($serviceId, $customerId) {
     $conn = dbconnect();
-    $sql = "UPDATE sales SET status = 'Processing' WHERE sales_id = ? AND product_id = ? AND customer_id = ?";
+    $sql = "UPDATE servicedetails SET status = 'Intransit' WHERE service_id = ? AND customer_id = ?";
     
     try {
         $stmt = $conn->prepare($sql);
-        $stmt->execute([$productId, $customerId]);
+        $stmt->execute([$serviceId, $customerId]);
         $conn = null;
         return true;
     } catch (PDOException $e) {

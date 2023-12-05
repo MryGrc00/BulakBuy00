@@ -16,7 +16,84 @@ else {
     echo "User not logged in or role not set.";
     // Optional: Redirect to login page or show a login link
 }
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $productId = $_POST['productId'];
+    $customerId = $_POST['customerId'];
+
+    // Update the status in the sales table for the specific product and customer
+    $result = update_status($productId, $customerId);
+
+    if ($result) {
+        echo 'Status updated successfully.';
+    } else {
+        echo 'Failed to update status.';
+    }
+}
+
+function update_status($productId, $customerId) {
+    $conn = dbconnect();
+    $sql = "UPDATE sales SET status = 'Completed' WHERE product_id = ? AND customer_id = ?";
+    
+    try {
+        $stmt = $conn->prepare($sql);
+        $stmt->execute([$productId, $customerId]);
+        $conn = null;
+        return true;
+    } catch (PDOException $e) {
+        echo $sql . "<br>" . $e->getMessage();
+        $conn = null;
+        return false;
+    }
+}
+
+
+function get_seller_orders($seller_id) {
+    $conn = dbconnect();
+    $sql = "SELECT s.amount, s.sales_date, s.paymode, p.product_id, p.product_name, p.product_img, p.product_price, sd.flower_type, sd.ribbon_color, s.customer_id
+            FROM sales s
+            JOIN products p ON s.product_id = p.product_id
+            JOIN salesdetails sd ON p.product_id = sd.product_id
+            JOIN shops sh ON p.shop_owner = sh.shop_id
+            WHERE sh.owner_id = ? AND s.status = 'intransit'";
+
+    try {
+        $stmt = $conn->prepare($sql);
+        $stmt->execute([$seller_id]);
+        $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $conn = null;
+        return $orders;
+    } catch (PDOException $e) {
+        echo $sql . "<br>" . $e->getMessage();
+        $conn = null;
+        return false;
+    }
+}
+
+$product_order = get_seller_orders($user_id);
+
+
+// Function to get quantity from sales_details table
+function get_quantity_for_product($product_id, $seller_id) {
+    $conn = dbconnect();
+    $sql = "SELECT quantity FROM salesdetails sd
+            JOIN products p ON sd.product_id = p.product_id
+            JOIN shops sh ON p.shop_owner = sh.shop_id
+            WHERE p.product_id = ? AND sh.owner_id = ?";
+    try {
+        $stmt = $conn->prepare($sql);
+        $stmt->execute([$product_id, $seller_id]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        $conn = null;
+        return $result ? $result['quantity'] : 0;
+    } catch (PDOException $e) {
+        echo $sql . "<br>" . $e->getMessage();
+        $conn = null;
+        return 0;
+    }
+}
 ?>
+
 
 <!DOCTYPE html> 
 <html lang="en">
@@ -64,76 +141,36 @@ else {
         <button class="services-button">Services</button>
     </div>
     <div class="products-card" id="productsCard">
+    <?php foreach ($product_order as $order):?>
         <div class="single-card ">
             <div class="img-area">
-                <img src="https://assets.florista.ph/uploads/product-pics/5022_86_5022.webp" alt="">
+                <img src="<?php echo $order['product_img']?>" alt="">
             </div>
             <div class="info">
                 <div class="text-left">
-                    <h3>Winter Green</h3>
+                    <h3><?php echo $order['product_name']?></h3>
                     <div class="flower-type">
                         <p class="flower">Flower:</p>
-                        <p class="type">Anthurium , White Rose, Assorted Mums, Rose </p>
+                        <p class="type"><?php echo $order['flower_type']?> </p>
                     </div>
                     <div class="ribbon-color">
                         <p class="ribbon">Ribbon:</p>
-                        <p class="color"> Violet </p>
+                        <p class="color"> <?php echo $order['ribbon_color']?> </p>
                     </div>
-                    <p class="price">₱ 1000.00</p>
+                    <p class="price"><?php echo $order['amount']?></p>
                 </div>
                 <div class="text-right">
-                    <p class="count">x 20</p>
-                    <button class="done">Done</button>
-                </div>
+                <?php 
+                $quantity = get_quantity_for_product($order['product_id'], $user_id); 
+                $quantityText = $quantity ? 'x ' . $quantity : 'Quantity not available';
+                ?>
+                <p class="count"><?php echo $quantityText; ?></p>
+                <button class="product-intransit done" data-product-id="<?php echo $order['product_id']?>" data-customer-id="<?php echo $order['customer_id']?>">Done</button>                </div>
             </div>
         </div>
-        <div class="single-card ">
-            <div class="img-area">
-                <img src="https://assets.florista.ph/uploads/product-pics/5022_86_5022.webp" alt="">
-            </div>
-            <div class="info">
-                <div class="text-left">
-                    <h3>Winter Green</h3>
-                    <div class="flower-type">
-                        <p class="flower">Flower:</p>
-                        <p class="type">Anthurium , White Rose, Assorted Mums, Rose </p>
-                    </div>
-                    <div class="ribbon-color">
-                        <p class="ribbon">Ribbon:</p>
-                        <p class="color"> Violet </p>
-                    </div>
-                    <p class="price">₱ 1000.00</p>
-                </div>
-                <div class="text-right">
-                    <p class="count">x 20</p>
-                    <button class="done">Done</button>
-                </div>
-            </div>
-        </div>
-        <div class="single-card ">
-            <div class="img-area">
-                <img src="https://assets.florista.ph/uploads/product-pics/5022_86_5022.webp" alt="">
-            </div>
-            <div class="info">
-                <div class="text-left">
-                    <h3>Winter Green</h3>
-                    <div class="flower-type">
-                        <p class="flower">Flower:</p>
-                        <p class="type">Anthurium , White Rose, Assorted Mums, Rose </p>
-                    </div>
-                    <div class="ribbon-color">
-                        <p class="ribbon">Ribbon:</p>
-                        <p class="color"> Violet </p>
-                    </div>
-                    <p class="price">₱ 1000.00</p>
-                </div>
-                <div class="text-right">
-                    <p class="count">x 20</p>
-                    <button class="done">Done</button>
-                </div>
-            </div>
-        </div>
+    <?php endforeach;?>
     </div>
+       
     <div class="service-list" id="service-container">
  <?php foreach ($service_order as $order):?>
         <div class="single-card ">
@@ -151,10 +188,7 @@ else {
                     <p class="price"><?php echo $order["amount"]?></p>
                 </div>
                 <div class="text-right">
-                <form method="post" action="update_service_status.php">
-                        <input type="hidden" name="service_detail_id" value="<?php echo $order['servicedetails_id']; ?>">
-                        <button type="submit" name="action" value="completed" class="service-done">Done</button>
-                </form>
+                    <button class="service-intransit done" data-service-id="<?php echo $order['service_id']; ?>" data-customer-id="<?php echo $order['customer_id'];?>">In Transit</button>
                 </div>
             </div>
         </div>
@@ -216,6 +250,63 @@ else {
         productsBtn.addEventListener('click', () => handleButtonClick('products'));
         productBtn.addEventListener('click', () => handleButtonClick('services'));
     </script>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script>
+    $(document).ready(function() {
+    $(".product-intransit").click(function() {
+        var productId = $(this).data("product-id");
+        var customerId = $(this).data("customer-id"); // Add this line to get the customer ID
+
+        // Send AJAX request to update the status
+        $.ajax({
+            url: 'service_intransit.php',
+            method: 'POST',
+            data: { productId: productId, customerId: customerId }, // Include customer ID in the data
+            success: function(response) {
+                // Handle the response if needed
+                console.log(response);
+
+                // Reload the page after the status is updated
+                location.reload();
+            },
+            error: function(error) {
+                // Handle the error if needed
+                console.error(error);
+            }
+        });
+    });
+
+});
+
+</script>
+<script>
+    $(document).ready(function() {
+    $(".service-intransit").click(function() {
+        var serviceId = $(this).data("service-id");
+        var customerId = $(this).data("customer-id"); // Add this line to get the customer ID
+
+        // Send AJAX request to update the status
+        $.ajax({
+            url: 'update_service_completed.php',
+            method: 'POST',
+            data: { serviceId: serviceId, customerId: customerId }, // Include customer ID in the data
+            success: function(response) {
+                // Handle the response if needed
+                console.log(response);
+
+                // Reload the page after the status is updated
+                location.reload();
+            },
+            error: function(error) {
+                // Handle the error if needed
+                console.error(error);
+            }
+        });
+    });
+
+});
+
+</script>
 <script>
     function goBack() {
         window.history.back();

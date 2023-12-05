@@ -3,7 +3,7 @@ session_start();
 require_once '../php/dbhelper.php'; // Using require_once ensures the script stops if the file is missing.
 
 // Redirect non-sellers or unauthenticated users to the login page
-if (!isset($_SESSION["user_id"]) || $_SESSION["role"] !== "seller") {
+if (!isset($_SESSION["user_id"]) || $_SESSION["role"] !== "arranger") {
     header("Location: ../login.php");
     exit(); // Stop script execution after a header redirect
 }
@@ -54,8 +54,6 @@ $subscriptions = getSubscriptions($userId);
 
 
 ?>
-
-
 <!DOCTYPE html> 
 <html lang="en">
     <head>
@@ -73,7 +71,7 @@ $subscriptions = getSubscriptions($userId);
         <header>
             <nav class="navbar navbar-expand-lg">
                 <!-- Logo -->
-                <a class="navbar-brand d-flex align-items-center" href="vendor_home.php">
+                <a class="navbar-brand d-flex align-items-center" href="arranger_home.php">
                     <img src="../php/images/logo.png" alt="BulakBuy Logo" class="img-fluid logo">
                 </a>
                 <!-- Search Bar -->
@@ -83,7 +81,7 @@ $subscriptions = getSubscriptions($userId);
                             <form class="form-inline my-2 my-lg-0">
                                 <a href=""><i class="fa fa-search"></i></a>
                                 <input type="text"  class="form-control form-input" placeholder="Search" style="text-align:left;padding-left: 15px;font-size: 16px;">
-                                <a href="vendor_home.php" id="back-link"><i class="back fa fa-angle-left" aria-hidden="true"></i></a>
+                                <a href="arranger_home.php" id="back-link"><i class="back fa fa-angle-left" aria-hidden="true"></i></a>
                                 <div id="search-results">Transaction History</div>
                             </form>
                         </li>

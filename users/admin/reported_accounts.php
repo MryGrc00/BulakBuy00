@@ -2,6 +2,10 @@
 include('checksession.php'); 
 include('../php/dbhelper.php');
 
+if (isset($_SESSION["user_id"])) {
+   $user_id = $_SESSION["user_id"];
+   $users = get_record('users','user_id',$user_id);
+}
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action']) && $_POST['action'] == 'block_shop') {
    $shop_id = $_POST['shop_id'];
@@ -69,7 +73,7 @@ function get_filtered_reports() {
 function get_user_details($user_id) {
    $conn = dbconnect();
    // Assuming your users table has 'first_name' and 'last_name' columns
-   $sql = "SELECT first_name, last_name FROM users WHERE user_id = :user_id";
+   $sql = "SELECT user_id, first_name, last_name FROM users WHERE user_id = :user_id";
 
    try {
        $stmt = $conn->prepare($sql);
@@ -119,57 +123,73 @@ $filtered_reports = get_filtered_reports();
                <hr>
             </div>
             <div class="profile">
-               <img src='https://media.istockphoto.com/id/517528555/photo/trendy-young-man-smiling-on-white-background.jpg?s=1024x1024&w=is&k=20&c=FJijfaHuhjDH_byYfFku4oclIL5oepIO5ZCA4y_iav0=' alt="Admin Profile">
-               <h6>Dan Mark</h6>
+            <?php
+                    $profileImage = !empty($users['profile_img']) ? $users['profile_img'] : '../php/images/default.jpg'; 
+                    echo '<img src="' . $profileImage . '" alt="' . $users['last_name'] . '" class="user-image">';
+                 ?>               
+                 <br><?php echo $users['first_name'] . ' ' . $users['last_name']; ?> 
+               <a href="edit_profile.php?user_id=<?php echo $users['user_id']; ?>"><i class="bi bi-pencil-square"></i></a>
             </div>
          </div>
          <ul class="nav-links align-items-center  text-center ">
             <li>
                <a href="dashboard.php">
-                  <i class="fa fa-home" aria-hidden="true"></i>
-                  <span class="links_name">Dashboard</span>
+               <i class="fa fa-home" aria-hidden="true"></i>
+               <span class="links_name">Dashboard</span>
                </a>
             </li>
             <li>
                <a href="users.php">
-                  <i class="fa fa-user-circle-o" aria-hidden="true"></i>
-                  <span class="links_name">Users</span>
+               <i class="fa fa-user-circle-o" aria-hidden="true"></i>
+               <span class="links_name">Users</span>
                </a>
             </li>
             <li>
-               <a href="reported_accounts.php"   class="active">
-                  <i class="fa fa-user-times" aria-hidden="true"></i>
-                  <span class="links_name">Reported Accounts</span>
+               <a href="admins.php">
+               <i class="bi bi-person-vcard"></i>
+               <span class="links_name">Admins</span>
+               </a>
+            </li>
+            <li>
+               <a href="reported_accounts.php" class="active">
+               <i class="fa fa-user-times" aria-hidden="true"></i>
+               <span class="links_name">Reported Accounts</span>
                </a>
             </li>
             <li>
                <a href="blocked_accounts.php">
-                  <i class="fa fa-ban" aria-hidden="true"></i>
-                  <span class="links_name">Blocked Accounts</span>
+               <i class="fa fa-ban" aria-hidden="true"></i>
+               <span class="links_name">Blocked Accounts</span>
                </a>
             </li>
             <li>
                <a href="subscriptions.php">
-                  <i class="fa fa-credit-card-alt" aria-hidden="true"></i>
-                  <span class="links_name">Subscriptions</span>
+               <i class="fa fa-credit-card-alt" aria-hidden="true"></i>
+               <span class="links_name">Subscriptions</span>
                </a>
             </li>
             <li>
                <a href="reports.php">
-                  <i class="fa fa-users" aria-hidden="true"></i>
-                  <span class="links_name">Reports</span>
+               <i class="fa fa-users" aria-hidden="true"></i>
+               <span class="links_name">Reports</span>
                </a>
             </li>
             <li>
                <a href="transaction_history.php">
-                  <i class="fa fa-line-chart" aria-hidden="true"></i>
-                  <span class="links_name">Transaction History</span>
+               <i class="fa fa-line-chart" aria-hidden="true"></i>
+               <span class="links_name">Transaction History</span>
+               </a>
+            </li>
+            <li>
+            <a href="change_pass.php?email=<?php echo urlencode($users["email"]); ?>">
+               <i class="fa fa-key" aria-hidden="true"></i>
+               <span class="links_name">Change Password</span>
                </a>
             </li>
             <li>
                <a href="logout.php">
-                  <i class="fa fa-sign-out" aria-hidden="true"></i> 
-                  <span class="links_name">Logout</span>
+               <i class="fa fa-sign-out" aria-hidden="true"></i> 
+               <span class="links_name">Logout</span>
                </a>
             </li>
          </ul>
@@ -260,9 +280,9 @@ $filtered_reports = get_filtered_reports();
                            echo '<td class="px-5 py-2" style="width:300px;">' . $shopName. '</td>';
                            echo '<td class="px-5 py-2">' . $report['reason'] . '</td>';
                            echo '<td class="button py-2" style="min-width: 240px;">';
-                           echo '<button class="btn dib" onclick="blockShop(' . $report['defendant_id'] . ')">Block</button>';
-                           echo '&nbsp;<a href="#">';
-                           echo '<button class="btn dib">Delete</button>';
+                           echo '&nbsp;<a href="../chat.php?user_id=' . $report['complainant_id'] . '">';                           echo '<button class="btn dib"><i class="fa fa-comments" aria-hidden="true"></i> Complainant</button>';
+                           echo '</a>';
+                           echo '&nbsp;<a href="../chat.php?user_id=' . $defendant['owner_id'] . '">';                           echo '<button class="btn dib"><i class="fa fa-comments" aria-hidden="true"></i> Defendant</button>';
                            echo '</a>';
                            echo '</td>';
                            echo '</tr>';

@@ -2,9 +2,16 @@
 include('checksession.php'); 
 include('../php/dbhelper.php'); 
 
+if (isset($_SESSION["user_id"])) {
+   $user_id = $_SESSION["user_id"];
+   $user = get_record('users', 'user_id', $user_id);
+   $users = fetchAllExceptAdmin("users");
 
-$users = all_record("users");
+   
+
+}
 ?>
+
 
 
 <!DOCTYPE html>
@@ -35,8 +42,12 @@ $users = all_record("users");
                <hr>
             </div>
             <div class="profile">
-               <img src='https://media.istockphoto.com/id/517528555/photo/trendy-young-man-smiling-on-white-background.jpg?s=1024x1024&w=is&k=20&c=FJijfaHuhjDH_byYfFku4oclIL5oepIO5ZCA4y_iav0=' alt="Admin Profile">
-               <h6>Dan Mark</h6>
+            <?php
+                    $profileImage = !empty($user['profile_img']) ? $user['profile_img'] : '../php/images/default.jpg'; 
+                    echo '<img src="' . $profileImage . '" alt="' . $user['last_name'] . '" class="user-image">';
+                 ?>               
+                 <br><?php echo $user['first_name'] . ' ' . $user['last_name']; ?> 
+               <a href="edit_profile.php?user_id=<?php echo $user['user_id']; ?>"><i class="bi bi-pencil-square"></i></a>
             </div>
          </div>
          <ul class="nav-links align-items-center  text-center ">
@@ -47,9 +58,15 @@ $users = all_record("users");
                </a>
             </li>
             <li>
-               <a href="users.php"  class="active">
+               <a href="users.php" class="active">
                <i class="fa fa-user-circle-o" aria-hidden="true"></i>
                <span class="links_name">Users</span>
+               </a>
+            </li>
+            <li>
+               <a href="admins.php">
+               <i class="bi bi-person-vcard"></i>
+               <span class="links_name">Admins</span>
                </a>
             </li>
             <li>
@@ -83,7 +100,13 @@ $users = all_record("users");
                </a>
             </li>
             <li>
-            <a href="logout.php">
+            <a href="change_pass.php?email=<?php echo urlencode($user["email"]); ?>">
+               <i class="fa fa-key" aria-hidden="true"></i>
+               <span class="links_name">Change Password</span>
+               </a>
+            </li>
+            <li>
+               <a href="logout.php">
                <i class="fa fa-sign-out" aria-hidden="true"></i> 
                <span class="links_name">Logout</span>
                </a>
@@ -150,7 +173,6 @@ $users = all_record("users");
                      <table class="table" id="myTable">
                         <thead style="text-align: center;">
                            <tr class="title" style="text-align: center;">
-                              <th scope="col" class="px-5" style="text-align: center;">IDNO</th>
                               <th scope="col" class="px-5" style="text-align: center;">Name</th>
                               <th scope="col" class="px-5" style="text-align: center;">Role</th>
                               <th scope="col" class="px-5" style="text-align: center;">Contact No.</th>
@@ -161,12 +183,10 @@ $users = all_record("users");
                         <tbody>
                         <?php
                         // Fetch user data from the database
-                        $users = all_record("users");
 
                         // Loop through the user data and display it in the table
                         foreach ($users as $user) {
                               echo '<tr class="name" style="text-align: center;">';
-                              echo '<td class="px-4 py-3" style="min-width: 100px;">' . $user['user_id'] . '</td>';
                               echo '<td class="px-5 py-3" style="width: 400px; text-align: center;">' . $user['first_name'] . ' ' . $user['last_name'] . '</td>';
                               echo '<td class="px-5 py-3" style="min-width: 150px; text-align: center;">' . ucfirst($user['role']). '</td>';
                               echo '<td class="px-5 py-3" style="min-width: 200px; text-align: center;">' . $user['phone'] . '</td>';

@@ -18,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 function update_status($productId, $customerId) {
     $conn = dbconnect();
-    $sql = "UPDATE sales SET status = 'To Deliver' WHERE product_id = ? AND customer_id = ?";
+    $sql = "UPDATE sales SET status = 'Intransit' WHERE product_id = ? AND customer_id = ?";
     
     try {
         $stmt = $conn->prepare($sql);

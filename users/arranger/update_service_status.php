@@ -9,19 +9,19 @@ if (isset($_POST['service_detail_id']) && isset($_POST['action'])) {
 
     switch ($action) {
         case 'accept':
-            $newStatus = 'processing';
+            $newStatus = 'Processing';
             $redirectPage = 'service_process.php';
             break;
         case 'intransit':
-            $newStatus = 'intransit';
+            $newStatus = 'Intransit';
             $redirectPage = 'service_intransit.php';
             break;
         case 'completed':
-            $newStatus = 'completed';
+            $newStatus = 'Completed';
             $redirectPage = 'service_completed.php';
             break;
         case 'cancelled':
-                $newStatus = 'cancelled';
+                $newStatus = 'Cancelled';
                 $redirectPage = 'service_order.php';
                 break;
         default:
@@ -37,7 +37,15 @@ if (isset($_POST['service_detail_id']) && isset($_POST['action'])) {
     $stmt->execute();
 
     // Redirect to the appropriate page
-    header("Location: $redirectPage");
-    exit();
+    if ($stmt->execute()) {
+        // Success, redirect to the appropriate page
+        header("Location: $redirectPage");
+        exit();
+    } else {
+        // Error handling
+        echo "Error updating record.";
+        // Optionally, log $stmt->errorInfo() for debugging
+    }
+    
 }
 ?>

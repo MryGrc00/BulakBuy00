@@ -1,12 +1,15 @@
 <?php
 include('checksession.php'); 
-include('../php/dbhelper.php'); // Include the dbhelper file to use its functions.
-
+include('../php/dbhelper.php'); 
+if (isset($_SESSION["user_id"])) {
+   $user_id = $_SESSION["user_id"];
+   $users = get_record('users','user_id',$user_id);
+}
 
 $pdo = dbconnect();
 try {
     // Prepare and execute the query
-    $stmt = $pdo->query("SELECT s.shop_id, s.s_date, s.e_date, s.status, CONCAT(u.first_name, ' ', u.last_name) AS full_name, u.role FROM subscription s JOIN shops sh ON s.shop_id = sh.shop_id JOIN users u ON sh.owner_id = u.user_id WHERE s.status = 'active'");
+    $stmt = $pdo->query("SELECT s.shop_id, s.s_date, s.e_date, s.status, CONCAT(u.first_name, ' ', u.last_name) AS full_name, u.role, u.user_id FROM subscription s JOIN shops sh ON s.shop_id = sh.shop_id JOIN users u ON sh.owner_id = u.user_id WHERE s.status = 'active'");
     $subscriptions = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     // Calculate days left and add to each subscription
@@ -60,51 +63,73 @@ try {
                <hr>
             </div>
             <div class="profile">
-               <img src='https://media.istockphoto.com/id/517528555/photo/trendy-young-man-smiling-on-white-background.jpg?s=1024x1024&w=is&k=20&c=FJijfaHuhjDH_byYfFku4oclIL5oepIO5ZCA4y_iav0=' alt="Admin Profile">
-               <h6>Dan Mark</h6>
+            <?php
+                    $profileImage = !empty($users['profile_img']) ? $users['profile_img'] : '../php/images/default.jpg'; 
+                    echo '<img src="' . $profileImage . '" alt="' . $users['last_name'] . '" class="user-image">';
+                 ?>               
+                 <br><?php echo $users['first_name'] . ' ' . $users['last_name']; ?> 
+               <a href="edit_profile.php?user_id=<?php echo $users['user_id']; ?>"><i class="bi bi-pencil-square"></i></a>
             </div>
          </div>
          <ul class="nav-links align-items-center  text-center ">
             <li>
                <a href="dashboard.php">
-                  <i class="fa fa-home" aria-hidden="true"></i>
-                  <span class="links_name">Dashboard</span>
+               <i class="fa fa-home" aria-hidden="true"></i>
+               <span class="links_name">Dashboard</span>
                </a>
             </li>
             <li>
                <a href="users.php">
-                  <i class="fa fa-user-circle-o" aria-hidden="true"></i>
-                  <span class="links_name">Users</span>
+               <i class="fa fa-user-circle-o" aria-hidden="true"></i>
+               <span class="links_name">Users</span>
+               </a>
+            </li>
+            <li>
+               <a href="admins.php">
+               <i class="bi bi-person-vcard"></i>
+               <span class="links_name">Admins</span>
                </a>
             </li>
             <li>
                <a href="reported_accounts.php">
-                  <i class="fa fa-user-times" aria-hidden="true"></i>
-                  <span class="links_name">Reported Accounts</span>
+               <i class="fa fa-user-times" aria-hidden="true"></i>
+               <span class="links_name">Reported Accounts</span>
                </a>
             </li>
             <li>
                <a href="blocked_accounts.php">
-                  <i class="fa fa-ban" aria-hidden="true"></i>
-                  <span class="links_name">Blocked Accounts</span>
+               <i class="fa fa-ban" aria-hidden="true"></i>
+               <span class="links_name">Blocked Accounts</span>
                </a>
             </li>
             <li>
                <a href="subscriptions.php" class="active">
-                  <i class="fa fa-credit-card-alt" aria-hidden="true"></i>
-                  <span class="links_name">Subscriptions</span>
+               <i class="fa fa-credit-card-alt" aria-hidden="true"></i>
+               <span class="links_name">Subscriptions</span>
+               </a>
+            </li>
+            <li>
+               <a href="reports.php">
+               <i class="fa fa-users" aria-hidden="true"></i>
+               <span class="links_name">Reports</span>
                </a>
             </li>
             <li>
                <a href="transaction_history.php">
-                  <i class="fa fa-line-chart" aria-hidden="true"></i>
-                  <span class="links_name">Transaction History</span>
+               <i class="fa fa-line-chart" aria-hidden="true"></i>
+               <span class="links_name">Transaction History</span>
+               </a>
+            </li>
+            <li>
+            <a href="change_pass.php?email=<?php echo urlencode($users["email"]); ?>">
+               <i class="fa fa-key" aria-hidden="true"></i>
+               <span class="links_name">Change Password</span>
                </a>
             </li>
             <li>
                <a href="logout.php">
-                  <i class="fa fa-sign-out" aria-hidden="true"></i> 
-                  <span class="links_name">Logout</span>
+               <i class="fa fa-sign-out" aria-hidden="true"></i> 
+               <span class="links_name">Logout</span>
                </a>
             </li>
          </ul>
@@ -172,7 +197,6 @@ try {
                         <table class="table" id="myTable">
                            <thead style="text-align: center;">
                               <tr class="title" style="text-align: center;">
-                                 <th scope="col" class="px-3" style="text-align: center;">Shop ID</th>
                                  <th scope="col" class="px-5" style="text-align: center;">Name</th>
                                  <th scope="col" class="px-5" style="text-align: center;">Role</th>
                                  <th scope="col" class="px-5" style="text-align: center;">Start Date</th>
@@ -186,7 +210,6 @@ try {
                            <tbody>
                               <?php foreach ($subscriptions as $subscription): ?>
                                  <tr class="name" style="text-align: center;">
-                                       <td class="px-4 py-3"><?php echo htmlspecialchars($subscription['shop_id']); ?></td>
                                        <td class="px-5 py-3" style="width:300px;"><?php echo htmlspecialchars($subscription['full_name']); ?></td>
                                        <td class="px-5 py-3" style="width:200px;"><?php echo htmlspecialchars($subscription['role']); ?></td>
                                        <td class="px-5 py-3" style="width:200px;"><?php echo htmlspecialchars($subscription['s_date']); ?></td>
@@ -194,8 +217,8 @@ try {
                                        <td class="px-5 py-2" style="width:200px;"><?php echo $subscription['days_left']; ?></td>
                                        <td class="px-5 py-3"><?php echo htmlspecialchars($subscription['status']); ?></td>
                                        <td class="button py-2 " style="min-width: 240px;">
-                                          <a href="#">
-                                             <button class="btn dib">Notify</button>
+                                       <a href="../chat.php?user_id=<?php echo $subscription['user_id']; ?>">
+                                             <button class="btn dib">Message</button>
                                           </a>
                                        </td>
                                  </tr>

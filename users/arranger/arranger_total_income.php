@@ -3,7 +3,7 @@ session_start();
 require_once '../php/dbhelper.php'; // Using require_once ensures the script stops if the file is missing.
 
 // Redirect non-sellers or unauthenticated users to the login page
-if (!isset($_SESSION["user_id"]) || $_SESSION["role"] !== "seller") {
+if (!isset($_SESSION["user_id"]) || $_SESSION["role"] !== "arranger") {
     header("Location: ../login.php");
     exit(); // Stop script execution after a header redirect
 }
@@ -60,6 +60,7 @@ $totalIncome = getTotalIncome($userId); // Fetch the total income
 
 $monthlySales = getMonthlySales($userId, 2022,2023);
 ?>
+
 <!DOCTYPE html> 
 <html lang="en">
     <head>
@@ -74,11 +75,11 @@ $monthlySales = getMonthlySales($userId, 2022,2023);
         <link rel="stylesheet" href="../../css/total_income.css">
     </head>
     <body>
-    <header>
+        <header>
             <nav class="navbar navbar-expand-lg">
                 <!-- Logo -->
-                <a class="navbar-brand d-flex align-items-center" href="customer_home.php">
-                    <img src="../php/images/logo.png" alt="BulakBuy Logo" class="img-fluid logo">
+                <a class="navbar-brand d-flex align-items-center" href="#">
+                <img src="../../images/logo.png" alt="BulakBuy Logo" class="img-fluid logo">
                 </a>
                 <!-- Search Bar -->
                 <div class="navbar-collapse justify-content-md-center">
@@ -86,16 +87,17 @@ $monthlySales = getMonthlySales($userId, 2022,2023);
                         <li class="nav-item">
                             <form class="form-inline my-2 my-lg-0">
                                 <a href=""><i class="fa fa-search"></i></a>
-                                <input type="text"  class="form-control form-input" placeholder="Search" style="text-align:left;padding-left: 15px;font-size: 16px;">
-                                <a href="vendor_home.php" id="back-link"><i class="back fa fa-angle-left" aria-hidden="true"></i></a>
-                                <div id="search-results">Total Income</div>
+                                <input type="text"  class="form-control form-input" placeholder="Search">
+                                <a href="javascript:void(0);" onclick="goBack()">
+                                    <i class="back fa fa-angle-left" aria-hidden="true"></i>
+                                    <div id="search-results">Total Income</div>
+                                  </a>
+                                  
                             </form>
                         </li>
                     </ul>
                 </div>
             </nav>
-            <hr class="nav-hr">
-        </header>
         </header>
         <main class="main">
             <div class="income-info">
@@ -103,33 +105,98 @@ $monthlySales = getMonthlySales($userId, 2022,2023);
                     <div class="income-name">
                         <span class="s-label">Total Income</span>
                     </div>
-                    <span class="income">₱ <?php echo htmlspecialchars($totalIncome ? $totalIncome : '0'); ?></span>
+                    <span class="income">₱ 249,000</span>
                 </div>
             </div>
             <section>
-                <br>
-                <?php foreach ($monthlySales as $monthlySale): ?>
+            <div class="container1">
+                <div class="product-button card2">
+                    <span class="label">Products</span>
+                    <span class="sales">₱ 30999</span>
+                </div>
+                <div class="service-button card2">
+                    <span class="label">Services</span>
+                    <span class="sales">₱ 10949</span>
+                </div>
+            </div>
+            <div class="product-details">
+            <?php foreach ($monthlySales as $monthlySale): ?>
                 <div class="vertical-container">
                     <div class="subscription-details">
                         <i class="fa fa-money" aria-hidden="true"></i>
                         <div class="text-content">
-                        <span class="subscription-status">
-                        <?php 
-                            $monthName = date("F", mktime(0, 0, 0, $monthlySale['month'], 10));
-                            echo htmlspecialchars($monthName) . " " . htmlspecialchars($monthlySale['year']); 
-                        ?>
-                    </span>
-                       <span class="income-monthly">
+                            <div class="subscript">
+                            <?php 
+                                $monthName = date("F", mktime(0, 0, 0, $monthlySale['month'], 10));
+                                echo htmlspecialchars($monthName) . " " . htmlspecialchars($monthlySale['year']); 
+                            ?>                           
+                             </div>
+                            <span class="income-monthly">
                              ₱ <?php echo htmlspecialchars($monthlySale['monthly_income']); ?>
-                         </span>                        
+                         </span>   
                         </div>
                     </div>
                 </div>
-                <?php endforeach; ?>
+            <?php endforeach; ?>
+            </div>
+            <div class="service-details">
+                <div class="vertical-container" style="display:none;">
+                    <div class="subscription-details">
+                        <i class="fa fa-money" aria-hidden="true"></i>
+                        <div class="text-content">
+                            <div class="subscript">
+                                <span class="subscription-status">June 2023</span>
+                            </div>
+                            <span class="income-monthly">₱ 2000
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
             </section>
         </main>
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+        <script>
+            function goBack() {
+                window.history.back();
+            }
+          </script>
+        <script>
+            function showProductsDetails() {
+                // Set products to be visible
+                const productsDetails = document.querySelector('.product-details');
+                const servicesDetails = document.querySelector('.service-details');
+                if (productsDetails && servicesDetails) {
+                    productsDetails.style.display = 'block';
+                    servicesDetails.style.display = 'none';
+                }
+            }
+
+            // Function to show the services details
+            function showServicesDetails() {
+                // Set services to be visible
+                const productsDetails = document.querySelector('.product-details');
+                const servicesDetails = document.querySelector('.service-details');
+                if (productsDetails && servicesDetails) {
+                    productsDetails.style.display = 'none';
+                    servicesDetails.style.display = 'block';
+                }
+            }
+
+            // Get the buttons
+            const productButton = document.querySelector('.product-button');
+            const serviceButton = document.querySelector('.service-button');
+
+            // Attach click event listeners to buttons
+            if (productButton && serviceButton) {
+                productButton.addEventListener('click', showProductsDetails);
+                serviceButton.addEventListener('click', showServicesDetails);
+            }
+        </script>
+
+
+            
     </body>
 </html>

@@ -92,7 +92,7 @@ function get_seller_orders($seller_id) {
             FROM sales s
             JOIN products p ON s.product_id = p.product_id
             JOIN shops sh ON p.shop_owner = sh.shop_id
-            WHERE sh.owner_id = ? AND s.status = 'pending'";
+            WHERE sh.owner_id = ? AND s.status = 'Pending'";
     try {
         $stmt = $conn->prepare($sql);
         $stmt->execute([$seller_id]);
