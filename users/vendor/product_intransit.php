@@ -3,11 +3,11 @@ session_start();
 include '../php/dbhelper.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $productId = $_POST['productId'];
+    $salesId = $_POST['salesId'];
     $customerId = $_POST['customerId'];
 
     // Update the status in the sales table for the specific product and customer
-    $result = update_status($productId, $customerId);
+    $result = update_status($salesId, $customerId); 
 
     if ($result) {
         echo 'Status updated successfully.';
@@ -16,13 +16,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 
-function update_status($productId, $customerId) {
+function update_status($salesId, $customerId) {
     $conn = dbconnect();
-    $sql = "UPDATE sales SET status = 'Completed' WHERE product_id = ? AND customer_id = ?";
+    $sql = "UPDATE sales SET status = 'Completed' WHERE sales_id = ? AND customer_id = ?";
     
     try {
         $stmt = $conn->prepare($sql);
-        $stmt->execute([$productId, $customerId]);
+        $stmt->execute([$salesId, $customerId]);
         $conn = null;
         return true;
     } catch (PDOException $e) {
@@ -31,6 +31,7 @@ function update_status($productId, $customerId) {
         return false;
     }
 }
+
 ?>
 
 <!DOCTYPE html> 
@@ -106,7 +107,7 @@ if (isset($_SESSION['user_id'])) {
             $quantity = isset($quantity) ? $quantity : 'Quantity not available';
             
             echo '<p class="count">x ' . $quantity . '</p>';
-            echo '<button class="product-accept" data-product-id="' . $order['product_id'] . '" data-customer-id="' . $order['customer_id'] . '">Completed</button>';
+            echo '<button class="product-done" data-sales-id="' . $order['sales_id'] . '" data-customer-id="' . $order['customer_id'] . '">In transit</button>';
             echo '</div>';
             echo '</div>';
             echo '</div>';
@@ -120,24 +121,34 @@ if (isset($_SESSION['user_id'])) {
 
 // Function to fetch seller orders from the sales table// Function to fetch seller orders from the sales table with status "pending"
 function get_seller_orders($seller_id) {
+    // Establish a database connection
     $conn = dbconnect();
-    $sql = "SELECT s.amount, s.sales_date, p.product_id, p.product_name, p.product_img, p.product_price, s.customer_id
+
+    // Updated SQL query to fetch order details including sales_id
+    $sql = "SELECT s.sales_id, s.amount, s.sales_date, s.paymode, p.product_id, p.product_name, p.product_img, p.product_price, s.customer_id
             FROM sales s
             JOIN products p ON s.product_id = p.product_id
             JOIN shops sh ON p.shop_owner = sh.shop_id
             WHERE sh.owner_id = ? AND s.status = 'Intransit'";
+
     try {
+        // Prepare and execute the statement
         $stmt = $conn->prepare($sql);
         $stmt->execute([$seller_id]);
+
+        // Fetch and return the orders
         $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        $conn = null;
         return $orders;
     } catch (PDOException $e) {
-        echo $sql . "<br>" . $e->getMessage();
+        // Handle any exceptions (log the error and return false)
+        error_log("Database query error: " . $e->getMessage()); // Log the error
+        return false; // Return false indicating failure
+    } finally {
+        // Close the database connection
         $conn = null;
-        return false;
     }
 }
+
 
 
 // Function to get quantity from sales_details table
@@ -168,21 +179,21 @@ function get_quantity_for_product($product_id, $seller_id) {
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <script>
     $(document).ready(function() {
-    $(".product-accept").click(function() {
-        var productId = $(this).data("product-id");
-        var customerId = $(this).data("customer-id"); // Add this line to get the customer ID
+    $(".product-done").click(function() {
+        var salesId = $(this).data("sales-id");
+        var customerId = $(this).data("customer-id");
 
         // Send AJAX request to update the status
         $.ajax({
             url: 'product_intransit.php',
             method: 'POST',
-            data: { productId: productId, customerId: customerId }, // Include customer ID in the data
+            data: { salesId: salesId, customerId: customerId }, 
             success: function(response) {
                 // Handle the response if needed
                 console.log(response);
 
                 // Reload the page after the status is updated
-                location.reload();
+                window.location.href = window.location.href;
             },
             error: function(error) {
                 // Handle the error if needed

@@ -10,6 +10,7 @@ if (isset($_SESSION["user_id"])) {
 
 ?>
 
+
 <!DOCTYPE html> 
 <html lang="en">
     <head>
@@ -128,7 +129,7 @@ if (isset($_SESSION["user_id"])) {
                     </a>
                 </div>
                 <div class="vertical-container">
-                <a href="../forgot_password.php">
+                <a href="../forgot_password.php?email=<?php echo $users['email'];?>">
                         <div class="link-content">
                             <i class="bi bi-key"></i>
                             <span class="label1">Change Password</span>

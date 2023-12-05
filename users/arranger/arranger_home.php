@@ -229,7 +229,7 @@ else {
                   <p class="num-cart1"><?php echo $totalintransitCount; ?></p>
               <?php endif; ?>
                 <i class="bi bi-truck"></i>
-                  <span class="label">In Transit</span>
+                  <span class="label">To Deliver</span>
               </div>
             </a>
             <a href="service_completed.php">

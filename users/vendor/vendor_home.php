@@ -179,33 +179,54 @@ if ($role == 'seller' && $isShopEmpty) {
 
             <section class="main-section">
                 <div class="container">
-                    <a href="product_order.php">
-                        <div class="card">
-                            <p class="num-cart1">1 </p>
-                            <i class="bi bi-handbag"></i>
-                            <span class="label">Orders</span>
-                        </div>
-                    </a>
-                    <a href="product_process.php">
-                        <div class="card">
-                            <p class="num-cart1">1 </p>
-                            <i class="bi bi-gear"></i>
-                            <span class="label">Processing</span>
-                        </div>
-                    </a>
-                    <a href="product_intransit.php">
-                        <div class="card">
-                            <p class="num-cart1">1 </p>
-                            <i class="bi bi-truck"></i>
-                            <span class="label">To Deliver</span>
-                        </div>
-                    </a>
-                    <a href="product_completed.php">
-                        <div class="card  ">
-                            <i class="bi bi-bag-check"></i>
-                            <span class="label">Completed</span>
-                        </div>
-                    </a>
+                <a href="product_order.php">
+              <div class="card">
+                <?php
+                     $pendingOrderCount = count_pending_seller_orders($user_id);
+                ?>
+               <?php if ($pendingOrderCount > 0): ?>
+                  <p class="num-cart1"><?php echo $pendingOrderCount; ?></p>
+               <?php endif; ?>  
+                <i class="bi bi-handbag"></i>
+                    <span class="label">Orders</span>
+                </div>
+                </a>
+                <a href="product_process.php">
+                <div class="card">
+                <?php
+                    $processOrderCount = count_processing_seller_orders($user_id);
+                ?>
+                    <?php if ($processOrderCount > 0): ?>
+                    <p class="num-cart1"><?php echo $processOrderCount; ?></p>
+                    <?php endif; ?>               
+                <i class="bi bi-gear"></i>
+                    <span class="label">Processing</span>
+                </div>
+                </a>
+                <a href="product_intransit.php">
+                <div class="card">
+                <?php
+                    $intransitOrderCount = count_intransit_seller_orders($user_id);
+                ?>
+                <?php if ($intransitOrderCount > 0): ?>
+                    <p class="num-cart1"><?php echo $intransitOrderCount; ?></p>
+                <?php endif; ?>
+                    <i class="bi bi-truck"></i>
+                    <span class="label">To Deliver</span>
+                </div>
+                </a>
+                <a href="product_completed.php">
+                    <div class="card  ">
+                    <?php
+                        $completedOrderCount = count_completed_seller_orders($user_id);
+                    ?>
+                    <?php if ($completedOrderCount > 0): ?>
+                        <p class="num-cart1"><?php echo $completedOrderCount; ?></p>
+                    <?php endif; ?>
+                        <i class="bi bi-bag-check"></i>
+                        <span class="label">Completed</span>
+                    </div>
+                </a>
                 </div>
                 <div class="container1">
                     <a href="vendor_product.php">

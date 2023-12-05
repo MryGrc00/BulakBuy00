@@ -97,8 +97,13 @@ $subscriptions = getSubscriptions($userId);
             <?php foreach ($sales as $sale): ?>                    
                 <div class="column1">
                     <div class="transaction-details">
-                        <img src="https://logos-download.com/wp-content/uploads/2020/06/GCash_Logo.png" alt="Product Image">
-                        <div class="text-content">
+                    <?php if ($sale['paymode'] == 'gcash'): ?>
+                        <img src="../php/images/gcash.png" alt="GCash Logo">
+                    <?php else: ?>
+                        <!-- Display a default image for COD or other paymodes -->
+                        <img src="../php/images/cod.jpg" alt="Default Image">
+                    <?php endif; ?>                       
+                     <div class="text-content">
                             <div class="transact">
                                 <span class="transaction-status">Receive</span>
                                 <span class="transaction-price">₱ <?php echo htmlspecialchars($sale['amount']); ?></span>

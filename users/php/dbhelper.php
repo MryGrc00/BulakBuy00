@@ -381,28 +381,7 @@ function get_count_of_processing_services($servicedetailsTable, $servicesTable, 
     $result = $stmt->fetch(PDO::FETCH_ASSOC);
     return $result ? $result['count'] : 0;
 }
-//count of products arranger
-function count_processing_seller_orders($seller_id) {
-    $conn = dbconnect();
-    $sql = "SELECT COUNT(*) AS order_count
-            FROM sales s
-            JOIN products p ON s.product_id = p.product_id
-            JOIN salesdetails sd ON p.product_id = sd.product_id
-            JOIN shops sh ON p.shop_owner = sh.shop_id
-            WHERE sh.owner_id = ? AND s.status = 'Processing'";
 
-    try {
-        $stmt = $conn->prepare($sql);
-        $stmt->execute([$seller_id]);
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
-        $conn = null;
-        return $result['order_count'];
-    } catch (PDOException $e) {
-        echo $sql . "<br>" . $e->getMessage();
-        $conn = null;
-        return false;
-    }
-}
 
 
 //intransit
@@ -443,28 +422,7 @@ function get_count_of_intransit_services($servicedetailsTable, $servicesTable, $
     return $result ? $result['count'] : 0;
 }
 
-//count of products 
-function count_intransit_seller_orders($seller_id) {
-    $conn = dbconnect();
-    $sql = "SELECT COUNT(*) AS order_count
-            FROM sales s
-            JOIN products p ON s.product_id = p.product_id
-            JOIN salesdetails sd ON p.product_id = sd.product_id
-            JOIN shops sh ON p.shop_owner = sh.shop_id
-            WHERE sh.owner_id = ? AND s.status = 'Intransit'";
 
-    try {
-        $stmt = $conn->prepare($sql);
-        $stmt->execute([$seller_id]);
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
-        $conn = null;
-        return $result['order_count'];
-    } catch (PDOException $e) {
-        echo $sql . "<br>" . $e->getMessage();
-        $conn = null;
-        return false;
-    }
-}
 
 
 //completed
@@ -475,7 +433,7 @@ function get_service_details_completed($servicedetailsTable, $servicesTable, $us
             FROM " . $servicedetailsTable . " AS sd
             JOIN " . $servicesTable . " AS s ON sd.service_id = s.service_id
             JOIN " . $usersTable . " AS u ON sd.customer_id = u.user_id
-            WHERE s.arranger_id = :loggedInUserId AND sd.status = 'completed'
+            WHERE s.arranger_id = :loggedInUserId AND sd.status = 'Completed'
             ORDER BY sd.servicedetails_id DESC"; 
     
     $stmt = $conn->prepare($sql);
@@ -503,28 +461,8 @@ function get_count_of_completed_services($servicedetailsTable, $servicesTable, $
     return $result ? $result['count'] : 0;
 }
 //product count
-//count of products arranger
-function count_completed_seller_orders($seller_id) {
-    $conn = dbconnect();
-    $sql = "SELECT COUNT(*) AS order_count
-            FROM sales s
-            JOIN products p ON s.product_id = p.product_id
-            JOIN salesdetails sd ON p.product_id = sd.product_id
-            JOIN shops sh ON p.shop_owner = sh.shop_id
-            WHERE sh.owner_id = ? AND s.status = 'Completed'";
 
-    try {
-        $stmt = $conn->prepare($sql);
-        $stmt->execute([$seller_id]);
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
-        $conn = null;
-        return $result['order_count'];
-    } catch (PDOException $e) {
-        echo $sql . "<br>" . $e->getMessage();
-        $conn = null;
-        return false;
-    }
-}
+
 
 //pending for customer side
 function get_pending_service_details_arranger($servicedetailsTable, $servicesTable, $usersTable, $loggedInUserId){
@@ -735,9 +673,71 @@ function count_pending_seller_orders($seller_id) {
     $sql = "SELECT COUNT(*) AS order_count
             FROM sales s
             JOIN products p ON s.product_id = p.product_id
-            JOIN salesdetails sd ON p.product_id = sd.product_id
             JOIN shops sh ON p.shop_owner = sh.shop_id
             WHERE sh.owner_id = ? AND s.status = 'pending'";
+
+    try {
+        $stmt = $conn->prepare($sql);
+        $stmt->execute([$seller_id]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        $conn = null;
+        return $result['order_count'];
+    } catch (PDOException $e) {
+        echo $sql . "<br>" . $e->getMessage();
+        $conn = null;
+        return false;
+    }
+}
+
+function count_processing_seller_orders($seller_id) {
+    $conn = dbconnect();
+    $sql = "SELECT COUNT(*) AS order_count
+            FROM sales s
+            JOIN products p ON s.product_id = p.product_id
+            JOIN shops sh ON p.shop_owner = sh.shop_id
+            WHERE sh.owner_id = ? AND s.status = 'processing'";
+
+    try {
+        $stmt = $conn->prepare($sql);
+        $stmt->execute([$seller_id]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        $conn = null;
+        return $result['order_count'];
+    } catch (PDOException $e) {
+        echo $sql . "<br>" . $e->getMessage();
+        $conn = null;
+        return false;
+    }
+}
+
+function count_intransit_seller_orders($seller_id) {
+    $conn = dbconnect();
+    $sql = "SELECT COUNT(*) AS order_count
+            FROM sales s
+            JOIN products p ON s.product_id = p.product_id
+            JOIN shops sh ON p.shop_owner = sh.shop_id
+            WHERE sh.owner_id = ? AND s.status = 'intransit'";
+
+    try {
+        $stmt = $conn->prepare($sql);
+        $stmt->execute([$seller_id]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        $conn = null;
+        return $result['order_count'];
+    } catch (PDOException $e) {
+        echo $sql . "<br>" . $e->getMessage();
+        $conn = null;
+        return false;
+    }
+}
+
+function count_completed_seller_orders($seller_id) {
+    $conn = dbconnect();
+    $sql = "SELECT COUNT(*) AS order_count
+            FROM sales s
+            JOIN products p ON s.product_id = p.product_id
+            JOIN shops sh ON p.shop_owner = sh.shop_id
+            WHERE sh.owner_id = ? AND s.status = 'completed'";
 
     try {
         $stmt = $conn->prepare($sql);
@@ -789,6 +789,8 @@ function fetchAllAdmin($tableName) {
         die("Database error: " . $e->getMessage());
     }
 }
+
+
 
 
 
