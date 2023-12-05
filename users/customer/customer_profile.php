@@ -72,20 +72,27 @@ if (isset($_SESSION["user_id"])) {
             </div>
             <section>
                 <div class="container">
-                    <a href="customer_order.php">
-                        <div class="card">
-                            <p class="num-cart1">1 </p>
-                            <i class="bi bi-handbag"></i>
-                            <span class="label">Orders</span>
-                        </div>
-                    </a>
+                <a href="customer_order.php">
+                    <div class="card">
+                        <?php
+                    $pendingOrderCount = countCustomerProducts($user_id);
+                    ?>
+                    <?php if ($pendingOrderCount > 0): ?>
+                        <p class="num-cart1"><?php echo $pendingOrderCount; ?></p>
+                    <?php endif; ?>  
+                    <i class="bi bi-handbag"></i>
+                        <span class="label">Orders</span>
+                    </div>
+                </a>
                     <a href="customer_request.php">
                         <div class="card">
                         <?php
+                        $cancelCount = get_cancelled_service_details_count_arranger('servicedetails', 'services','users', $user_id);
                         $OrderCount = get_pending_service_details_count_arranger('servicedetails', 'services','users', $user_id);
+                        $total = $cancelCount + $OrderCount;
                         ?>
-                        <?php if ($OrderCount > 0): ?>
-                            <p class="num-cart1"><?php echo $OrderCount; ?></p>
+                        <?php if ($total > 0): ?>
+                            <p class="num-cart1"><?php echo $total; ?></p>
                         <?php endif; ?>                              
                         <i class="bi bi-person-plus"></i>
                             <span class="label">Services</span>
@@ -94,10 +101,12 @@ if (isset($_SESSION["user_id"])) {
                     <a href="customer_process.php">
                         <div class="card">
                         <?php
+                        $orderCount= countProcessing($user_id);
                         $processCount = get_process_service_details_count_arranger('servicedetails', 'services','users', $user_id);
+                        $total = $orderCount + $processCount;
                         ?>
-                        <?php if ($processCount > 0): ?>
-                            <p class="num-cart1"><?php echo $processCount; ?></p>
+                        <?php if ($total > 0): ?>
+                            <p class="num-cart1"><?php echo $total; ?></p>
                         <?php endif; ?> 
                             <i class="bi bi-gear"></i>
                             <span class="label">Processing</span>
@@ -106,10 +115,12 @@ if (isset($_SESSION["user_id"])) {
                     <a href="customer_intransit.php">
                         <div class="card">
                         <?php
+                        $productCount= countIntransit($user_id);
                         $intransitCount = get_intransit_service_details_count_arranger('servicedetails', 'services','users', $user_id);
+                        $total = $productCount + $intransitCount;
                         ?>
-                        <?php if ($intransitCount > 0): ?>
-                            <p class="num-cart1"><?php echo $intransitCount; ?></p>
+                        <?php if ($total > 0): ?>
+                            <p class="num-cart1"><?php echo $total; ?></p>
                         <?php endif; ?> 
                             <i class="bi bi-truck"></i>
                             <span class="label">In Transit</span>

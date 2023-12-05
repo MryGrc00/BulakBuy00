@@ -344,6 +344,8 @@ function get_latest_products_by_id($productsTable, $shopTable, $subscribedTable)
         return $result ? $result['sales_count'] : 0;
     }
 
+    
+
 //processing
     function get_service_details_processing($servicedetailsTable, $servicesTable, $usersTable, $loggedInUserId) {
         $conn = dbconnect();
@@ -512,6 +514,26 @@ function get_pending_service_details_count_arranger($servicedetailsTable, $servi
             FROM " . $servicedetailsTable . " AS sd
             JOIN " . $servicesTable . " AS s ON sd.service_id = s.service_id
             WHERE sd.customer_id = :loggedInUserId AND sd.status = 'pending'";
+
+    $stmt = $conn->prepare($sql);
+    $stmt->bindParam(':loggedInUserId', $loggedInUserId, PDO::PARAM_INT);
+    $stmt->execute();
+
+    // Fetching only one row as it's a COUNT query
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    // Return the count. If there's no record, return 0.
+    return $result ? (int) $result['pending_count'] : 0;
+}
+//cancelled
+function get_cancelled_service_details_count_arranger($servicedetailsTable, $servicesTable, $usersTable, $loggedInUserId) {
+    $conn = dbconnect();
+    
+    // SQL to count the number of pending servicedetails for an arranger
+    $sql = "SELECT COUNT(*) AS pending_count
+            FROM " . $servicedetailsTable . " AS sd
+            JOIN " . $servicesTable . " AS s ON sd.service_id = s.service_id
+            WHERE sd.customer_id = :loggedInUserId AND sd.status = 'Cancelled'";
 
     $stmt = $conn->prepare($sql);
     $stmt->bindParam(':loggedInUserId', $loggedInUserId, PDO::PARAM_INT);
@@ -731,6 +753,67 @@ function count_intransit_seller_orders($seller_id) {
         return false;
     }
 }
+//customer side order (count)
+function countCustomerProducts($customerId) {
+    $conn = dbconnect();
+    $sql = "SELECT COUNT(DISTINCT s.salesdetails_id) AS pending_salesdetails_count
+            FROM sales s
+            JOIN salesdetails sd ON s.salesdetails_id = sd.salesdetails_id
+            WHERE s.customer_id = ? AND s.status = 'pending'";
+
+    try {
+        $stmt = $conn->prepare($sql);
+        $stmt->execute([$customerId]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        $conn = null;
+        return $result['pending_salesdetails_count'];
+    } catch (PDOException $e) {
+        echo $sql . "<br>" . $e->getMessage();
+        $conn = null;
+        return false;
+    }
+}
+//process
+function countProcessing($customerId) {
+    $conn = dbconnect();
+    $sql = "SELECT COUNT(DISTINCT s.salesdetails_id) AS pending_salesdetails_count
+            FROM sales s
+            JOIN salesdetails sd ON s.salesdetails_id = sd.salesdetails_id
+            WHERE s.customer_id = ? AND s.status = 'processing'";
+
+    try {
+        $stmt = $conn->prepare($sql);
+        $stmt->execute([$customerId]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        $conn = null;
+        return $result['pending_salesdetails_count'];
+    } catch (PDOException $e) {
+        echo $sql . "<br>" . $e->getMessage();
+        $conn = null;
+        return false;
+    }
+}
+
+function countIntransit($customerId) {
+    $conn = dbconnect();
+    $sql = "SELECT COUNT(DISTINCT s.salesdetails_id) AS pending_salesdetails_count
+            FROM sales s
+            JOIN salesdetails sd ON s.salesdetails_id = sd.salesdetails_id
+            WHERE s.customer_id = ? AND s.status = 'intransit'";
+
+    try {
+        $stmt = $conn->prepare($sql);
+        $stmt->execute([$customerId]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        $conn = null;
+        return $result['pending_salesdetails_count'];
+    } catch (PDOException $e) {
+        echo $sql . "<br>" . $e->getMessage();
+        $conn = null;
+        return false;
+    }
+}
+
 
 function count_completed_seller_orders($seller_id) {
     $conn = dbconnect();
