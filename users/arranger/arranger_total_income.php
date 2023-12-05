@@ -11,7 +11,7 @@ if (!isset($_SESSION["user_id"]) || $_SESSION["role"] !== "arranger") {
 $userId = $_SESSION["user_id"];
 
 
-function getTotalIncome($userId) {
+function getProductTotalIncome($userId) {
     $pdo = dbconnect(); // Ensure this is the correct function to establish your database connection
 
     // SQL query to sum the amount from sales where the shop_id is owned by the user
@@ -27,12 +27,31 @@ function getTotalIncome($userId) {
 
     // Fetch the result
     $result = $stmt->fetch(PDO::FETCH_ASSOC);
-    return $result ? $result['total_income'] : 0; // Return the total income or 0 if none
+    return $result ? $result['total_income'] : 0; 
+}
+
+function getServiceTotalIncome($userId) {
+    $pdo = dbconnect(); 
+
+
+    $sql = "SELECT SUM(sd.amount) AS total_income 
+            FROM servicedetails sd
+            INNER JOIN services s ON sd.service_id = s.service_id
+            WHERE s.arranger_id = :userId";
+
+    // Prepare and execute the SQL statement
+    $stmt = $pdo->prepare($sql);
+    $stmt->bindParam(':userId', $userId, PDO::PARAM_INT);
+    $stmt->execute();
+
+    // Fetch the result
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    return $result ? $result['total_income'] : 0; 
 }
 
 
 
-function getMonthlySales($userId, $startYear, $endYear) {
+function getProductMonthlySales($userId, $startYear, $endYear) {
     $pdo = dbconnect();
     $sql = "SELECT 
                 YEAR(sales_date) AS year, 
@@ -54,11 +73,37 @@ function getMonthlySales($userId, $startYear, $endYear) {
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
+function getServiceMonthlySales($userId, $startYear, $endYear) {
+    $pdo = dbconnect();
+    $sql = "SELECT 
+                YEAR(sd.date) AS year, 
+                MONTH(sd.date) AS month, 
+                SUM(sd.amount) AS monthly_income 
+            FROM servicedetails sd
+            INNER JOIN services s ON sd.service_id = s.service_id
+            WHERE YEAR(sd.date) BETWEEN :startYear AND :endYear
+            AND s.arranger_id = :userId
+            GROUP BY YEAR(sd.date), MONTH(sd.date)";
+
+    $stmt = $pdo->prepare($sql);
+    $stmt->bindParam(':startYear', $startYear, PDO::PARAM_INT);
+    $stmt->bindParam(':endYear', $endYear, PDO::PARAM_INT);
+    $stmt->bindParam(':userId', $userId, PDO::PARAM_INT);
+    $stmt->execute();
+
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
 
 
-$totalIncome = getTotalIncome($userId); // Fetch the total income
 
-$monthlySales = getMonthlySales($userId, 2022,2023);
+
+$productTotalIncome = getProductTotalIncome($userId); 
+$serviceTotalIncome = getServiceTotalIncome($userId);
+$totalIncome = $productTotalIncome + $serviceTotalIncome;
+
+$productMonthlySales = getProductMonthlySales($userId, 2022,2023);
+$serviceMonthlySales = getServiceMonthlySales($userId, 2022,2023);
+
 ?>
 
 <!DOCTYPE html> 
@@ -105,22 +150,22 @@ $monthlySales = getMonthlySales($userId, 2022,2023);
                     <div class="income-name">
                         <span class="s-label">Total Income</span>
                     </div>
-                    <span class="income">₱ 249,000</span>
+                    <span class="income">₱ <?php echo $totalIncome;?></span>
                 </div>
             </div>
             <section>
             <div class="container1">
                 <div class="product-button card2">
                     <span class="label">Products</span>
-                    <span class="sales">₱ 30999</span>
+                    <span class="sales">₱ <?php echo $productTotalIncome;?></span>
                 </div>
                 <div class="service-button card2">
                     <span class="label">Services</span>
-                    <span class="sales">₱ 10949</span>
+                    <span class="sales">₱ <?php echo $serviceTotalIncome;?></span>
                 </div>
             </div>
-            <div class="product-details">
-            <?php foreach ($monthlySales as $monthlySale): ?>
+            <div class="product-details" style="display:block;">
+            <?php foreach ($productMonthlySales as $monthlySale): ?>
                 <div class="vertical-container">
                     <div class="subscription-details">
                         <i class="fa fa-money" aria-hidden="true"></i>
@@ -139,19 +184,25 @@ $monthlySales = getMonthlySales($userId, 2022,2023);
                 </div>
             <?php endforeach; ?>
             </div>
-            <div class="service-details">
-                <div class="vertical-container" style="display:none;">
+            <div class="service-details" style="display:none;">
+            <?php foreach ($serviceMonthlySales as $monthlySale): ?>
+                <div class="vertical-container">
                     <div class="subscription-details">
                         <i class="fa fa-money" aria-hidden="true"></i>
                         <div class="text-content">
                             <div class="subscript">
-                                <span class="subscription-status">June 2023</span>
-                            </div>
-                            <span class="income-monthly">₱ 2000
-                            </span>
+                            <?php 
+                                $monthName = date("F", mktime(0, 0, 0, $monthlySale['month'], 10));
+                                echo htmlspecialchars($monthName) . " " . htmlspecialchars($monthlySale['year']); 
+                            ?>                           
+                             </div>
+                            <span class="income-monthly">
+                             ₱ <?php echo htmlspecialchars($monthlySale['monthly_income']); ?>
+                         </span>   
                         </div>
                     </div>
                 </div>
+            <?php endforeach; ?>
             </div>
             </section>
         </main>
