@@ -9,12 +9,91 @@ if (isset($_SESSION["user_id"]) && isset($_SESSION["role"])) {
 
     $users = get_record_by_user($user_id) ;
 
-    $service_order =  get_service_details_intransit('servicedetails','services', 'users', $user_id);
 }
-else {
-    // Handle cases where the user is not logged in or role is not set
-    echo "User not logged in or role not set.";
-    // Optional: Redirect to login page or show a login link
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $salesId = $_POST['salesId'];
+    $customerId = $_POST['customerId'];
+
+    // Update the status in the sales table for the specific product and customer
+    $result = update_status($salesId, $customerId); 
+
+    if ($result) {
+        echo 'Status updated successfully.';
+    } else {
+        echo 'Failed to update status.';
+    }
+}
+
+function update_status($salesId, $customerId) {
+    $conn = dbconnect();
+    $sql = "UPDATE sales SET status = 'Completed' WHERE sales_id = ? AND customer_id = ?";
+    
+    try {
+        $stmt = $conn->prepare($sql);
+        $stmt->execute([$salesId, $customerId]);
+        $conn = null;
+        return true;
+    } catch (PDOException $e) {
+        echo $sql . "<br>" . $e->getMessage();
+        $conn = null;
+        return false;
+    }
+}
+
+
+function get_seller_orders($seller_id) {
+    // Establish a database connection
+    $conn = dbconnect();
+
+    // Updated SQL query to fetch order details including sales_id
+    $sql = "SELECT s.sales_id, s.amount, s.sales_date, s.paymode, p.product_id, p.product_name, p.product_img, p.product_price, p.flower_type, p.ribbon_color, s.customer_id
+            FROM sales s
+            JOIN products p ON s.product_id = p.product_id
+            JOIN shops sh ON p.shop_owner = sh.shop_id
+            WHERE sh.owner_id = ? AND s.status = 'Intransit'";
+
+    try {
+        // Prepare and execute the statement
+        $stmt = $conn->prepare($sql);
+        $stmt->execute([$seller_id]);
+
+        // Fetch and return the orders
+        $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $orders;
+    } catch (PDOException $e) {
+        // Handle any exceptions (log the error and return false)
+        error_log("Database query error: " . $e->getMessage()); // Log the error
+        return false; // Return false indicating failure
+    } finally {
+        // Close the database connection
+        $conn = null;
+    }
+}
+
+$product_order = get_seller_orders($user_id);
+$service_order =  get_service_details_intransit('servicedetails','services', 'users', $user_id);
+
+
+
+// Function to get quantity from sales_details table
+function get_quantity_for_product($product_id, $seller_id) {
+    $conn = dbconnect();
+    $sql = "SELECT quantity FROM salesdetails sd
+            JOIN products p ON sd.product_id = p.product_id
+            JOIN shops sh ON p.shop_owner = sh.shop_id
+            WHERE p.product_id = ? AND sh.owner_id = ?";
+    try {
+        $stmt = $conn->prepare($sql);
+        $stmt->execute([$product_id, $seller_id]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        $conn = null;
+        return $result ? $result['quantity'] : 0;
+    } catch (PDOException $e) {
+        echo $sql . "<br>" . $e->getMessage();
+        $conn = null;
+        return 0;
+    }
 }
 ?>
 
@@ -23,9 +102,9 @@ else {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>In Transit</title>
+    <title>To Deliver</title>
     <link href='https://fonts.googleapis.com/css?family=Poppins' rel='stylesheet'>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-pzjw8f+uaex3+ihrbIk8mz07tb2F4F5ssx6kl5v5PmUGp1ELjF8j5+zM1a7z5t2N" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" >
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../../css/arranger.css">
@@ -46,9 +125,9 @@ else {
                         <form class="form-inline my-2 my-lg-0">
                             <a href=""><i class="fa fa-search"></i></a>
                             <input type="text"  class="form-control form-input" placeholder="Search">
-                            <a href="javascript:void(0);" onclick="goBack()">
+                            <a href="arranger_home.php">
                             <i class="back fa fa-angle-left" aria-hidden="true"></i>
-                            <div id="search-results">In Transit</div>
+                            <div id="search-results">To Deliver</div>
                             </a>
                             
                         </form>
@@ -63,85 +142,47 @@ else {
         <button class="products-btn active">Products</button>
         <button class="services-button">Services</button>
     </div>
-    <div class="products-card" id="productsCard">
+    <div class="products-card" id="productsCard" style="display: block;">
+    <?php foreach ($product_order as $order):?>
         <div class="single-card ">
             <div class="img-area">
-                <img src="https://assets.florista.ph/uploads/product-pics/5022_86_5022.webp" alt="">
+                <img src="<?php echo $order['product_img']?>" alt="">
             </div>
             <div class="info">
                 <div class="text-left">
-                    <h3>Winter Green</h3>
+                    <h3><?php echo $order['product_name']?></h3>
                     <div class="flower-type">
                         <p class="flower">Flower:</p>
-                        <p class="type">Anthurium , White Rose, Assorted Mums, Rose </p>
+                        <p class="type"><?php echo $order['flower_type']?> </p>
                     </div>
                     <div class="ribbon-color">
                         <p class="ribbon">Ribbon:</p>
-                        <p class="color"> Violet </p>
+                        <p class="color"> <?php echo $order['ribbon_color']?> </p>
                     </div>
-                    <p class="price">₱ 1000.00</p>
+                    <p class="price"><?php echo $order['amount']?></p>
                 </div>
                 <div class="text-right">
-                    <p class="count">x 20</p>
-                    <button class="done">Done</button>
-                </div>
+                <?php 
+                $quantity = get_quantity_for_product($order['product_id'], $user_id); 
+                $quantityText = $quantity ? 'x ' . $quantity : 'Quantity not available';
+                ?>
+                <p class="count"><?php echo $quantityText; ?></p>
+                <button class="product-done done" data-sales-id="<?php echo $order['sales_id']?>" data-customer-id="<?php echo $order['customer_id']?>" name="done">Done</button>           
+                 </div>
             </div>
         </div>
-        <div class="single-card ">
-            <div class="img-area">
-                <img src="https://assets.florista.ph/uploads/product-pics/5022_86_5022.webp" alt="">
-            </div>
-            <div class="info">
-                <div class="text-left">
-                    <h3>Winter Green</h3>
-                    <div class="flower-type">
-                        <p class="flower">Flower:</p>
-                        <p class="type">Anthurium , White Rose, Assorted Mums, Rose </p>
-                    </div>
-                    <div class="ribbon-color">
-                        <p class="ribbon">Ribbon:</p>
-                        <p class="color"> Violet </p>
-                    </div>
-                    <p class="price">₱ 1000.00</p>
-                </div>
-                <div class="text-right">
-                    <p class="count">x 20</p>
-                    <button class="done">Done</button>
-                </div>
-            </div>
-        </div>
-        <div class="single-card ">
-            <div class="img-area">
-                <img src="https://assets.florista.ph/uploads/product-pics/5022_86_5022.webp" alt="">
-            </div>
-            <div class="info">
-                <div class="text-left">
-                    <h3>Winter Green</h3>
-                    <div class="flower-type">
-                        <p class="flower">Flower:</p>
-                        <p class="type">Anthurium , White Rose, Assorted Mums, Rose </p>
-                    </div>
-                    <div class="ribbon-color">
-                        <p class="ribbon">Ribbon:</p>
-                        <p class="color"> Violet </p>
-                    </div>
-                    <p class="price">₱ 1000.00</p>
-                </div>
-                <div class="text-right">
-                    <p class="count">x 20</p>
-                    <button class="done">Done</button>
-                </div>
-            </div>
-        </div>
+    <?php endforeach;?>
     </div>
-    <div class="service-list" id="service-container">
- <?php foreach ($service_order as $order):?>
+
+    <div class="service-list" id="service-container" style="display: none;">
+        <?php foreach ($service_order as $order):?>
         <div class="single-card ">
             <div class="img-area">
-                 <img src="<?php echo $order["customer_profile"]?>" alt="">
+                <img src="<?php echo $order["customer_profile"]?>" alt="">
             </div>
             <div class="info">
-                <div class="text-left">
+                <div class="text-left">                    
+                
                 <h3><?php echo $order["customer_first_name"]. " " . $order["customer_last_name"]; ?></h3>
                     <p class="ad"><?php echo $order["customer_address"]?></p>
                     <div class="o-date-time">
@@ -150,72 +191,110 @@ else {
                     </div>
                     <p class="price"><?php echo $order["amount"]?></p>
                 </div>
+                
                 <div class="text-right">
-                <form method="post" action="update_service_status.php">
-                        <input type="hidden" name="service_detail_id" value="<?php echo $order['servicedetails_id']; ?>">
-                        <button type="submit" name="action" value="completed" class="service-done">Done</button>
-                </form>
+                    <div class="btn-container order">
+                    <button class="service-done done" data-service-id="<?php echo $order['service_id']; ?>" data-customer-id="<?php echo $order['customer_id'];?>">Done</button>
+                    </div>
                 </div>
             </div>
         </div>
         <?php endforeach;?>
-        
     </div>
-  </div>
+</div>
   <script>
-        // Get the products and services elements
-        const products = document.querySelector('.products-card');
-        const services = document.querySelector('.service-list');
-
-        // Get the products and product buttons
+    document.addEventListener('DOMContentLoaded', function() {
         const productsBtn = document.querySelector('.products-btn');
-        const productBtn = document.querySelector('.services-button');
+        const servicesBtn = document.querySelector('.services-button');
+        const productsSection = document.getElementById('productsCard');
+        const servicesSection = document.getElementById('service-container');
 
-        // Function to set the active page in localStorage
-        function setActivePage(page) {
-            localStorage.setItem('activePage', page);
-        }products
-
-        // Function to get the active page from localStorage
-        function getActivePage() {
-            return localStorage.getItem('activePage');
-        }
-
-        // Function to handle button clicks
-        function handleButtonClick(page) {
-            setActivePage(page);
-
-            if (page === 'products') {
-                // Show the products and hide the services
-                products.style.display = 'block';
-                services.style.display = 'none';
-
-                // Make the products button active and deactivate the product button
+        function toggleDisplay(showProducts) {
+            if (showProducts) {
+                productsSection.style.display = 'block';
+                servicesSection.style.display = 'none';
                 productsBtn.classList.add('active');
-                productBtn.classList.remove('active');
-            } else if (page === 'services') {
-                // Show the services and hide the products
-                products.style.display = 'none';
-                services.style.display = 'block';
-
-                // Make the product button active and deactivate the products button
-                productBtn.classList.add('active');
+                servicesBtn.classList.remove('active');
+            } else {
+                productsSection.style.display = 'none';
+                servicesSection.style.display = 'block';
+                servicesBtn.classList.add('active');
                 productsBtn.classList.remove('active');
             }
         }
 
-        // Check if there's an active page in localStorage and set it
-        const activePage = getActivePage();
-        if (activePage === 'services') {
-            handleButtonClick('services');
-        } else {
-            handleButtonClick('products'); // Default to products if no active page is found
-        }
+        productsBtn.addEventListener('click', function() {
+            toggleDisplay(true);
+        });
 
-        // Add click event listeners to the products and services buttons
-        productsBtn.addEventListener('click', () => handleButtonClick('products'));
-        productBtn.addEventListener('click', () => handleButtonClick('services'));
-    </script>
+        servicesBtn.addEventListener('click', function() {
+            toggleDisplay(false);
+        });
+
+        // Initialize the default view
+        toggleDisplay(true); // or false if you want services to be displayed first
+    });
+
+
+        </script>
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script>
+    $(document).ready(function() {
+    $(".product-done").click(function() {
+        var salesId = $(this).data("sales-id");
+        var customerId = $(this).data("customer-id"); // Add this line to get the customer ID
+
+        // Send AJAX request to update the status
+        $.ajax({
+            url: 'service_intransit.php',
+            method: 'POST',
+            data: { salesId: salesId, customerId: customerId }, 
+            success: function(response) {
+                // Handle the response if needed
+                console.log(response);
+
+                // Reload the page after the status is updated
+                location.reload();
+            },
+            error: function(error) {
+                // Handle the error if needed
+                console.error(error);
+            }
+        });
+    });
+
+});
+
+</script>
+<script>
+    $(document).ready(function() {
+    $(".service-done").click(function() {
+        var serviceId = $(this).data("service-id");
+        var customerId = $(this).data("customer-id"); // Add this line to get the customer ID
+
+        // Send AJAX request to update the status
+        $.ajax({
+            url: 'update_service_completed.php',
+            method: 'POST',
+            data: { serviceId: serviceId, customerId: customerId }, // Include customer ID in the data
+            success: function(response) {
+                // Handle the response if needed
+                console.log(response);
+
+                // Reload the page after the status is updated
+                location.reload();
+            },
+            error: function(error) {
+                // Handle the error if needed
+                console.error(error);
+            }
+        });
+    });
+
+});
+
+</script>
 <script>
     function goBack() {
         window.history.back();

@@ -112,7 +112,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
                     <form class="form-inline my-2 my-lg-0">
                         <a href=""><i class="fa fa-search"></i></a>
                         <input type="text"  class="form-control form-input" placeholder="Search">
-                        <a href="javascript:void(0);" onclick="goBack()">
+                        <a href="arranger_home.php" onclick="goBack()">
                           <i class="back fa fa-angle-left" aria-hidden="true"></i>
                           <div id="search-results">Edit Shop Profile</div>
                         </a>

@@ -187,12 +187,11 @@ a:hover {
      .nav-hr{
          width:100%;
     }
-     a #search-results{
+     #search-results{
          display: block ;
-         font-size: 15px;
-         margin-left: 20px;
          color: #555;
-         margin-top: -20px;
+         font-size: 15px;
+         margin-left: 15px;
     }
     a:hover{
         text-decoration: none;

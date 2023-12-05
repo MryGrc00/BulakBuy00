@@ -3,14 +3,14 @@ session_start();
 require_once '../php/dbhelper.php'; // Using require_once ensures the script stops if the file is missing.
 
 // Redirect non-sellers or unauthenticated users to the login page
-if (!isset($_SESSION["user_id"]) || $_SESSION["role"] !== "seller") {
+if (!isset($_SESSION["user_id"]) || $_SESSION["role"] !== "arranger") {
     header("Location: ../login.php");
     exit(); // Stop script execution after a header redirect
 }
 
 $userId = $_SESSION["user_id"];
 
-function getSales( $userId) {
+function getProductSales( $userId) {
     $pdo = dbConnect(); // Assuming dbConnect() returns a PDO connection
     $sql = "SELECT sales.*, 
                    CONCAT(customers.first_name, ' ', customers.last_name) AS customer_name,
@@ -28,6 +28,26 @@ function getSales( $userId) {
 
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
+function getServiceSales($userId) {
+    $pdo = dbConnect(); // Assuming dbConnect() returns a PDO connection
+    $sql = "SELECT servicedetails.*, 
+                   CONCAT(customers.first_name, ' ', customers.last_name) AS customer_name,
+                   DATE_FORMAT(servicedetails.date, '%Y-%m-%d') AS service_date, 
+                   DATE_FORMAT(servicedetails.time, '%H:%i:%s') AS service_time
+            FROM servicedetails 
+            JOIN services ON servicedetails.service_id = services.service_id 
+            JOIN users AS customers ON servicedetails.customer_id = customers.user_id 
+            JOIN users AS arrangers ON services.arranger_id = arrangers.user_id
+            WHERE arrangers.user_id = :userId";
+
+    $stmt = $pdo->prepare($sql);
+    $stmt->bindParam(':userId', $userId, PDO::PARAM_INT);
+    $stmt->execute();
+
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+
 
 
 function getSubscriptions($userId) {
@@ -49,32 +69,45 @@ function getSubscriptions($userId) {
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
-$sales = getSales($userId);
-$subscriptions = getSubscriptions($userId);
-
-// Add a type identifier to each sale
-foreach ($sales as $key => $value) {
-    $sales[$key]['type'] = 'sale';
+function getUnifiedDate($item) {
+    // Checking the type of transaction and returning the appropriate date
+    if ($item['type'] == 'product') {
+        return $item['sale_date'];
+    } else if ($item['type'] == 'service') {
+        return $item['service_date'];
+    } else {
+        // Assuming subscription type
+        return $item['start_date'];
+    }
 }
 
-// Add a type identifier to each subscription
+$products = getProductSales($userId);
+$subscriptions = getSubscriptions($userId);
+$services = getServiceSales($userId);
+
+// Add a type identifier to each item
+foreach ($products as $key => $value) {
+    $products[$key]['type'] = 'product';
+}
+foreach ($services as $key => $value) {
+    $services[$key]['type'] = 'service';
+}
 foreach ($subscriptions as $key => $value) {
     $subscriptions[$key]['type'] = 'subscription';
 }
 
 // Merge the arrays
-$allTransactions = array_merge($sales, $subscriptions);
+$allTransactions = array_merge($products, $services, $subscriptions);
 
-// Sort the array based on the date in descending order
 usort($allTransactions, function($a, $b) {
-    $dateA = isset($a['sale_date']) ? $a['sale_date'] : $a['start_date'];
-    $dateB = isset($b['sale_date']) ? $b['sale_date'] : $b['start_date'];
-    return strtotime($dateB) - strtotime($dateA); // Sort by latest date first
+    $dateA = getUnifiedDate($a);
+    $dateB = getUnifiedDate($b);
+    return strtotime($dateB) - strtotime($dateA); // Compare in reverse order
 });
 
+
+
 ?>
-
-
 <!DOCTYPE html> 
 <html lang="en">
     <head>
@@ -92,7 +125,7 @@ usort($allTransactions, function($a, $b) {
         <header>
             <nav class="navbar navbar-expand-lg">
                 <!-- Logo -->
-                <a class="navbar-brand d-flex align-items-center" href="vendor_home.php">
+                <a class="navbar-brand d-flex align-items-center" href="arranger_home.php">
                     <img src="../php/images/logo.png" alt="BulakBuy Logo" class="img-fluid logo">
                 </a>
                 <!-- Search Bar -->
@@ -102,7 +135,7 @@ usort($allTransactions, function($a, $b) {
                             <form class="form-inline my-2 my-lg-0">
                                 <a href=""><i class="fa fa-search"></i></a>
                                 <input type="text"  class="form-control form-input" placeholder="Search" style="text-align:left;padding-left: 15px;font-size: 16px;">
-                                <a href="vendor_home.php" id="back-link"><i class="back fa fa-angle-left" aria-hidden="true"></i></a>
+                                <a href="arranger_home.php" id="back-link"><i class="back fa fa-angle-left" aria-hidden="true"></i></a>
                                 <div id="search-results">Transaction History</div>
                             </form>
                         </li>
@@ -149,6 +182,7 @@ usort($allTransactions, function($a, $b) {
                 </div>
             </div>
         </main>
+        <!-- ...
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

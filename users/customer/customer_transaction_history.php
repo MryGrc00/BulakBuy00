@@ -3,24 +3,23 @@ session_start();
 require_once '../php/dbhelper.php'; // Using require_once ensures the script stops if the file is missing.
 
 // Redirect non-sellers or unauthenticated users to the login page
-if (!isset($_SESSION["user_id"]) || $_SESSION["role"] !== "seller") {
+if (!isset($_SESSION["user_id"]) || $_SESSION["role"] !== "customer") {
     header("Location: ../login.php");
     exit(); // Stop script execution after a header redirect
 }
 
 $userId = $_SESSION["user_id"];
 
-function getSales( $userId) {
-    $pdo = dbConnect(); // Assuming dbConnect() returns a PDO connection
+function getProductSales($userId) {
+    $pdo = dbConnect(); 
     $sql = "SELECT sales.*, 
-                   CONCAT(customers.first_name, ' ', customers.last_name) AS customer_name,
+                   CONCAT(owners.first_name, ' ', owners.last_name) AS merchant_name,
                    DATE_FORMAT(sales.sales_date, '%Y-%m-%d') AS sale_date, 
                    DATE_FORMAT(sales.sales_date, '%H:%i:%s') AS sale_time
             FROM sales 
             JOIN shops ON sales.shop_id = shops.shop_id 
-            JOIN users AS sellers ON shops.owner_id = sellers.user_id 
-            JOIN users AS customers ON sales.customer_id = customers.user_id 
-            WHERE sellers.user_id = :userId";
+            JOIN users AS owners ON shops.owner_id = owners.user_id 
+            WHERE sales.customer_id = :userId";
 
     $stmt = $pdo->prepare($sql);
     $stmt->bindParam(':userId', $userId, PDO::PARAM_INT);
@@ -29,18 +28,16 @@ function getSales( $userId) {
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
-
-function getSubscriptions($userId) {
-    $pdo = dbConnect(); 
-    $sql = "SELECT 
-                DATE_FORMAT(subscription.s_date, '%Y-%m-%d') AS start_date, 
-                DATE_FORMAT(subscription.s_date, '%H:%i:%s') AS start_time,
-                DATE_FORMAT(subscription.e_date, '%Y-%m-%d') AS end_date,
-                DATE_FORMAT(subscription.e_date, '%H:%i:%s') AS end_time
-            FROM subscription
-            JOIN shops ON subscription.shop_id = shops.shop_id
-            JOIN users ON shops.owner_id = users.user_id
-            WHERE users.user_id = :userId";
+function getServiceSales($userId) {
+    $pdo = dbConnect(); // Assuming dbConnect() returns a PDO connection
+    $sql = "SELECT servicedetails.*, 
+                   CONCAT(arrangers.first_name, ' ', arrangers.last_name) AS merchant_name,
+                   DATE_FORMAT(servicedetails.date, '%Y-%m-%d') AS service_date, 
+                   DATE_FORMAT(servicedetails.time, '%H:%i:%s') AS service_time
+            FROM servicedetails 
+            JOIN services ON servicedetails.service_id = services.service_id 
+            JOIN users AS arrangers ON services.arranger_id = arrangers.user_id
+            WHERE servicedetails.customer_id = :userId";
 
     $stmt = $pdo->prepare($sql);
     $stmt->bindParam(':userId', $userId, PDO::PARAM_INT);
@@ -49,30 +46,27 @@ function getSubscriptions($userId) {
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
-$sales = getSales($userId);
-$subscriptions = getSubscriptions($userId);
+$products = getProductSales($userId);
+$services = getServiceSales($userId);
 
-// Add a type identifier to each sale
-foreach ($sales as $key => $value) {
-    $sales[$key]['type'] = 'sale';
+foreach ($products as $key => $value) {
+    $products[$key]['type'] = 'product';
+    $products[$key]['datetime'] = $products[$key]['sale_date'] . ' ' . $products[$key]['sale_time']; // Combine date and time
 }
 
-// Add a type identifier to each subscription
-foreach ($subscriptions as $key => $value) {
-    $subscriptions[$key]['type'] = 'subscription';
+// Add a type identifier to each service
+foreach ($services as $key => $value) {
+    $services[$key]['type'] = 'service';
+    $services[$key]['datetime'] = $services[$key]['service_date'] . ' ' . $services[$key]['service_time']; // Combine date and time
 }
 
-// Merge the arrays
-$allTransactions = array_merge($sales, $subscriptions);
-
-// Sort the array based on the date in descending order
+// Merge and sort the arrays by datetime
+$allTransactions = array_merge($products, $services);
 usort($allTransactions, function($a, $b) {
-    $dateA = isset($a['sale_date']) ? $a['sale_date'] : $a['start_date'];
-    $dateB = isset($b['sale_date']) ? $b['sale_date'] : $b['start_date'];
-    return strtotime($dateB) - strtotime($dateA); // Sort by latest date first
+    return strtotime($b['datetime']) - strtotime($a['datetime']); // Sort by descending order
 });
-
 ?>
+
 
 
 <!DOCTYPE html> 
@@ -89,11 +83,12 @@ usort($allTransactions, function($a, $b) {
         <link rel="stylesheet" href="../../css/transaction_history.css">
     </head>
     <body>
+        
         <header>
             <nav class="navbar navbar-expand-lg">
                 <!-- Logo -->
-                <a class="navbar-brand d-flex align-items-center" href="vendor_home.php">
-                    <img src="../php/images/logo.png" alt="BulakBuy Logo" class="img-fluid logo">
+                <a class="navbar-brand d-flex align-items-center" href="#">
+                <img src="../../images/logo.png" alt="BulakBuy Logo" class="img-fluid logo">
                 </a>
                 <!-- Search Bar -->
                 <div class="navbar-collapse justify-content-md-center">
@@ -102,7 +97,7 @@ usort($allTransactions, function($a, $b) {
                             <form class="form-inline my-2 my-lg-0">
                                 <a href=""><i class="fa fa-search"></i></a>
                                 <input type="text"  class="form-control form-input" placeholder="Search" style="text-align:left;padding-left: 15px;font-size: 16px;">
-                                <a href="vendor_home.php" id="back-link"><i class="back fa fa-angle-left" aria-hidden="true"></i></a>
+                                <a href="customer_profile.php" id="back-link"><i class="back fa fa-angle-left" aria-hidden="true"></i></a>
                                 <div id="search-results">Transaction History</div>
                             </form>
                         </li>
@@ -113,45 +108,49 @@ usort($allTransactions, function($a, $b) {
         </header>
         <main class="main">
             <div class="container">
-            <?php foreach ($allTransactions as $transaction): ?>
+                <div class="column1">
+                <?php foreach ($allTransactions as $transaction): ?>
                     <div class="column1">
                         <div class="transaction-details">
                             <!-- Check transaction type and display appropriate image -->
-                            <?php if ($transaction['type'] == 'product' && $transaction['paymode'] == 'gcash'): ?>
-                                <img src="../php/images/gcash.png" alt="GCash Logo">
-                            <?php elseif ($transaction['type'] == 'product'): ?>
-                                <!-- Display a default image for COD or other paymodes -->
-                                <img src="../php/images/cod.jpg" alt="Default Image">
+                            <?php if ($transaction['type'] == 'product'): ?>
+                                <?php if (isset($transaction['paymode']) && $transaction['paymode'] == 'gcash'): ?>
+                                    <img src="../php/images/gcash.png" alt="GCash Logo">
+                                <?php else: ?>
+                                    <!-- Display a default image for COD or other paymodes -->
+                                    <img src="../php/images/cod.jpg" alt="Default Image">
+                                <?php endif; ?>
                             <?php else: ?>
-                                <!-- Display a generic image for services and subscriptions -->
+                                <!-- Display a generic image for services -->
                                 <img src="https://logos-download.com/wp-content/uploads/2020/06/GCash_Logo.png" alt="Transaction Image">
                             <?php endif; ?>
-                            
+
                             <div class="text-content">
                                 <!-- Transaction details based on type -->
                                 <div class="transact">
-                                    <span class="transaction-status"><?php echo $transaction['type'] == 'subscription' ? 'Sent' : 'Receive'; ?></span>
-                                    <span class="transaction-price">₱ <?php echo htmlspecialchars($transaction['amount'] ?? 249); // Default amount for subscriptions ?></span>
+                                <span class="transaction-status">Sent</span>
+                                    <span class="transaction-price">₱ <?php echo htmlspecialchars($transaction['amount'] ?? 'N/A'); ?></span>
                                 </div>
                                 <div class="status">
-                                    <span class="transaction-description"><?php echo htmlspecialchars($transaction['customer_name'] ?? 'To BulakBuy'); // Default for subscriptions ?></span>
+                                    <span class="transaction-description">To <?php echo htmlspecialchars($transaction['merchant_name'] ?? 'N/A'); ?></span>
                                     <span class="transact-status">Successful</span>
                                 </div>
                                 <div class="o-date-time">
-                                    <!-- Display date and time based on transaction type -->
-                                    <span class="transaction-date"><?php echo htmlspecialchars($transaction['sale_date'] ?? $transaction['service_date'] ?? $transaction['start_date']); ?></span>
-                                    <span class="transaction-time"><?php echo htmlspecialchars($transaction['sale_time'] ?? $transaction['service_time'] ?? $transaction['start_time']); ?></span>
+                                    <!-- Display date and time -->
+                                    <span class="transaction-date"><?php echo htmlspecialchars($transaction['datetime'] ?? 'N/A'); ?></span>
                                 </div>
                             </div>
                         </div>
                         <hr class="transaction-hr">
-                    <?php endforeach; ?>
+                    </div>
+                <?php endforeach; ?>
+
                 </div>
             </div>
         </main>
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
+                                
     </body>
 </html>

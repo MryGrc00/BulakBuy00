@@ -1,5 +1,5 @@
 <?php
-include('../php/checksession.php'); 
+session_start();
 include_once "../php/dbhelper.php"; 
 
 
@@ -7,6 +7,9 @@ if (isset($_SESSION["user_id"])){
         $user_id = $_SESSION["user_id"];
         $users = get_record('users','user_id',$user_id);
 
+}else{
+    header("Location: login.php");
+    exit();
 }
 
 

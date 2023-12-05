@@ -226,43 +226,65 @@ function generateUniqueFileName($originalFileName) {
     }
     
 
-    function get_latest_products_by_id($productsTable, $shopTable, $subscribedTable) {
-        $conn = dbconnect(); 
-    
-        // SQL to join products table with shop and subscribed tables
-        $sql = "SELECT p.* FROM " . $productsTable . " AS p
-                JOIN " . $shopTable . " AS s ON p.shop_owner = s.shop_id
-                LEFT JOIN " . $subscribedTable . " AS sub ON s.shop_id = sub.shop_id
-                ORDER BY (sub.status = 'active') DESC, p.product_id DESC";
-        
-        $stmt = $conn->prepare($sql);
-        $stmt->execute();
-        
-        $products = $stmt->fetchAll(PDO::FETCH_ASSOC); 
-    
-        return $products;
-    }
-    
+function get_latest_products_by_id($productsTable, $shopTable, $subscribedTable) {
+    $conn = dbconnect(); 
 
+    if ($conn) {
+        try {
+            // SQL to join products table with shop and subscribed tables
+            // Exclude products from shops with status 'blocked'
+            $sql = "SELECT p.* FROM " . $productsTable . " AS p
+                    JOIN " . $shopTable . " AS s ON p.shop_owner = s.shop_id
+                    LEFT JOIN " . $subscribedTable . " AS sub ON s.shop_id = sub.shop_id
+                    WHERE s.status != 'blocked'
+                    ORDER BY (sub.status = 'active') DESC, p.product_id DESC";
+            
+            $stmt = $conn->prepare($sql);
+            $stmt->execute();
+            
+            return $stmt->fetchAll(PDO::FETCH_ASSOC); 
+        } catch (PDOException $e) {
+            // Handle SQL errors or connection problems
+            echo "Database error: " . $e->getMessage();
+            return [];
+        }
+    } else {
+        // Handle the case where connection could not be established
+        echo "Unable to connect to the database.";
+        return [];
+    }
+}
+    
     function get_latest_services($servicesTable, $usersTable, $shopTable, $subscribedTable) {
         $conn = dbconnect(); 
     
-        // SQL to join services table with users, then users with shops, and finally shops with subscriptions
-        // Added WHERE clause to filter services with status = 'enable' and subscriptions with status = 'active'
-        $sql = "SELECT s.*, u.first_name, u.last_name, u.profile_img FROM " . $servicesTable . " AS s
-                JOIN " . $usersTable . " AS u ON s.arranger_id = u.user_id
-                LEFT JOIN " . $shopTable . " AS sh ON u.user_id = sh.owner_id
-                LEFT JOIN " . $subscribedTable . " AS sub ON sh.shop_id = sub.shop_id
-                WHERE s.status = 'enabled' AND sub.status = 'active'
-                ORDER BY s.service_id DESC";
-        
-        $stmt = $conn->prepare($sql);
-        $stmt->execute();
-        
-        $services = $stmt->fetchAll(PDO::FETCH_ASSOC); 
-    
-        return $services;
+        if ($conn) {
+            try {
+                // SQL to join services table with users, shops, and subscriptions
+                // Exclude services from shops with status 'blocked'
+                $sql = "SELECT s.*, u.first_name, u.last_name, u.profile_img FROM " . $servicesTable . " AS s
+                        JOIN " . $usersTable . " AS u ON s.arranger_id = u.user_id
+                        LEFT JOIN " . $shopTable . " AS sh ON u.user_id = sh.owner_id
+                        LEFT JOIN " . $subscribedTable . " AS sub ON sh.shop_id = sub.shop_id
+                        WHERE s.status = 'enabled' AND sh.status != 'blocked'
+                        ORDER BY (sub.status = 'active') DESC, s.service_id DESC";
+                
+                $stmt = $conn->prepare($sql);
+                $stmt->execute();
+                
+                return $stmt->fetchAll(PDO::FETCH_ASSOC); 
+            } catch (PDOException $e) {
+                // Handle SQL errors or connection problems
+                echo "Database error: " . $e->getMessage();
+                return [];
+            }
+        } else {
+            // Handle the case where connection could not be established
+            echo "Unable to connect to the database.";
+            return [];
+        }
     }
+    
     
     
     
@@ -312,7 +334,7 @@ function generateUniqueFileName($originalFileName) {
         $sql = "SELECT COUNT(*) as sales_count 
                 FROM " . $salesdetailsTable . " AS sd
                 JOIN " . $servicesTable . " AS s ON sd.service_id = s.service_id
-                WHERE s.arranger_id = :loggedInUserId AND sd.status = 'pending'";
+                WHERE s.arranger_id = :loggedInUserId AND sd.status = 'Pending'";
         
         $stmt = $conn->prepare($sql);
         $stmt->bindParam(':loggedInUserId', $loggedInUserId, PDO::PARAM_INT);
@@ -321,6 +343,8 @@ function generateUniqueFileName($originalFileName) {
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
         return $result ? $result['sales_count'] : 0;
     }
+
+    
 
 //processing
     function get_service_details_processing($servicedetailsTable, $servicesTable, $usersTable, $loggedInUserId) {
@@ -332,8 +356,8 @@ function generateUniqueFileName($originalFileName) {
                 FROM " . $servicedetailsTable . " AS sd
                 JOIN " . $servicesTable . " AS s ON sd.service_id = s.service_id
                 JOIN " . $usersTable . " AS u ON sd.customer_id = u.user_id
-                WHERE s.arranger_id = :loggedInUserId AND sd.status = 'processing'
-                ORDER BY sd.servicedetails_id DESC"; // Assuming servicedetails_id is the identifier in servicedetails table
+                WHERE s.arranger_id = :loggedInUserId AND sd.status = 'Processing'
+                ORDER BY sd.servicedetails_id DESC"; 
         
         $stmt = $conn->prepare($sql);
         $stmt->bindParam(':loggedInUserId', $loggedInUserId, PDO::PARAM_INT);
@@ -342,7 +366,7 @@ function generateUniqueFileName($originalFileName) {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-//count
+//count of services
 function get_count_of_processing_services($servicedetailsTable, $servicesTable, $loggedInUserId) {
     $conn = dbconnect();
 
@@ -360,18 +384,20 @@ function get_count_of_processing_services($servicedetailsTable, $servicesTable, 
     return $result ? $result['count'] : 0;
 }
 
+
+
 //intransit
 function get_service_details_intransit($servicedetailsTable, $servicesTable, $usersTable, $loggedInUserId) {
     $conn = dbconnect();
 
-    // SQL to join servicedetails with services and users, filtering for 'intransit' status
+    // SQL to join servicedetails with services and users, filtering for 'processing' status
     $sql = "SELECT sd.*, u.first_name AS customer_first_name, u.last_name AS customer_last_name, 
-                    u.address AS customer_address, u.profile_img AS customer_profile
+                u.address AS customer_address, u.profile_img AS customer_profile
             FROM " . $servicedetailsTable . " AS sd
             JOIN " . $servicesTable . " AS s ON sd.service_id = s.service_id
             JOIN " . $usersTable . " AS u ON sd.customer_id = u.user_id
-            WHERE s.arranger_id = :loggedInUserId AND sd.status = 'intransit'
-            ORDER BY sd.servicedetails_id DESC"; // Assuming servicedetails_id is the identifier in servicedetails table
+            WHERE s.arranger_id = :loggedInUserId AND sd.status = 'Intransit'
+            ORDER BY sd.servicedetails_id DESC"; 
     
     $stmt = $conn->prepare($sql);
     $stmt->bindParam(':loggedInUserId', $loggedInUserId, PDO::PARAM_INT);
@@ -379,6 +405,7 @@ function get_service_details_intransit($servicedetailsTable, $servicesTable, $us
     
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
+
 
 //count
 function get_count_of_intransit_services($servicedetailsTable, $servicesTable, $loggedInUserId) {
@@ -398,6 +425,9 @@ function get_count_of_intransit_services($servicedetailsTable, $servicesTable, $
     return $result ? $result['count'] : 0;
 }
 
+
+
+
 //completed
 function get_service_details_completed($servicedetailsTable, $servicesTable, $usersTable, $loggedInUserId) {
     $conn = dbconnect();
@@ -406,7 +436,7 @@ function get_service_details_completed($servicedetailsTable, $servicesTable, $us
             FROM " . $servicedetailsTable . " AS sd
             JOIN " . $servicesTable . " AS s ON sd.service_id = s.service_id
             JOIN " . $usersTable . " AS u ON sd.customer_id = u.user_id
-            WHERE s.arranger_id = :loggedInUserId AND sd.status = 'completed'
+            WHERE s.arranger_id = :loggedInUserId AND sd.status = 'Completed'
             ORDER BY sd.servicedetails_id DESC"; 
     
     $stmt = $conn->prepare($sql);
@@ -416,7 +446,7 @@ function get_service_details_completed($servicedetailsTable, $servicesTable, $us
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
-//count
+//count of service
 function get_count_of_completed_services($servicedetailsTable, $servicesTable, $loggedInUserId) {
     $conn = dbconnect();
 
@@ -424,7 +454,7 @@ function get_count_of_completed_services($servicedetailsTable, $servicesTable, $
     $sql = "SELECT COUNT(*) as count
             FROM " . $servicedetailsTable . " AS sd
             JOIN " . $servicesTable . " AS s ON sd.service_id = s.service_id
-            WHERE s.arranger_id = :loggedInUserId AND sd.status = 'completed'";
+            WHERE s.arranger_id = :loggedInUserId AND sd.status = 'Completed'";
     
     $stmt = $conn->prepare($sql);
     $stmt->bindParam(':loggedInUserId', $loggedInUserId, PDO::PARAM_INT);
@@ -433,6 +463,10 @@ function get_count_of_completed_services($servicedetailsTable, $servicesTable, $
     $result = $stmt->fetch(PDO::FETCH_ASSOC);
     return $result ? $result['count'] : 0;
 }
+//product count
+
+
+
 //pending for customer side
 function get_pending_service_details_arranger($servicedetailsTable, $servicesTable, $usersTable, $loggedInUserId){
     $conn = dbconnect();
@@ -480,6 +514,26 @@ function get_pending_service_details_count_arranger($servicedetailsTable, $servi
             FROM " . $servicedetailsTable . " AS sd
             JOIN " . $servicesTable . " AS s ON sd.service_id = s.service_id
             WHERE sd.customer_id = :loggedInUserId AND sd.status = 'pending'";
+
+    $stmt = $conn->prepare($sql);
+    $stmt->bindParam(':loggedInUserId', $loggedInUserId, PDO::PARAM_INT);
+    $stmt->execute();
+
+    // Fetching only one row as it's a COUNT query
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    // Return the count. If there's no record, return 0.
+    return $result ? (int) $result['pending_count'] : 0;
+}
+//cancelled
+function get_cancelled_service_details_count_arranger($servicedetailsTable, $servicesTable, $usersTable, $loggedInUserId) {
+    $conn = dbconnect();
+    
+    // SQL to count the number of pending servicedetails for an arranger
+    $sql = "SELECT COUNT(*) AS pending_count
+            FROM " . $servicedetailsTable . " AS sd
+            JOIN " . $servicesTable . " AS s ON sd.service_id = s.service_id
+            WHERE sd.customer_id = :loggedInUserId AND sd.status = 'Cancelled'";
 
     $stmt = $conn->prepare($sql);
     $stmt->bindParam(':loggedInUserId', $loggedInUserId, PDO::PARAM_INT);
@@ -635,6 +689,195 @@ function getServiceDetails($servicedetailsTable, $servicesTable, $usersTable, $s
 
     return $stmt->fetch(PDO::FETCH_ASSOC);
 }
+
+//count of orders in arranger
+function count_pending_seller_orders($seller_id) {
+    $conn = dbconnect();
+    $sql = "SELECT COUNT(*) AS order_count
+            FROM sales s
+            JOIN products p ON s.product_id = p.product_id
+            JOIN shops sh ON p.shop_owner = sh.shop_id
+            WHERE sh.owner_id = ? AND s.status = 'pending'";
+
+    try {
+        $stmt = $conn->prepare($sql);
+        $stmt->execute([$seller_id]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        $conn = null;
+        return $result['order_count'];
+    } catch (PDOException $e) {
+        echo $sql . "<br>" . $e->getMessage();
+        $conn = null;
+        return false;
+    }
+}
+
+function count_processing_seller_orders($seller_id) {
+    $conn = dbconnect();
+    $sql = "SELECT COUNT(*) AS order_count
+            FROM sales s
+            JOIN products p ON s.product_id = p.product_id
+            JOIN shops sh ON p.shop_owner = sh.shop_id
+            WHERE sh.owner_id = ? AND s.status = 'processing'";
+
+    try {
+        $stmt = $conn->prepare($sql);
+        $stmt->execute([$seller_id]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        $conn = null;
+        return $result['order_count'];
+    } catch (PDOException $e) {
+        echo $sql . "<br>" . $e->getMessage();
+        $conn = null;
+        return false;
+    }
+}
+
+function count_intransit_seller_orders($seller_id) {
+    $conn = dbconnect();
+    $sql = "SELECT COUNT(*) AS order_count
+            FROM sales s
+            JOIN products p ON s.product_id = p.product_id
+            JOIN shops sh ON p.shop_owner = sh.shop_id
+            WHERE sh.owner_id = ? AND s.status = 'intransit'";
+
+    try {
+        $stmt = $conn->prepare($sql);
+        $stmt->execute([$seller_id]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        $conn = null;
+        return $result['order_count'];
+    } catch (PDOException $e) {
+        echo $sql . "<br>" . $e->getMessage();
+        $conn = null;
+        return false;
+    }
+}
+//customer side order (count)
+function countCustomerProducts($customerId) {
+    $conn = dbconnect();
+    $sql = "SELECT COUNT(DISTINCT s.salesdetails_id) AS pending_salesdetails_count
+            FROM sales s
+            JOIN salesdetails sd ON s.salesdetails_id = sd.salesdetails_id
+            WHERE s.customer_id = ? AND s.status = 'pending'";
+
+    try {
+        $stmt = $conn->prepare($sql);
+        $stmt->execute([$customerId]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        $conn = null;
+        return $result['pending_salesdetails_count'];
+    } catch (PDOException $e) {
+        echo $sql . "<br>" . $e->getMessage();
+        $conn = null;
+        return false;
+    }
+}
+//process
+function countProcessing($customerId) {
+    $conn = dbconnect();
+    $sql = "SELECT COUNT(DISTINCT s.salesdetails_id) AS pending_salesdetails_count
+            FROM sales s
+            JOIN salesdetails sd ON s.salesdetails_id = sd.salesdetails_id
+            WHERE s.customer_id = ? AND s.status = 'processing'";
+
+    try {
+        $stmt = $conn->prepare($sql);
+        $stmt->execute([$customerId]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        $conn = null;
+        return $result['pending_salesdetails_count'];
+    } catch (PDOException $e) {
+        echo $sql . "<br>" . $e->getMessage();
+        $conn = null;
+        return false;
+    }
+}
+
+function countIntransit($customerId) {
+    $conn = dbconnect();
+    $sql = "SELECT COUNT(DISTINCT s.salesdetails_id) AS pending_salesdetails_count
+            FROM sales s
+            JOIN salesdetails sd ON s.salesdetails_id = sd.salesdetails_id
+            WHERE s.customer_id = ? AND s.status = 'intransit'";
+
+    try {
+        $stmt = $conn->prepare($sql);
+        $stmt->execute([$customerId]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        $conn = null;
+        return $result['pending_salesdetails_count'];
+    } catch (PDOException $e) {
+        echo $sql . "<br>" . $e->getMessage();
+        $conn = null;
+        return false;
+    }
+}
+
+
+function count_completed_seller_orders($seller_id) {
+    $conn = dbconnect();
+    $sql = "SELECT COUNT(*) AS order_count
+            FROM sales s
+            JOIN products p ON s.product_id = p.product_id
+            JOIN shops sh ON p.shop_owner = sh.shop_id
+            WHERE sh.owner_id = ? AND s.status = 'completed'";
+
+    try {
+        $stmt = $conn->prepare($sql);
+        $stmt->execute([$seller_id]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        $conn = null;
+        return $result['order_count'];
+    } catch (PDOException $e) {
+        echo $sql . "<br>" . $e->getMessage();
+        $conn = null;
+        return false;
+    }
+}
+
+function fetchAllExceptAdmin($tableName) {
+    try {
+        // Assuming you have a function dbconnect() that returns a PDO connection
+        $conn = dbconnect(); 
+
+        // Prepare the SQL statement
+        $stmt = $conn->prepare("SELECT * FROM $tableName WHERE role != :excludeRole");
+
+        // Execute the query with the role to exclude
+        $stmt->execute(['excludeRole' => 'admin']);
+
+        // Fetch all results
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        // Handle any errors here
+        die("Database error: " . $e->getMessage());
+    }
+}
+
+function fetchAllAdmin($tableName) {
+    try {
+        // Assuming you have a function dbconnect() that returns a PDO connection
+        $conn = dbconnect(); 
+
+        // Prepare the SQL statement
+        $stmt = $conn->prepare("SELECT * FROM $tableName WHERE role = :Role");
+
+        // Execute the query with the role to exclude
+        $stmt->execute(['Role' => 'admin']);
+
+        // Fetch all results
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        // Handle any errors here
+        die("Database error: " . $e->getMessage());
+    }
+}
+
+
+
+
+
 
 
 

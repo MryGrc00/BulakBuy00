@@ -1,6 +1,5 @@
 <?php
 
-
 session_start();
 include '../php/dbhelper.php';
 $pdo = dbconnect();
@@ -183,8 +182,13 @@ else {
         <div class="container">
             <a href="product_order.php">
               <div class="card">
-                <p class="num-cart1">1 </p>
-                <i class="bi bi-handbag"></i>
+                <?php
+              $pendingOrderCount = count_pending_seller_orders($user_id);
+              ?>
+               <?php if ($pendingOrderCount > 0): ?>
+                  <p class="num-cart1"><?php echo $pendingOrderCount; ?></p>
+              <?php endif; ?>  
+              <i class="bi bi-handbag"></i>
                   <span class="label">Orders</span>
               </div>
             </a>
@@ -203,11 +207,13 @@ else {
             <a href="service_process.php">
               <div class="card">
               <?php
-              $processServiceOrderCount = get_count_of_processing_services('servicedetails', 'services', $user_id)
+                  $processOrderCount = count_processing_seller_orders($user_id);
+                  $processServiceOrderCount = get_count_of_processing_services('servicedetails', 'services', $user_id);
+                  $totalProcessingCount = $processOrderCount + $processServiceOrderCount;
               ?>
-               <?php if ($processServiceOrderCount > 0): ?>
-                  <p class="num-cart1"><?php echo $processServiceOrderCount; ?></p>
-              <?php endif; ?>               
+                <?php if ($totalProcessingCount > 0): ?>
+                  <p class="num-cart1"><?php echo $totalProcessingCount; ?></p>
+                <?php endif; ?>               
                <i class="bi bi-gear"></i>
                   <span class="label">Processing</span>
               </div>
@@ -215,22 +221,27 @@ else {
             <a href="service_intransit.php">
               <div class="card">
               <?php
-              $intransitServiceOrderCount = get_count_of_intransit_services('servicedetails', 'services', $user_id)
+              $intransitOrderCount = count_intransit_seller_orders($user_id);
+              $intransitServiceOrderCount = get_count_of_intransit_services('servicedetails', 'services', $user_id);
+              $totalintransitCount = $intransitOrderCount + $intransitServiceOrderCount;
               ?>
-               <?php if ($intransitServiceOrderCount > 0): ?>
-                  <p class="num-cart1"><?php echo $intransitServiceOrderCount; ?></p>
+               <?php if ($totalintransitCount > 0): ?>
+                  <p class="num-cart1"><?php echo $totalintransitCount; ?></p>
               <?php endif; ?>
                 <i class="bi bi-truck"></i>
-                  <span class="label">In Transit</span>
+                  <span class="label">To Deliver</span>
               </div>
             </a>
             <a href="service_completed.php">
               <div class="card  ">
               <?php
-              $completedServiceOrderCount = get_count_of_completed_services('servicedetails', 'services', $user_id)
+              $completedOrderCount = count_completed_seller_orders($user_id);
+              $completedServiceOrderCount = get_count_of_completed_services('servicedetails', 'services', $user_id);
+              $totalcompletedCount = $completedOrderCount + $completedServiceOrderCount;
+
               ?>
-               <?php if ($completedServiceOrderCount > 0): ?>
-                  <p class="num-cart1"><?php echo $completedServiceOrderCount; ?></p>
+               <?php if ($totalcompletedCount > 0): ?>
+                  <p class="num-cart1"><?php echo $totalcompletedCount; ?></p>
               <?php endif; ?>
                 <i class="bi bi-bag-check"></i>
                   <span class="label">Completed</span>
@@ -256,7 +267,7 @@ else {
             <span class="label">Services</span>
           </div>
         </a>
-        <a href="arranger_transaction_history.html">
+        <a href="arranger_transaction_history.php">
           <div class="card2">
             <i class="bi bi-file-earmark-text"></i>
             <span class="label">Transaction History</span>
@@ -266,7 +277,7 @@ else {
       </div>
       
       <div class="container1">
-      <a href="arranger_total_income.html">
+      <a href="arranger_total_income.php">
           <div class="card2">
             <i class="bi bi-file-bar-graph"></i>
             <span class="label">Reports</span>

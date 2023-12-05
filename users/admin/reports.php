@@ -3,6 +3,10 @@
 include('checksession.php'); 
 include('../php/dbhelper.php'); // Include the dbhelper file to use its functions.
 
+if (isset($_SESSION["user_id"])) {
+    $user_id = $_SESSION["user_id"];
+    $users = get_record('users','user_id',$user_id);
+ }
 ?>
 
 
@@ -95,8 +99,12 @@ include('../php/dbhelper.php'); // Include the dbhelper file to use its function
                <hr>
             </div>
             <div class="profile">
-               <img src='https://media.istockphoto.com/id/517528555/photo/trendy-young-man-smiling-on-white-background.jpg?s=1024x1024&w=is&k=20&c=FJijfaHuhjDH_byYfFku4oclIL5oepIO5ZCA4y_iav0=' alt="Admin Profile">
-               <h6>Dan Mark</h6>
+            <?php
+                    $profileImage = !empty($users['profile_img']) ? $users['profile_img'] : '../php/images/default.jpg'; 
+                    echo '<img src="' . $profileImage . '" alt="' . $users['last_name'] . '" class="user-image">';
+                 ?>               
+                 <br><?php echo $users['first_name'] . ' ' . $users['last_name']; ?> 
+               <a href="edit_profile.php?user_id=<?php echo $users['user_id']; ?>"><i class="bi bi-pencil-square"></i></a>
             </div>
          </div>
          <ul class="nav-links align-items-center  text-center ">
@@ -113,6 +121,12 @@ include('../php/dbhelper.php'); // Include the dbhelper file to use its function
                </a>
             </li>
             <li>
+               <a href="admins.php">
+               <i class="bi bi-person-vcard"></i>
+               <span class="links_name">Admins</span>
+               </a>
+            </li>
+            <li>
                <a href="reported_accounts.php">
                <i class="fa fa-user-times" aria-hidden="true"></i>
                <span class="links_name">Reported Accounts</span>
@@ -125,21 +139,27 @@ include('../php/dbhelper.php'); // Include the dbhelper file to use its function
                </a>
             </li>
             <li>
-               <a href="subscriptions.html">
+               <a href="subscriptions.php">
                <i class="fa fa-credit-card-alt" aria-hidden="true"></i>
                <span class="links_name">Subscriptions</span>
                </a>
             </li>
             <li>
-               <a href="reports.php"  class="active">
+               <a href="reports.php" class="active">
                <i class="fa fa-users" aria-hidden="true"></i>
                <span class="links_name">Reports</span>
                </a>
             </li>
             <li>
-               <a href="transaction_history.html">
+               <a href="transaction_history.php">
                <i class="fa fa-line-chart" aria-hidden="true"></i>
                <span class="links_name">Transaction History</span>
+               </a>
+            </li>
+            <li>
+            <a href="change_pass.php?email=<?php echo urlencode($users["email"]); ?>">
+               <i class="fa fa-key" aria-hidden="true"></i>
+               <span class="links_name">Change Password</span>
                </a>
             </li>
             <li>
@@ -243,7 +263,7 @@ include('../php/dbhelper.php'); // Include the dbhelper file to use its function
                         
                         <p style="width:520px;height:7000px;margin-top:40px"><canvas  id="chartjs_bar"></canvas></p>
                     </div>
-                    <div style="width:900px;height:670px;background-color:white;padding:30px;margin-left:60px;margin-top:40px;border-radius:20px">
+                    <div style="width:900px;height:500px;background-color:white;padding:30px;margin-left:60px;margin-top:40px;border-radius:20px">
                         <p style="color: #868e96;font-size:15px">Subscribers</p>
                         <form id="filterForm2">
                             <label for="yearSelect" style="color:#666;font-weight:400">Year:</label>
@@ -286,7 +306,7 @@ include('../php/dbhelper.php'); // Include the dbhelper file to use its function
                
                </div>
                <div style="display:flex;">
-                    <div style="width:580px;height:630px;background-color:white;padding:30px;margin-left:60px;border-radius:20px">
+               <div style="width:650px;height:550px;background-color:white;padding:30px;margin-left:60px;margin-top:100px;border-radius:20px">
                         <p style="color: #868e96;font-size:15px">Seller Sales</p>
                         <form id="filterForm3">
                             <label for="yearSelect" style="color:#666;font-weight:400">Year:</label>
@@ -340,12 +360,10 @@ include('../php/dbhelper.php'); // Include the dbhelper file to use its function
                         </form>
 
                         <p style="max-width:800px;max-height:70px;margin-top:50px"><canvas id="seller"></canvas></p>
-                     </div>
-
-               
+                     </div>               
                </div>
                <div style="display:flex;">
-                    <div style="width:580px;height:630px;background-color:white;padding:30px;margin-left:60px;margin-top:100px;border-radius:20px">
+                    <div style="width:650px;height:630px;background-color:white;padding:30px;margin-left:60px;margin-top:100px;border-radius:20px">
                         <p style="color: #868e96;font-size:15px">Flower Arranger Sales</p>
                         <form id="filterForm5">
                             <label for="yearSelect" style="color:#666;font-weight:400">Year:</label>
@@ -384,7 +402,7 @@ include('../php/dbhelper.php'); // Include the dbhelper file to use its function
                             </div>
                      
                     </div>
-                    <div style="width:900px;height:550px;background-color:white;padding:30px;margin-left:60px;margin-top:100px;border-radius:20px">
+                    <div style="width:900px;height:630px;background-color:white;padding:30px;margin-left:60px;margin-top:100px;border-radius:20px">
                         <p style="color: #868e96;font-size:15px">Flower Arranger Sales</p>
                         <form id="filterForm6">
                            <label for="yearSelect6" style="color:#666;font-weight:400;margin-left:10%">Year:</label>
@@ -403,8 +421,8 @@ include('../php/dbhelper.php'); // Include the dbhelper file to use its function
 
                
                </div>
-               <div style="display:flex;">
-                    <div style="width:580px;height:630px;background-color:white;padding:30px;margin-left:60px;margin-top:200px;border-radius:20px">
+               <div style="display:flex; margin-bottom:50px;">
+                   <div style="width:650px;height:630px;background-color:white;padding:30px;margin-left:60px;margin-top:100px;border-radius:20px">
                         <p style="color: #868e96;font-size:15px">Service Customers</p>
                         <form id="filterForm7">
                             <label for="yearSelect" style="color:#666;font-weight:400">Year:</label>
@@ -443,7 +461,7 @@ include('../php/dbhelper.php'); // Include the dbhelper file to use its function
                             </div>
                      
                     </div>
-                    <div style="width:900px;height:550px;background-color:white;padding:30px;margin-left:60px;margin-top:100px;border-radius:20px">
+                    <div style="width:900px;height:630px;background-color:white;padding:30px;margin-left:60px;margin-top:100px;border-radius:20px">
                         <p style="color: #868e96;font-size:15px">Service Customers</p>
                         <form id="filterForm8">
                            <label for="yearSelect8" style="color:#666;font-weight:400;">Year:</label>

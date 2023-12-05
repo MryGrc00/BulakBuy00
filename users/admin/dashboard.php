@@ -1,15 +1,17 @@
 <?php
 include('checksession.php'); 
 include('../php/dbhelper.php'); 
-if (isset($_SESSION["admin_id"])) {
-   $admin_id = $_SESSION["admin_id"];
-   $users = get_record('admin','admin_id',$admin_id);
+if (isset($_SESSION["user_id"])) {
+   $user_id = $_SESSION["user_id"];
+   $users = get_record('users','user_id',$user_id);
+   $user = fetchAllExceptAdmin("users");
+
 }
 $pdo = dbconnect();
 try {
     // Total Accounts
-    $stmt = $pdo->query("SELECT COUNT(*) FROM users");
-    $totalAccounts = $stmt->fetchColumn();
+    $stmt = $pdo->query("SELECT COUNT(*) FROM users WHERE role != 'admin'");
+    $totalAccounts = $stmt->fetchColumn();    
 
     // Total Seller/Arranger Accounts
     $stmt = $pdo->query("SELECT COUNT(*) FROM users WHERE role = 'seller' OR role = 'arranger'");
@@ -68,7 +70,7 @@ try {
                     echo '<img src="' . $profileImage . '" alt="' . $users['last_name'] . '" class="user-image">';
                  ?>               
                  <br><?php echo $users['first_name'] . ' ' . $users['last_name']; ?> 
-               <a href="edit_profile.php?user_id=<?php echo $users['admin_id']; ?>"><i class="bi bi-pencil-square"></i></a>
+               <a href="edit_profile.php?user_id=<?php echo $users['user_id']; ?>"><i class="bi bi-pencil-square"></i></a>
             </div>
          </div>
          <ul class="nav-links align-items-center  text-center ">
@@ -85,7 +87,13 @@ try {
                </a>
             </li>
             <li>
-               <a href="reported_accounts.html">
+               <a href="admins.php">
+               <i class="bi bi-person-vcard"></i>
+               <span class="links_name">Admins</span>
+               </a>
+            </li>
+            <li>
+               <a href="reported_accounts.php">
                <i class="fa fa-user-times" aria-hidden="true"></i>
                <span class="links_name">Reported Accounts</span>
                </a>
@@ -103,9 +111,21 @@ try {
                </a>
             </li>
             <li>
+               <a href="reports.php">
+               <i class="fa fa-users" aria-hidden="true"></i>
+               <span class="links_name">Reports</span>
+               </a>
+            </li>
+            <li>
                <a href="transaction_history.php">
                <i class="fa fa-line-chart" aria-hidden="true"></i>
                <span class="links_name">Transaction History</span>
+               </a>
+            </li>
+            <li>
+            <a href="change_pass.php?email=<?php echo urlencode($users["email"]); ?>">
+               <i class="fa fa-key" aria-hidden="true"></i>
+               <span class="links_name">Change Password</span>
                </a>
             </li>
             <li>
@@ -218,8 +238,10 @@ try {
                               <div class="stat-icon dib"><i class="bi bi-person-vcard"></i>
                               </div>
                               <div class="stat-content dib">
+                                 <a href="subscriptions.php">
                                  <div class="stat-text">Subscribed Accounts</div>
                                  <div class="stat-digit"><?php echo $totalSubscribed;?></div>
+                                 </a>
                               </div>
                            </div>
                         </div>
@@ -230,8 +252,10 @@ try {
                               <div class="stat-icon dib"><i class="bi bi-person-slash"></i>
                               </div>
                               <div class="stat-content dib">
-                                 <div class="stat-text">Blocked Accounts</div>
-                                 <div class="stat-digit"><?php echo  $countBlockedShops;?></div>
+                                 <a href="blocked_dash.php">
+                                    <div class="stat-text">Blocked Accounts</div>
+                                    <div class="stat-digit"><?php echo  $countBlockedShops;?></div>
+                                 </a>
                               </div>
                            </div>
                         </div>
@@ -242,8 +266,10 @@ try {
                               <div class="stat-icon dib"><i class="bi bi-person-x"></i>
                               </div>
                               <div class="stat-content dib">
+                              <a href="reported_dash.php">
                                  <div class="stat-text">Reported Accounts</div>
                                  <div class="stat-digit"> <?php echo  $countReportedShops;?></div>
+                              </a>
                               </div>
                            </div>
                         </div>
@@ -251,6 +277,7 @@ try {
                   </div>
                </div>
       </section>
+      
       </div>
       </div>
    </body>

@@ -77,7 +77,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             width: 440px;
             background-color: #F5F5F5;
             border-radius:10px;
-             letter-spacing: 0.1rem;
+            letter-spacing: 0.1rem;
             color:#888;
             margin-top: 10px;
             outline: none !important;
@@ -95,7 +95,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             color:#666;
             font-size: 17px;
             text-align: center;
-             letter-spacing: 0.1rem;
+            letter-spacing: 0.1rem;
             margin-top: 15px;
             font-weight: 500;
         }
@@ -106,7 +106,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             padding:7px;
             border-radius:10px;
             margin-top: 10px;
-             letter-spacing: 0.1rem;
+            letter-spacing: 0.1rem;
             font-size: 16px;
         }
         .btn:hover{
@@ -283,7 +283,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                     <br>
                                     <div class="password-input-container mt-4">
                                         <input type="password" class="form-control" name="cpassword" id="cpassword" placeholder="Confirm New Password" required>
-                                        <span class="toggle-password" id="toggleCPassword">
+                                        <span class="toggle-password" id="togglePassword">
                                             <i class="bi bi-eye-slash"></i>
                                         </span>
                                     </div>

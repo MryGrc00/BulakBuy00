@@ -1,3 +1,65 @@
+<?php
+session_start();
+require_once '../php/dbhelper.php'; // Using require_once ensures the script stops if the file is missing.
+
+// Redirect non-sellers or unauthenticated users to the login page
+if (!isset($_SESSION["user_id"]) || $_SESSION["role"] !== "seller") {
+    header("Location: ../login.php");
+    exit(); // Stop script execution after a header redirect
+}
+
+$userId = $_SESSION["user_id"];
+
+
+function getTotalIncome($userId) {
+    $pdo = dbconnect(); // Ensure this is the correct function to establish your database connection
+
+    // SQL query to sum the amount from sales where the shop_id is owned by the user
+    $sql = "SELECT SUM(s.amount) AS total_income 
+            FROM sales s
+            INNER JOIN shops sh ON s.shop_id = sh.shop_id
+            WHERE sh.owner_id = :userId";
+
+    // Prepare and execute the SQL statement
+    $stmt = $pdo->prepare($sql);
+    $stmt->bindParam(':userId', $userId, PDO::PARAM_INT);
+    $stmt->execute();
+
+    // Fetch the result
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    return $result ? $result['total_income'] : 0; // Return the total income or 0 if none
+}
+
+
+
+function getMonthlySales($userId, $startYear, $endYear) {
+    $pdo = dbconnect();
+    $sql = "SELECT 
+                YEAR(sales_date) AS year, 
+                MONTH(sales_date) AS month, 
+                SUM(amount) AS monthly_income 
+            FROM sales 
+            WHERE YEAR(sales_date) BETWEEN :startYear AND :endYear
+            AND shop_id IN (
+                SELECT shop_id FROM shops WHERE owner_id = :userId
+            ) 
+            GROUP BY YEAR(sales_date), MONTH(sales_date)";
+
+    $stmt = $pdo->prepare($sql);
+    $stmt->bindParam(':startYear', $startYear, PDO::PARAM_INT);
+    $stmt->bindParam(':endYear', $endYear, PDO::PARAM_INT);
+    $stmt->bindParam(':userId', $userId, PDO::PARAM_INT);
+    $stmt->execute();
+
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+
+
+$totalIncome = getTotalIncome($userId); // Fetch the total income
+
+$monthlySales = getMonthlySales($userId, 2022,2023);
+?>
 <!DOCTYPE html> 
 <html lang="en">
     <head>
@@ -12,11 +74,11 @@
         <link rel="stylesheet" href="../../css/total_income.css">
     </head>
     <body>
-        <header>
+    <header>
             <nav class="navbar navbar-expand-lg">
                 <!-- Logo -->
-                <a class="navbar-brand d-flex align-items-center" href="#">
-                <img src="../../images/logo.png" alt="BulakBuy Logo" class="img-fluid logo">
+                <a class="navbar-brand d-flex align-items-center" href="customer_home.php">
+                    <img src="../php/images/logo.png" alt="BulakBuy Logo" class="img-fluid logo">
                 </a>
                 <!-- Search Bar -->
                 <div class="navbar-collapse justify-content-md-center">
@@ -24,14 +86,16 @@
                         <li class="nav-item">
                             <form class="form-inline my-2 my-lg-0">
                                 <a href=""><i class="fa fa-search"></i></a>
-                                <input type="text"  class="form-control form-input" placeholder="Search">
-                                <a href="vendor_home.html"><i class="back fa fa-angle-left" aria-hidden="true"></i></a>
-                                <div id="search-results">Reports</div>
+                                <input type="text"  class="form-control form-input" placeholder="Search" style="text-align:left;padding-left: 15px;font-size: 16px;">
+                                <a href="vendor_home.php" id="back-link"><i class="back fa fa-angle-left" aria-hidden="true"></i></a>
+                                <div id="search-results">Total Income</div>
                             </form>
                         </li>
                     </ul>
                 </div>
             </nav>
+            <hr class="nav-hr">
+        </header>
         </header>
         <main class="main">
             <div class="income-info">
@@ -39,86 +103,29 @@
                     <div class="income-name">
                         <span class="s-label">Total Income</span>
                     </div>
-                    <span class="income">₱ 249,000</span>
+                    <span class="income">₱ <?php echo htmlspecialchars($totalIncome ? $totalIncome : '0'); ?></span>
                 </div>
             </div>
             <section>
-                <div class="container1">
-                    <div class="card2">
-                        <span class="label">This Month</span>
-                        <span class="sales">₱ 30999</span>
-                    </div>
-                    <div class="card2">
-                        <span class="label">This Week</span>
-                        <span class="sales">₱ 10949</span>
-                    </div>
-                </div>
+                <br>
+                <?php foreach ($monthlySales as $monthlySale): ?>
                 <div class="vertical-container">
                     <div class="subscription-details">
                         <i class="fa fa-money" aria-hidden="true"></i>
                         <div class="text-content">
-                            <div class="subscript">
-                                <span class="subscription-status">June 2023</span>
-                            </div>
-                            <span class="income-monthly">₱ 10949</span>
+                        <span class="subscription-status">
+                        <?php 
+                            $monthName = date("F", mktime(0, 0, 0, $monthlySale['month'], 10));
+                            echo htmlspecialchars($monthName) . " " . htmlspecialchars($monthlySale['year']); 
+                        ?>
+                    </span>
+                       <span class="income-monthly">
+                             ₱ <?php echo htmlspecialchars($monthlySale['monthly_income']); ?>
+                         </span>                        
                         </div>
                     </div>
                 </div>
-                <div class="vertical-container">
-                    <div class="subscription-details">
-                        <i class="fa fa-money" aria-hidden="true"></i>
-                        <div class="text-content">
-                            <div class="subscript">
-                                <span class="subscription-status">June 2023</span>
-                            </div>
-                            <span class="income-monthly">₱ 10949</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="vertical-container">
-                    <div class="subscription-details">
-                        <i class="fa fa-money" aria-hidden="true"></i>
-                        <div class="text-content">
-                            <div class="subscript">
-                                <span class="subscription-status">June 2023</span>
-                            </div>
-                            <span class="income-monthly">₱ 10949</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="vertical-container">
-                    <div class="subscription-details">
-                        <i class="fa fa-money" aria-hidden="true"></i>
-                        <div class="text-content">
-                            <div class="subscript">
-                                <span class="subscription-status">June 2023</span>
-                            </div>
-                            <span class="income-monthly">₱ 10949</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="vertical-container">
-                    <div class="subscription-details">
-                        <i class="fa fa-money" aria-hidden="true"></i>
-                        <div class="text-content">
-                            <div class="subscript">
-                                <span class="subscription-status">June 2023</span>
-                            </div>
-                            <span class="income-monthly">₱ 10949</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="vertical-container">
-                    <div class="subscription-details">
-                        <i class="fa fa-money" aria-hidden="true"></i>
-                        <div class="text-content">
-                            <div class="subscript">
-                                <span class="subscription-status">June 2023</span>
-                            </div>
-                            <span class="income-monthly">₱ 10949</span>
-                        </div>
-                    </div>
-                </div>
+                <?php endforeach; ?>
             </section>
         </main>
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>

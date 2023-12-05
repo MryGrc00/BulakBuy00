@@ -1487,8 +1487,8 @@ function add_cart_item_without_optional_fields($product_id, $customer_id, $quant
                                     <button class="add add-to-cart-button" name="add-to-cart" data-product-id="<?= $product['product_id'] ?>">Add to Cart</button>
                         </form>
                    
-                                <a href="chat.php?user_id=<?php echo $user['user_id']; ?>">
-                                    <button class="messenger"><i class="bi bi-messenger"></i></button>
+                                <a href="../chat.php?user_id=<?php echo $user['user_id']; ?>" class="messenger">
+                                    <i class="bi bi-messenger"></i>
                                 </a>
                         </div>
                             <div id="addModal" class="modal">

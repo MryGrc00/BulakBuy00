@@ -174,7 +174,7 @@ $filtered_reports = get_filtered_reports();
             color:#666;
             font-size: 17px;
             text-align: center;
-             letter-spacing: 0.1rem;
+            letter-spacing: 0.1rem;
             margin-top: 15px;
             font-weight: 500;
         }
@@ -185,7 +185,7 @@ $filtered_reports = get_filtered_reports();
             padding:7px;
             border-radius:10px;
             margin-top: 10px;
-             letter-spacing: 0.1rem;
+            letter-spacing: 0.1rem;
             font-size: 16px;
         }
         .btn:hover{

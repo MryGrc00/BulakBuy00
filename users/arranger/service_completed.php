@@ -12,9 +12,67 @@ if (isset($_SESSION["user_id"]) && isset($_SESSION["role"])) {
     $service_order =  get_service_details_completed('servicedetails','services', 'users', $user_id);
 }
 else {
-    // Handle cases where the user is not logged in or role is not set
     echo "User not logged in or role not set.";
-    // Optional: Redirect to login page or show a login link
+}
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $productId = $_POST['productId'];
+    $customerId = $_POST['customerId'];
+
+    // Update the status in the sales table for the specific product and customer
+    $result = update_status($productId, $customerId);
+
+    if ($result) {
+        echo 'Status updated successfully.';
+    } else {
+        echo 'Failed to update status.';
+    }
+}
+
+
+function get_seller_orders($seller_id) {
+    $conn = dbconnect();
+    $sql = "SELECT s.amount, s.sales_date, s.paymode, p.product_id, p.product_name, p.product_img, p.product_price, sd.flower_type, sd.ribbon_color, s.customer_id
+            FROM sales s
+            JOIN products p ON s.product_id = p.product_id
+            JOIN salesdetails sd ON p.product_id = sd.product_id
+            JOIN shops sh ON p.shop_owner = sh.shop_id
+            WHERE sh.owner_id = ? AND s.status = 'Completed'";
+
+    try {
+        $stmt = $conn->prepare($sql);
+        $stmt->execute([$seller_id]);
+        $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $conn = null;
+        return $orders;
+    } catch (PDOException $e) {
+        echo $sql . "<br>" . $e->getMessage();
+        $conn = null;
+        return false;
+    }
+}
+
+$product_order = get_seller_orders($user_id);
+
+
+// Function to get quantity from sales_details table
+function get_quantity_for_product($product_id, $seller_id) {
+    $conn = dbconnect();
+    $sql = "SELECT quantity FROM salesdetails sd
+            JOIN products p ON sd.product_id = p.product_id
+            JOIN shops sh ON p.shop_owner = sh.shop_id
+            WHERE p.product_id = ? AND sh.owner_id = ?";
+    try {
+        $stmt = $conn->prepare($sql);
+        $stmt->execute([$product_id, $seller_id]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        $conn = null;
+        return $result ? $result['quantity'] : 0;
+    } catch (PDOException $e) {
+        echo $sql . "<br>" . $e->getMessage();
+        $conn = null;
+        return 0;
+    }
 }
 ?>
 
@@ -64,74 +122,34 @@ else {
         <button class="services-button">Services</button>
     </div>
     <div class="products-card" id="productsCard">
+    <?php foreach ($product_order as $order):?>
         <div class="single-card ">
             <div class="img-area">
-                <img src="https://assets.florista.ph/uploads/product-pics/5022_86_5022.webp" alt="">
+                <img src="<?php echo $order['product_img']?>" alt="">
             </div>
             <div class="info">
                 <div class="text-left">
-                    <h3>Winter Green</h3>
+                    <h3><?php echo $order['product_name']?></h3>
                     <div class="flower-type">
                         <p class="flower">Flower:</p>
-                        <p class="type">Anthurium , White Rose, Assorted Mums, Rose </p>
+                        <p class="type"><?php echo $order['flower_type']?> </p>
                     </div>
                     <div class="ribbon-color">
                         <p class="ribbon">Ribbon:</p>
-                        <p class="color"> Violet </p>
+                        <p class="color"> <?php echo $order['ribbon_color']?> </p>
                     </div>
-                    <p class="price">₱ 1000.00</p>
+                    <p class="price"><?php echo $order['amount']?></p>
                 </div>
                 <div class="text-right">
-                    <p class="count">x 20</p>
-                </div>
+                <?php 
+                $quantity = get_quantity_for_product($order['product_id'], $user_id); 
+                $quantityText = $quantity ? 'x ' . $quantity : 'Quantity not available';
+                ?>
+                <p class="count"><?php echo $quantityText; ?></p>
+               </div>
             </div>
         </div>
-          
-        <div class="single-card ">
-            <div class="img-area">
-                <img src="https://assets.florista.ph/uploads/product-pics/5022_86_5022.webp" alt="">
-            </div>
-            <div class="info">
-                <div class="text-left">
-                    <h3>Winter Green</h3>
-                    <div class="flower-type">
-                        <p class="flower">Flower:</p>
-                        <p class="type">Anthurium , White Rose, Assorted Mums, Rose </p>
-                    </div>
-                    <div class="ribbon-color">
-                        <p class="ribbon">Ribbon:</p>
-                        <p class="color"> Violet </p>
-                    </div>
-                    <p class="price">₱ 1000.00</p>
-                </div>
-                <div class="text-right">
-                    <p class="count">x 20</p>
-                </div>
-            </div>
-        </div>
-    
-        <div class="single-card ">
-            <div class="img-area">
-                <img src="https://assets.florista.ph/uploads/product-pics/5022_86_5022.webp" alt="">
-            </div>
-            <div class="info">
-                <div class="text-left">
-                    <h3>Winter Green</h3>
-                    <div class="flower-type">
-                        <p class="flower">Flower:</p>
-                        <p class="type">Anthurium , White Rose, Assorted Mums, Rose </p>
-                    </div>
-                    <div class="ribbon-color">
-                        <p class="ribbon">Ribbon:</p>
-                        <p class="color"> Violet </p>
-                    </div>
-                    <p class="price">₱ 1000.00</p>
-                </div>
-                <div class="text-right">
-                    <p class="count">x 20</p>
-                </div>
-            </div>
-        </div>
+    <?php endforeach;?>
     </div>
     <div class="service-list" id="service-container">
     <?php foreach ($service_order as $order):?>

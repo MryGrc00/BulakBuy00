@@ -11,10 +11,35 @@ if (isset($_SESSION["user_id"]) && isset($_SESSION["role"])) {
 
     $service_order = get_pending_service_details('servicedetails','services', 'users', $user_id);
 }
-else {
-    // Handle cases where the user is not logged in or role is not set
-    echo "User not logged in or role not set.";
-    // Optional: Redirect to login page or show a login link
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $serviceId= $_POST['serviceId'];
+    $customerId = $_POST['customerId'];
+
+    // Update the status in the sales table for the specific product and customer
+    $result = update_status($serviceId, $customerId);
+
+    if ($result) {
+        echo 'Status updated successfully.';
+    } else {
+        echo 'Failed to update status.';
+    }
+}
+
+function update_status($serviceId, $customerId) {
+    $conn = dbconnect();
+    $sql = "UPDATE servicedetails SET status = 'Processing' WHERE service_id = ? AND customer_id = ?";
+    
+    try {
+        $stmt = $conn->prepare($sql);
+        $stmt->execute([$serviceId, $customerId]);
+        $conn = null;
+        return true;
+    } catch (PDOException $e) {
+        echo $sql . "<br>" . $e->getMessage();
+        $conn = null;
+        return false;
+    }
 }
 ?>
 
@@ -80,11 +105,8 @@ else {
                 
                 <div class="text-right">
                     <div class="btn-container order">
-                    <form method="post" action="update_service_status.php">
-                        <input type="hidden" name="service_detail_id" value="<?php echo $order['servicedetails_id']; ?>">
-                        <button type="submit" name="action" value="accept" class="service-accept">Accept</button>
-                        <button class="service-cancel" type="submit" name="action" value="cancelled">Cancel</button>
-                  </form>
+                        <button class="service-accept accept" data-service-id="<?php echo $order['service_id']; ?>" data-customer-id="<?php echo $order['customer_id'];?>">Accept</button>
+                        <button class="service-cancel"data-service-id="<?php echo $order['service_id']; ?>" data-customer-id="<?php echo $order['customer_id'];?>">Cancel</button>
                     </div>
                 </div>
             </div>
@@ -98,6 +120,65 @@ else {
     <?php endforeach;?>
 
   </div>
+
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script>
+    $(document).ready(function() {
+    $(".service-accept").click(function() {
+        var serviceId = $(this).data("service-id");
+        var customerId = $(this).data("customer-id"); // Add this line to get the customer ID
+
+        // Send AJAX request to update the status
+        $.ajax({
+            url: 'service_order.php',
+            method: 'POST',
+            data: { serviceId: serviceId, customerId: customerId }, // Include customer ID in the data
+            success: function(response) {
+                // Handle the response if needed
+                console.log(response);
+
+                // Reload the page after the status is updated
+                location.reload();
+            },
+            error: function(error) {
+                // Handle the error if needed
+                console.error(error);
+            }
+        });
+    });
+
+});
+
+</script>
+<script>
+    $(document).ready(function() {
+    $(".service-cancel").click(function() {
+        var serviceId = $(this).data("service-id");
+        var customerId = $(this).data("customer-id"); // Add this line to get the customer ID
+
+        // Send AJAX request to update the status
+        $.ajax({
+            url: 'update_service_cancel.php',
+            method: 'POST',
+            data: { serviceId: serviceId, customerId: customerId }, // Include customer ID in the data
+            success: function(response) {
+                // Handle the response if needed
+                console.log(response);
+
+                // Reload the page after the status is updated
+                location.reload();
+            },
+            error: function(error) {
+                // Handle the error if needed
+                console.error(error);
+            }
+        });
+    });
+
+});
+
+</script>
+
   <script>
     function goBack() {
         window.history.back();
