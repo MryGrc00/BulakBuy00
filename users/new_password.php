@@ -64,6 +64,239 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     
     <title>Change Password</title>
+    <style>
+         body{
+            background-color:#f5f5f5;
+        }
+        .container{
+            width:500px;
+            margin:auto;
+            margin-top: 180px;
+            font-family: 'Poppins';
+            background-color: white;
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            padding:20px;
+            padding-bottom:70px;
+        }
+
+        .row img{
+            margin:auto;
+            width:230px;
+            height:90px;
+        }
+        .enter{
+            color:#666;
+            font-size: 17px;
+            text-align: center;
+             letter-spacing: 0.1rem;
+            margin-top: 15px;
+            font-weight: 500;
+        }
+        .form-group{
+            margin-top: 20px;
+        }
+        .form-control {
+            /* Add general styling for form controls here */
+            padding: 20px;
+            border:none;
+            width: 440px;
+            background-color: #F5F5F5;
+            border-radius:10px;
+             letter-spacing: 0.1rem;
+            color:#888;
+            margin-top: 10px;
+            outline: none !important;
+        }
+        .form-control::placeholder {
+            font-size: 15px;
+            color:#A0A0A0;
+        }
+        .form-control:focus {
+            border:1px solid #fefefe;
+            outline:none;
+        }
+        .btn{
+            background-color: #65A5A5;
+            color:white;
+            width:440px;
+            padding:7px;
+            border-radius:10px;
+            margin-top: 10px;
+            margin-top: 10px;
+             letter-spacing: 0.1rem;
+            font-size: 16px;
+        }
+        .btn:hover{
+            color:#fefefe;
+        }
+        .password-input-container {
+            position: relative;
+        }
+
+        .toggle-password {
+            position: absolute;
+            top: 45%;
+            right: 10px;
+            transform: translateY(-50%);
+            cursor: pointer;
+        }
+
+        /* Eye icon styles */
+        .toggle-password i {
+            font-size: 18px;
+            color: #999;
+        }
+
+        /* Style the eye icon when password is revealed */
+        .password-revealed i {
+            color: #33b5e5;
+        }
+        .button{
+            margin-top: -20px;
+        }
+        .container1{
+            margin-top: -10px;
+        }
+        .container1 .row a{
+            color:#888;
+            font-size: 14px;
+            text-align: center;
+            text-decoration: none;
+            margin-top: 10px;
+        }
+        .error-text{
+            color: #721c24;
+            padding: 8px 10px;
+            text-align: center;
+            border-radius: 5px;
+            background: #f8d7da;
+            font-size: 15px;
+            border: 1px solid #f5c6cb;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            display: none;
+            font-weight: 300;
+        }
+        @media (max-width: 768px) {
+            body{
+            background-color:transparent;
+            
+        }
+        .container{
+            margin:auto;
+            margin-top:70px;
+            font-family: 'Poppins';
+            padding:20px;
+            padding-bottom:30px;
+            width: 375px;
+            box-shadow: none;
+            border-radius: none;
+      
+        }
+
+        .row img{
+            margin:auto;
+            width:200px;
+            height:80px;
+        }
+        .enter{
+            color:#666;
+            font-size: 15px;
+            text-align: center;
+             letter-spacing: 0.1rem;
+            margin-top: 10px;
+            font-weight: 500;
+        }
+        .form-control {
+            /* Add general styling for form controls here */
+            padding: 20px;
+            border:none;
+            width: 310px;
+            background-color: #F5F5F5;
+            border-radius:10px;
+             letter-spacing: 0.1rem;
+            color:#888;
+            margin-top: 20px;
+            outline: none !important;
+            font-size: 13px;
+            border:none;
+        }
+        .form-control::placeholder {
+            font-size: 13px;
+            color:#A0A0A0;
+        }
+        .form-control:focus {
+            border:1px solid #fefefe;
+            outline:none;
+        }
+        .button{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .btn{
+            background-color: #65A5A5;
+            color:white;
+            width:350px;
+            padding:7px;
+            border-radius:10px;
+            margin-top: 30px;
+             letter-spacing: 0.1rem;
+            font-size: 13px;
+        }
+        .btn:hover{
+            color:#fefefe;
+        }
+        .password-input-container {
+            position: relative;
+        }
+
+        .toggle-password {
+            position: absolute;
+            top: 45%;
+            right: 10px;
+            transform: translateY(-50%);
+            cursor: pointer;
+        }
+
+        /* Eye icon styles */
+        .toggle-password i {
+            font-size: 18px;
+            color: #999;
+        }
+
+        /* Style the eye icon when password is revealed */
+        .password-revealed i {
+            color: #33b5e5;
+        }
+        .button{
+            margin-top: -20px;
+        }
+        .container1{
+            margin-top: -10px;
+        }
+        .container1 .row a{
+            color:#888;
+            font-size: 13px;
+            text-align: center;
+            text-decoration: none;
+            margin-top: 10px;
+        }
+        .error-text{
+            color: #721c24;
+            padding: 8px 10px;
+            text-align: center;
+            border-radius: 5px;
+            background: #f8d7da;
+            font-size: 13px;
+            border: 1px solid #f5c6cb;
+            margin-bottom: 25px;
+            display: none;
+            font-weight: 300;
+        }
+        }
+    </style>
 </head>
 <body>
   
@@ -71,10 +304,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <main>
         <div class="container-fluid mt-5">
             <div class="row fw-semibold">
-                <h2>Enter New Password</h2>
+                <h2 class="enter">Enter New Password</h2>
                 <form action="" method="POST" enctype="multipart/form-data" autocomplete="off">
                 <div class="error-text"></div>
-                <div class="form-group">
+                    <div class="form-group">
                         <div class="password-input-container">
                             <input type="password" class="form-control bg-light rounded" name="password" id="password" placeholder="Password" required>
                             <span class="toggle-password" id="togglePassword">
@@ -90,7 +323,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         </div>
                         <br><br>
                           <div class="button">
-                             <input type="submit" class="btn btn-primary w-100" name="submit" value="Register">
+                             <input type="submit" class="btn " name="submit" value="Register">
                          </div>
                         <br>
                     </div>

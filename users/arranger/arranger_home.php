@@ -155,7 +155,7 @@ else {
               </a>
               <li class="nav-item">
                 <form class="form-inline my-2 my-lg-0">
-                  <a href="search_results.html"><i class="fa fa-search"></i></a>
+                  <a href="search_results.php"><i class="fa fa-search"></i></a>
                   <input type="text"  class="form-control form-input" placeholder="Search">
               </form>
             </li>
@@ -181,7 +181,7 @@ else {
 
     <section class="main-section">
         <div class="container">
-            <a href="product_order.html">
+            <a href="product_order.php">
               <div class="card">
                 <p class="num-cart1">1 </p>
                 <i class="bi bi-handbag"></i>

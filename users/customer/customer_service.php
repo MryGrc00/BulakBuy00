@@ -69,7 +69,7 @@ if (isset($_GET['service_id']) && isset($_SESSION['user_id'])) {
                 <!-- Search Bar -->
                 <div class="navbar-collapse justify-content-md-center">
                     <ul class="navbar-nav dib">
-                        <a href="cart.html">
+                        <a href="cart.php">
                             <li class="cart">
                                 <i class="fa fa-shopping-bag" aria-hidden="true"></i>
                                 <p class="num-cart">1 </p>

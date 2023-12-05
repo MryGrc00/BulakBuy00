@@ -1,49 +1,66 @@
 <?php
-
 session_start();
 include '../php/dbhelper.php';
 include '../php/checksession.php';
 
-if (isset($_SESSION["user_id"])) {
-    $seller_id = $_SESSION["user_id"];
-
-    // Initialize variables
-    $min_price_input = $max_price_input = null;
-
-    // Check if the form is submitted and the variables are set
-    if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        if (isset($_POST['min_price'])) {
-            $min_price_input = $_POST['min_price'];
-        }
-        if (isset($_POST['max_price'])) {
-            $max_price_input = $_POST['max_price'];
-        }
-
-        // Fetch products within the inputted price range
-        if ($min_price_input !== null && $max_price_input !== null) {
-            $services = filter_products_by_price($min_price_input, $max_price_input);
-        } else {
-            $services = get_latest_services('services','users','shops','subscription');
-        }
-    } else {
-        $services = get_latest_services('services','users','shops','subscription');
-
-    }
-
-    list($min_price, $max_price) = get_rate_range_service();
-}
-
-function filter_service_by_price($min, $max) {
+// Function to filter products by price
+function filter_products_by_price($min, $max, $search_query = null) {
     $conn = dbconnect();
-    $query = "SELECT * FROM services WHERE service_rate BETWEEN :min AND :max";
+
+    // Include the search query in the SQL query if it exists
+    $search_condition = $search_query ? "AND (product_name LIKE :search_query OR product_category LIKE :search_query)" : "";
+
+    $query = "SELECT * FROM products WHERE product_price BETWEEN :min AND :max $search_condition";
     $stmt = $conn->prepare($query);
     $stmt->bindParam(':min', $min, PDO::PARAM_INT);
     $stmt->bindParam(':max', $max, PDO::PARAM_INT);
+
+    // Bind the search query parameters if it exists
+    if ($search_query) {
+        $stmt->bindValue(':search_query', '%' . $search_query . '%', PDO::PARAM_STR);
+    }
+
     $stmt->execute();
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
+// Function to get latest products
+function get_latest_products() {
+    $products = get_latest_products_by_id('products', 'shops', 'subscription');
+    return $products;
+}
+
+// Initialize variables
+$min_price_input = $max_price_input = $search_query = null;
+
+// Check if the form is submitted and the variables are set
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if (isset($_POST['min_price'])) {
+        $min_price_input = $_POST['min_price'];
+    }
+    if (isset($_POST['max_price'])) {
+        $max_price_input = $_POST['max_price'];
+    }
+}
+
+if (isset($_GET['search'])) {
+    $search_query = $_GET['search'];
+}
+
+// Fetch products based on search and/or price range
+if ($min_price_input !== null && $max_price_input !== null) {
+    $results = filter_products_by_price($min_price_input, $max_price_input, $search_query);
+} elseif ($search_query !== null) {
+    // Fetch products based on search query only
+    $results = filter_products_by_price(0, PHP_INT_MAX, $search_query);
+} else {
+    // Fetch latest products if no search or price filter
+    $results = get_latest_products();
+}
+
+$hasResults = !empty($results);
 ?>
+
 <!DOCTYPE html> 
 <html lang="en">
     <head>
@@ -68,6 +85,19 @@ function filter_service_by_price($min, $max) {
      height: 100px;
      margin-top: -10px;
      margin-left: 186%;
+}
+
+.nav-item {
+    list-style-type: none; /* This will remove the bullet point */
+}
+
+.nav-item form button {
+    background: none; 
+    border: none; 
+    cursor: pointer;
+    padding: 0; 
+    font-size: inherit; 
+    color: inherit; 
 }
  .form {
      position: relative;
@@ -131,7 +161,8 @@ function filter_service_by_price($min, $max) {
 .history{
     color:#bebebe;
     margin-left:20%;
-}.filter{
+}
+ .filter{
     margin-top: -5px;
      margin-left:51.5%;
      font-size: 25px;
@@ -327,13 +358,13 @@ function filter_service_by_price($min, $max) {
 }
  .p-end {
      color: #bebebe;
-     font-size: 14px;
+     font-size: 15px;
      text-align: center;
-     margin-top: 30px;
+     margin-top: 300px;
 }
 /*Responsiveness*/
  @media (max-width: 768px) {
-    .navbar{
+      .navbar{
          position: fixed;
          background-color: white;
          width:100%;
@@ -417,7 +448,7 @@ function filter_service_by_price($min, $max) {
          top: 0;
        
     }
-    .close-modal {
+     .close-modal {
          background-color:transparent;
          border: none;
          cursor: pointer;
@@ -541,6 +572,7 @@ function filter_service_by_price($min, $max) {
          flex-wrap: wrap;
          justify-content: center;
          margin-top:35px;
+         margin-bottom:10px;
     }
      .product {
          flex: 0 0 calc(2%);
@@ -564,7 +596,7 @@ function filter_service_by_price($min, $max) {
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-    }
+     }
     
      .product .product-category {
          color: #666;
@@ -576,7 +608,6 @@ function filter_service_by_price($min, $max) {
          margin-bottom: 5px;
          font-size: 13px;
     }
-
      .product .p {
          display: flex;
     }
@@ -584,7 +615,7 @@ function filter_service_by_price($min, $max) {
          color: #bebebe;
          font-size: 12px;
          text-align: center;
-         margin-top: 30px;
+         margin-top: 300px;
     }
     /* Media query to adjust alignment for smaller screens */
      @media (max-width: 768px) {
@@ -604,8 +635,9 @@ function filter_service_by_price($min, $max) {
             /* Display the dropdown button */
         }
     }
-
 }
+
+ 
         </style>
     </head>
     <body>
@@ -625,19 +657,26 @@ function filter_service_by_price($min, $max) {
                             </li>
                         </a>
                         <li class="nav-item">
-                            <form class="form-inline my-2 my-lg-0">
-                                <a href=""><i class="fa fa-search"></i></a>
-                                <input type="text"  class="form-control form-input" placeholder="Search">
+                            <form action="search_results.php" method="GET" class="form-inline my-2 my-lg-0">
+                                <button type="submit"><i class="fa fa-search"></i></button>
+                                <input type="text" name="search" id="search-input" class="form-control form-input" placeholder="Search">
                                 <a href="javascript:void(0);" onclick="goBack()">
                                     <i class="back fa fa-angle-left" aria-hidden="true"></i>
-                                    <div id="search-results">Services</div>
-                                  </a>
+                                    <div id="search-results">
+                                        <?php
+                                        // Check if the search query is set in the GET parameters
+                                        if (isset($_GET['search'])) {
+                                            $search_query = htmlspecialchars($_GET['search']);
+                                            echo $search_query;
+                                        } 
+                                        ?>
+                                    </div>
+                                </a>
                             </form>
                         </li>
                     </ul>
                 </div>
             </nav>
-
         </header>
         <main>
             <section>
@@ -649,16 +688,19 @@ function filter_service_by_price($min, $max) {
                         <form action="search_results.php" method="post">
                         <div class="price">
                             <p class="f-label">Price</p>
-                            <input type="text" name="min_price" class="m-price" placeholder="Min: <?php echo $min_price; ?>">
-                            <input type="text" name="max_price" class="m-price" placeholder="Max: <?php echo $max_price; ?>">
+                            <input type="text" name="min_price" class="m-price" placeholder="Min: <?php echo $min_price_input; ?>">
+                            <input type="text" name="max_price" class="m-price" placeholder="Max: <?php echo $max_price_input; ?>">
+
                         </div>
                         <div class="f-apply">
                             <button class="apply" type="submit">Apply</button>
                         </div>
                         </form>
+                    </div>
+                    
                 </div>
                 <div class="upper">
-                    <p class="history">Home > Services</p>
+                    <p class="history">Home > Search</p>
                     <div class="modal-overlay" id="modalOverlay"></div>
                     <div class="filter" id="openModal">
                         <i class="fa fa-sliders" aria-hidden="true"></i>
@@ -666,25 +708,29 @@ function filter_service_by_price($min, $max) {
                 </div>
                 </section>
                 <section>
-                <div class="product-list" id="product-container">
-                <?php foreach ($services as $service): ?>
-                    <div class="product">
-                        <a href="customer_product.php?service_id=<?php echo $service['service_id']; ?>">
-                        <?php
-                        echo '<img src="' . $service['profile_img'] . '" alt="' . $service['last_name'] . '">';
-                    ?>                        
-                            <div class="product-name"><?php echo $service['first_name'] . ' ' . $service['last_name']; ?></div>
-                            <div class="p">
-                                <div class="product-price"><?php echo $service['service_rate']; ?></div>
-                                <div class="product-ratings">4.5 stars</div>
+                <?php if ($hasResults) : ?>
+                    <div class="product-list" id="product-container" >
+                        <?php foreach ($results as $product) : ?>
+                            <div class="product">
+                                <a href="customer_product.php?product_id=<?= $product['product_id'] ?>">
+                                    <img src="<?= $product['product_img'] ?>" alt="<?= $product['product_name'] ?>">
+                                    <div class="product-name"><?= $product['product_name'] ?></div>
+                                    <div class="product-category"><?= $product['product_category'] ?></div>
+                                    <div class="p">
+                                        <div class="product-price">₱ <?= $product['product_price'] ?></div>
+                                    </div>
+                                </a>
                             </div>
-                        </a>
+                        <?php endforeach; ?>
                     </div>
-                <?php endforeach; ?>
-                   
+                <?php else : ?>
+                    <p class="p-end">No products found</p>
+                <?php endif; ?>
 
-                </div>
+               
+                 
             </section>
+           
             <br><br><br>
         </main>
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>

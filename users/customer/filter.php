@@ -127,7 +127,171 @@ function filter_products_by_price($min, $max) {
     display: flex;
     margin-top: 15px;
 }
-
+.history{
+    color:#bebebe;
+    margin-left:20%;
+}
+ .filter{
+    margin-top: -5px;
+     margin-left:49.5%;
+     font-size: 25px;
+     color: #8e8e8e;
+}
+ .filter {
+     cursor: pointer;
+}
+ .close-modal {
+     background-color:transparent;
+     border: none;
+     cursor: pointer;
+     border-radius: 5px;
+     margin-top: 12px;
+     margin-left:90%;
+     font-size: 20px;
+     color: #666;
+     transform: translateX(-50%);
+     position: absolute;
+}
+ .close-modal:hover {
+     background-color: transparent;
+     color:#666;
+}
+ .close-modal:focus{
+     outline: none;
+}
+ .modal-overlay {
+     display: none;
+     position: fixed;
+     top: 0;
+     left: 0;
+     width: 100%;
+     height: 100%;
+     background-color: rgba(0, 0, 0, 0.3);
+     z-index: 1;
+     opacity: 0;
+     transition: opacity 0.3s ease;
+}
+ .modal-overlay-active {
+     display: block;
+     opacity: 1;
+}
+ .filter-modal {
+     display: none;
+     position: fixed;
+     top: 19%;
+     left: 50%;
+     transform: translateX(-50%);
+     width: 30%;
+     height: auto;
+     justify-content: center;
+     align-items: center;
+     z-index: 2;
+     transition: bottom 0.5s ease-in-out, opacity 0.5s ease-in-out;
+}
+ .filter-modal-content {
+     background-color: #fff;
+     padding: 25px;
+     border-radius: 5px;
+     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+}
+ .p-filter{
+     text-align: center;
+     font-size: 20px;
+     margin-top: 10px;
+}
+ .f-label{
+     font-size: 18px;
+     color:#555;
+     font-weight: 400;
+     margin-top: 25px;
+     margin-bottom:20px;
+}
+ .price input{
+     text-align: center;
+     border-radius: 30px;
+     color: #666;
+}
+ .m-price{
+     border: 1px solid #65A5A5;
+     padding:5px;
+     width:47%;
+}
+ .m-price:focus {
+     border: 2px solid #65A5A5;
+     outline: none;
+}
+ .m-price + .m-price {
+     margin-left: 25px;
+    /* Adjust the value as needed */
+}
+ .m-price::placeholder{
+     text-align: center;
+     font-size: 14px;
+     color:#bebebe;
+}
+ .r-btn{
+     align-items: center;
+     padding: 5px 9px;
+     border-radius: 30px;
+     border: 1px solid #65A5A5;
+     background: #FFF;
+     color: #666;
+    ;
+     margin: 5px 6px;
+     cursor: pointer;
+     width: auto;
+     font-size: 14px;
+}
+ .r-btn:focus{
+     outline:none;
+     border:none;
+     background-color: #65A5A5;
+     color: white;
+}
+ .ratings-btn{
+     align-items: center;
+     padding: 5px 9px;
+     border-radius: 30px;
+     border: 1px solid #65A5A5;
+     background: #FFF;
+     color: #666;
+    ;
+     margin: 5px 6px;
+     cursor: pointer;
+     width: 17%;
+     font-size: 14px;
+}
+ .ratings-btn:focus{
+     outline:none;
+     border:none;
+     background-color: #65A5A5;
+     color: white;
+}
+ .ratings-btn i{
+     color: #ff7e95;
+}
+ .f-apply {
+     display: flex;
+     justify-content: center;
+     align-items: center;
+     margin: auto;
+     text-align: center;
+}
+ .apply {
+     background-color: #65a5a5;
+     color: white;
+     border: none;
+     padding: 12px;
+     min-width: 520px;
+     width: auto;
+     border-radius: 30px;
+     margin-top: 30px;
+     margin-bottom: 20px;
+}
+ .apply:focus {
+     border: none;
+     outline: none;
+}
 .product-list {
     display: flex;
     flex-wrap: wrap;
@@ -135,7 +299,7 @@ function filter_products_by_price($min, $max) {
     gap: 20px;
     max-width: 1140px;
     margin: 0 auto;
-    margin-top: 40px;
+    margin-top: 20px;
 }
 
 .product {
@@ -243,7 +407,7 @@ function filter_products_by_price($min, $max) {
          padding: 0;
          position: absolute;
          top: 24px;
-         left: 90%;
+         left: 80%;
          transform: translateX(-50%);
          color: #65a5a5;
     }
@@ -274,13 +438,176 @@ function filter_products_by_price($min, $max) {
          text-decoration: none;
          outline: none;
     }
-     
+     .filter {
+         margin-top: 20px;
+         margin-left: 93%;
+         font-size: 20px;
+         position: fixed;
+         color: #8e8e8e;
+         transform: translateX(-50%);
+         z-index: 200;
+         top: 0;
+       
+    }
+     .close-modal {
+         background-color:transparent;
+         border: none;
+         cursor: pointer;
+         border-radius: 5px;
+         margin-top: 12px;
+         margin-left:89%;
+         font-size: 20px;
+         color: #777;
+         transform: translateX(-50%);
+         position: absolute;
+    }
+     .close-modal:hover {
+         background-color: transparent;
+         color:#666;
+    }
+     .close-modal:focus{
+         outline: none;
+    }
+     .modal-overlay {
+         display: none;
+         position: fixed;
+         top: 0;
+         left: 0;
+         width: 100%;
+         height: 100%;
+         background-color: rgba(0, 0, 0, 0.2);
+         z-index: 100;
+         opacity: 0;
+         transition: opacity 0.3s ease;
+        
+    }
+     .modal-overlay-active {
+         display: block;
+         opacity: 1;
+        
+    }
+     .filter-modal {
+         display: none;
+         position: fixed;
+         top: 37%;
+         width: 102%;
+         left:50%;
+         right:0;
+         height: auto;
+         justify-content: center;
+         align-items: center;
+         z-index: 200;
+         transition: bottom 100.5s ease-in-out, opacity 100.5s ease-in-out;
+    }
+     .filter-modal-content {
+         background-color: #fff;
+         padding: 15px;
+         border-radius: 15px;
+         box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+    }
+     .p-filter{
+         text-align: center;
+         font-size: 15px;
+         margin-top: 10px;
+         color: #777;
+    }
+     .f-label{
+         font-size: 14px;
+         color:#555;
+         font-weight: 400;
+         margin-top: 25px;
+         margin-bottom:20px;
+    }
+     .price input{
+         text-align: center;
+         border-radius: 30px;
+         color: #666;
+         font-size: 14px;
+    }
+     .m-price{
+         border: 1px solid #65A5A5;
+         padding:5px;
+         width:45%;
+    }
+     .m-price:focus {
+         border: 2px solid #65A5A5;
+         outline: none;
+    }
+     .m-price + .m-price {
+         margin-left: 25px;
+        
+    }
+     .m-price::placeholder{
+         text-align: center;
+         font-size: 14px;
+    }
+     .r-btn{
+         align-items: center;
+         padding: 5px 9px;
+         border-radius: 30px;
+         border: 1px solid #65A5A5;
+         background: #FFF;
+         color: #666;      
+         margin: 4px;
+         cursor: pointer;
+         width: auto;
+         font-size: 13px;
+    }
+     .r-btn:focus{
+         outline:none;
+         border:none;
+         background-color: #65A5A5;
+         color: white;
+    }
+     .ratings-btn{
+         align-items: center;
+         padding: 5px 9px;
+         border-radius:30px;
+         border: 1px solid #65A5A5;
+         background: #FFF;
+         color: #666;
+        ;
+         margin: 5px 6px;
+         cursor: pointer;
+         width: 15%;
+         font-size: 13px;
+    }
+     .ratings-btn:focus{
+         outline:none;
+         border:none;
+         background-color: #65A5A5;
+         color: white;
+    }
+     .ratings-btn i{
+         color: gold;
+    }
+     .f-apply {
+         display: flex;
+         justify-content: center;
+         align-items: center;
+         margin: auto;
+         text-align: center;
+    }
+     .apply {
+         background-color: #65a5a5;
+         color: white;
+         border: none;
+         padding: 12px;
+         min-width: 345px;
+         width: auto;
+         border-radius: 30px;
+         margin-top: 30px;
+         margin-bottom: 20px;
+    }
+     .apply:focus {
+         border: none;
+         outline: none;
+    }
     .product-list {
          display: flex;
          flex-wrap: wrap;
          justify-content: center;
-         margin-top:90px;
-         margin-bottom:10px;
+         margin-top:35px;
     }
      .product {
          flex: 0 0 calc(2%);
@@ -304,7 +631,7 @@ function filter_products_by_price($min, $max) {
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-    
+    }
     }
      .product .product-category {
          color: #666;
@@ -316,6 +643,7 @@ function filter_products_by_price($min, $max) {
          margin-bottom: 5px;
          font-size: 13px;
     }
+
      .product .p {
          display: flex;
     }
@@ -369,7 +697,7 @@ function filter_products_by_price($min, $max) {
                                 <input type="text"  class="form-control form-input" placeholder="Search">
                                 <a href="javascript:void(0);" onclick="goBack()">
                                     <i class="back fa fa-angle-left" aria-hidden="true"></i>
-                                    <div id="search-results">Category</div>
+                                    <div id="search-results">Products</div>
                                   </a>
                             </form>
                         </li>
@@ -379,8 +707,27 @@ function filter_products_by_price($min, $max) {
         </header>
         <main>
             <section>
-                
-                
+                <div class="filter-modal" id="filterModal">
+                    <div class="filter-modal-content">
+                        <button class="close-modal" id="closeModal"><i class="fa fa-times-circle-o" aria-hidden="true"></i></button>
+                        <p class="p-filter">Filters</p>
+                        <hr class="f-hr">
+                        <form action="allproducts.php" method="post">
+                        <div class="price">
+                            <h4 class="f-label">Price</h4>
+                            <input type="text" name="min_price" class="m-price" placeholder="Min: <?php echo $min_price; ?>">
+                            <input type="text" name="max_price" class="m-price" placeholder="Max: <?php echo $max_price; ?>">
+                        </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="upper">
+                    <p class="history">Home > All Products</p>
+                    <div class="modal-overlay" id="modalOverlay"></div>
+                    <div class="filter" id="openModal">
+                        <i class="fa fa-sliders" aria-hidden="true"></i>
+                    </div>
+                </div>
                 </section>
                 <section>
                 <div class="product-list" id="product-container">
@@ -407,7 +754,35 @@ function filter_products_by_price($min, $max) {
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-        
+        <script>
+            const filterModal = document.getElementById('filterModal');
+            const openModalButton = document.getElementById('openModal');
+            const closeModalButton = document.getElementById('closeModal');
+            const modalOverlay = document.getElementById('modalOverlay');
+            
+            // Function to open the filter modal
+            function openModal() {
+              filterModal.style.display = 'block';
+              modalOverlay.classList.add('modal-overlay-active'); // Add the class to show the overlay
+            
+              // Add the "active" class to slide up the modal
+              filterModal.classList.add('active');
+            }
+            
+            // Function to close the filter modal
+            function closeModal() {
+              filterModal.style.display = 'none';
+              modalOverlay.classList.remove('modal-overlay-active'); // Remove the class to hide the overlay
+            
+              // Remove the "active" class to slide down the modal
+              filterModal.classList.remove('active');
+            }
+            
+            // Event listeners to open and close the modal
+            openModalButton.addEventListener('click', openModal);
+            closeModalButton.addEventListener('click', closeModal);
+            
+        </script>    
         <script>
             function goBack() {
                 window.history.back();

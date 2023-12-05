@@ -103,7 +103,34 @@ function get_product_details($productID, $salesdetailsId) {
 
 
 
+// Function to check if a product with a given salesdetails_id exists in the sales table
+function is_salesdetails_id_in_sales_table($salesdetailsId) {
+    $conn = dbconnect(); // Connect to the database
 
+    // Define the table and where clause
+    $table = 'sales';
+    $where = 'salesdetails_id';
+
+    // Prepare the SQL query to check if salesdetails_id is in the sales table
+    $sql = "SELECT COUNT(*) as count FROM $table WHERE $where = ?";
+
+    try {
+        // Prepare and execute the statement
+        $stmt = $conn->prepare($sql);
+        $stmt->execute([$salesdetailsId]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        // Check if salesdetails_id is in the sales table
+        return ($result['count'] > 0);
+    } catch (PDOException $e) {
+        // Handle any errors
+        echo "Error: " . $e->getMessage();
+        return false;
+    } finally {
+        // Close the database connection
+        $conn = null;
+    }
+}
 
 ?>
 
@@ -118,9 +145,9 @@ function get_product_details($productID, $salesdetailsId) {
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
         <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
-        <link rel="stylesheet" href="../../css/cart.css">
+        
         <style>
-             .number{
+             .number, .address, .zipcode{
                 font-size: 13px;
                 margin-top: 25px;
             }
@@ -131,10 +158,15 @@ function get_product_details($productID, $salesdetailsId) {
                 margin-top: 30px;
             }
         
-            .item-details h2 {
+            .item-details .p_name{
                 font-size: 16px;
                 color:#555;
-                margin-top: -20px;
+                margin-top: -35px;
+                width:400px;
+                font-weight: 400;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
             }
             .all-items .item-checkbox {
                 margin-left: 10px;
@@ -145,7 +177,7 @@ function get_product_details($productID, $salesdetailsId) {
             }
             .cart-item img {
                 width: 100px;
-                height: 230px;
+                height: 250px;
                 margin-right: 20px;
             }
             .flower-type{
@@ -201,7 +233,680 @@ function get_product_details($productID, $salesdetailsId) {
                 margin: auto;
                 margin-top: 5%;
             }
+            @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap");
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+                font-family: "Poppins", sans-serif;
+            }
+            .navbar img {
+                padding: 0;
+                width: 195px;
+                height: 100px;
+                margin-top: -10px;
+                margin-left: 186%;
+            }
+            .form {
+                position: relative;
+                color: #8e8e8e;
+                left: 130px;
+            }
+            .form-inline .fa-search {
+                position: absolute;
+                top: 43px;
+                left: 78%;
+                color: #9ca3af;
+                font-size: 22px;
+            }
+            .form-input[type="text"] {
+                height: 50px;
+                width: 500px;
+                background-color: #f0f0f0;
+                border-radius: 10px;
+                margin-left: 430px;
+                margin-top: -10px;
+            }
+            .nav-hr{
+                width:60%;
+                margin: auto;
+                margin-top:-6px;
+            }
+            #search-results{
+                display:none;
+            }
+            .back{
+                display: none;
+            }
+            .container {
+                display: flex;
+                justify-content: space-between;
+                gap: 20px;
+            }
+            .column1 {
+                flex-basis: 50%;
+                margin-top: 10px;
+                display: flex;
+                flex-direction: column;
+            }
+            .location{
+                border-radius: 10px;
+                border:1px solid #65A5A5;
+                padding:10px;
+                width:120%;
+                display: flex;
+                margin-top: 20px;
+            }
+            .location i{
+                margin-right: 10px;
+                position: relative;
+                font-size:30px;
+                color:#666;
+            }
+            .location-info {
+                flex-direction: column;
+                font-size:13px;
+                line-height:20%;
+                margin-top: 2.5%;
+                position: relative;
+                margin-left:10px;
+             
 
+            }
+            .loc{
+                font-size: 15px;
+            }
+            .street{
+                font-size: 13px;
+                margin-top: 20px;
+            }
+            .cart-container {
+                width: 120%;
+                margin: 20px auto;
+                background-color: #fff;
+                border-radius: 5px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            }
+            .all-items{
+                display: flex;
+                background-color: #f0f0f0;
+                padding:10px;
+                top:0px;
+            }
+            input[type="checkbox"] {
+                transform: scale(1.5);
+                background-color: #65A5A5;
+            }
+            .all-checkbox{
+                margin-left:13px;
+                background-color: #65A5A5;
+            }
+            .items-label{
+                font-size: 15px;
+                margin-top:2%;
+                margin-left:25px;
+                color:#555;
+            }
+            .edit{
+                background-color: transparent;
+                border:none;
+                color:#666;
+                padding: 10px 5px;
+                border-radius: 10px;
+                font-size: 15px;
+                margin-left:600px;
+                position:absolute;
+
+            
+            
+            }
+            .edit:focus{
+                outline: none;
+            }
+            .cart-item {
+                display: flex;
+                align-items: center;
+                padding:20px;
+            }
+            .shop-info {
+                flex-direction: column;
+                font-size:13px;
+                line-height:5%;
+                margin-top: 2%;
+                position: relative;
+            }
+            .shop-info img {
+                width: 35px;
+                height: 35px;
+                margin-top:2px;
+                margin-left: 13px;
+                border-radius:50px;
+            }
+            .shop-info h3{
+                margin-top:-35px;
+            }
+            .shop-info a h3{
+                font-size: 14px;
+                margin-left: 60px;
+                margin-top:-25px;
+                color:#555;
+            }
+            .shop-name a{
+                display: flex;
+                align-items: center;
+                flex-grow: 1;
+            }
+            .shop-name a:hover{
+                text-decoration: none;
+            }
+            .fa.fa-angle-right {
+                margin-left: 10px;
+                margin-top:-33px;
+                color: #555;
+                font-size: 18px;
+            }
+            .item-checkbox {
+                margin-right: 15px;
+            }
+            .custom-checkbox {
+                margin-top: -5px;
+                ;
+            }
+            .cart-item img {
+                max-width: 100px;
+                max-height: 100px;
+                margin-right: 20px;
+            }
+
+            .item-details p {
+                margin: 5px 0;
+            }
+            
+            .flower-type{
+                display: flex;
+                gap:10px;
+                margin-top:-5px;
+            }
+            .flower{
+                font-size: 13px;
+                color:#777;
+            }
+            .type{
+                font-size: 13px;
+                color:#666;
+            }
+            .ribbon-color{
+                display: flex;
+                gap:10px;
+                margin-top:-5px;
+            }
+            .ribbon{
+                font-size: 13px;
+                color:#777;
+            }
+            .color{
+                font-size: 13px;
+                color:#666;
+            }
+            .price{
+                color:#666;
+                font-weight: 500;
+                font-size: 15px;
+            }
+            .quantity-control {
+                display: flex;
+                position: absolute;
+                margin-top:-31px;
+                left: 51.7%;
+                transform: translateX(-50%);
+            }
+            input[type="text"] {
+                width: 50px;
+                text-align: center;
+                font-size: 14px;
+                padding:1px;
+                border: 1px solid #d2cfcf;
+                color:#666;
+            }
+            .quantity-button {
+                background-color: transparent;
+                color: #666;
+                border: 1px solid #d2cfcf;
+                cursor: pointer;
+                padding: 1px 10px;
+                font-size: 15px;
+                border-radius: 2px;
+            }
+            .column2 {
+                flex-basis: 37%;
+                margin-top:21px;
+            }
+            .border{
+                height:8px;
+                background-color: #f0f0f0;
+            }
+            .summary-container {
+                width: 100%;
+                margin-top: 10px ;
+                background-color: #fff;
+                border-radius: 5px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            }
+            .order-summary{
+                display: flex;
+                background-color: #f0f0f0;
+                padding:10px;
+                top:0px;
+            }
+            .order-label{
+                margin-top:5px;
+                margin-left:10px;
+            }
+            .summary-items{
+                padding:20px;
+            }
+            .sub-label{
+                color:#555;
+            }
+            .sub-price{
+                color:#555;
+                margin-left:63%;
+            }
+            .sub-total{
+                display: flex;
+            }
+            .button-container {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+            .checkout a{
+                color: #fff;
+                text-decoration: none;
+            }
+            .checkout{
+                background-color: #65A5A5;
+                color:white;
+                border:none;
+                outline:none;
+                padding: 10px;
+                padding-left: 50px;
+                padding-right: 50px;
+                width:91%;
+                border-radius: 10px;
+                margin-bottom: 20px;
+                text-align: center;
+            }
+            .checkout:focus{
+                outline:none;
+                border:none;
+            }
+            /*Responsiveness*/
+            @media (max-width: 768px) {
+                .navbar{
+                    position: fixed;
+                    background-color: white;
+                    width:100%;
+                    z-index: 100;
+                    top:0px;
+                }
+                .navbar img {
+                    display: none;
+                }
+                .form-input[type="text"] {
+                    display: none;
+                }
+                .nav-hr{
+                    width:100%;
+                }
+                a #search-results{
+                    display: block ;
+                    font-size: 15px;
+                    margin-left: 20px;
+                    color: #555;
+                    margin-top: -20px;
+                }
+                a:hover{
+                    text-decoration: none;
+                    outline: none;
+                    border:none;
+                }
+                .back{
+                    display: block;
+                    font-size: 20px;
+                }
+                .form-inline .fa-search {
+                    display: none;
+                }
+                .form-inline .back{
+                    text-decoration: none;
+                    color:#666;
+                }
+                .form-inline .fa-angle-left:focus {
+                    text-decoration: none;
+                    outline: none;
+                }
+                .container {
+                    margin-top: 50px;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 20px;
+                }
+                .column1 {
+                    display: flex;
+                    flex-direction: column;
+                    margin:0;
+                    margin-left:0;
+                    margin-bottom: 40px;
+                }
+                .location{
+                    border-radius: 10px;
+                    border:1px solid #65A5A5;
+                    padding:10px;
+                    width:100%;
+                    display: flex;
+                    margin-top: 20px;
+                }
+                .location i{
+                    margin-right: 10px;
+                    margin-top:5px;
+                    position: relative;
+                    font-size:25px;
+                    color:#666;
+                }
+                .location-info {
+                   
+                    font-size:13px;
+                    line-height:20%;
+                    margin-top: 2.5%;
+                    position: relative;
+                    flex-direction: row; /* Align items horizontally for larger screens */
+
+                 
+                }
+                .loc{
+                    font-size: 13px;
+                    margin-left:-80px;
+                }
+                .number{
+                    font-size: 13px;
+                    margin-top: 25px;
+                    margin-left: -90px;
+                    
+                }
+                .zipcode{
+                    font-size: 13px;
+                    margin-top: 25px;
+                    margin-left: -130px;
+                    
+                }
+                .street{
+                    font-size: 12px;
+                    margin-top: 20px;
+                    margin-left:-10px;
+                }
+                .cart-container {
+                    width: 100%;
+                    margin: 20px auto;
+                    background-color: #fff;
+                    border-radius: 5px;
+                    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+                }
+                .all-items{
+                    display: flex;
+                    background-color: #f0f0f0;
+                    padding:5px;
+                    top:0px;
+                }
+                input[type="checkbox"] {
+                    transform: scale(1.1);
+                    background-color: #65A5A5;
+                }
+                .all-checkbox{
+                    margin-left:11px;
+                    background-color: #65A5A5;
+                }
+                .items-label{
+                    font-size: 13px;
+                    margin-top:4%;
+                    color:#555;
+                }
+                .edit{
+                    background-color: transparent;
+                    border:none;
+                    color:#666;
+                    padding: 10px 5px;
+                    border-radius: 10px;
+                    font-size: 15px;
+                    margin-left:300px;
+                
+                
+                }
+                .cart-item {
+                    margin-bottom: 50px;
+                    padding:20px;
+                }
+                .shop-info {
+                    flex-direction: column;
+                    text-align:left ;
+                    margin-left:5px;
+                    line-height:5%;
+                    margin-top: 2%;
+                    position: relative;
+                }
+                .shop-info img {
+                    width: 25px;
+                    height: 25px;
+                    margin-top:2px;
+                    margin-left: 10px;
+                    border-radius:50px;
+                }
+                .shop-info a h3{
+                    font-size: 12px;
+                    margin-left: 45px;
+                    margin-top:-20px;
+                    color:#555;
+                }
+                .shop-name a{
+                    display: flex;
+                    align-items: center;
+                    flex-grow: 1;
+                }
+
+                .fa.fa-angle-right {
+                    margin-left: 10px;
+                    margin-top:-29px;
+                    color: #555;
+                    font-size: 16px;
+                }
+
+                .cart-hr{
+                    margin-top:5px;
+                }
+                .custom-checkbox {
+                    width: 50px;
+                    display: flex;
+                    margin-top: -20px;
+                }
+                .item-checkbox {
+                    margin-right: -1px;
+                    margin-top: 0px;
+                }
+                .cart-item img {
+                    max-width: 80px;
+                    height:90px;
+                    max-height: 100px;
+                    margin-right: 20px;
+                    margin-top:-10px;
+                    margin-left:11px;
+                }
+                .item-details{
+                    margin-top: -10px;
+                    margin-left:5px;
+                }
+                .item-details .p_name{
+                    font-size: 13px;
+                    color:#555;
+                    margin-left:60px;
+                    margin-top:-55px;
+                    width:170px;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    position: sticky;
+                    
+          
+                }
+                .item-details p {
+                    margin: 5px 0;
+                }
+                .flower-type{
+                    display: flex;
+                    justify-content:flex-start;
+                    width:190px;
+                    margin-top:-1px;
+                    margin-left:60px;
+                }
+                .flower{
+                    color:#777;
+                    font-size: 11px;
+                }
+                .type{
+                    color:#777;
+                    font-size: 11px;
+                    margin-left:-105px;
+                }
+                .ribbon-color{
+                    display: flex;
+                    gap:10px;
+                    margin-top:1px;
+                    margin-left:60px;
+                }
+                .ribbon{
+                    font-size: 11px;
+                    color:#777;
+                }
+                .color{
+                    font-size: 11px;
+                    color:#666;
+                }
+                .price{
+                    color:#666;
+                    font-weight: 500;
+                    font-size: 13px;
+                    display: flex;
+                    position: absolute;
+                    left: 46%;
+                    transform: translateX(-50%);
+                }
+                .quantity-control {
+                    display: flex;
+                    position: absolute;
+                    margin-top:5px;
+                    left: 79%;
+                    transform: translateX(-50%);
+                }
+                input[type="text"] {
+                    width: 40px;
+                    height:20px;
+                    text-align: center;
+                    font-size: 11px;
+                    padding:1px;
+                    border: 1px solid #d2cfcf;
+                    color:#666;
+                }
+                .quantity-button {
+                    background-color: transparent;
+                    color: #666;
+                    height:20px;
+                    border: 1px solid #d2cfcf;
+                    cursor: pointer;
+                    padding: 1px 7px;
+                    font-size: 12px;
+                    border-radius: 2px;
+                }
+                .quantity-button:focus{
+                    outline:none;
+                }
+                .column2 {
+                    flex-basis: 37%;
+                    margin-top:21px;
+                }
+                .border{
+                    height:8px;
+                    margin-top:-20px;
+                    background-color: #f0f0f0;
+                }
+                .summary-container {
+                    position: fixed;
+                    bottom: 0;
+                    left: 0;
+                    height:8%;
+                    background-color: #fff;
+                    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
+                    display: flex;
+                    justify-content: space-between;
+                    padding: 10px 10px;
+                    z-index: 100;
+                    border-radius: 0px;
+                }
+                .order-summary{
+                    display: none;
+                }
+                .order-label{
+                    display:none;
+                }
+                .summary-items{
+                    padding:20px;
+                }
+                .sub-label{
+                    display:none;
+                }
+                .sub-total{
+                    display: flex;
+                }
+                .button-container {
+                    padding-right:20px;
+                    margin-top: 20px;
+                    margin-left: -20px;
+                }
+                .sub-price {
+                    margin-right: -110px;
+                    margin-top:-10px;
+                }
+                .checkout{
+                    background-color: #65A5A5;
+                    color:white;
+                    border:none;
+                    outline:none;
+                    width:100%;
+                    border-radius: 10px;
+                    font-size: 15px;
+                    margin-left:30px;
+                    margin-right:-15px;
+                    margin-top:1px;
+                }
+                .checkout a{
+                    color: #fff;
+                    text-decoration: none;
+                }
+                .checkout:focus{
+                    outline:none;
+                }
+                /* Media query to adjust alignment for smaller screens */
+                @media (max-width: 768px) {
+                    .product {
+                        width: calc(50% - 15px);
+                    }
+                    .product-list{
+                        gap: 10px;
+                    }
+                    .column1 {
+                        text-align: center;
+                    }
+                }
+            }
+ 
         </style>
     </head>
     <body>
@@ -227,7 +932,6 @@ function get_product_details($productID, $salesdetailsId) {
                     </ul>
                 </div>
             </nav>
-            <hr class="nav-hr">
         </header>
         <main class="main">
             <div class="container">
@@ -236,7 +940,9 @@ function get_product_details($productID, $salesdetailsId) {
                         <i class="bi bi-geo-alt"></i>
                         <div class="location-info">
                             <?php if (isset($address) && isset($zipcode) && isset($phone)) { ?>
-                                <p class="loc">Delivering to: <?php echo $address; ?>, <?php echo $zipcode; ?><i class=" fa fa-angle-right" aria-hidden="true"></i></p></p>
+                                <p class="loc">Delivering to: </p>
+                                <p class="address"> <?php echo $address; ?></p>
+                                <p class="zipcode"> <?php echo $zipcode; ?></p>
                                 <p class="number"> <?php echo $phone; ?></p>
                             <?php } else { ?>
                                 <p class="loc">Address not available</p>
@@ -256,14 +962,23 @@ function get_product_details($productID, $salesdetailsId) {
                                         <?php
                                         $productsByShop = array();
 
+                                        $removedSalesDetailsIds = array(); 
                                         // Loop through each product and organize them by shop_id
                                         foreach ($products as $product) {
                                             $shopId = $product['shop_owner'];
                                             if (!isset($productsByShop[$shopId])) {
                                                 $productsByShop[$shopId] = array();
                                             }
+                                        
+                                            // Check if the salesdetails_id is already in the sales table
+                                            if (is_salesdetails_id_in_sales_table($product['salesdetails_id'])) {
+                                                $removedSalesDetailsIds[] = $product['salesdetails_id'];
+                                                continue; // Skip this product if its salesdetails_id is in the sales table
+                                            }
+                                        
                                             $productsByShop[$shopId][] = $product;
                                         }
+                                        $productsByShop = array_filter($productsByShop);
                                         if (empty($productsByShop)) {
                                             echo 'No products added to cart.';
                                         } else {
@@ -290,6 +1005,8 @@ function get_product_details($productID, $salesdetailsId) {
                                                     // Display products for the current shop
                                                     echo '<hr class="cart-hr">';
                                                     echo '<div class="cart-items">';
+                                                    $shopHasProducts = false; // Flag to track if the shop has any products to display
+
                                                     foreach ($shopProducts as $product) {
                                                         echo '<div class="cart-item">';
                                                         echo '<div class="custom-checkbox" style="margin-top: -30px">';
@@ -299,7 +1016,7 @@ function get_product_details($productID, $salesdetailsId) {
                                                 
                                                         // Rest of your product display code...
                                                         echo '<div class="item-details">';
-                                                        echo '<h2>' . $product['product_name'] . '</h2>';                
+                                                        echo '<p class="p_name">' . $product['product_name'] . '</p>';                
                                                         //Retrieve flower type and ribbon color from salesdetails table
                                                         $salesDetails = $product;
 
@@ -345,6 +1062,11 @@ function get_product_details($productID, $salesdetailsId) {
                                                     echo '<div class="border"></div>';
                                                 }
                                             }
+                                            $products = array_filter($products, function ($product) use ($removedSalesDetailsIds) {
+                                                return !in_array($product['salesdetails_id'], $removedSalesDetailsIds);
+                                            });
+                                            
+                                            $_SESSION['selected_products'] = $products;
                                         ?>
                                  
 

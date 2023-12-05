@@ -123,6 +123,7 @@ function filter_products_by_price($min, $max) {
  .back{
      display: none;
 }
+
 .upper{
     display: flex;
     margin-top: 15px;
@@ -132,8 +133,8 @@ function filter_products_by_price($min, $max) {
     margin-left:20%;
 }
  .filter{
-    
-     margin-left:49.5%;
+    margin-top: -5px;
+     margin-left:49%;
      font-size: 25px;
      color: #8e8e8e;
 }
@@ -146,15 +147,15 @@ function filter_products_by_price($min, $max) {
      cursor: pointer;
      border-radius: 5px;
      margin-top: 12px;
-     margin-left:90%;
+     margin-left:88%;
      font-size: 20px;
-     color: #666;
+     color: #bebebe;
      transform: translateX(-50%);
      position: absolute;
 }
  .close-modal:hover {
      background-color: transparent;
-     color:#666;
+     color: #ccc;
 }
  .close-modal:focus{
      outline: none;
@@ -178,10 +179,10 @@ function filter_products_by_price($min, $max) {
  .filter-modal {
      display: none;
      position: fixed;
-     top: 19%;
+     top: 33%;
      left: 50%;
      transform: translateX(-50%);
-     width: 30%;
+     width: 25%;
      height: auto;
      justify-content: center;
      align-items: center;
@@ -191,30 +192,37 @@ function filter_products_by_price($min, $max) {
  .filter-modal-content {
      background-color: #fff;
      padding: 25px;
-     border-radius: 5px;
+     border-radius: 10px;
      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
 }
  .p-filter{
-     text-align: center;
-     font-size: 20px;
-     margin-top: 10px;
+    color:#666;
+    font-size: 17px;
+    text-align: center;
+    letter-spacing: 0.1rem;
+    margin-top: 15px;
 }
  .f-label{
-     font-size: 18px;
-     color:#555;
-     font-weight: 400;
-     margin-top: 25px;
-     margin-bottom:20px;
+    color:#666;
+    font-size: 15px;
+    letter-spacing: 0.1rem;
+    margin-top: 3px;
+}
+.price {
+    display: inline-block;
+    
+    
 }
  .price input{
      text-align: center;
-     border-radius: 30px;
+     border-radius: 10px;
      color: #666;
 }
  .m-price{
      border: 1px solid #65A5A5;
      padding:5px;
-     width:47%;
+     width:46%;
+     
 }
  .m-price:focus {
      border: 2px solid #65A5A5;
@@ -229,97 +237,61 @@ function filter_products_by_price($min, $max) {
      font-size: 14px;
      color:#bebebe;
 }
- .r-btn{
-     align-items: center;
-     padding: 5px 9px;
-     border-radius: 30px;
-     border: 1px solid #65A5A5;
-     background: #FFF;
-     color: #666;
-    ;
-     margin: 5px 6px;
-     cursor: pointer;
-     width: auto;
-     font-size: 14px;
-}
- .r-btn:focus{
-     outline:none;
-     border:none;
-     background-color: #65A5A5;
-     color: white;
-}
- .ratings-btn{
-     align-items: center;
-     padding: 5px 9px;
-     border-radius: 30px;
-     border: 1px solid #65A5A5;
-     background: #FFF;
-     color: #666;
-    ;
-     margin: 5px 6px;
-     cursor: pointer;
-     width: 17%;
-     font-size: 14px;
-}
- .ratings-btn:focus{
-     outline:none;
-     border:none;
-     background-color: #65A5A5;
-     color: white;
-}
- .ratings-btn i{
-     color: #ff7e95;
-}
+ 
  .f-apply {
      display: flex;
      justify-content: center;
      align-items: center;
      margin: auto;
      text-align: center;
+     margin-top: 10px;
 }
  .apply {
      background-color: #65a5a5;
      color: white;
      border: none;
      padding: 12px;
-     min-width: 520px;
-     width: auto;
-     border-radius: 30px;
+     width: 450px;
+     border-radius: 10px;
      margin-top: 30px;
      margin-bottom: 20px;
+     font-size"15px;
 }
  .apply:focus {
      border: none;
      outline: none;
 }
- .product-list {
-     display: flex;
-     flex-wrap: wrap;
-     justify-content: flex-start;
-     gap: 20px;
-     max-width: 1140px;
-     margin: 0 auto;
-     margin-top: 30px;
+.product-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 20px;
+    max-width: 1140px;
+    margin: 0 auto;
+    margin-top: 20px;
 }
- .product {
-     flex: 0 0 calc(2%);
-     margin-top:-20px;
-     margin-bottom: 20px;
-     padding: 10px;
-     border: 1px solid #ccc;
-     border-radius: 10px;
-     display: flex;
-     flex-direction: column;
-     text-align: left;
-     box-sizing: border-box;
+
+.product {
+    flex: 0 0 calc(4%);
+    margin-top: -20px;
+    margin-bottom: 20px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    box-sizing: border-box;
 }
- .product a:hover{
-     text-decoration: none;
+
+.product a:hover {
+    text-decoration: none;
 }
- .product:hover {
-     transform: scale(1.05);
-   
-}.product a img {
+
+.product:hover {
+    transform: scale(1.05);
+}
+
+.product a img {
     width: 150px;
     height: 150px;
     flex-grow: 1;
@@ -350,12 +322,7 @@ function filter_products_by_price($min, $max) {
      margin-bottom: 5px;
      font-size: 13px;
 }
- .product .product-ratings {
-     color: #acaaaa;
-     font-size: 11px;
-     margin-top: 3px;
-     margin-left: 50px;
-}
+
  .product .p {
      display: flex;
 }
@@ -367,11 +334,12 @@ function filter_products_by_price($min, $max) {
 }
 /*Responsiveness*/
  @media (max-width: 768px) {
-      .navbar{
+    .navbar{
          position: fixed;
          background-color: white;
          width:100%;
          z-index: 100;
+         top:0;
      }
      .navbar img {
          display: none;
@@ -386,8 +354,13 @@ function filter_products_by_price($min, $max) {
          display: block ;
          font-size: 15px;
          margin-left: 20px;
-         color: #555;
-         margin-top: -20px;
+        margin-top: -20px;
+        width: 220px;
+        font-size: 15px;
+        color: #666;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
     a:hover{
         text-decoration: none;
@@ -402,7 +375,7 @@ function filter_products_by_price($min, $max) {
          font-size: 20px;
          padding: 0;
          position: absolute;
-         top: 25px;
+         top: 24px;
          left: 80%;
          transform: translateX(-50%);
          color: #65a5a5;
@@ -435,7 +408,7 @@ function filter_products_by_price($min, $max) {
          outline: none;
     }
      .filter {
-         margin-top: 15px;
+         margin-top: 20px;
          margin-left: 93%;
          font-size: 20px;
          position: fixed;
@@ -445,15 +418,15 @@ function filter_products_by_price($min, $max) {
          top: 0;
        
     }
-     .close-modal {
+    .close-modal {
          background-color:transparent;
          border: none;
          cursor: pointer;
          border-radius: 5px;
-         margin-top: 12px;
-         margin-left:89%;
-         font-size: 20px;
-         color: #777;
+         margin-top: 0px;
+         margin-left:87%;
+         font-size: 18px;
+         color: #bebebe;
          transform: translateX(-50%);
          position: absolute;
     }
@@ -485,8 +458,8 @@ function filter_products_by_price($min, $max) {
      .filter-modal {
          display: none;
          position: fixed;
-         top: 37%;
-         width: 102%;
+         top: 30%;
+         width: 80%;
          left:50%;
          right:0;
          height: auto;
@@ -498,32 +471,36 @@ function filter_products_by_price($min, $max) {
      .filter-modal-content {
          background-color: #fff;
          padding: 15px;
-         border-radius: 15px;
-         box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+         border-top: 10px;
+         border-radius: 10px;
+      
     }
-     .p-filter{
-         text-align: center;
-         font-size: 15px;
-         margin-top: 10px;
-         color: #777;
+    .p-filter{
+        color:#666;
+        font-size: 14px;
+        letter-spacing: 0.1rem;
+        margin-top: 3px;
     }
-     .f-label{
-         font-size: 14px;
-         color:#555;
-         font-weight: 400;
-         margin-top: 25px;
-         margin-bottom:20px;
+    .f-label{
+        color:#666;
+        font-size: 13px;
+        letter-spacing: 0.1rem;
+        margin-top: 3;
     }
-     .price input{
-         text-align: center;
-         border-radius: 30px;
-         color: #666;
-         font-size: 14px;
+    .price {
+        display: inline-block;
     }
-     .m-price{
-         border: 1px solid #65A5A5;
-         padding:5px;
-         width:45%;
+    .price input{
+        text-align: center;
+        border-radius: 10px;
+        color: #666;
+    }
+    .m-price{
+        border: 1px solid #65A5A5;
+        padding:5px;
+        width:44%;
+        font-size: 13px;
+        
     }
      .m-price:focus {
          border: 2px solid #65A5A5;
@@ -535,48 +512,9 @@ function filter_products_by_price($min, $max) {
     }
      .m-price::placeholder{
          text-align: center;
-         font-size: 14px;
+         font-size: 12px;
     }
-     .r-btn{
-         align-items: center;
-         padding: 5px 9px;
-         border-radius: 30px;
-         border: 1px solid #65A5A5;
-         background: #FFF;
-         color: #666;      
-         margin: 4px;
-         cursor: pointer;
-         width: auto;
-         font-size: 13px;
-    }
-     .r-btn:focus{
-         outline:none;
-         border:none;
-         background-color: #65A5A5;
-         color: white;
-    }
-     .ratings-btn{
-         align-items: center;
-         padding: 5px 9px;
-         border-radius:30px;
-         border: 1px solid #65A5A5;
-         background: #FFF;
-         color: #666;
-        ;
-         margin: 5px 6px;
-         cursor: pointer;
-         width: 15%;
-         font-size: 13px;
-    }
-     .ratings-btn:focus{
-         outline:none;
-         border:none;
-         background-color: #65A5A5;
-         color: white;
-    }
-     .ratings-btn i{
-         color: gold;
-    }
+    
      .f-apply {
          display: flex;
          justify-content: center;
@@ -588,64 +526,59 @@ function filter_products_by_price($min, $max) {
          background-color: #65a5a5;
          color: white;
          border: none;
-         padding: 12px;
-         min-width: 345px;
-         width: auto;
-         border-radius: 30px;
+         padding: 7px;
+         width: 330px;
+         border-radius: 10px;
          margin-top: 30px;
-         margin-bottom: 20px;
+         margin-bottom: 10px;
+         font-size:13px;
     }
      .apply:focus {
          border: none;
          outline: none;
     }
-     .product-list {
+    .product-list {
          display: flex;
          flex-wrap: wrap;
          justify-content: center;
-         margin-top: 80px;
+         margin-top:35px;
+         margin-bottom:10px;
     }
      .product {
-         width: calc(9%);
-         margin-bottom: 0px;
-         margin-top: 0px;
-         border: 1px solid #ccc;
-         border-radius: 10px;
+         flex: 0 0 calc(2%);
+         padding: 10px;
+         border: 1px solid #ddd;
+  
          display: flex;
          flex-direction: column;
          text-align: left;
+         box-sizing: border-box;
     }
-     .product img {
-         max-width: 193px;
-         height: 150px;
+     .product img a{
+         width: 193px;
+         height:150px;
          flex-grow: 1;
     }
-     .product .product-info {
-         padding: 10px;
-    }
+
      .product .product-name {
-         font-weight: 500;
-         margin-top: 20px;
-         margin-bottom: 5px;
-         font-size: 14px;
-         color: #666;
+        font-size: 13px;
+        color: #666;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    
     }
      .product .product-category {
          color: #666;
          margin-bottom: 5px;
-         font-size: 11px;
+         font-size: 12px;
     }
      .product .product-price {
-         color: #ff7e95;
+         color: #666;
          margin-bottom: 5px;
-         font-size: 15px;
+         font-size: 13px;
     }
-     .product .product-ratings {
-         color: #acaaaa;
-         font-size: 11px;
-         margin-top: 3px;
-         margin-left: 50px;
-    }
+
      .product .p {
          display: flex;
     }
@@ -687,7 +620,7 @@ function filter_products_by_price($min, $max) {
                 <!-- Search Bar -->
                 <div class="navbar-collapse justify-content-md-center">
                     <ul class="navbar-nav dib">
-                        <a href="cart.html">
+                        <a href="cart.php">
                             <li class="cart">
                                 <i class="fa fa-shopping-bag" aria-hidden="true"></i>
                                 <p class="num-cart">1 </p>
@@ -716,26 +649,9 @@ function filter_products_by_price($min, $max) {
                         <hr class="f-hr">
                         <form action="allproducts.php" method="post">
                         <div class="price">
-                            <h4 class="f-label">Price</h4>
+                            <p class="f-label">Price</p>
                             <input type="text" name="min_price" class="m-price" placeholder="Min: <?php echo $min_price; ?>">
                             <input type="text" name="max_price" class="m-price" placeholder="Max: <?php echo $max_price; ?>">
-                        </div>
-                       
-                        <div class="relevance">
-                            <h4 class="f-label">Relevance</h4>
-                            <button class="r-btn">Best Match</button>
-                            <button class="r-btn">Lowest Price</button>
-                            <button class="r-btn">Newest</button>
-                            <button class="r-btn">Popular</button>
-                            <button class="r-btn">Recommended</button>
-                        </div>
-                        <div class="ratings">
-                            <h4 class="f-label">Ratings</h4>
-                            <button class="ratings-btn">5 <i class="fa fa-star" aria-hidden="true"></i></button>
-                            <button class="ratings-btn">4 <i class="fa fa-star" aria-hidden="true"></i></button>
-                            <button class="ratings-btn">3 <i class="fa fa-star" aria-hidden="true"></i></button>
-                            <button class="ratings-btn">2 <i class="fa fa-star" aria-hidden="true"></i></button>
-                            <button class="ratings-btn">1 <i class="fa fa-star" aria-hidden="true"></i></button>
                         </div>
                         <div class="f-apply">
                             <button class="apply" type="submit">Apply</button>
@@ -752,26 +668,25 @@ function filter_products_by_price($min, $max) {
                 </div>
                 </section>
                 <section>
-                <div class="product-list" id="product-container">
-                <?php foreach ($products as $product): ?>
-                    <div class="product">
-                        <a href="customer_product.php?product_id=<?php echo $product['product_id']; ?>">
-                        <?php
-                        echo '<img src="' . $product['product_img'] . '" alt="' . $product['product_name'] . '">';
-                    ?>                        
-                           <div class="product-name"><?php echo $product['product_name']; ?></div>
-                            <div class="product-category"><?php echo $product['product_category']; ?></div>
-                            <div class="p">
-                                <div class="product-price"><?php echo '₱ '.$product['product_price']; ?></div>
-                            </div>
-                        </a>
-                    </div>
-                <?php endforeach; ?>
-                   
+                    <div class="product-list" id="product-container">
+                    <?php foreach ($products as $product): ?>
+                        <div class="product">
+                            <a href="customer_product.php?product_id=<?php echo $product['product_id']; ?>">
+                            <?php
+                            echo '<img src="' . $product['product_img'] . '" alt="' . $product['product_name'] . '">';
+                        ?>                        
+                            <div class="product-name"><?php echo $product['product_name']; ?></div>
+                                <div class="product-category"><?php echo $product['product_category']; ?></div>
+                                <div class="p">
+                                    <div class="product-price"><?php echo '₱ '.$product['product_price']; ?></div>
+                                </div>
+                            </a>
+                        </div>
+                    <?php endforeach; ?>
+                    
 
-                </div>
-            </section>
-            <p class="p-end">No more products found</p>
+                    </div>
+                </section>
             <br><br><br>
         </main>
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>

@@ -57,6 +57,19 @@ if (isset($_SESSION["user_id"])) {
      border-radius: 10px;
      margin-left: 430px;
      margin-top: -10px;
+    
+}
+.nav-item {
+    list-style-type: none; /* This will remove the bullet point */
+}
+
+.nav-item form button {
+    background: none; 
+    border: none; 
+    cursor: pointer;
+    padding: 0; 
+    font-size: inherit; 
+    color: inherit; 
 }
  .cart {
      font-size: 30px;
@@ -106,7 +119,7 @@ if (isset($_SESSION["user_id"])) {
 }
  .icon-list li {
      text-align: center;
-     margin-left: 50px;
+     margin-left: 70px;
      position: relative;
 }
  .icon-list i {
@@ -205,7 +218,7 @@ if (isset($_SESSION["user_id"])) {
 }
  .label {
      color: #666;
-     font-size: 19px;
+     font-size: 17px;
      font-style: normal;
      font-weight: 500;
      line-height: normal;
@@ -273,8 +286,7 @@ if (isset($_SESSION["user_id"])) {
     margin-top: -20px;
     margin-bottom: 20px;
     padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 10px;
+    border: 1px solid #ddd;
     display: flex;
     flex-direction: column;
     text-align: left;
@@ -486,11 +498,12 @@ if (isset($_SESSION["user_id"])) {
          border-radius: 10px;
          margin: 0;
          margin-top: -10px;
+         font-size: 13px;
     }
      .form-inline .fa-search {
          font-size: 20px;
          margin-top: 35px;
-         margin-left: 40px;
+         margin-left: 39px;
     }
      ::placeholder {
          font-size: 14px;
@@ -525,15 +538,17 @@ if (isset($_SESSION["user_id"])) {
          text-align: center;
     }
      .home {
-         background-color: #65a5a5;
-         width: 92.5%;
+         background-color: white;
+         width: 105%;
          margin: auto;
-         margin-top: 20px;
-         border-radius: 19px;
          height: 70px;
-         position: sticky;
-         top: 88%;
-         z-index: 1000;
+         top: 91.5%;
+         position: fixed;
+         z-index: 100;
+         border-radius: 0px;
+    }
+    .number{
+        color: white;
     }
      .icon-list {
          list-style: none;
@@ -541,14 +556,20 @@ if (isset($_SESSION["user_id"])) {
          display: flex;
          justify-content: center;
          margin-top: 1px;
+         margin-left: -18px;
          margin-bottom: 10px;
-         color: white;
+         color: #65a5a5;
+         
+       
     }
-     .icon-list li {
+     .icon-list li a {
          text-align: center;
+         color: #65a5a5;
     }
      .icon-list i {
          font-size: 20px;
+         
+         margin: 0px 25px;
     }
      .h-label {
          font-size: 10px;
@@ -557,7 +578,6 @@ if (isset($_SESSION["user_id"])) {
      .container {
          max-width: 100%;
          margin: auto;
-         margin-top: -100px;
          margin-left: 0;
     }
      .carousel {
@@ -571,7 +591,7 @@ if (isset($_SESSION["user_id"])) {
          height: 10rem;
     }
      .carousel-item img {
-         width: 400px;
+         width: 350px;
          height: 160px;
     }
      .button-container {
@@ -690,37 +710,36 @@ if (isset($_SESSION["user_id"])) {
      .product {
          flex: 0 0 calc(2%);
          padding: 10px;
-         border: 1px solid #ccc;
-         border-radius: 10px;
+         border: 1px solid #ddd;
+  
          display: flex;
          flex-direction: column;
          text-align: left;
          box-sizing: border-box;
     }
      .product img a{
-         max-width: 193px;
-         max-height:150px;
+         width: 193px;
+         height:150px;
          flex-grow: 1;
     }
-     .product .product-info {
-         padding: 10px;
-    }
+
      .product .product-name {
-         font-weight: 500;
-         margin-top: 20px;
-         margin-bottom: 5px;
-         font-size: 14px;
-         color: #666;
+        font-size: 13px;
+        color: #666;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    
     }
      .product .product-category {
          color: #666;
          margin-bottom: 5px;
-         font-size: 11px;
+         font-size: 12px;
     }
      .product .product-price {
          color: #666;
          margin-bottom: 5px;
-         font-size: 15px;
+         font-size: 13px;
     }
      .product .product-ratings {
          color: #acaaaa;
@@ -783,7 +802,7 @@ if (isset($_SESSION["user_id"])) {
              gap: 10px;
         }
     }
-}
+ }
  
         </style>
     </head>
@@ -804,146 +823,39 @@ if (isset($_SESSION["user_id"])) {
                             </li>
                         </a>
                         <li class="nav-item">
-                            <form class="form-inline my-2 my-lg-0">
-                                <a href="search_results.html"><i class="fa fa-search"></i></a>
-                                <input type="text"  class="form-control form-input" placeholder="Search">
+                            <form action="search_results.php" method="GET" class="form-inline my-2 my-lg-0">
+                                <button type="submit"><i class="fa fa-search"></i></button>
+                                <input type="text" name="search" id="search-input" class="form-control form-input" placeholder="Search">
                             </form>
                         </li>
+
                     </ul>
                 </div>
             </nav>
         </header>
         <main>
             <div class="home text-center">
-            <ul class="icon-list">
-                <li>                      
-                    <a href="customer_home.php"><i class="fa fa-home" aria-hidden="true"></i></a>
-                    <span class="h-label">Home</span>
-                </li>
-                <li>
-                <a href="../users.php"><i class="fa fa-envelope-o" aria-hidden="true"></i></a>
-                    <p class="number">1</p>
-                    <span class="h-label">Messages</span>
-                </li>
-                <li>
-                    <a href="maps.html"><i class="fa fa-map-marker" aria-hidden="true"></i></a>
-                    <p class="number">1</p>
-                    <span class="h-label">Maps</span>
-                </li>
-                <li>
-                    <div class="dropdown">
-                        <button class="dropbtn" id="dropdownBtn">
-                            <a href="#">
-                                <!-- Link to the notification page -->
-                                <i class="fa fa-bell-o" aria-hidden="true"></i>
-                            </a>
-                            <p class="number">1</p>
-                            <span class="h-label">Notifications</span>
-                        </button>
-                        <div class="dropdown-content">
-                            <div class="notification-details">
-                                <img src="https://assets.florista.ph/uploads/product-pics/1674804112_5022.png" alt="Product Image">
-                                <div class="text-content">
-                                    <span class="order-status">Order out for delivery!</span>
-                                    <span class="order-description">Your order of a new hahahahhaha iPhone 14 Pro is on its way!</span>
-                                    <div class="o-date-time">
-                                        <span class="order-date">23 July 2023</span>
-                                        <span class="order-time">7:20 AM</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <hr class="notif-hr">
-                            <div class="notification-details">
-                                <img src="https://assets.florista.ph/uploads/product-pics/1674804112_5022.png" alt="Product Image">
-                                <div class="text-content">
-                                    <span class="order-status">Order out for delivery!</span>
-                                    <span class="order-description">Your order of a new hahahahhaha iPhone 14 Pro is on its way!</span>
-                                    <div class="o-date-time">
-                                        <span class="order-date">23 July 2023</span>
-                                        <span class="order-time">7:20 AM</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <hr class="notif-hr">
-                            <div class="notification-details">
-                                <img src="https://assets.florista.ph/uploads/product-pics/1674804112_5022.png" alt="Product Image">
-                                <div class="text-content">
-                                    <span class="order-status">Order out for delivery!</span>
-                                    <span class="order-description">Your order of a new hahahahhaha iPhone 14 Pro is on its way!</span>
-                                    <div class="o-date-time">
-                                        <span class="order-date">23 July 2023</span>
-                                        <span class="order-time">7:20 AM</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <hr class="notif-hr">
-                            <div class="notification-details">
-                                <img src="https://assets.florista.ph/uploads/product-pics/1674804112_5022.png" alt="Product Image">
-                                <div class="text-content">
-                                    <span class="order-status">Order out for delivery!</span>
-                                    <span class="order-description">Your order of a new hahahahhaha iPhone 14 Pro is on its way!</span>
-                                    <div class="o-date-time">
-                                        <span class="order-date">23 July 2023</span>
-                                        <span class="order-time">7:20 AM</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <hr class="notif-hr">
-                            <div class="notification-details">
-                                <img src="https://assets.florista.ph/uploads/product-pics/1674804112_5022.png" alt="Product Image">
-                                <div class="text-content">
-                                    <span class="order-status">Order out for delivery!</span>
-                                    <span class="order-description">Your order of a new hahahahhaha iPhone 14 Pro is on its way!</span>
-                                    <div class="o-date-time">
-                                        <span class="order-date">23 July 2023</span>
-                                        <span class="order-time">7:20 AM</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <hr class="notif-hr">
-                            <div class="notification-details">
-                                <img src="https://assets.florista.ph/uploads/product-pics/1674804112_5022.png" alt="Product Image">
-                                <div class="text-content">
-                                    <span class="order-status">Order out for delivery!</span>
-                                    <span class="order-description">Your order of a new hahahahhaha iPhone 14 Pro is on its way!</span>
-                                    <div class="o-date-time">
-                                        <span class="order-date">23 July 2023</span>
-                                        <span class="order-time">7:20 AM</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <hr class="notif-hr">
-                            <div class="notification-details">
-                                <img src="https://assets.florista.ph/uploads/product-pics/1674804112_5022.png" alt="Product Image">
-                                <div class="text-content">
-                                    <span class="order-status">Order out for delivery!</span>
-                                    <span class="order-description">Your order of a new hahahahhaha iPhone 14 Pro is on its way!</span>
-                                    <div class="o-date-time">
-                                        <span class="order-date">23 July 2023</span>
-                                        <span class="order-time">7:20 AM</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <hr class="notif-hr">
-                            <div class="notification-details">
-                                <img src="https://assets.florista.ph/uploads/product-pics/1674804112_5022.png" alt="Product Image">
-                                <div class="text-content">
-                                    <span class="order-status">Order out for delivery!</span>
-                                    <span class="order-description">Your order of a new hahahahhaha iPhone 14 Pro is on its way!</span>
-                                    <div class="o-date-time">
-                                        <span class="order-date">23 July 2023</span>
-                                        <span class="order-time">7:20 AM</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <hr class="notif-hr">
-                        </div>
-                </li>
-                <li>
-                <a href="customer_profile.php"><i class="fa fa-user-o" aria-hidden="true"></i></a>
-                <span class="h-label">Account</span>
-                </li>
-            </ul>
+                <ul class="icon-list">
+                    <li>                      
+                        <a href="customer_home.php"><i class="fa fa-home" aria-hidden="true"></i></a>
+                        <span class="h-label">Home</span>
+                    </li>
+                    <li>
+                    <a href="../users.php"><i class="fa fa-envelope-o" aria-hidden="true"></i></a>
+                        <p class="number">1</p>
+                        <span class="h-label">Messages</span>
+                    </li>
+                    <li>
+                        <a href="maps.php"><i class="fa fa-map-marker" aria-hidden="true"></i></a>
+                        <span class="h-label">Maps</span>
+                    </li>
+                    
+                    <li>
+                        <a href="customer_profile.php"><i class="fa fa-user-o" aria-hidden="true"></i></a>
+                        <p class="number">1</p>
+                        <span class="h-label">Account</span>
+                    </li>
+                </ul>
             </div>
             <section>
                 <div class="container">
@@ -953,17 +865,21 @@ if (isset($_SESSION["user_id"])) {
                             <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
                             <li data-target="#myCarousel" data-slide-to="1"></li>
                             <li data-target="#myCarousel" data-slide-to="2"></li>
+                            <li data-target="#myCarousel" data-slide-to="3"></li>
                         </ol>
                         <!-- Slides -->
                         <div class="carousel-inner">
                             <div class="carousel-item active">
-                                <img src="https://img.freepik.com/free-photo/pink-roses-gifts-boxes-wooden-background_23-2148268275.jpg?w=2000" alt="Image 1">
+                                <img src="https://i.pinimg.com/originals/8f/82/33/8f8233d80203bf7c0ad423121051f28a.jpg" alt="Image 1">
                             </div>
                             <div class="carousel-item">
-                                <img src="https://img.freepik.com/free-photo/pink-roses-gifts-boxes-wooden-background_23-2148268275.jpg?w=2000" alt="Image 2">
+                                <img src="https://t3.ftcdn.net/jpg/05/47/05/60/360_F_547056070_qrtAaQNjUzKmRoo33HztmrIApHT70Zh4.jpg" alt="Image 2">
                             </div>
                             <div class="carousel-item">
-                                <img src="https://img.freepik.com/free-photo/pink-roses-gifts-boxes-wooden-background_23-2148268275.jpg?w=2000" alt="Image 3">
+                                <img src="https://www.shandonflowers.com/upload/mt/shan533/upload/files/images/panels/15-florist-choice.jpg" alt="Image 3">
+                            </div>
+                            <div class="carousel-item">
+                                <img src="https://www.flowershopnetwork.com/blog/wp-content/uploads/2019/12/ChristmasGifts.png" alt="Image 4">
                             </div>
                         </div>
                         <!-- Left and right controls -->
@@ -1000,7 +916,7 @@ if (isset($_SESSION["user_id"])) {
                     </div>
                     <div class="category">
                         <a href="category.php?category=Arrangement Materials" ><img src="https://flowermoxiesupply.com/cdn/shop/products/50373055808_8a22415eb2_c.jpg?v=1626454724" alt="Category 3"></a>
-                        <p>Arrangemnent Materials</p>
+                        <p>Arrangement Materials</p>
                     </div>
                     <div class="category">
                         <a href="category.php?category=Flower Stands" ><img src="https://img2.chinadaily.com.cn/images/202112/17/61bc1548a310cdd3d82174b3.jpeg" alt="Category 1"></a>
@@ -1011,7 +927,7 @@ if (isset($_SESSION["user_id"])) {
                         <p>Leaves</p>
                     </div>
                     <div class="category">
-                        <a href="category.php?category=Other" ><img src="https://casajuan.ph/cdn/shop/products/anahawnapkinring.jpg?v=1626910031" alt="Category 3"></a>
+                        <a href="category.php?category=Other" ><img src="https://i.ebayimg.com/images/g/dbcAAOSwQL5iJtd2/s-l1200.webp" alt="Category 3"></a>
                         <p>Other</p>
                     </div>
                 </div>
@@ -1025,7 +941,7 @@ if (isset($_SESSION["user_id"])) {
                     <?php 
                     $counter = 0;
                     foreach ($products as $product):
-                        if ($counter >= 6) {
+                        if ($counter >= 30) {
                             break; // Stop the loop after displaying 6 products
                         }
                         ?>
@@ -1077,7 +993,6 @@ if (isset($_SESSION["user_id"])) {
                     endforeach; ?>
                 </div>
             </section>
-            <p class="p-end">No more products found</p>
             <br><br><br>
         </main>
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
