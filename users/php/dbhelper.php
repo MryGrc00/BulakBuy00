@@ -875,7 +875,20 @@ function fetchAllAdmin($tableName) {
 }
 
 
+function get_services_with_images($user_id, $pdo) {
+    // Define the SQL query
+    $sql = "SELECT s.*, g.image FROM services s
+            LEFT JOIN gallery g ON s.service_id = g.service_id
+            WHERE s.arranger_id = :user_id";
 
+    // Prepare and execute the query
+    $stmt = $pdo->prepare($sql);
+    $stmt->bindParam(':user_id', $user_id);
+    $stmt->execute();
+
+    // Fetch the services with associated images and return them
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
 
 
 
