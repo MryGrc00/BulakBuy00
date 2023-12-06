@@ -1,3 +1,23 @@
+<?php
+
+session_start();
+include '../php/dbhelper.php';
+$pdo = dbconnect();
+if (isset($_SESSION["user_id"]) && isset($_SESSION["role"])) {
+    $user_id = $_SESSION["user_id"];
+    $role = $_SESSION["role"];
+
+    $users = get_record_by_user($user_id) ;
+
+    $service_order =  get_completed_service_details_arranger('servicedetails','services', 'users', $user_id);
+}
+else {
+    // Handle cases where the user is not logged in or role is not set
+    echo "User not logged in or role not set.";
+    // Optional: Redirect to login page or show a login link
+}
+?>
+
 <!DOCTYPE html> 
 <html lang="en">
 <head>
@@ -38,12 +58,13 @@
             </div>
         </nav><hr class="nav-hr">
     </header>
-
     <div class="wrapper">
-        <div class="products-card">
+    <div class="button-container">
+        <button class="products-btn active">Products</button>
+        <button class="services-button">Services</button>
+    </div>
+    <div class="products-card" id="productsCard">
             <?php
-            session_start();
-            include '../php/dbhelper.php';
 
             if (isset($_SESSION['user_id'])) {
                 $customer_id = $_SESSION['user_id'];
@@ -108,6 +129,31 @@
             ?>
         </div>
     </div>
+    <div class="service-list" id="service-container">
+    <?php foreach ($service_order as $order):?>
+        <div class="single-card" onclick="redirectToServiceStatus('<?= $order['service_id'] ?>')">
+            <div class="img-area">
+                 <img src="<?php echo $order["arranger_profile"]?>" alt="">
+            </div>
+            <div class="info">
+                <div class="text-left">
+                <h3><?php echo $order["arranger_first_name"]. " " . $order["arranger_last_name"]; ?></h3>
+                    <p class="ad"><?php echo $order["arranger_address"]?></p>
+                    <div class="o-date-time">
+                        <span class="date"><?php echo $order["date"]?></span>
+                        <span class="time"><?php echo $order["time"]?></span>
+                    </div>
+                    <p class="price"><?php echo $order["amount"]?></p>
+                </div>
+                <div class="text-right mt-5">
+                    <i class="bi bi-chevron-right"></i>
+                </div>
+            </div>
+        </div>
+        <?php endforeach;?>
+        
+    </div>
+  </div>
   <script>
         // Get the products and services elements
         const products = document.querySelector('.products-card');
@@ -171,6 +217,12 @@
     function redirectToOrderStatus(productId) {
         // Redirect the user to the order_status.php page with the product id as a parameter
         window.location.href = 'order_delivered.php?product_id=' + productId;
+    }
+</script>
+<script>
+    function redirectToServiceStatus(serviceId) {
+        // Redirect the user to the order_status.php page with the product id as a parameter
+        window.location.href = 'request_delivered.php?service_id=' + serviceId;
     }
 </script>
     

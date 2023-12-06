@@ -87,7 +87,7 @@
                                 // Display the product details
                                 if ($product_details) {
                                     echo '<div class="all-items">';
-                                    echo '<h6 class="items-label">Order id- 8475645328</h6>';
+                                    echo '<h6 class="items-label">Order Details</h6>';
                                     echo '</div>';
                                     echo '<div class="cart-item">';
                                     echo '<div class="custom-checkbox" style="margin-top:-30px">';

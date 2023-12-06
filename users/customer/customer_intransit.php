@@ -132,7 +132,7 @@ else {
 </div>
     <div class="service-list" id="service-container">
     <?php foreach ($service_order as $order):?>
-        <div class="single-card ">
+        <div class="single-card" onclick="redirectToServiceStatus('<?= $order['service_id'] ?>')">
             <div class="img-area">
                  <img src="<?php echo $order["arranger_profile"]?>" alt="">
             </div>
@@ -147,10 +147,7 @@ else {
                     <p class="price"><?php echo $order["amount"]?></p>
                 </div>
                 <div class="text-right mt-5">
-                <form method="post" action="update_service_status.php">
-                        <input type="hidden" name="service_detail_id" value="<?php echo $order['servicedetails_id']; ?>">
-                        <button type="submit" name="action" value="intransit" class="service-transit">In Transit</button>
-                </form>
+                    <i class="bi bi-chevron-right"></i>
                 </div>
             </div>
         </div>
@@ -221,6 +218,12 @@ else {
     function redirectToOrderStatus(productId) {
         // Redirect the user to the order_status.php page with the product id as a parameter
         window.location.href = 'order_status.php?product_id=' + productId;
+    }
+</script>
+<script>
+    function redirectToServiceStatus(serviceId) {
+        // Redirect the user to the order_status.php page with the product id as a parameter
+        window.location.href = 'request_status.php?service_id=' + serviceId;
     }
 </script>
     

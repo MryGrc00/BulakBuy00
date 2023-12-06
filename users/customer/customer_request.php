@@ -181,6 +181,13 @@ else {
     }
   </script>
 
+<script>
+    function redirectToOrderStatus(serviceId) {
+        // Redirect the user to the order_status.php page with the product id as a parameter
+        window.location.href = 'request_status.php?service_id=' + serviceId;
+    }
+</script>
+
     
 </body>
 </html>

@@ -471,7 +471,7 @@ function get_pending_service_details_arranger($servicedetailsTable, $servicesTab
     $conn = dbconnect();
     
     // SQL to join servicedetails with services, then with users to get the arranger's name and details
-    $sql = "SELECT sd.*, u.first_name AS arranger_first_name, u.last_name AS arranger_last_name, u.address AS arranger_address, u.profile_img AS arranger_profile
+    $sql = "SELECT  sd.*, u.first_name AS arranger_first_name, u.last_name AS arranger_last_name, u.address AS arranger_address, u.profile_img AS arranger_profile
             FROM " . $servicedetailsTable . " AS sd
             JOIN " . $servicesTable . " AS s ON sd.service_id = s.service_id
             JOIN " . $usersTable . " AS u ON s.arranger_id = u.user_id
@@ -672,9 +672,9 @@ function getServiceDetails($servicedetailsTable, $servicesTable, $usersTable, $s
     $conn = dbconnect();
 
     // SQL query to join servicedetails with services, and then join with users twice (once for customer, once for arranger)
-    $sql = "SELECT sd.*, 
+    $sql = "SELECT sd.*, s.service_rate,
                    cust.first_name AS customer_first_name, cust.last_name AS customer_last_name, cust.profile_img AS customer_profile, cust.address AS customer_address, cust.phone AS customer_phone,
-                   arr.first_name AS arranger_first_name, arr.last_name AS arranger_last_name, arr.profile_img AS arranger_profile
+                   arr.first_name AS arranger_first_name, arr.last_name AS arranger_last_name, arr.profile_img AS arranger_profile, arr.address AS arranger_address, arr.phone AS arranger_phone
             FROM " . $servicedetailsTable . " AS sd
             JOIN " . $servicesTable . " AS s ON sd.service_id = s.service_id
             JOIN " . $usersTable . " AS cust ON sd.customer_id = cust.user_id
