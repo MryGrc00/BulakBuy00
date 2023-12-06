@@ -1660,7 +1660,7 @@ function add_cart_item_without_optional_fields($product_id, $customer_id, $quant
                             ?>
 
                     <hr>
-                    <a href="../common/see_all_reviews.html" class="all">
+                    <a href="see_all_reviews.php" class="all">
                         <p>See All Reviews</p>
                     </a>
                 </div>

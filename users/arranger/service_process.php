@@ -167,7 +167,7 @@ function get_quantity_for_product($product_id, $seller_id) {
                 $quantityText = $quantity ? 'x ' . $quantity : 'Quantity not available';
                 ?>
                 <p class="count"><?php echo $quantityText; ?></p>
-                <button class="product-intransit transit" data-sales-id="<?php echo $order['sales_id']?>" data-customer-id="<?php echo $order['customer_id']?>" name="intransit">In Transit</button>           
+                <button class="product-intransit transit" data-sales-id="<?php echo $order['sales_id']?>" data-customer-id="<?php echo $order['customer_id']?>" name="intransit">To Deliver</button>           
                  </div>
             </div>
         </div>

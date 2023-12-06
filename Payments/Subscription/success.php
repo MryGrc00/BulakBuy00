@@ -76,7 +76,7 @@ if (isset($_SESSION['user_id']) && isset($_SESSION['role'])) {
         echo "<strong>Subscription activated successfully for Shop ID: $shop_id</strong>";
         echo "<strong>Reference Code: $paymongo_id</strong>";
         echo "</div>";
-        echo "<a class='btn btn-primary btn-lg' href='http://192.168.137.1:80/Bulakbuy00/Payments/Subscription/$backUrl'>Back to main</a>";
+        echo "<a class='btn btn-primary btn-lg' href='http://172.20.10.3:80/Bulakbuy00/Payments/Subscription/$backUrl'>Back to main</a>";
         echo "</div>";
     } else {
         // Handle case where shop_id is not found
