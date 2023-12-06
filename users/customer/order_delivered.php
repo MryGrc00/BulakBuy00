@@ -43,7 +43,7 @@
                             <form class="form-inline my-2 my-lg-0">
                                 <a href=""><i class="fa fa-search"></i></a>
                                 <input type="text"  class="form-control form-input" placeholder="Search" style="text-align:left;padding-left: 15px;font-size: 16px;">
-                                <a href="javascript:void(0);" onclick="goBack()">
+                                <a href="#" onclick="goBack()">
                                     <i class="back fa fa-angle-left" aria-hidden="true"></i>
                                     <div id="search-results">Order Status</div>
                                   </a>
@@ -167,7 +167,6 @@
                                                 <div class="status-icon">1</div>
                                                 <div class="status-info">
                                                     <div class="status-text">Order Placed</div>
-                                                    <div class="status-date">on 23 July 20233</div>
                                                 </div>
                                                 <div class="vertical-line"></div>
                                                 <!-- Vertical line -->
@@ -194,7 +193,6 @@
                                                 <div class="status-icon">4</div>
                                                 <div class="status-info">
                                                     <div class="status-text">Delivered</div>
-                                                    <div class="status-date">September 7, 2023</div>
                                                 </div>
                                             </div>
                                         </div> ';

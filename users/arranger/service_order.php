@@ -13,11 +13,11 @@ if (isset($_SESSION["user_id"]) && isset($_SESSION["role"])) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $serviceId= $_POST['serviceId'];
+    $servicedetailsId= $_POST['servicedetailsId'];
     $customerId = $_POST['customerId'];
 
     // Update the status in the sales table for the specific product and customer
-    $result = update_status($serviceId, $customerId);
+    $result = update_status($servicedetailsId, $customerId);
 
     if ($result) {
         echo 'Status updated successfully.';
@@ -26,13 +26,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 
-function update_status($serviceId, $customerId) {
+function update_status($servicedetailsId, $customerId) {
     $conn = dbconnect();
-    $sql = "UPDATE servicedetails SET status = 'Processing' WHERE service_id = ? AND customer_id = ?";
+    $sql = "UPDATE servicedetails SET status = 'Processing' WHERE servicedetails_id = ? AND customer_id = ?";
     
     try {
         $stmt = $conn->prepare($sql);
-        $stmt->execute([$serviceId, $customerId]);
+        $stmt->execute([$servicedetailsId, $customerId]);
         $conn = null;
         return true;
     } catch (PDOException $e) {
@@ -105,8 +105,8 @@ function update_status($serviceId, $customerId) {
                 
                 <div class="text-right">
                     <div class="btn-container order">
-                        <button class="service-accept accept" data-service-id="<?php echo $order['service_id']; ?>" data-customer-id="<?php echo $order['customer_id'];?>">Accept</button>
-                        <button class="service-cancel"data-service-id="<?php echo $order['service_id']; ?>" data-customer-id="<?php echo $order['customer_id'];?>">Cancel</button>
+                        <button class="service-accept accept" data-servicedetails-id="<?php echo $order['servicedetails_id']; ?>" data-customer-id="<?php echo $order['customer_id'];?>">Accept</button>
+                        <button class="service-cancel"data-servicedetails-id="<?php echo $order['servicedetails_id']; ?>" data-customer-id="<?php echo $order['customer_id'];?>">Cancel</button>
                     </div>
                 </div>
             </div>
@@ -125,14 +125,14 @@ function update_status($serviceId, $customerId) {
 <script>
     $(document).ready(function() {
     $(".service-accept").click(function() {
-        var serviceId = $(this).data("service-id");
+        var servicedetailsId = $(this).data("servicedetails-id");
         var customerId = $(this).data("customer-id"); // Add this line to get the customer ID
 
         // Send AJAX request to update the status
         $.ajax({
             url: 'service_order.php',
             method: 'POST',
-            data: { serviceId: serviceId, customerId: customerId }, // Include customer ID in the data
+            data: { servicedetailsId: servicedetailsId, customerId: customerId }, // Include customer ID in the data
             success: function(response) {
                 // Handle the response if needed
                 console.log(response);
@@ -153,14 +153,14 @@ function update_status($serviceId, $customerId) {
 <script>
     $(document).ready(function() {
     $(".service-cancel").click(function() {
-        var serviceId = $(this).data("service-id");
+        var servicedetailsId = $(this).data("servicedetails-id");
         var customerId = $(this).data("customer-id"); // Add this line to get the customer ID
 
         // Send AJAX request to update the status
         $.ajax({
             url: 'update_service_cancel.php',
             method: 'POST',
-            data: { serviceId: serviceId, customerId: customerId }, // Include customer ID in the data
+            data: { servicedetailsId: servicedetailsId, customerId: customerId }, // Include customer ID in the data
             success: function(response) {
                 // Handle the response if needed
                 console.log(response);

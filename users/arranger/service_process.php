@@ -194,7 +194,7 @@ function get_quantity_for_product($product_id, $seller_id) {
                 
                 <div class="text-right">
                     <div class="btn-container order">
-                    <button class="service-intransit transit" data-service-id="<?php echo $order['service_id']; ?>" data-customer-id="<?php echo $order['customer_id'];?>">In Transit</button>
+                    <button class="service-intransit transit" data-servicedetails-id="<?php echo $order['servicedetails_id']; ?>" data-customer-id="<?php echo $order['customer_id'];?>">In Transit</button>
                     </div>
                 </div>
             </div>
@@ -270,14 +270,14 @@ function get_quantity_for_product($product_id, $seller_id) {
 <script>
     $(document).ready(function() {
     $(".service-intransit").click(function() {
-        var serviceId = $(this).data("service-id");
+        var servicedetailsId = $(this).data("servicedetails-id");
         var customerId = $(this).data("customer-id"); // Add this line to get the customer ID
 
         // Send AJAX request to update the status
         $.ajax({
             url: 'update_service_intransit.php',
             method: 'POST',
-            data: { serviceId: serviceId, customerId: customerId }, // Include customer ID in the data
+            data: { servicedetailsId: servicedetailsId, customerId: customerId }, // Include customer ID in the data
             success: function(response) {
                 // Handle the response if needed
                 console.log(response);

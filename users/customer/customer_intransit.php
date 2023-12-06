@@ -217,10 +217,10 @@ else {
         window.history.back();
     }
   </script>
-  <script>
-    function redirectToAnotherPage() {
-        // Redirect the user to another page when the single-card is clicked
-        window.location.href = 'order_status.html';
+<script>
+    function redirectToOrderStatus(productId) {
+        // Redirect the user to the order_status.php page with the product id as a parameter
+        window.location.href = 'order_status.php?product_id=' + productId;
     }
 </script>
     

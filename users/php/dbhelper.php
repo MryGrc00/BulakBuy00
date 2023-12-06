@@ -313,13 +313,12 @@ function get_latest_products_by_id($productsTable, $shopTable, $subscribedTable)
         $conn = dbconnect();
     
         // SQL to join servicedetails with services, then with users to get the customer's name
-        $sql = "SELECT sd.*, u.first_name AS customer_first_name, u.last_name AS customer_last_name , u.address AS customer_address, u.profile_img AS customer_profile
+        $sql = "SELECT sd.servicedetails_id, sd.*, u.first_name AS customer_first_name, u.last_name AS customer_last_name, u.address AS customer_address, u.profile_img AS customer_profile
                 FROM " . $servicedetailsTable . " AS sd
                 JOIN " . $servicesTable . " AS s ON sd.service_id = s.service_id
                 JOIN " . $usersTable . " AS u ON sd.customer_id = u.user_id
                 WHERE s.arranger_id = :loggedInUserId AND sd.status = 'pending'
-                ORDER BY sd.servicedetails_id DESC"; // Assuming detail_id is the identifier in servicedetails table
-        
+                ORDER BY sd.servicedetails_id DESC"; // Including servicedetails_id in the selection
         $stmt = $conn->prepare($sql);
         $stmt->bindParam(':loggedInUserId', $loggedInUserId, PDO::PARAM_INT);
         $stmt->execute();
@@ -351,7 +350,7 @@ function get_latest_products_by_id($productsTable, $shopTable, $subscribedTable)
         $conn = dbconnect();
     
         // SQL to join servicedetails with services and users, filtering for 'processing' status
-        $sql = "SELECT sd.*, u.first_name AS customer_first_name, u.last_name AS customer_last_name, 
+        $sql = "SELECT sd.servicedetails_id, sd.*, u.first_name AS customer_first_name, u.last_name AS customer_last_name, 
                     u.address AS customer_address, u.profile_img AS customer_profile
                 FROM " . $servicedetailsTable . " AS sd
                 JOIN " . $servicesTable . " AS s ON sd.service_id = s.service_id
@@ -391,7 +390,7 @@ function get_service_details_intransit($servicedetailsTable, $servicesTable, $us
     $conn = dbconnect();
 
     // SQL to join servicedetails with services and users, filtering for 'processing' status
-    $sql = "SELECT sd.*, u.first_name AS customer_first_name, u.last_name AS customer_last_name, 
+    $sql = "SELECT sd.servicedetails_id,sd.*, u.first_name AS customer_first_name, u.last_name AS customer_last_name, 
                 u.address AS customer_address, u.profile_img AS customer_profile
             FROM " . $servicedetailsTable . " AS sd
             JOIN " . $servicesTable . " AS s ON sd.service_id = s.service_id
@@ -432,7 +431,7 @@ function get_count_of_intransit_services($servicedetailsTable, $servicesTable, $
 function get_service_details_completed($servicedetailsTable, $servicesTable, $usersTable, $loggedInUserId) {
     $conn = dbconnect();
 
-    $sql = "SELECT sd.*, u.first_name AS customer_first_name, u.last_name AS customer_last_name , u.address AS customer_address, u.profile_img AS customer_profile
+    $sql = "SELECT sd.servicedetails_id, sd.*, u.first_name AS customer_first_name, u.last_name AS customer_last_name , u.address AS customer_address, u.profile_img AS customer_profile
             FROM " . $servicedetailsTable . " AS sd
             JOIN " . $servicesTable . " AS s ON sd.service_id = s.service_id
             JOIN " . $usersTable . " AS u ON sd.customer_id = u.user_id
