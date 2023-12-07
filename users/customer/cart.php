@@ -147,7 +147,64 @@ function is_salesdetails_id_in_sales_table($salesdetailsId) {
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
         
         <style>
-             .number, .address, .zipcode{
+             
+            @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap");
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+                font-family: "Poppins", sans-serif;
+            }
+            .navbar img {
+                padding: 0;
+                width: 195px;
+                height: 100px;
+                margin-top: -10px;
+                margin-left: 186%;
+            }
+            .form {
+                position: relative;
+                color: #8e8e8e;
+                left: 130px;
+            }
+            .form-inline .fa-search {
+                position: absolute;
+                top: 43px;
+                left: 78%;
+                color: #9ca3af;
+                font-size: 22px;
+            }
+            .form-input[type="text"] {
+                height: 50px;
+                width: 500px;
+                background-color: #f0f0f0;
+                border-radius: 10px;
+                margin-left: 430px;
+                margin-top: -10px;
+            }
+            .nav-hr{
+                width:60%;
+                margin: auto;
+                margin-top:-6px;
+            }
+            #search-results{
+                display:none;
+            }
+            .back{
+                display: none;
+            }
+            .container {
+                display: flex;
+                justify-content: space-between;
+                gap: 20px;
+            }
+            .column1 {
+                flex-basis: 50%;
+                margin-top: 10px;
+                display: flex;
+                flex-direction: column;
+            }
+            .number, .address, .zipcode{
                 font-size: 13px;
                 margin-top: 25px;
             }
@@ -218,9 +275,9 @@ function is_salesdetails_id_in_sales_table($salesdetailsId) {
                 overflow: auto;
             }
             .modal-content {
-                background-color: #65a5a5e1;
-                margin: 20% auto;
-                padding: 20px;
+                background-color: rgba(40, 42, 42, 0.7); /* Adjust the opacity value (0.5 in this case) */
+                margin: 24% auto;
+                padding-top: 10px;
                 border: none;
                 border-radius: 10px;
                 max-width: 300px;
@@ -233,62 +290,6 @@ function is_salesdetails_id_in_sales_table($salesdetailsId) {
                 margin: auto;
                 margin-top: 5%;
             }
-            @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap");
-            * {
-                margin: 0;
-                padding: 0;
-                box-sizing: border-box;
-                font-family: "Poppins", sans-serif;
-            }
-            .navbar img {
-                padding: 0;
-                width: 195px;
-                height: 100px;
-                margin-top: -10px;
-                margin-left: 186%;
-            }
-            .form {
-                position: relative;
-                color: #8e8e8e;
-                left: 130px;
-            }
-            .form-inline .fa-search {
-                position: absolute;
-                top: 43px;
-                left: 78%;
-                color: #9ca3af;
-                font-size: 22px;
-            }
-            .form-input[type="text"] {
-                height: 50px;
-                width: 500px;
-                background-color: #f0f0f0;
-                border-radius: 10px;
-                margin-left: 430px;
-                margin-top: -10px;
-            }
-            .nav-hr{
-                width:60%;
-                margin: auto;
-                margin-top:-6px;
-            }
-            #search-results{
-                display:none;
-            }
-            .back{
-                display: none;
-            }
-            .container {
-                display: flex;
-                justify-content: space-between;
-                gap: 20px;
-            }
-            .column1 {
-                flex-basis: 50%;
-                margin-top: 10px;
-                display: flex;
-                flex-direction: column;
-            }
             .location{
                 border-radius: 10px;
                 border:1px solid #65A5A5;
@@ -296,6 +297,14 @@ function is_salesdetails_id_in_sales_table($salesdetailsId) {
                 width:120%;
                 display: flex;
                 margin-top: 20px;
+                text-align: left;
+            }
+            .none{
+                font-size: 15px;
+                text-align: center;
+                margin-top: 30px;
+                padding-bottom: 30px;
+                color:#666;
             }
             .location i{
                 margin-right: 10px;
@@ -382,10 +391,10 @@ function is_salesdetails_id_in_sales_table($salesdetailsId) {
                 margin-left: 13px;
                 border-radius:50px;
             }
-            .shop-info h3{
+            .shop-info p{
                 margin-top:-35px;
             }
-            .shop-info a h3{
+            .shop-info a p{
                 font-size: 14px;
                 margin-left: 60px;
                 margin-top:-25px;
@@ -507,13 +516,17 @@ function is_salesdetails_id_in_sales_table($salesdetailsId) {
             }
             .sub-label{
                 color:#555;
+                white-space: nowrap;
             }
             .sub-price{
                 color:#555;
-                margin-left:63%;
+                margin-right:20px;
+                white-space: nowrap;    
             }
             .sub-total{
                 display: flex;
+                white-space: nowrap;
+                justify-content: space-between;
             }
             .button-container {
                 display: flex;
@@ -599,6 +612,13 @@ function is_salesdetails_id_in_sales_table($salesdetailsId) {
                     margin-left:0;
                     margin-bottom: 40px;
                 }
+                .none{
+                    font-size: 13px;
+                    text-align: center;
+                    margin-top: 30px;
+                    padding-bottom: 30px;
+                    color:#666;
+                }
                 .location{
                     border-radius: 10px;
                     border:1px solid #65A5A5;
@@ -606,6 +626,7 @@ function is_salesdetails_id_in_sales_table($salesdetailsId) {
                     width:100%;
                     display: flex;
                     margin-top: 20px;
+                    text-align: left;
                 }
                 .location i{
                     margin-right: 10px;
@@ -616,28 +637,33 @@ function is_salesdetails_id_in_sales_table($salesdetailsId) {
                 }
                 .location-info {
                    
-                    font-size:13px;
-                    line-height:20%;
-                    margin-top: 2.5%;
+                    
+                    margin-top:5px;
                     position: relative;
                     flex-direction: row; /* Align items horizontally for larger screens */
 
                  
                 }
                 .loc{
-                    font-size: 13px;
-                    margin-left:-80px;
+                    font-size: 12px;
+                    
                 }
                 .number{
-                    font-size: 13px;
+                    font-size: 12px;
                     margin-top: 25px;
-                    margin-left: -90px;
+                   
                     
                 }
                 .zipcode{
-                    font-size: 13px;
+                    font-size: 12px;
                     margin-top: 25px;
-                    margin-left: -130px;
+                    
+                    
+                }
+                .address{
+                    font-size: 12px;
+                    margin-top: 25px;
+                    
                     
                 }
                 .street{
@@ -701,10 +727,10 @@ function is_salesdetails_id_in_sales_table($salesdetailsId) {
                     margin-left: 10px;
                     border-radius:50px;
                 }
-                .shop-info a h3{
+                .shop-info a p{
                     font-size: 12px;
                     margin-left: 45px;
-                    margin-top:-20px;
+                    margin-top:-14px;
                     color:#555;
                 }
                 .shop-name a{
@@ -724,13 +750,16 @@ function is_salesdetails_id_in_sales_table($salesdetailsId) {
                     margin-top:5px;
                 }
                 .custom-checkbox {
-                    width: 50px;
+                    width:50px;
                     display: flex;
-                    margin-top: -20px;
+                    
                 }
                 .item-checkbox {
                     margin-right: -1px;
+                    margin-left: -5px;
                     margin-top: 0px;
+                    width: 13px;
+                    height: 13px;
                 }
                 .cart-item img {
                     max-width: 80px;
@@ -741,14 +770,15 @@ function is_salesdetails_id_in_sales_table($salesdetailsId) {
                     margin-left:11px;
                 }
                 .item-details{
-                    margin-top: -10px;
+                    margin-top: -25px;
                     margin-left:5px;
+                    text-align: left;
                 }
                 .item-details .p_name{
-                    font-size: 13px;
+                    font-size: 12px;
                     color:#555;
                     margin-left:60px;
-                    margin-top:-55px;
+                    margin-top:-40px;
                     width:170px;
                     white-space: nowrap;
                     overflow: hidden;
@@ -766,6 +796,11 @@ function is_salesdetails_id_in_sales_table($salesdetailsId) {
                     width:190px;
                     margin-top:-1px;
                     margin-left:60px;
+                    width:170px;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    position: sticky;
                 }
                 .flower{
                     color:#777;
@@ -779,12 +814,18 @@ function is_salesdetails_id_in_sales_table($salesdetailsId) {
                 .ribbon-color{
                     display: flex;
                     gap:10px;
-                    margin-top:1px;
+                    margin-top:-3px;
                     margin-left:60px;
+                   
                 }
                 .ribbon{
                     font-size: 11px;
                     color:#777;
+                    width:160px;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    position: sticky;
                 }
                 .color{
                     font-size: 11px;
@@ -792,11 +833,11 @@ function is_salesdetails_id_in_sales_table($salesdetailsId) {
                 }
                 .price{
                     color:#666;
-                    font-weight: 500;
-                    font-size: 13px;
+                    font-weight: 400;
+                    font-size: 12px;
                     display: flex;
                     position: absolute;
-                    left: 46%;
+                    left: 167px;
                     transform: translateX(-50%);
                 }
                 .quantity-control {
@@ -841,7 +882,7 @@ function is_salesdetails_id_in_sales_table($salesdetailsId) {
                     position: fixed;
                     bottom: 0;
                     left: 0;
-                    height:8%;
+                    height:9%;
                     background-color: #fff;
                     box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
                     display: flex;
@@ -864,15 +905,20 @@ function is_salesdetails_id_in_sales_table($salesdetailsId) {
                 }
                 .sub-total{
                     display: flex;
+                    white-space: nowrap;
+                    justify-content: space-between;
                 }
                 .button-container {
                     padding-right:20px;
                     margin-top: 20px;
                     margin-left: -20px;
+                    max-height: 120px;
                 }
                 .sub-price {
-                    margin-right: -110px;
+                    margin-left:0px;
                     margin-top:-10px;
+                    font-size:13px;
+                    white-space: nowrap;
                 }
                 .checkout{
                     background-color: #65A5A5;
@@ -881,7 +927,7 @@ function is_salesdetails_id_in_sales_table($salesdetailsId) {
                     outline:none;
                     width:100%;
                     border-radius: 10px;
-                    font-size: 15px;
+                    font-size: 13px;
                     margin-left:30px;
                     margin-right:-15px;
                     margin-top:1px;
@@ -892,6 +938,30 @@ function is_salesdetails_id_in_sales_table($salesdetailsId) {
                 }
                 .checkout:focus{
                     outline:none;
+                }
+                .modal {
+                display: none;
+                position: fixed;
+                z-index: 1;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                overflow: auto;
+            }
+            .confirm-order{
+                margin-top: 5px;
+            }
+                .modal-content {
+                    background-color: rgba(40, 42, 42, 0.7); /* Adjust the opacity value (0.5 in this case) */
+                    margin: 85% auto;
+                    padding-top: 10px;
+                    border: none;
+                    border-radius: 10px;
+                    max-width: 180px;
+                    text-align: center;
+                    color: white;
+                    font-size: 12px;
                 }
                 /* Media query to adjust alignment for smaller screens */
                 @media (max-width: 768px) {
@@ -941,8 +1011,7 @@ function is_salesdetails_id_in_sales_table($salesdetailsId) {
                         <div class="location-info">
                             <?php if (isset($address) && isset($zipcode) && isset($phone)) { ?>
                                 <p class="loc">Delivering to: </p>
-                                <p class="address"> <?php echo $address; ?></p>
-                                <p class="zipcode"> <?php echo $zipcode; ?></p>
+                                <p class="address"><?php echo $address . ', ' . $zipcode; ?></p>
                                 <p class="number"> <?php echo $phone; ?></p>
                             <?php } else { ?>
                                 <p class="loc">Address not available</p>
@@ -953,7 +1022,6 @@ function is_salesdetails_id_in_sales_table($salesdetailsId) {
                     <div class="cart-container">
                         <div class="all-items">
                             <h6 class="items-label">Products</h6>
-                            <button class="edit"><i class="bi bi-trash"></i></button>
                         </div>
                       
                             <div class="cart-items">
@@ -980,7 +1048,7 @@ function is_salesdetails_id_in_sales_table($salesdetailsId) {
                                         }
                                         $productsByShop = array_filter($productsByShop);
                                         if (empty($productsByShop)) {
-                                            echo 'No products added to cart.';
+                                            echo '<p class="none">No products added to cart.</p>';
                                         } else {
                                                 // Loop through each shop and display its products
                                                 foreach ($productsByShop as $shopId => $shopProducts) {
@@ -993,8 +1061,7 @@ function is_salesdetails_id_in_sales_table($salesdetailsId) {
                                                         echo '<img src="' . $shop['shop_img'] . '" alt="Shop Image">';
                                                         echo '<div class="shop-name">';
                                                         echo '<a href="../vendor/vendor_shop.html">';
-                                                        echo '<h3>' . $shop['shop_name'] . '</h3>';
-                                                        echo '<i class="fa fa-angle-right" aria-hidden="true"></i>';
+                                                        echo '<p>' . $shop['shop_name'] . '</p>';
                                                         echo '</a>';
                                                         echo '</div>';
                                                         echo '</div>';
@@ -1021,30 +1088,36 @@ function is_salesdetails_id_in_sales_table($salesdetailsId) {
                                                         $salesDetails = $product;
 
                                                         if ($salesDetails) {
+                                                            // Initialize an array to store customization details
+                                                            $customization = array();
+                                                        
                                                             // Check if flower type is available
                                                             if (!empty($salesDetails['flower_type'])) {
-                                                                echo '<div class="flower-type">';
-                                                                echo '<p class="flower">Flower:</p>';
-                                                                echo '<p class="type">' . $salesDetails['flower_type'] . '</p>';
-                                                                echo '</div>';
+                                                                $customization[] = $salesDetails['flower_type'];
                                                             }
-
-                                                            
-
+                                                        
                                                             // Check if ribbon color is available
                                                             if (!empty($salesDetails['ribbon_color'])) {
+                                                                $customization[] = $salesDetails['ribbon_color'];
+                                                            }
+                                                        
+                                                            // Display the customization details
+                                                            if (!empty($customization)) {
                                                                 echo '<div class="ribbon-color">';
-                                                                echo '<p class="ribbon">Ribbon:</p>';
-                                                                echo '<p class="color">' . $salesDetails['ribbon_color'] . '</p>';
+                                                                echo '<p class="ribbon">'. implode(', ', $customization) .'</p>';
                                                                 echo '</div>';
                                                             }
-                                                            // Check if ribbon color is available
-                                                            if (!empty($salesDetails['message'])) {
+                                                        
+                                                            if ($salesDetails) {
+                                                                // Initialize a variable to store the message
+                                                                $message = !empty($salesDetails['message']) ? $salesDetails['message'] : 'None';
+                                                            
+                                                                // Display the message details
                                                                 echo '<div class="ribbon-color">';
-                                                                echo '<p class="ribbon">Message:</p>';
-                                                                echo '<p class="color">' . $salesDetails['message'] . '</p>';
+                                                                echo '<p class="ribbon">Message: ' . $message .'</p>';
                                                                 echo '</div>';
                                                             }
+                                                            
                                                         }
 
                                                                     
@@ -1095,9 +1168,8 @@ function is_salesdetails_id_in_sales_table($salesdetailsId) {
                        
                             <button class="checkout" onclick="goToPlaceOrder()">Checkout</button>
                             <div id="confirmationModal" class="modal">
-                                 <div class="modal-content">
-                                    <i class="bi bi-info-circle"></i>                                    
-                                    <p class="confirm-order">No products selected!</p>
+                                 <div class="modal-content">                                     
+                                    <p class="confirm-order">Please select item(s).</p>
                                 </div>
                             </div>
                         </div>

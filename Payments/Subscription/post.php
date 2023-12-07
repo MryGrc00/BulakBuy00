@@ -5,8 +5,8 @@ $user_id = $_SESSION['user_id'];
 $url = "https://api4wrd-v1.kpa.ph/paymongo/v1/create";
 
 $redirect = [
-        "success" => "http://172.20.10.3:80/Bulakbuy00/Payments/Subscription/success.php",
-        "failed" => "http://172.20.10.3:80/Bulakbuy00/Payments/Subscription/failed.php"
+        "success" => "http://localhost:80/Bulakbuy00/Payments/Subscription/success.php",
+        "failed" => "http://localhost:80/Bulakbuy00/Payments/Subscription/failed.php"
 ];
 
 $billing = [

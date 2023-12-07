@@ -297,9 +297,6 @@ if (isset($_SESSION["user_id"])) {
     text-decoration: none;
 }
 
-.product:hover {
-    transform: scale(1.05);
-}
 
 .product a img {
     width: 150px;
@@ -541,24 +538,26 @@ if (isset($_SESSION["user_id"])) {
          background-color: white;
          width: 105%;
          margin: auto;
-         height: 70px;
-         top: 91.5%;
+         height: 100px;
+         top: 88%;
          position: fixed;
          z-index: 100;
          border-radius: 0px;
+         
     }
     .number{
         color: white;
     }
      .icon-list {
          list-style: none;
-         padding: 0;
+         padding: 0px 50px;
          display: flex;
          justify-content: center;
          margin-top: 1px;
          margin-left: -18px;
          margin-bottom: 10px;
          color: #65a5a5;
+         
          
        
     }
@@ -852,7 +851,6 @@ if (isset($_SESSION["user_id"])) {
                     
                     <li>
                         <a href="customer_profile.php"><i class="fa fa-user-o" aria-hidden="true"></i></a>
-                        <p class="number">1</p>
                         <span class="h-label">Account</span>
                     </li>
                 </ul>
@@ -919,7 +917,7 @@ if (isset($_SESSION["user_id"])) {
                         <p>Arrangement Materials</p>
                     </div>
                     <div class="category">
-                        <a href="category.php?category=Flower Stands" ><img src="https://img2.chinadaily.com.cn/images/202112/17/61bc1548a310cdd3d82174b3.jpeg" alt="Category 1"></a>
+                        <a href="category.php?category=Flower Stands" ><img src="https://lzd-img-global.slatic.net/g/p/bd2d4e33299f8da2f68553b14d145865.jpg_720x720q80.jpg" alt="Category 1"></a>
                         <p>Flower Stands</p>
                     </div>
                     <div class="category">
@@ -969,11 +967,11 @@ if (isset($_SESSION["user_id"])) {
                     <p>Services</p>
                     <a href="allservices.php" class="all">See all<i class="fa fa-long-arrow-right" aria-hidden="true"></i></a>
                 </div>
-                <div class="product-list" id="product-container">
+                <div class="product-list" id="product-container" style="margin-bottom:30px">
                 <?php 
                     $counter = 0;
                     foreach ($services as $service):
-                        if ($counter >= 6) {
+                        if ($counter >= 30) {
                             break; // Stop the loop after displaying 6 products
                         }
                         ?>                        

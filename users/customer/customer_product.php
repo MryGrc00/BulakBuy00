@@ -395,13 +395,13 @@ function add_cart_item_without_optional_fields($product_id, $customer_id, $quant
 .add-btn .messenger {
 	border: 1px solid #65A5A5;
 	background-color: transparent;
-	padding: 5px;
-	width: 10%;
+	padding: 8px 15px;
+	width: 15%;
 	color: #65A5A5;
 	border-radius: 10px;
-	margin-top: 40px;
+
 	margin-left: 10px;
-    font-size: 20px;
+    font-size: 17px;
 }
 .add-btn .messenger:focus {
 	border-color: #65A5A5;
@@ -729,9 +729,6 @@ function add_cart_item_without_optional_fields($product_id, $customer_id, $quant
     text-decoration: none;
 }
 
-.product:hover {
-    transform: scale(1.05);
-}
 
 .product a img {
     width: 150px;
@@ -956,8 +953,9 @@ function add_cart_item_without_optional_fields($product_id, $customer_id, $quant
 		position: fixed;
 		bottom: 0;
 		left: 0;
+		top:87%;
 		width: 100%;
-		height: 70px;
+		max-height: 120px;
 		background-color: #fff;
 		box-shadow: 0px -5px 5px rgba(0, 0, 0, 0.1);
 		z-index: 1;
@@ -966,25 +964,40 @@ function add_cart_item_without_optional_fields($product_id, $customer_id, $quant
 		display: flex;
 		justify-content: space-around;
 		padding: 2px;
+		margin-top: -15px;
+		max-height: 80px;
+		max-width: 95%;
+		
+	
 	}
 	.add-btn .add {
 		background-color: #65A5A5;
 		border: none;
-		margin-top: 3%;
+		font-size: 13px;
 		margin-left: 4%;
 		color: white;
-		border-radius: 20px;
+		border-radius: 10px;
+		padding-bottom:10px;
 	}
-	.add-btn button.messenger {
+	.add-btn .messenger {
 		border: 1px solid #65A5A5;
 		background-color: transparent;
-		padding: 9px;
-		width: 50px;
+		padding-bottom: 10px;
 		color: #65A5A5;
 		border-radius: 10px;
-		margin-top: 12px;
-		margin-left: 20px;
-		margin-right: 15px;
+		
+		margin-left: 10px;
+		margin-top: 30px;
+	
+		font-size: 20px;
+	}
+	.add-btn .i {
+		border: 1px solid #65A5A5;
+		background-color: transparent;	
+		color: #65A5A5;
+		border-radius: 10px;
+		margin-top: -10px;
+		font-size: 17px;
 	}
 	.add-btn .messenger:focus {
 		border-color: #65A5A5;
@@ -1314,6 +1327,7 @@ function add_cart_item_without_optional_fields($product_id, $customer_id, $quant
          display: flex;
          flex-wrap: wrap;
          justify-content: center;
+		 padding-bottom:50px;
     }
      .product {
          flex: 0 0 calc(2%);

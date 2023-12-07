@@ -14,5 +14,5 @@
 		echo "Failed Page";
 	}
 
-	echo "<a href='http://192.168.137.1:80/Bulakbuy00/Payments/index.php'>Back to main</a>";
+	echo "<a href='http://localhost:80/Bulakbuy00/Payments/index.php'>Back to main</a>";
 ?>

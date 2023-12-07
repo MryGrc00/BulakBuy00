@@ -318,9 +318,6 @@ function filter_products_by_price($min, $max) {
     text-decoration: none;
 }
 
-.product:hover {
-    transform: scale(1.05);
-}
 
 .product a img {
     width: 150px;

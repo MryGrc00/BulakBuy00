@@ -22,7 +22,6 @@ if (isset($_SESSION["user_id"])) {
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
         <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 
-        <link rel="stylesheet" href="../../css/maps.css">
         <style>
             @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap");
  * {
@@ -79,6 +78,21 @@ if (isset($_SESSION["user_id"])) {
      transform: translateX(-50%);
      position: absolute;
 }
+.num-label{
+     background-color: #ff7e95;
+     border-radius: 50px;
+     padding: 2px;
+     margin: auto;
+     width: 20px;
+     height: 20px;
+     font-size: 10px;
+     position: absolute;
+     top: 5px;
+     margin-left: 20.5%;
+     transform: translateX(50%);
+     color: white;
+     text-align: center;
+}
  .num-cart {
      background-color: #ff7e95;
      border-radius: 50px;
@@ -130,10 +144,22 @@ if (isset($_SESSION["user_id"])) {
     max-width: 1140px;
     margin: 0 auto;
     margin-top: 40px;
-    margin-bottom: 90px;
+   
 
 }
+.service-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 20px;
+    max-width: 1140px;
+    margin: 0 auto;
+    margin-top: 20px;
+   
+    margin-bottom: 90px;
+    
 
+}
 .product {
     flex: 0 0 calc(4%);
     margin-top: -20px;
@@ -150,9 +176,6 @@ if (isset($_SESSION["user_id"])) {
     text-decoration: none;
 }
 
-.product:hover {
-    transform: scale(1.05);
-}
 
 .product a img {
     width: 150px;
@@ -199,26 +222,61 @@ if (isset($_SESSION["user_id"])) {
          z-index: 100;
          top:0;
      }
+     .history{
+        display:none;
+     }
      .navbar img {
          display: none;
     }
-     .form-input[type="text"] {
-         display: none;
-    }
-     .nav-hr{
+     .navbar{
+         position: fixed;
+         background-color: white;
          width:100%;
+         z-index: 1;
+         top:0;
+    }
+    .num-label{
+         background-color: #ff7e95;
+         border-radius: 50px;
+         padding: 2px;
+         margin: auto;
+         width: 17px;
+         height: 17px;
+         font-size: 9px;
+         font-weight: bold;
+         position: absolute;
+         top: 2px;
+         margin-left: 10%;
+         transform: translateX(50%);
+         color: white;
+         text-align: center;
+    }
+     .form {
+         text-align: left;
+         
+    }
+     .form-input[type="text"] {
+         height: 45px;
+         width: 100%;
+         background-color: #f0f0f0;
+         border-radius: 10px;
+         margin: 0;
+         margin-top: 25px;
+    }
+     .form-inline .fa-search {
+         font-size: 20px;
+         margin-top: 43px;
+         margin-left: 40px;
+    }
+     ::placeholder {
+         font-size: 14px;
     }
      a #search-results{
          display: block ;
          font-size: 15px;
          margin-left: 20px;
-        margin-top: -20px;
-        width: 220px;
-        font-size: 15px;
-        color: #666;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+         color: #555;
+         margin-top: -20px;
     }
     a:hover{
         text-decoration: none;
@@ -228,6 +286,10 @@ if (isset($_SESSION["user_id"])) {
      .back{
          display: block;
          font-size: 20px;
+         color:#666;
+    }
+     .nav-hr{
+         display: none;
     }
      .cart {
          font-size: 20px;
@@ -255,7 +317,7 @@ if (isset($_SESSION["user_id"])) {
          text-align: center;
     }
      .form-inline .fa-search {
-         display: none;
+         display: block;
     }
      .form-inline .back{
          text-decoration: none;
@@ -270,7 +332,7 @@ if (isset($_SESSION["user_id"])) {
          width: 105%;
          margin: auto;
          height: 70px;
-         top: 91.5%;
+         top: 90%;
          position: fixed;
          z-index: 100;
          border-radius: 0px;
@@ -296,7 +358,7 @@ if (isset($_SESSION["user_id"])) {
          justify-content: center;
          margin-top: 18px;
          margin-left: -18px;
-         margin-bottom: 10px;
+        
          color: #65a5a5;
          
        
@@ -320,7 +382,13 @@ if (isset($_SESSION["user_id"])) {
          display: flex;
          flex-wrap: wrap;
          justify-content: center;
-         margin-top:90px;
+         margin-top:170px;
+    }
+    .service-list {
+         display: flex;
+         flex-wrap: wrap;
+         justify-content: center;
+         margin-top:20px;
          margin-bottom:90px;
     }
      .product {
@@ -420,116 +488,158 @@ if (isset($_SESSION["user_id"])) {
             </nav>
         </header>
         <main>
-        <div class="home text-center">
-            <ul class="icon-list">
-               <li>                      
-                  <a href="customer_home.php"><i class="fa fa-home" aria-hidden="true"></i></a>
-                  <span class="h-label">Home</span>
-               </li>
-               <li>
-               <a href="../users.php"><i class="fa fa-envelope-o" aria-hidden="true"></i></a>
-                  <p class="number">1</p>
-                  <span class="h-label">Messages</span>
-               </li>
-               <li>
-                  <a href="maps.php"><i class="fa fa-map-marker" aria-hidden="true"></i></a>
-                  <span class="h-label">Maps</span>
-               </li>
-               
-               <li>
-                  <a href="customer_profile.php"><i class="fa fa-user-o" aria-hidden="true"></i></a>
-                  <p class="number">1</p>
-                  <span class="h-label">Account</span>
-               </li>
-            </ul>
-      </div>
+        
 
       <section>
-        <?php
-            $conn = dbconnect(); // Establish the database connection
-            $hasResults = false;
+      <?php
+        $conn = dbconnect(); // Establish the database connection
+        $hasResults = false;
 
-            if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-               if (isset($_GET['search'])) {
-                  // Case 1: Search query is present
-                  $search_query = $_GET['search'];
+        if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+            if (isset($_GET['search'])) {
+                // Case 1: Search query is present for shops and products
+                $search_query = $_GET['search'];
 
-                  // Perform a search query in the shop table
-                  $sql = "SELECT * FROM shops WHERE shop_address LIKE :search";
-                  $stmt = $conn->prepare($sql);
-                  $stmt->bindValue(':search', '%' . $search_query . '%', PDO::PARAM_STR);
-                  $stmt->execute();
-                  $shops = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                // Perform a search query in the shop table
+                $sql_shops = "SELECT * FROM shops WHERE shop_address LIKE :search";
+                $stmt_shops = $conn->prepare($sql_shops);
+                $stmt_shops->bindValue(':search', '%' . $search_query . '%', PDO::PARAM_STR);
+                $stmt_shops->execute();
+                $shops = $stmt_shops->fetchAll(PDO::FETCH_ASSOC);
 
-                  if ($shops) {
-                        // If there are matching shops, fetch corresponding products from the product table
-                        $product_container = '<div class="product-list" id="product-container">';
-                        foreach ($shops as $shop) {
-                           $shop_id = $shop['shop_id'];
+                if ($shops) {
+                    // If there are matching shops, fetch corresponding products from the product table
+                    $product_container = '<div class="product-list" id="product-container">';
+                    foreach ($shops as $shop) {
+                        $shop_id = $shop['shop_id'];
 
-                           $sql_products = "SELECT * FROM products WHERE shop_owner = :shop_owner";
-                           $stmt_products = $conn->prepare($sql_products);
-                           $stmt_products->bindValue(':shop_owner', $shop_id, PDO::PARAM_INT);
-                           $stmt_products->execute();
-                           $products = $stmt_products->fetchAll(PDO::FETCH_ASSOC);
+                        $sql_products = "SELECT * FROM products WHERE shop_owner = :shop_owner";
+                        $stmt_products = $conn->prepare($sql_products);
+                        $stmt_products->bindValue(':shop_owner', $shop_id, PDO::PARAM_INT);
+                        $stmt_products->execute();
+                        $products = $stmt_products->fetchAll(PDO::FETCH_ASSOC);
 
-                           foreach ($products as $product) {
-                              $hasResults = true;
-                              $product_container .= '<div class="product">';
-                              $product_container .= '<a href="product.html">';
-                              $product_container .= '<img src="' . $product['product_img'] . '" alt="' . $product['product_name'] . '">';
-                              $product_container .= '<div class="product-name">' . $product['product_name'] . '</div>';
-                              $product_container .= '<div class="product-category">' . $product['product_category'] . '</div>';
-                              $product_container .= '<div class="p">';
-                              $product_container .= '<div class="product-price">₱ ' . number_format($product['product_price'], 2) . '</div>';
-                              // Add code to display product ratings
-                              $product_container .= '</div>';
-                              $product_container .= '</a>';
-                              $product_container .= '</div>';
-                           }
+                        foreach ($products as $product) {
+                            $hasResults = true;
+                            $product_container .= '<div class="product">';
+                            $product_container .= '<a href="product.html">';
+                            $product_container .= '<img src="' . $product['product_img'] . '" alt="' . $product['product_name'] . '">';
+                            $product_container .= '<div class="product-name">' . $product['product_name'] . '</div>';
+                            $product_container .= '<div class="product-category">' . $product['product_category'] . '</div>';
+                            $product_container .= '<div class="p">';
+                            $product_container .= '<div class="product-price">₱ ' . number_format($product['product_price'], 2) . '</div>';
+                            // Add code to display product ratings
+                            $product_container .= '</div>';
+                            $product_container .= '</a>';
+                            $product_container .= '</div>';
                         }
-                        $product_container .= '</div>';
-                        echo $product_container;
-                  }
-               } else {
-                  // Case 2: No search query, display all products
-                  $sql_all_products = "SELECT * FROM products";
-                  $stmt_all_products = $conn->prepare($sql_all_products);
-                  $stmt_all_products->execute();
-                  $all_products = $stmt_all_products->fetchAll(PDO::FETCH_ASSOC);
+                    }
+                    $product_container .= '</div>';
+                    echo $product_container;
+                }
 
-                  if ($all_products) {
+                // Perform a search query in the services table
+                $sql_services = "SELECT s.*, u.first_name, u.last_name, u.profile_img 
+                FROM services AS s
+                JOIN users AS u ON s.arranger_id = u.user_id
+                WHERE (u.address LIKE :search) AND s.status = 'enabled'
+                ORDER BY s.service_id DESC";
+                $stmt_services = $conn->prepare($sql_services);
+                $stmt_services->bindValue(':search', '%' . $search_query . '%', PDO::PARAM_STR);
+                $stmt_services->execute();
+                $services = $stmt_services->fetchAll(PDO::FETCH_ASSOC);
+
+                if ($services) {
+                    // If there are matching services, display them
+                    $service_container = '<div class="service-list" id="service-container">';
+                    foreach ($services as $service) {
                         $hasResults = true;
+                        $service_container .= '<div class="product">';
+                            $service_container .= '<a href="customer_service.php?service_id=' . $service['service_id'] . '">';
+                            $service_container .= '<img src="' . $service['profile_img'] . '" alt="' . $service['last_name'] . '">';
+                            $service_container .= '<div class="product-name">' . $service['first_name'] . ' ' . $service['last_name'] . '</div>';
+                            $service_container .= '<div class="product-category">Service Category</div>';
+                            $service_container .= '<div class="p">';
+                            $service_container .= '<div class="product-price">Service Rate: ₱ ' . number_format($service['service_rate'], 2) . '</div>';
+                            // Add code to display service details
+                            $service_container .= '</div>';
+                            $service_container .= '</a>';
+                            $service_container .= '</div>';
+                    }
+                    $service_container .= '</div>';
+                    echo $service_container;
+                }
+            } else {
+                // Case 2: No search query, display all products and services
+                $sql_all_products = "SELECT * FROM products";
+                $stmt_all_products = $conn->prepare($sql_all_products);
+                $stmt_all_products->execute();
+                $all_products = $stmt_all_products->fetchAll(PDO::FETCH_ASSOC);
 
-                        $product_container = '<div class="product-list" id="product-container">';
-                        foreach ($all_products as $product) {
-                           $product_container .= '<div class="product">';
-                           $product_container .= '<a href="customer_product.php?product_id=' . $product['product_id'] . '">';
-                           $product_container .= '<img src="' . $product['product_img'] . '" alt="' . $product['product_name'] . '">';
-                           $product_container .= '<div class="product-name">' . $product['product_name'] . '</div>';
-                           $product_container .= '<div class="product-category">' . $product['product_category'] . '</div>';
-                           $product_container .= '<div class="p">';
-                           $product_container .= '<div class="product-price">₱ ' . number_format($product['product_price'], 2) . '</div>';
-                           // Add code to display product ratings
-                           $product_container .= '</div>';
-                           $product_container .= '</a>';
-                           $product_container .= '</div>';
-                           }
-                           $product_container .= '</div>';
-                           echo $product_container;
-                  }
-               }
+                if ($all_products) {
+                    $hasResults = true;
+                    $product_container = '<div class="product-list" id="product-container">';
+                    foreach ($all_products as $product) {
+                        $product_container .= '<div class="product">';
+                        $product_container .= '<a href="customer_product.php?product_id=' . $product['product_id'] . '">';
+                        $product_container .= '<img src="' . $product['product_img'] . '" alt="' . $product['product_name'] . '">';
+                        $product_container .= '<div class="product-name">' . $product['product_name'] . '</div>';
+                        $product_container .= '<div class="product-category">' . $product['product_category'] . '</div>';
+                        $product_container .= '<div class="p">';
+                        $product_container .= '<div class="product-price">₱ ' . number_format($product['product_price'], 2) . '</div>';
+                        $product_container .= '</div>';
+                        $product_container .= '</a>';
+                        $product_container .= '</div>';
+                    }
+                    $product_container .= '</div>';
+                    echo $product_container;
+                }
+
+                // Display all services
+                $sql_all_services = "SELECT s.*, u.first_name, u.last_name, u.profile_img 
+                            FROM services AS s
+                            JOIN users AS u ON s.arranger_id = u.user_id
+                            WHERE s.status = 'enabled'
+                            ORDER BY s.service_id DESC";
+                $stmt_all_services = $conn->prepare($sql_all_services);
+                $stmt_all_services->execute();
+                $all_services = $stmt_all_services->fetchAll(PDO::FETCH_ASSOC);
+
+
+                if ($all_services) {
+                    $hasResults = true;
+                    $service_container = '<div class="service-list" id="service-container">';
+                    foreach ($all_services as $service) {
+                        $service_container .= '<div class="product">';
+                            $service_container .= '<a href="customer_service.php?service_id=' . $service['service_id'] . '">';
+                            $service_container .= '<img src="' . $service['profile_img'] . '" alt="' . $service['last_name'] . '">';
+                            $service_container .= '<div class="product-name">' . $service['first_name'] . ' ' . $service['last_name'] . '</div>';
+                            $service_container .= '<div class="product-category">Service Category</div>';
+                            $service_container .= '<div class="p">';
+                            $service_container .= '<div class="product-price">Service Rate: ₱ ' . number_format($service['service_rate'], 2) . '</div>';
+                            // Add code to display service details
+                            $service_container .= '</div>';
+                            $service_container .= '</a>';
+                            $service_container .= '</div>';
+                    }
+                    $service_container .= '</div>';
+                    echo $service_container;
+                }
             }
+        }
 
-            $conn = null; // Close the database connection
-            ?>
-               <?php if (!$hasResults) : ?>
-                  <p class="p-end" style="color: #bebebe;
-     font-size: 15px;
-     text-align: center;
-     margin-top: 300px;">No products found</p>
-               <?php endif; ?>
-               </section>
+$conn = null; // Close the database connection
+?>
+
+<?php if (!$hasResults) : ?>
+    <p class="p-end" style="color: #bebebe;
+        font-size: 15px;
+        text-align: center;
+        margin-top: 400px;">No results found</p>
+<?php endif; ?>
+</section>
+
+
 
 
         

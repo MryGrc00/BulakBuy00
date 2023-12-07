@@ -7,8 +7,21 @@ include '../php/checksession.php';
 function filter_products_by_price($min, $max, $search_query = null) {
     $conn = dbconnect();
 
+    // Initialize the search condition
+    $search_condition = '';
+
     // Include the search query in the SQL query if it exists
-    $search_condition = $search_query ? "AND (product_name LIKE :search_query OR product_category LIKE :search_query)" : "";
+    if ($search_query) {
+        // Split the search query into keywords
+        $keywords = explode(' ', $search_query);
+
+        // Build the search condition for each keyword
+        $search_condition .= " AND (";
+        foreach ($keywords as $index => $keyword) {
+            $search_condition .= ($index > 0 ? ' AND ' : '') . "(product_name LIKE :search_keyword$index OR product_category LIKE :search_keyword_category$index)";
+        }
+        $search_condition .= ")";
+    }
 
     $query = "SELECT * FROM products WHERE product_price BETWEEN :min AND :max $search_condition";
     $stmt = $conn->prepare($query);
@@ -17,13 +30,39 @@ function filter_products_by_price($min, $max, $search_query = null) {
 
     // Bind the search query parameters if it exists
     if ($search_query) {
-        $stmt->bindValue(':search_query', '%' . $search_query . '%', PDO::PARAM_STR);
+        // Bind each keyword to the corresponding parameter
+        foreach ($keywords as $index => $keyword) {
+            $stmt->bindValue(":search_keyword$index", '%' . $keyword . '%', PDO::PARAM_STR);
+            $stmt->bindValue(":search_keyword_category$index", '%' . $keyword . '%', PDO::PARAM_STR);
+        }
     }
 
-    $stmt->execute();
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    try {
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        echo "Error: " . $e->getMessage();
+    }
 }
+function filter_services_by_keyword($keyword) {
+    $conn = dbconnect();
 
+    $query = "SELECT s.*, u.first_name, u.last_name, u.profile_img 
+              FROM services AS s
+              JOIN users AS u ON s.arranger_id = u.user_id
+              WHERE s.status = 'enabled' AND (u.first_name LIKE :search_keyword OR u.last_name LIKE :search_keyword)
+              ORDER BY s.service_id DESC";
+
+    $stmt = $conn->prepare($query);
+    $stmt->bindValue(':search_keyword', '%' . $keyword . '%', PDO::PARAM_STR);
+
+    try {
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        echo "Error: " . $e->getMessage();
+    }
+}
 // Function to get latest products
 function get_latest_products() {
     $products = get_latest_products_by_id('products', 'shops', 'subscription');
@@ -47,20 +86,31 @@ if (isset($_GET['search'])) {
     $search_query = $_GET['search'];
 }
 
-// Fetch products based on search and/or price range
 if ($min_price_input !== null && $max_price_input !== null) {
-    $results = filter_products_by_price($min_price_input, $max_price_input, $search_query);
+    $product_results = filter_products_by_price($min_price_input, $max_price_input, $search_query);
+    $service_results = filter_services_by_keyword($search_query);
 } elseif ($search_query !== null) {
-    // Fetch products based on search query only
-    $results = filter_products_by_price(0, PHP_INT_MAX, $search_query);
+    if ($search_query === "flower arranger" || $search_query === "Flower Arranger" || $search_query === "FLOWER ARRANGER" || $search_query === "ARRANGER" || $search_query === "arranger") {
+        // Display all services if the search query is "flower arranger"
+        $service_results = get_latest_services('services', 'users', 'shops', 'subscription');
+        $product_results = []; // No product results in this case
+    } else {
+        // Fetch products based on search query only
+        $product_results = filter_products_by_price(0, PHP_INT_MAX, $search_query);
+        $service_results = filter_services_by_keyword($search_query);
+    }
 } else {
     // Fetch latest products if no search or price filter
-    $results = get_latest_products();
+    $product_results = get_latest_products();
+    $service_results = get_latest_services('services', 'users', 'shops', 'subscription');
 }
 
-$hasResults = !empty($results);
-?>
 
+$product_hasResults = !empty($product_results);
+$service_hasResults = !empty($service_results);
+
+
+?>
 <!DOCTYPE html> 
 <html lang="en">
     <head>
@@ -317,9 +367,6 @@ $hasResults = !empty($results);
     text-decoration: none;
 }
 
-.product:hover {
-    transform: scale(1.05);
-}
 
 .product a img {
     width: 150px;
@@ -370,6 +417,9 @@ $hasResults = !empty($results);
          width:100%;
          z-index: 100;
          top:0;
+     }
+     .history{
+        display:none;
      }
      .navbar img {
          display: none;
@@ -571,7 +621,7 @@ $hasResults = !empty($results);
          display: flex;
          flex-wrap: wrap;
          justify-content: center;
-         margin-top:35px;
+         margin-top:90px;
          margin-bottom:10px;
     }
      .product {
@@ -660,7 +710,7 @@ $hasResults = !empty($results);
                             <form action="search_results.php" method="GET" class="form-inline my-2 my-lg-0">
                                 <button type="submit"><i class="fa fa-search"></i></button>
                                 <input type="text" name="search" id="search-input" class="form-control form-input" placeholder="Search">
-                                <a href="javascript:void(0);" onclick="goBack()">
+                                <a href="customer_home.php">
                                     <i class="back fa fa-angle-left" aria-hidden="true"></i>
                                     <div id="search-results">
                                         <?php
@@ -708,9 +758,11 @@ $hasResults = !empty($results);
                 </div>
                 </section>
                 <section>
-                <?php if ($hasResults) : ?>
-                    <div class="product-list" id="product-container" >
-                        <?php foreach ($results as $product) : ?>
+                <?php if ($product_hasResults || $service_hasResults) : ?>
+                <div class="product-list" id="product-container">
+                    <?php if ($product_hasResults) : ?>
+                        <!-- Display product results -->
+                        <?php foreach ($product_results as $product) : ?>
                             <div class="product">
                                 <a href="customer_product.php?product_id=<?= $product['product_id'] ?>">
                                     <img src="<?= $product['product_img'] ?>" alt="<?= $product['product_name'] ?>">
@@ -722,10 +774,27 @@ $hasResults = !empty($results);
                                 </a>
                             </div>
                         <?php endforeach; ?>
-                    </div>
-                <?php else : ?>
-                    <p class="p-end">No products found</p>
-                <?php endif; ?>
+                    <?php endif; ?>
+
+                    <?php if ($service_hasResults) : ?>
+                        <!-- Display service results -->
+                        <?php foreach ($service_results as $service) : ?>
+                            <div class="product">
+                                <a href="customer_service.php?service_id=<?= $service['service_id'] ?>">
+                                    <img src="<?= $service['profile_img'] ?>" alt="<?= $service['last_name'] ?>">
+                                    <div class="product-name"><?= $service['first_name'] . ' ' . $service['last_name'] ?></div>
+                                    <div class="product-category">Flower Arranger</div>
+                                    <div class="p">
+                                        <div class="product-price">₱ <?= $service['service_rate'] ?></div>
+                                    </div>
+                                </a>
+                            </div>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </div>
+            <?php else : ?>
+                <p class="p-end">No results found</p>
+            <?php endif; ?>
 
                
                  
