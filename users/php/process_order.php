@@ -13,7 +13,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $customerID = $_SESSION["user_id"];
         $totalAmount = $productData["totalAmount"];
         $salesDate = date("Y-m-d H:i:s");
-        $status = "pending";
+        $status = "Pending";
 
         // Add the sales record to the database
         $success = add_sales_record($productID, $customerID, $totalAmount, $salesDate, $status);

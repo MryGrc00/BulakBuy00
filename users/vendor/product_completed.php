@@ -85,7 +85,7 @@ if (isset($_SESSION['user_id'])) {
     }
 }
 
-// Function to fetch seller orders from the sales table// Function to fetch seller orders from the sales table with status "pending"
+// Function to fetch seller orders from the sales table// Function to fetch seller orders from the sales table with status "Pending"
 function get_seller_orders($seller_id) {
     $conn = dbconnect();
     $sql = "SELECT s.amount, s.sales_date, p.product_id, p.product_name, p.product_img, p.product_price, s.customer_id

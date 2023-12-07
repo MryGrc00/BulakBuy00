@@ -46,12 +46,12 @@
                         session_start();
                         include '../php/dbhelper.php';
 
-                        if (isset($_SESSION['user_id']) &&  isset($_GET['service_id'])){
+                        if (isset($_SESSION['user_id']) &&  isset($_GET['servicedetails_id'])){
                             $user_id = $_SESSION['user_id'];
-                            $service_id = $_GET['service_id'];
+                            $servicedetails_id = $_GET['servicedetails_id'];
 
                             // Fetch product details from the product table
-                            $details= getServiceDetails("servicedetails", "services", "users", $service_id, $user_id);
+                            $details= getServiceDetails("servicedetails", "services", "users", $servicedetails_id, $user_id);
 
 
                         }
@@ -80,30 +80,43 @@
           ?>
                         <hr class="cart-hr">
 						<div class="timeline">
-                            
-                            <?php
 
-                            if (isset($_GET['service_id'])) {
-                                $service_id = $_GET['service_id'];
-                            
-                                $status = get_order_status($service_id);
-                            
-                                // Check if there was an error fetching the status
-                                if ($status === false) {
-                                    echo "Error fetching order status.";
-                                    return; // Exit the script if there was an error
-                                }
-                            
-                                // Output HTML based on the order status
-                                if ($status === 'Pending') {
-                                    echo '<div class="status">
-                                            <div class="status-icon">1</div>
-                                            <div class="status-info">
-                                                <div class="status-text">Order Placed</div>
-                                            </div>
-                                        </div>';
-                                } elseif ($status === 'Processing') {
-                                    echo '<div class="status">
+                            <?php
+                                                
+                            // Check if product_id is set in the URL
+                            if (isset($_GET['servicedetails_id'])) {
+                                $servicedetails_id = $_GET['servicedetails_id'];
+
+                                // Fetch status from the sales table
+                                $status = get_service_status_by_servicedetails_id($servicedetails_id);
+
+                            // Display the corresponding HTML based on the status
+                            if ($status === 'Pending') {
+                            echo '<div class="status">
+                                    <div class="status-icon">1</div>
+                                    <div class="status-info">
+                                        <div class="status-text">Order Placed</div>
+                                    </div>
+                                
+                                </div>';
+                            } elseif ($status === 'Processing') {
+                            echo '<div class="status">
+                                    <div class="status-icon">1</div>
+                                    <div class="status-info">
+                                        <div class="status-text">Order Placed</div>
+                                    </div>
+                                    <div class="vertical-line"></div>
+                                    <!-- Vertical line -->
+                                </div>
+                                <div class="status">
+                                    <div class="status-icon">2</div>
+                                    <div class="status-info">
+                                        <div class="status-text">Processing</div>
+                              </div>
+                                
+                                </div>';
+                            } elseif ($status === 'Intransit') {
+                            echo '<div class="status">
                                     <div class="status-icon">1</div>
                                     <div class="status-info">
                                         <div class="status-text">Order Placed</div>
@@ -116,34 +129,18 @@
                                     <div class="status-info">
                                         <div class="status-text">Processing</div>
                                     </div>
+                                    <div class="vertical-line"></div>
+                                    <!-- Vertical line -->
+                                </div>
+                                <div class="status">
+                                    <div class="status-icon">3</div>
+                                    <div class="status-info">
+                                        <div class="status-text">In Transit</div>
+                                    </div>
                                 
                                 </div>';
-                                } elseif ($status === 'Intransit') {
-                                    echo '<div class="status">
-                                        <div class="status-icon">1</div>
-                                        <div class="status-info">
-                                            <div class="status-text">Order Placed</div>
-                                        </div>
-                                        <div class="vertical-line"></div>
-                                        <!-- Vertical line -->
-                                    </div>
-                                    <div class="status">
-                                        <div class="status-icon">2</div>
-                                        <div class="status-info">
-                                            <div class="status-text">Processing</div>
-                                        </div>
-                                        <div class="vertical-line"></div>
-                                        <!-- Vertical line -->
-                                    </div>
-                                    <div class="status">
-                                        <div class="status-icon">3</div>
-                                        <div class="status-info">
-                                            <div class="status-text">In Transit</div>
-                                        </div>
-                                    
-                                    </div>';
-                                } elseif ($status === 'Completed') {
-                                    echo '<div class="status">
+                            } elseif ($status === 'Completed') {
+                            echo '<div class="status">
                                     <div class="status-icon">1</div>
                                     <div class="status-info">
                                         <div class="status-text">Order Placed</div>
@@ -173,27 +170,21 @@
                                         <div class="status-text">Delivered</div>
                                     </div>
                                 </div>';
-                                } else {
-                                    echo "Invalid status.";
-                                }
                             } else {
-                                echo "Product ID not provided.";
+                                    echo "Invalid status.";
+                                    }
+                            } else {
+                            echo "Product ID not provided.";
                             }
-                            
-                            function get_order_status($service_id) {
+
+                            function get_service_status_by_servicedetails_id($servicedetails_id) {
                                 $conn = dbconnect();
-                                $sql = "SELECT status FROM servicedetails WHERE service_id = ?";
-                            
+                                $sql = "SELECT status FROM servicedetails WHERE servicedetails_id = ?";
+
                                 try {
                                     $stmt = $conn->prepare($sql);
-                                    $stmt->execute([$service_id]);
+                                    $stmt->execute([$servicedetails_id]); // Use the function parameter here
                                     $status = $stmt->fetchColumn();
-                            
-                                    // Check if $status is a string and not false or null
-                                    if (!is_string($status)) {
-                                        return false;
-                                    }
-                            
                                     $conn = null;
                                     return $status;
                                 } catch (PDOException $e) {
@@ -202,8 +193,9 @@
                                     return false;
                                 }
                             }
+
+
                             ?>
-                            
 
 
 						</div>

@@ -54,7 +54,7 @@
                 if ($orders) {
                     // Loop through the orders and display them
                     foreach ($orders as $order) {
-                                  echo '<div class="single-card" onclick="redirectToOrderStatus(' . $order['product_id'] . ')">';
+                        echo '<div class="single-card" onclick="redirectToOrderStatus(' . $order['sales_id'] . ')">';
                         echo '<div class="img-area">';
                         echo '<img src="' . $order['product_img'] . '" alt="">';
                         echo '</div>';
@@ -86,13 +86,12 @@
             // Function to fetch customer orders from the sales table with status "Pending"
             function get_customer_orders($customer_id) {
                 $conn = dbconnect();
-                $sql = "SELECT p.product_id, p.product_name, p.product_img, p.product_price, SUM(sd.quantity) as quantity, sd.flower_type, sd.ribbon_color
-                FROM sales s
-                JOIN salesdetails sd ON s.product_id = sd.product_id
-                JOIN products p ON sd.product_id = p.product_id
-                WHERE s.customer_id = ? AND s.status = 'Pending'
-                GROUP BY p.product_id, sd.flower_type, sd.ribbon_color;
-                ";
+                $sql = "SELECT s.sales_id, p.product_name, p.product_img, p.product_price, SUM(sd.quantity) as quantity, sd.flower_type, sd.ribbon_color
+                        FROM sales s
+                        JOIN salesdetails sd ON s.salesdetails_id = sd.salesdetails_id
+                        JOIN products p ON sd.product_id = p.product_id
+                        WHERE s.customer_id = ? AND s.status = 'Pending'
+                        GROUP BY s.sales_id, sd.flower_type, sd.ribbon_color;";
                 try {
                     $stmt = $conn->prepare($sql);
                     $stmt->execute([$customer_id]);
@@ -105,6 +104,7 @@
                     return false;
                 }
             }
+            
             ?>
         </div>
     </div>
@@ -115,9 +115,9 @@
     }
   </script>
    <script>
-    function redirectToOrderStatus(productId) {
+    function redirectToOrderStatus(salesId) {
         // Redirect the user to the order_status.php page with the product id as a parameter
-        window.location.href = 'order_status.php?product_id=' + productId;
+        window.location.href = 'order_status.php?sales_id=' + salesId;
     }
 </script>
     

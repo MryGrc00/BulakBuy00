@@ -1,23 +1,22 @@
-
 <!DOCTYPE html> 
 <html lang="en">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Feedbacks</title>
+        <title>See All Reviews</title>
         <link href='https://fonts.googleapis.com/css?family=Poppins' rel='stylesheet'>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-pzjw8f+uaex3+ihrbIk8mz07tb2F4F5ssx6kl5v5PmUGp1ELjF8j5+zM1a7z5t2N" crossorigin="anonymous">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
         <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
-        <link rel="stylesheet" href="../../css/feedbacks.css">
+        <link rel="stylesheet" href="../../css/see_all_reviews.css">
     </head>
     <body>
         <header>
             <nav class="navbar navbar-expand-lg">
                 <!-- Logo -->
                 <a class="navbar-brand d-flex align-items-center" href="#">
-                <img src="../php/images/logo.png" alt="BulakBuy Logo" class="img-fluid logo">
+                <img src="../../images/logo.png" alt="BulakBuy Logo" class="img-fluid logo">
                 </a>
                 <!-- Search Bar -->
                 <div class="navbar-collapse justify-content-md-center">
@@ -26,10 +25,8 @@
                             <form class="form-inline my-2 my-lg-0">
                                 <a href=""><i class="fa fa-search"></i></a>
                                 <input type="text"  class="form-control form-input" placeholder="Search">
-                                <a href="javascript:void(0);" onclick="goBack()">
-                                    <i class="back fa fa-angle-left" aria-hidden="true"></i>
-                                    <div id="search-results">Feedbacks</div>
-                                  </a>
+                                <a href="../customer/product.html"><i class="back fa fa-angle-left" aria-hidden="true"></i></a>
+                                <div id="search-results">Product Ratings</div>
                             </form>
                         </li>
                     </ul>
@@ -41,22 +38,16 @@
             <div class="container">
                 <div class="column2">
                 <?php
-                      session_start();
                     include '../php/dbhelper.php';
                     $conn=dbconnect();
 
-                    
-                    function get_product_details_by_user_id($user_id) {
+                    function get_product_details($product_id) {
                         $conn = dbconnect();
-                        $sql = "SELECT p.* 
-                                FROM products p 
-                                JOIN sales s ON p.product_id = s.product_id 
-                                JOIN shops sh ON s.shop_id = sh.shop_id 
-                                WHERE sh.owner_id = ?";
+                        $sql = "SELECT * FROM products WHERE product_id = ?";
                         try {
                             $stmt = $conn->prepare($sql);
-                            $stmt->execute([$user_id]);
-                            $product_details = $stmt->fetchAll(PDO::FETCH_ASSOC); // Fetch all since a user might have multiple products
+                            $stmt->execute([$product_id]);
+                            $product_details = $stmt->fetch(PDO::FETCH_ASSOC);
                             $conn = null;
                             return $product_details;
                         } catch (PDOException $e) {
@@ -64,20 +55,20 @@
                             $conn = null;
                             return false;
                         }
-                    }                    
+                    }
                         
-                    if (isset($_SESSION['user_id'])) {
-                        $user_id = $_SESSION['user_id'];
+                    if (isset($_GET['product_id'])) {
+                        $product_id = $_GET['product_id'];
                     
-                        // Fetch product details for the logged-in user
-                        $products = get_product_details_by_user_id($user_id);
+                        // Fetch product details from the product table
+                        $product_details = get_product_details($product_id);
                     
-                    
-
+                        // Display the product details
+                        if ($product_details) {
                             // ... (your existing code for displaying product details)
                     
                             // Display feedback and ratings
-                            $feedbackAndRatings = get_feedback_and_ratings_by_user_id($user_id);
+                            $feedbackAndRatings = get_feedback_and_ratings($product_id);
                     
                             if ($feedbackAndRatings) {
                                 foreach ($feedbackAndRatings as $feedback) {
@@ -117,18 +108,16 @@
                         } else {
                             echo "Product details not found.";
                         }
-                
+                    } else {
+                        echo "Product ID not provided.";
+                    }
                             // Function to fetch feedback and ratings from the sales table
-                            function get_feedback_and_ratings_by_user_id($user_id) {
+                            function get_feedback_and_ratings($product_id) {
                                 $conn = dbconnect();
-                                $sql = "SELECT s.*, p.product_name, p.product_img
-                                        FROM sales s
-                                        JOIN shops sh ON s.shop_id = sh.shop_id
-                                        JOIN products p ON s.product_id = p.product_id
-                                        WHERE sh.owner_id = ?";
+                                $sql = "SELECT * FROM sales WHERE product_id = ?";
                                 try {
                                     $stmt = $conn->prepare($sql);
-                                    $stmt->execute([$user_id]);
+                                    $stmt->execute([$product_id]);
                                     $feedbackAndRatings = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                     $conn = null;
                                     return $feedbackAndRatings;
@@ -138,7 +127,6 @@
                                     return false;
                                 }
                             }
-                            
 
                             // Function to fetch customer details
                             function get_customer_details($customer_id) {
@@ -170,8 +158,7 @@
                                 return $ratingHTML;
                             }
                             ?>
-
-                    
+                <hr>
                 <!-- Add this to your HTML -->
                 <div id="imageModal" class="modal1">
                     <span class="close">&times;</span>
@@ -236,10 +223,5 @@
             nextButton.addEventListener('click', nextImage);
             
         </script>
-         <script>
-            function goBack() {
-                window.history.back();
-            }
-          </script>
     </body>
 </html>

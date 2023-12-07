@@ -167,7 +167,7 @@ function get_quantity_for_product($product_id, $seller_id) {
                 $quantityText = $quantity ? 'x ' . $quantity : 'Quantity not available';
                 ?>
                 <p class="count"><?php echo $quantityText; ?></p>
-                <button class="product-intransit transit" data-sales-id="<?php echo $order['sales_id']?>" data-customer-id="<?php echo $order['customer_id']?>" name="intransit">To Deliver</button>           
+                <button class="product-Intransit transit" data-sales-id="<?php echo $order['sales_id']?>" data-customer-id="<?php echo $order['customer_id']?>" name="Intransit">To Deliver</button>           
                  </div>
             </div>
         </div>
@@ -194,7 +194,7 @@ function get_quantity_for_product($product_id, $seller_id) {
                 
                 <div class="text-right">
                     <div class="btn-container order">
-                    <button class="service-intransit transit" data-servicedetails-id="<?php echo $order['servicedetails_id']; ?>" data-customer-id="<?php echo $order['customer_id'];?>">In Transit</button>
+                    <button class="service-Intransit transit" data-servicedetails-id="<?php echo $order['servicedetails_id']; ?>" data-customer-id="<?php echo $order['customer_id'];?>">In Transit</button>
                     </div>
                 </div>
             </div>
@@ -241,7 +241,7 @@ function get_quantity_for_product($product_id, $seller_id) {
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <script>
     $(document).ready(function() {
-    $(".product-intransit").click(function() {
+    $(".product-Intransit").click(function() {
         var salesId = $(this).data("sales-id");
         var customerId = $(this).data("customer-id"); // Add this line to get the customer ID
 
@@ -269,7 +269,7 @@ function get_quantity_for_product($product_id, $seller_id) {
 </script>
 <script>
     $(document).ready(function() {
-    $(".service-intransit").click(function() {
+    $(".service-Intransit").click(function() {
         var servicedetailsId = $(this).data("servicedetails-id");
         var customerId = $(this).data("customer-id"); // Add this line to get the customer ID
 

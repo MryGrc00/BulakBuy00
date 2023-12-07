@@ -1568,9 +1568,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     });
                 }
 
-                // Send data to server for processing
+                // Send data to server for Processing
                 var xhr = new XMLHttpRequest();
-                xhr.open("POST", "", true); // Replace with the actual processing script
+                xhr.open("POST", "", true); // Replace with the actual Processing script
                 xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
                 xhr.onreadystatechange = function() {
                     if (xhr.readyState == 4) {

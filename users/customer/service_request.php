@@ -46,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
    $time = $_POST['time'];
    $hour = $_POST['hours'];
    $totalAmount = $_POST['total_amount'];
-   $status = "pending";
+   $status = "Pending";
 
    if (!empty($serviceID) && !empty($customerID) && !empty($date) && !empty($time) && !empty($totalAmount)) {
       $stmt = $pdo->prepare("INSERT INTO servicedetails (service_id, customer_id, amount, date, time, status, hours) VALUES (:serviceID, :customerID, :totalAmount, :date, :time, :status, :hour)");

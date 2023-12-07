@@ -288,7 +288,7 @@ else {
             <span class="label">Subscription</span>
           </div>
         </a>
-        <a href="../common/feedbacks.html">
+        <a href="arranger_feedbacks.php">
           <div class="card2">
             <i class="bi bi-chat-dots"></i>
             <span class="label">Feedback</span>

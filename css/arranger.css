@@ -145,7 +145,7 @@
 	color:#666;
 }
 
-/*btns of the service_process, intransit and completed*/
+/*btns of the service_process, Intransit and completed*/
 .btns{
     margin-top: 2%;
 }
@@ -153,7 +153,7 @@
  
 
 /* btns of service_order*/
-.accept, .done, .intransit{
+.accept, .done, .Intransit{
 	background-color: #65A5A5;
 	color: white;
 	padding: 5px 15px;
@@ -167,7 +167,7 @@
 }
 
 
-.service-intransit, .service-done, .service-accept, .service-cancel  {
+.service-Intransit, .service-done, .service-accept, .service-cancel  {
 	background-color: #65A5A5;
 	color: white;
 	padding: 5px 15px;

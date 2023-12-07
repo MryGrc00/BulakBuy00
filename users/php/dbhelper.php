@@ -317,7 +317,7 @@ function get_latest_products_by_id($productsTable, $shopTable, $subscribedTable)
                 FROM " . $servicedetailsTable . " AS sd
                 JOIN " . $servicesTable . " AS s ON sd.service_id = s.service_id
                 JOIN " . $usersTable . " AS u ON sd.customer_id = u.user_id
-                WHERE s.arranger_id = :loggedInUserId AND sd.status = 'pending'
+                WHERE s.arranger_id = :loggedInUserId AND sd.status = 'Pending'
                 ORDER BY sd.servicedetails_id DESC"; // Including servicedetails_id in the selection
         $stmt = $conn->prepare($sql);
         $stmt->bindParam(':loggedInUserId', $loggedInUserId, PDO::PARAM_INT);
@@ -329,7 +329,7 @@ function get_latest_products_by_id($productsTable, $shopTable, $subscribedTable)
     function get_count_of_pending_services($salesdetailsTable, $servicesTable, $loggedInUserId) {
         $conn = dbconnect();
     
-        // SQL to count the number of pending sales for services offered by the logged-in arranger
+        // SQL to count the number of Pending sales for services offered by the logged-in arranger
         $sql = "SELECT COUNT(*) as sales_count 
                 FROM " . $salesdetailsTable . " AS sd
                 JOIN " . $servicesTable . " AS s ON sd.service_id = s.service_id
@@ -345,11 +345,11 @@ function get_latest_products_by_id($productsTable, $shopTable, $subscribedTable)
 
     
 
-//processing
+//Processing
     function get_service_details_processing($servicedetailsTable, $servicesTable, $usersTable, $loggedInUserId) {
         $conn = dbconnect();
     
-        // SQL to join servicedetails with services and users, filtering for 'processing' status
+        // SQL to join servicedetails with services and users, filtering for 'Processing' status
         $sql = "SELECT sd.servicedetails_id, sd.*, u.first_name AS customer_first_name, u.last_name AS customer_last_name, 
                     u.address AS customer_address, u.profile_img AS customer_profile
                 FROM " . $servicedetailsTable . " AS sd
@@ -369,11 +369,11 @@ function get_latest_products_by_id($productsTable, $shopTable, $subscribedTable)
 function get_count_of_processing_services($servicedetailsTable, $servicesTable, $loggedInUserId) {
     $conn = dbconnect();
 
-    // SQL to count the number of service details in 'processing' status for the logged-in user's services
+    // SQL to count the number of service details in 'Processing' status for the logged-in user's services
     $sql = "SELECT COUNT(*) as count
             FROM " . $servicedetailsTable . " AS sd
             JOIN " . $servicesTable . " AS s ON sd.service_id = s.service_id
-            WHERE s.arranger_id = :loggedInUserId AND sd.status = 'processing'";
+            WHERE s.arranger_id = :loggedInUserId AND sd.status = 'Processing'";
     
     $stmt = $conn->prepare($sql);
     $stmt->bindParam(':loggedInUserId', $loggedInUserId, PDO::PARAM_INT);
@@ -385,11 +385,11 @@ function get_count_of_processing_services($servicedetailsTable, $servicesTable, 
 
 
 
-//intransit
+//Intransit
 function get_service_details_intransit($servicedetailsTable, $servicesTable, $usersTable, $loggedInUserId) {
     $conn = dbconnect();
 
-    // SQL to join servicedetails with services and users, filtering for 'processing' status
+    // SQL to join servicedetails with services and users, filtering for 'Processing' status
     $sql = "SELECT sd.servicedetails_id,sd.*, u.first_name AS customer_first_name, u.last_name AS customer_last_name, 
                 u.address AS customer_address, u.profile_img AS customer_profile
             FROM " . $servicedetailsTable . " AS sd
@@ -410,11 +410,11 @@ function get_service_details_intransit($servicedetailsTable, $servicesTable, $us
 function get_count_of_intransit_services($servicedetailsTable, $servicesTable, $loggedInUserId) {
     $conn = dbconnect();
 
-    // SQL to count the number of service details in 'intransit' status for the logged-in user's services
+    // SQL to count the number of service details in 'Intransit' status for the logged-in user's services
     $sql = "SELECT COUNT(*) as count
             FROM " . $servicedetailsTable . " AS sd
             JOIN " . $servicesTable . " AS s ON sd.service_id = s.service_id
-            WHERE s.arranger_id = :loggedInUserId AND sd.status = 'intransit'";
+            WHERE s.arranger_id = :loggedInUserId AND sd.status = 'Intransit'";
     
     $stmt = $conn->prepare($sql);
     $stmt->bindParam(':loggedInUserId', $loggedInUserId, PDO::PARAM_INT);
@@ -449,7 +449,7 @@ function get_service_details_completed($servicedetailsTable, $servicesTable, $us
 function get_count_of_completed_services($servicedetailsTable, $servicesTable, $loggedInUserId) {
     $conn = dbconnect();
 
-    // SQL to count the number of service details in 'intransit' status for the logged-in user's services
+    // SQL to count the number of service details in 'Intransit' status for the logged-in user's services
     $sql = "SELECT COUNT(*) as count
             FROM " . $servicedetailsTable . " AS sd
             JOIN " . $servicesTable . " AS s ON sd.service_id = s.service_id
@@ -466,16 +466,16 @@ function get_count_of_completed_services($servicedetailsTable, $servicesTable, $
 
 
 
-//pending for customer side
+//Pending for customer side
 function get_pending_service_details_arranger($servicedetailsTable, $servicesTable, $usersTable, $loggedInUserId){
     $conn = dbconnect();
     
     // SQL to join servicedetails with services, then with users to get the arranger's name and details
-    $sql = "SELECT  sd.*, u.first_name AS arranger_first_name, u.last_name AS arranger_last_name, u.address AS arranger_address, u.profile_img AS arranger_profile
+    $sql = "SELECT  sd.servicedetails_id, sd.*, u.first_name AS arranger_first_name, u.last_name AS arranger_last_name, u.address AS arranger_address, u.profile_img AS arranger_profile
             FROM " . $servicedetailsTable . " AS sd
             JOIN " . $servicesTable . " AS s ON sd.service_id = s.service_id
             JOIN " . $usersTable . " AS u ON s.arranger_id = u.user_id
-            WHERE sd.customer_id = :loggedInUserId AND sd.status = 'pending'
+            WHERE sd.customer_id = :loggedInUserId AND sd.status = 'Pending'
             ORDER BY sd.servicedetails_id DESC";
 
     $stmt = $conn->prepare($sql);
@@ -508,11 +508,11 @@ function get_cancelled_service_details_arranger($servicedetailsTable, $servicesT
 function get_pending_service_details_count_arranger($servicedetailsTable, $servicesTable, $usersTable, $loggedInUserId) {
     $conn = dbconnect();
     
-    // SQL to count the number of pending servicedetails for an arranger
+    // SQL to count the number of Pending servicedetails for an arranger
     $sql = "SELECT COUNT(*) AS pending_count
             FROM " . $servicedetailsTable . " AS sd
             JOIN " . $servicesTable . " AS s ON sd.service_id = s.service_id
-            WHERE sd.customer_id = :loggedInUserId AND sd.status = 'pending'";
+            WHERE sd.customer_id = :loggedInUserId AND sd.status = 'Pending'";
 
     $stmt = $conn->prepare($sql);
     $stmt->bindParam(':loggedInUserId', $loggedInUserId, PDO::PARAM_INT);
@@ -528,7 +528,7 @@ function get_pending_service_details_count_arranger($servicedetailsTable, $servi
 function get_cancelled_service_details_count_arranger($servicedetailsTable, $servicesTable, $usersTable, $loggedInUserId) {
     $conn = dbconnect();
     
-    // SQL to count the number of pending servicedetails for an arranger
+    // SQL to count the number of Pending servicedetails for an arranger
     $sql = "SELECT COUNT(*) AS pending_count
             FROM " . $servicedetailsTable . " AS sd
             JOIN " . $servicesTable . " AS s ON sd.service_id = s.service_id
@@ -555,7 +555,7 @@ function get_process_service_details_arranger($servicedetailsTable, $servicesTab
             FROM " . $servicedetailsTable . " AS sd
             JOIN " . $servicesTable . " AS s ON sd.service_id = s.service_id
             JOIN " . $usersTable . " AS u ON s.arranger_id = u.user_id
-            WHERE sd.customer_id = :loggedInUserId AND sd.status = 'processing'
+            WHERE sd.customer_id = :loggedInUserId AND sd.status = 'Processing'
             ORDER BY sd.servicedetails_id DESC";
 
     $stmt = $conn->prepare($sql);
@@ -569,11 +569,11 @@ function get_process_service_details_arranger($servicedetailsTable, $servicesTab
 function get_process_service_details_count_arranger($servicedetailsTable, $servicesTable, $usersTable, $loggedInUserId) {
     $conn = dbconnect();
     
-    // SQL to count the number of pending servicedetails for an arranger
+    // SQL to count the number of Pending servicedetails for an arranger
     $sql = "SELECT COUNT(*) AS pending_count
             FROM " . $servicedetailsTable . " AS sd
             JOIN " . $servicesTable . " AS s ON sd.service_id = s.service_id
-            WHERE sd.customer_id = :loggedInUserId AND sd.status = 'processing'";
+            WHERE sd.customer_id = :loggedInUserId AND sd.status = 'Processing'";
 
     $stmt = $conn->prepare($sql);
     $stmt->bindParam(':loggedInUserId', $loggedInUserId, PDO::PARAM_INT);
@@ -587,7 +587,7 @@ function get_process_service_details_count_arranger($servicedetailsTable, $servi
 }
 
 
-//intransit for customer side
+//Intransit for customer side
 function get_intransit_service_details_arranger($servicedetailsTable, $servicesTable, $usersTable, $loggedInUserId){
     $conn = dbconnect();
     
@@ -596,7 +596,7 @@ function get_intransit_service_details_arranger($servicedetailsTable, $servicesT
             FROM " . $servicedetailsTable . " AS sd
             JOIN " . $servicesTable . " AS s ON sd.service_id = s.service_id
             JOIN " . $usersTable . " AS u ON s.arranger_id = u.user_id
-            WHERE sd.customer_id = :loggedInUserId AND sd.status = 'intransit'
+            WHERE sd.customer_id = :loggedInUserId AND sd.status = 'Intransit'
             ORDER BY sd.servicedetails_id DESC";
 
     $stmt = $conn->prepare($sql);
@@ -610,11 +610,11 @@ function get_intransit_service_details_arranger($servicedetailsTable, $servicesT
 function get_intransit_service_details_count_arranger($servicedetailsTable, $servicesTable, $usersTable, $loggedInUserId) {
     $conn = dbconnect();
     
-    // SQL to count the number of pending servicedetails for an arranger
+    // SQL to count the number of Pending servicedetails for an arranger
     $sql = "SELECT COUNT(*) AS pending_count
             FROM " . $servicedetailsTable . " AS sd
             JOIN " . $servicesTable . " AS s ON sd.service_id = s.service_id
-            WHERE sd.customer_id = :loggedInUserId AND sd.status = 'intransit'";
+            WHERE sd.customer_id = :loggedInUserId AND sd.status = 'Intransit'";
 
     $stmt = $conn->prepare($sql);
     $stmt->bindParam(':loggedInUserId', $loggedInUserId, PDO::PARAM_INT);
@@ -650,7 +650,7 @@ function get_completed_service_details_arranger($servicedetailsTable, $servicesT
 function get_completed_service_details_count_arranger($servicedetailsTable, $servicesTable, $usersTable, $loggedInUserId) {
     $conn = dbconnect();
     
-    // SQL to count the number of pending servicedetails for an arranger
+    // SQL to count the number of Pending servicedetails for an arranger
     $sql = "SELECT COUNT(*) AS pending_count
             FROM " . $servicedetailsTable . " AS sd
             JOIN " . $servicesTable . " AS s ON sd.service_id = s.service_id
@@ -668,7 +668,7 @@ function get_completed_service_details_count_arranger($servicedetailsTable, $ser
 }
 
 //for order status.
-function getServiceDetails($servicedetailsTable, $servicesTable, $usersTable, $serviceId, $loggedInUserId) {
+function getServiceDetails($servicedetailsTable, $servicesTable, $usersTable, $servicedetailsId, $loggedInUserId) {
     $conn = dbconnect();
 
     // SQL query to join servicedetails with services, and then join with users twice (once for customer, once for arranger)
@@ -679,15 +679,16 @@ function getServiceDetails($servicedetailsTable, $servicesTable, $usersTable, $s
             JOIN " . $servicesTable . " AS s ON sd.service_id = s.service_id
             JOIN " . $usersTable . " AS cust ON sd.customer_id = cust.user_id
             JOIN " . $usersTable . " AS arr ON s.arranger_id = arr.user_id
-            WHERE sd.service_id = :serviceId AND sd.customer_id = :loggedInUserId";
+            WHERE sd.servicedetails_id = :servicedetailsId AND sd.customer_id = :loggedInUserId";
 
     $stmt = $conn->prepare($sql);
-    $stmt->bindParam(':serviceId', $serviceId, PDO::PARAM_INT);
+    $stmt->bindParam(':servicedetailsId', $servicedetailsId, PDO::PARAM_INT);
     $stmt->bindParam(':loggedInUserId', $loggedInUserId, PDO::PARAM_INT);
     $stmt->execute();
 
     return $stmt->fetch(PDO::FETCH_ASSOC);
 }
+
 
 //count of orders in arranger
 function count_pending_seller_orders($seller_id) {
@@ -696,7 +697,7 @@ function count_pending_seller_orders($seller_id) {
             FROM sales s
             JOIN products p ON s.product_id = p.product_id
             JOIN shops sh ON p.shop_owner = sh.shop_id
-            WHERE sh.owner_id = ? AND s.status = 'pending'";
+            WHERE sh.owner_id = ? AND s.status = 'Pending'";
 
     try {
         $stmt = $conn->prepare($sql);
@@ -717,7 +718,7 @@ function count_processing_seller_orders($seller_id) {
             FROM sales s
             JOIN products p ON s.product_id = p.product_id
             JOIN shops sh ON p.shop_owner = sh.shop_id
-            WHERE sh.owner_id = ? AND s.status = 'processing'";
+            WHERE sh.owner_id = ? AND s.status = 'Processing'";
 
     try {
         $stmt = $conn->prepare($sql);
@@ -738,7 +739,7 @@ function count_intransit_seller_orders($seller_id) {
             FROM sales s
             JOIN products p ON s.product_id = p.product_id
             JOIN shops sh ON p.shop_owner = sh.shop_id
-            WHERE sh.owner_id = ? AND s.status = 'intransit'";
+            WHERE sh.owner_id = ? AND s.status = 'Intransit'";
 
     try {
         $stmt = $conn->prepare($sql);
@@ -758,7 +759,7 @@ function countCustomerProducts($customerId) {
     $sql = "SELECT COUNT(DISTINCT s.salesdetails_id) AS pending_salesdetails_count
             FROM sales s
             JOIN salesdetails sd ON s.salesdetails_id = sd.salesdetails_id
-            WHERE s.customer_id = ? AND s.status = 'pending'";
+            WHERE s.customer_id = ? AND s.status = 'Pending'";
 
     try {
         $stmt = $conn->prepare($sql);
@@ -778,7 +779,7 @@ function countProcessing($customerId) {
     $sql = "SELECT COUNT(DISTINCT s.salesdetails_id) AS pending_salesdetails_count
             FROM sales s
             JOIN salesdetails sd ON s.salesdetails_id = sd.salesdetails_id
-            WHERE s.customer_id = ? AND s.status = 'processing'";
+            WHERE s.customer_id = ? AND s.status = 'Processing'";
 
     try {
         $stmt = $conn->prepare($sql);
@@ -798,7 +799,27 @@ function countIntransit($customerId) {
     $sql = "SELECT COUNT(DISTINCT s.salesdetails_id) AS pending_salesdetails_count
             FROM sales s
             JOIN salesdetails sd ON s.salesdetails_id = sd.salesdetails_id
-            WHERE s.customer_id = ? AND s.status = 'intransit'";
+            WHERE s.customer_id = ? AND s.status = 'Intransit'";
+
+    try {
+        $stmt = $conn->prepare($sql);
+        $stmt->execute([$customerId]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        $conn = null;
+        return $result['pending_salesdetails_count'];
+    } catch (PDOException $e) {
+        echo $sql . "<br>" . $e->getMessage();
+        $conn = null;
+        return false;
+    }
+}
+
+function countCompleted($customerId) {
+    $conn = dbconnect();
+    $sql = "SELECT COUNT(DISTINCT s.salesdetails_id) AS pending_salesdetails_count
+            FROM sales s
+            JOIN salesdetails sd ON s.salesdetails_id = sd.salesdetails_id
+            WHERE s.customer_id = ? AND s.status = 'Completed'";
 
     try {
         $stmt = $conn->prepare($sql);

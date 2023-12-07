@@ -75,14 +75,14 @@
                                 }
                             }
                             // Check if product_id is set in the URL
-                            if (isset($_GET['product_id'])) {
-                                $product_id = $_GET['product_id'];
+                            if (isset($_GET['sales_id'])) {
+                                $sales_id = $_GET['sales_id'];
 
                                 // Fetch product details from the product table
-                                $product_details = get_product_details($product_id);
+                                $product_details = get_product_details_by_sales_id($sales_id);
 
                                 // Fetch product quantity from the sales_details table
-                                $quantity = get_quantity_for_product($product_id);
+                                $quantity = get_quantity_for_sales_id($sales_id);
 
                                 // Display the product details
                                 if ($product_details) {
@@ -115,12 +115,16 @@
                             }
 
                             // Function to fetch product details from the product table
-                            function get_product_details($product_id) {
+                            function get_product_details_by_sales_id($sales_id) {
                                 $conn = dbconnect();
-                                $sql = "SELECT * FROM products WHERE product_id = ?";
+                                $sql = "SELECT p.product_id, p.product_name, p.product_img, p.product_price, sd.quantity, sd.flower_type, sd.ribbon_color
+                                        FROM sales s
+                                        JOIN products p ON s.product_id = p.product_id
+                                        JOIN salesdetails sd ON s.salesdetails_id = sd.salesdetails_id
+                                        WHERE s.sales_id = ?";
                                 try {
                                     $stmt = $conn->prepare($sql);
-                                    $stmt->execute([$product_id]);
+                                    $stmt->execute([$sales_id]);
                                     $product_details = $stmt->fetch(PDO::FETCH_ASSOC);
                                     $conn = null;
                                     return $product_details;
@@ -130,14 +134,20 @@
                                     return false;
                                 }
                             }
+                            
+                            
 
                             // Function to get quantity from sales_details table
-                            function get_quantity_for_product($product_id) {
+                            function get_quantity_for_sales_id($sales_id) {
                                 $conn = dbconnect();
-                                $sql = "SELECT quantity FROM salesdetails WHERE product_id = ?";
+                                // Joining sales and salesdetails tables to get the quantity
+                                $sql = "SELECT sd.quantity 
+                                        FROM salesdetails sd
+                                        JOIN sales s ON sd.salesdetails_id = s.salesdetails_id
+                                        WHERE s.sales_id = ?";
                                 try {
                                     $stmt = $conn->prepare($sql);
-                                    $stmt->execute([$product_id]);
+                                    $stmt->execute([$sales_id]);
                                     $result = $stmt->fetch(PDO::FETCH_ASSOC);
                                     $conn = null;
                                     return $result ? $result['quantity'] : 0;
@@ -147,6 +157,8 @@
                                     return 0;
                                 }
                             }
+                            
+                            
                             ?>
 
                         <hr class="cart-hr">
@@ -154,11 +166,11 @@
                         <?php
                        
                         // Check if product_id is set in the URL
-                        if (isset($_GET['product_id'])) {
-                            $product_id = $_GET['product_id'];
+                        if (isset($_GET['sales_id'])) {
+                            $sales_id = $_GET['sales_id'];
 
                             // Fetch status from the sales table
-                            $status = get_order_status($product_id);
+                            $status = get_order_status_by_sales_id($sales_id);
 
                     // Display the corresponding HTML based on the status
                     if ($status === 'Pending') {
@@ -182,7 +194,7 @@
                                 <div class="status-icon">2</div>
                                 <div class="status-info">
                                     <div class="status-text">Processing</div>
-                                    <div class="status-date">seller is processing order details</div>
+                                    <div class="status-date">seller is Processing order details</div>
                                 </div>
                             
                             </div>';
@@ -199,7 +211,7 @@
                                 <div class="status-icon">2</div>
                                 <div class="status-info">
                                     <div class="status-text">Processing</div>
-                                    <div class="status-date">seller is processing order details</div>
+                                    <div class="status-date">seller is Processing order details</div>
                                 </div>
                                 <div class="vertical-line"></div>
                                 <!-- Vertical line -->
@@ -225,7 +237,7 @@
                                 <div class="status-icon">2</div>
                                 <div class="status-info">
                                     <div class="status-text">Processing</div>
-                                    <div class="status-date">seller is processing order details</div>
+                                    <div class="status-date">seller is Processing order details</div>
                                 </div>
                                 <div class="vertical-line"></div>
                                 <!-- Vertical line -->
@@ -253,12 +265,12 @@
                 }
 
                 // Function to fetch order status from the sales table
-                function get_order_status($product_id) {
+                function get_order_status_by_sales_id($sales_id) {
                     $conn = dbconnect();
-                    $sql = "SELECT status FROM sales WHERE product_id = ?";
+                    $sql = "SELECT status FROM sales WHERE sales_id = ?";
                     try {
                         $stmt = $conn->prepare($sql);
-                        $stmt->execute([$product_id]);
+                        $stmt->execute([$sales_id]);
                         $status = $stmt->fetchColumn();
                         $conn = null;
                         return $status;
@@ -268,6 +280,7 @@
                         return false;
                     }
                 }
+                
                 ?>
 
                         </div>

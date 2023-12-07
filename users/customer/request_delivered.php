@@ -2,12 +2,12 @@
 session_start();
 include '../php/dbhelper.php';
 
-if (isset($_SESSION['user_id']) &&  isset($_GET['service_id'])){
+if (isset($_SESSION['user_id']) &&  isset($_GET['servicedetails_id'])){
 	$user_id = $_SESSION['user_id'];
-	$service_id = $_GET['service_id'];
+	$servicedetails_id = $_GET['servicedetails_id'];
 
 	// Fetch product details from the product table
-	$details= getServiceDetails("servicedetails", "services", "users", $service_id, $user_id);
+	$details= getServiceDetails("servicedetails", "services", "users", $servicedetails_id, $user_id);
 
 
 }
@@ -17,7 +17,7 @@ if (isset($_SESSION['user_id']) &&  isset($_GET['service_id'])){
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Order Delivered</title>
+        <title>Request Delivered</title>
         <link href='https://fonts.googleapis.com/css?family=Poppins' rel='stylesheet'>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-pzjw8f+uaex3+ihrbIk8mz07tb2F4F5ssx6kl5v5PmUGp1ELjF8j5+zM1a7z5t2N" crossorigin="anonymous">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -81,8 +81,8 @@ if (isset($_SESSION['user_id']) &&  isset($_GET['service_id'])){
 						<div class="timeline">
 							<?php
 						// Check if product_id is set in the URL
-						if (isset($_GET['service_id'])) {
-							$service_id = $_GET['service_id'];
+						if (isset($_GET['servicedetails_id'])) {
+							$servicedetails_id = $_GET['servicedetails_id'];
 
 							$status = $details["status"];
 						// Display the corresponding HTML based on the status
@@ -141,7 +141,7 @@ if (isset($_SESSION['user_id']) &&  isset($_GET['service_id'])){
                                 <i class="bi bi-star"></i>
                                 <div class="btn-container">
                                     <!-- Pass the product_id as a query parameter in the link -->
-                                    <a href="review.php?product_id=<?php echo $service_id; ?>">
+                                    <a href="servicereview.php?servicedetails_id=<?php echo $servicedetails_id; ?>">
                                         <button class="review-btn">Review</button>
                                     </a>
 
@@ -197,6 +197,11 @@ if (isset($_SESSION['user_id']) &&  isset($_GET['service_id'])){
 									<p class="total">Total</p>
 									<p class="t-payment">₱ <?php echo $details["amount"]; ?></p><br>
 								</div>
+								<div class="report-container">
+                                <a href="servicereport.php?servicedetails_id=<?php echo $servicedetails_id; ?>">
+                                    <button class="report-btn">Report Seller</button>
+                                </a>
+                            </div>
 							</div>
 						</div>
 					</div>
