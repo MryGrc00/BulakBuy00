@@ -69,25 +69,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_review'])) {
 
         // Check if the insertion was successful
 		if ($result) {
-			// Use PHP to generate JavaScript code
-			echo '<script>
-				// Function to submit the review
-				function submitReview() {
-					// Show the "Thank You" modal
-					document.getElementById("thankYouModal").style.display = "block";
-		
-					// Automatically close the "Thank You" modal after 2 seconds
-					setTimeout(function () {
-						document.getElementById("thankYouModal").style.display = "none";
-		
-						// Clear the stored images from local storage
-						localStorage.removeItem("selectedImages");
-		
-						// Redirect to order_delivered.html
-						window.location.href = "customer_home.php";
-					}, 3000); // 2 seconds
-				}
-			</script>';
+            header('location: customer_home.php');
+            exit();		    
 		} else {
 			echo "Error submitting report.";
 		}
@@ -125,7 +108,7 @@ function update_shop_status_if_reported($shop_id) {
 
         if ($shop) {
             // Shop found, update its status
-            $updateSql = "UPDATE shops SET status = 'Reported' WHERE shop_id = ?";
+            $updateSql = "UPDATE shops SET status = 'reported' WHERE shop_id = ?";
             $updateStmt = $conn->prepare($updateSql);
             $updateStmt->execute([$shop_id]);
         }
@@ -221,6 +204,31 @@ function update_shop_status_if_reported($shop_id) {
 </script> 
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js">
 </script> 
+<script>
+    document.getElementById("reviewForm").addEventListener("submit", function (e) {
+        e.preventDefault(); // Prevent the default form submission
+
+        submitForm(); // Call the function to handle the submission
+    
+
+    function submitForm() {
+        // Show the "Thank You" modal
+        document.getElementById("thankYouModal").style.display = "block";
+
+        // Automatically close the "Thank You" modal after 2 seconds
+        setTimeout(function () {
+            document.getElementById("thankYouModal").style.display = "none";
+
+            // Clear the stored images from local storage
+            localStorage.removeItem("selectedImages");
+
+            // Manually submit the form
+            document.getElementById("reviewForm").submit();
+        }, 1500); // 1.5 seconds
+    }
+});
+
+</script>
 
 
 

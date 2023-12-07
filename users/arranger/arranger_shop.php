@@ -116,9 +116,11 @@ $gallery = get_seller_images($user_id);
                     <button class="gallery-btn active">Gallery</button>
                     <button class="product-btn">Products</button>
                 </div>
+                <div class="image-grid" id="imageGrid">
                 <?php foreach ($gallery as $images): ?>
                          <img class="image" src="<?php echo $images['image'];?>" alt="Image 1">
                     <?php endforeach; ?>
+                </div>
                 <div id="addProductContainer">
                     <a href="add_image.php"><button class="add-product">+ Add Image</button></a>
                 </div>

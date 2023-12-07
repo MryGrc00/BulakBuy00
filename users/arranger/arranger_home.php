@@ -1,25 +1,22 @@
 <?php
-
 session_start();
 include '../php/dbhelper.php';
-$pdo = dbconnect();
-if (isset($_SESSION["user_id"]) && isset($_SESSION["role"])) {
-    $user_id = $_SESSION["user_id"];
-    $role = $_SESSION["role"];
 
-    $isShopEmpty = is_shop_empty($user_id);
-    $users = get_record_by_user($user_id) ;
-
-    if ($role == 'seller' && $isShopEmpty) {
-        echo "<script>$(document).ready(function() { $('#shopDetailsModal').modal('show'); });</script>";
-    }
-
-    // Rest of your code
+// Redirect if not logged in
+if (!isset($_SESSION["user_id"]) || !isset($_SESSION["role"])) {  
+    header("Location: ../login.php");
+    exit(); 
 }
-else {
-    // Handle cases where the user is not logged in or role is not set
-    echo "User not logged in or role not set.";
-    // Optional: Redirect to login page or show a login link
+
+$pdo = dbconnect();
+$user_id = $_SESSION["user_id"];
+$role = $_SESSION["role"];
+
+$isShopEmpty = is_shop_empty($user_id);
+$users = get_record_by_user($user_id);
+
+if ($role == 'arranger' && $isShopEmpty) {
+    echo "<script>$(document).ready(function() { $('#shopDetailsModal').modal('show'); });</script>";
 }
 ?>
 
@@ -365,7 +362,7 @@ else {
     // Listen for window resize
     window.addEventListener("resize", checkScreenWidth);
 </script>
-<script>
+        <script>
                 $(document).ready(function() {
                     <?php if ($isShopEmpty): ?>
                     $('#shopDetailsModal').modal({
@@ -377,7 +374,7 @@ else {
 
         </script>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
 $(document).ready(function () {
   $("#completed-link").on("click", function (e) {
@@ -394,7 +391,7 @@ $(document).ready(function () {
     });
   });
 });
-</script>
+</script> -->
 
 </body>
 
