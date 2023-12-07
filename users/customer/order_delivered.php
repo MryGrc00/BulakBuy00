@@ -43,7 +43,7 @@
                             <form class="form-inline my-2 my-lg-0">
                                 <a href=""><i class="fa fa-search"></i></a>
                                 <input type="text"  class="form-control form-input" placeholder="Search" style="text-align:left;padding-left: 15px;font-size: 16px;">
-                                <a href="javascript:void(0);" onclick="goBack()">
+                                <a href="#" onclick="goBack()">
                                     <i class="back fa fa-angle-left" aria-hidden="true"></i>
                                     <div id="search-results">Order Status</div>
                                   </a>
@@ -75,19 +75,19 @@
                                 }
                             }
                             // Check if product_id is set in the URL
-                            if (isset($_GET['product_id'])) {
-                                $product_id = $_GET['product_id'];
+                            if (isset($_GET['sales_id'])) {
+                                $sales_id = $_GET['sales_id'];
 
                                 // Fetch product details from the product table
-                                $product_details = get_product_details($product_id);
+                                $product_details = get_product_details_by_sales_id($sales_id);
 
                                 // Fetch product quantity from the sales_details table
-                                $quantity = get_quantity_for_product($product_id);
+                                $quantity = get_quantity_for_sales_id($sales_id);
 
                                 // Display the product details
                                 if ($product_details) {
                                     echo '<div class="all-items">';
-                                    echo '<h6 class="items-label">Order id- 8475645328</h6>';
+                                    echo '<h6 class="items-label">Order Details</h6>';
                                     echo '</div>';
                                     echo '<div class="cart-item">';
                                     echo '<div class="custom-checkbox" style="margin-top:-30px">';
@@ -113,14 +113,16 @@
                             } else {
                                 echo "Product ID not provided.";
                             }
-
-                            // Function to fetch product details from the product table
-                            function get_product_details($product_id) {
+                            function get_product_details_by_sales_id($sales_id) {
                                 $conn = dbconnect();
-                                $sql = "SELECT * FROM products WHERE product_id = ?";
+                                $sql = "SELECT p.product_id, p.product_name, p.product_img, p.product_price, sd.quantity, sd.flower_type, sd.ribbon_color
+                                        FROM sales s
+                                        JOIN products p ON s.product_id = p.product_id
+                                        JOIN salesdetails sd ON s.salesdetails_id = sd.salesdetails_id
+                                        WHERE s.sales_id = ?";
                                 try {
                                     $stmt = $conn->prepare($sql);
-                                    $stmt->execute([$product_id]);
+                                    $stmt->execute([$sales_id]);
                                     $product_details = $stmt->fetch(PDO::FETCH_ASSOC);
                                     $conn = null;
                                     return $product_details;
@@ -130,14 +132,17 @@
                                     return false;
                                 }
                             }
-
                             // Function to get quantity from sales_details table
-                            function get_quantity_for_product($product_id) {
+                            function get_quantity_for_sales_id($sales_id) {
                                 $conn = dbconnect();
-                                $sql = "SELECT quantity FROM salesdetails WHERE product_id = ?";
+                                // Joining sales and salesdetails tables to get the quantity
+                                $sql = "SELECT sd.quantity 
+                                        FROM salesdetails sd
+                                        JOIN sales s ON sd.salesdetails_id = s.salesdetails_id
+                                        WHERE s.sales_id = ?";
                                 try {
                                     $stmt = $conn->prepare($sql);
-                                    $stmt->execute([$product_id]);
+                                    $stmt->execute([$sales_id]);
                                     $result = $stmt->fetch(PDO::FETCH_ASSOC);
                                     $conn = null;
                                     return $result ? $result['quantity'] : 0;
@@ -147,6 +152,7 @@
                                     return 0;
                                 }
                             }
+                            
                             ?>
 
                         <hr class="cart-hr">
@@ -154,11 +160,12 @@
                         <?php
                        
                             // Check if product_id is set in the URL
-                            if (isset($_GET['product_id'])) {
-                                $product_id = $_GET['product_id'];
-
+                            if (isset($_GET['sales_id'])) {
+                                $sales_id = $_GET['sales_id'];
+    
                                 // Fetch status from the sales table
-                                $status = get_order_status($product_id);
+                                $status = get_order_status_by_sales_id($sales_id);
+    
 
                             // Display the corresponding HTML based on the status
                             if ($status === 'Completed') {
@@ -167,7 +174,6 @@
                                                 <div class="status-icon">1</div>
                                                 <div class="status-info">
                                                     <div class="status-text">Order Placed</div>
-                                                    <div class="status-date">on 23 July 20233</div>
                                                 </div>
                                                 <div class="vertical-line"></div>
                                                 <!-- Vertical line -->
@@ -176,7 +182,7 @@
                                                 <div class="status-icon">2</div>
                                                 <div class="status-info">
                                                     <div class="status-text">Processing</div>
-                                                    <div class="status-date">seller is processing order details</div>
+                                                    <div class="status-date">seller is Processing order details</div>
                                                 </div>
                                                 <div class="vertical-line"></div>
                                                 <!-- Vertical line -->
@@ -194,7 +200,6 @@
                                                 <div class="status-icon">4</div>
                                                 <div class="status-info">
                                                     <div class="status-text">Delivered</div>
-                                                    <div class="status-date">September 7, 2023</div>
                                                 </div>
                                             </div>
                                         </div> ';
@@ -205,13 +210,13 @@
                                 echo "Product ID not provided.";
                             }
 
-                            // Function to fetch order status from the sales table
-                            function get_order_status($product_id) {
+                          // Function to fetch order status from the sales table
+                            function get_order_status_by_sales_id($sales_id) {
                                 $conn = dbconnect();
-                                $sql = "SELECT status FROM sales WHERE product_id = ?";
+                                $sql = "SELECT status FROM sales WHERE sales_id = ?";
                                 try {
                                     $stmt = $conn->prepare($sql);
-                                    $stmt->execute([$product_id]);
+                                    $stmt->execute([$sales_id]);
                                     $status = $stmt->fetchColumn();
                                     $conn = null;
                                     return $status;
@@ -235,7 +240,7 @@
                                 <i class="bi bi-star"></i>
                                 <div class="btn-container">
                                     <!-- Pass the product_id as a query parameter in the link -->
-                                    <a href="review.php?product_id=<?php echo $product_id; ?>">
+                                    <a href="productreview.php?sales_id=<?php echo $sales_id; ?>">
                                         <button class="review-btn">Review</button>
                                     </a>
 
@@ -291,7 +296,7 @@
                                 }
                             ?>
                             <div class="report-container">
-                                <a href="report.php?product_id=<?php echo $product_id; ?>">
+                                <a href="productreport.php?sales_id=<?php echo $sales_id; ?>">
                                     <button class="report-btn">Report Seller</button>
                                 </a>
                             </div>

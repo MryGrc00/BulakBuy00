@@ -18,6 +18,38 @@ $users = get_record('shops', 'owner_id', $user_id);
 // Fetching product details
 $products = get_products_by_user($user_id, $pdo);
 
+
+
+function get_seller_images($user_id) {
+    // Establish a database connection
+    $conn = dbconnect();
+
+    // Updated SQL query to fetch order details including sales_id
+    $sql = "SELECT gallery.image
+            FROM gallery
+            INNER JOIN services ON gallery.service_id = services.service_id
+            WHERE services.arranger_id = ?";
+
+    try {
+        // Prepare and execute the statement
+        $stmt = $conn->prepare($sql);
+        $stmt->execute([$user_id]);
+
+        // Fetch and return the orders
+        $images = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $images;
+    } catch (PDOException $e) {
+        // Handle any exceptions (log the error and return false)
+        error_log("Database query error: " . $e->getMessage()); // Log the error
+        return false; // Return false indicating failure
+    } finally {
+        // Close the database connection
+        $conn = null;
+    }
+}
+
+$gallery = get_seller_images($user_id);
+
 ?>
 
 
@@ -84,24 +116,11 @@ $products = get_products_by_user($user_id, $pdo);
                     <button class="gallery-btn active">Gallery</button>
                     <button class="product-btn">Products</button>
                 </div>
-                <div class="image-grid" id="imageGrid">
-                    <!-- Add your images here -->
-                    <img class="image" src="https://quinceflowers.com/cdn/shop/products/3-Bridal-Bouquet-Petite-Package-Quince-Flowers-Toronto-Wedding-Florist_1445x.jpg?v=1655055264" alt="Image 1">
-                    <img class="image" src="https://i.etsystatic.com/18889321/r/il/3a0845/3490460883/il_fullxfull.3490460883_pek8.jpg" alt="Image 2">
-                    <img class="image" src="https://quinceflowers.com/cdn/shop/products/3-Bridal-Bouquet-Petite-Package-Quince-Flowers-Toronto-Wedding-Florist_1445x.jpg?v=1655055264" alt="Image 3">
-                    <img class="image" src="https://quinceflowers.com/cdn/shop/products/3-Bridal-Bouquet-Petite-Package-Quince-Flowers-Toronto-Wedding-Florist_1445x.jpg?v=1655055264" alt="Image 4">
-                    <img class="image" src="https://i.etsystatic.com/18889321/r/il/3a0845/3490460883/il_fullxfull.3490460883_pek8.jpg" alt="Image 5">
-                    <img class="image" src="https://quinceflowers.com/cdn/shop/products/3-Bridal-Bouquet-Petite-Package-Quince-Flowers-Toronto-Wedding-Florist_1445x.jpg?v=1655055264" alt="Image 6">
-                    <img class="image" src="https://quinceflowers.com/cdn/shop/products/3-Bridal-Bouquet-Petite-Package-Quince-Flowers-Toronto-Wedding-Florist_1445x.jpg?v=1655055264" alt="Image 7">
-                    <img class="image" src="https://quinceflowers.com/cdn/shop/products/3-Bridal-Bouquet-Petite-Package-Quince-Flowers-Toronto-Wedding-Florist_1445x.jpg?v=1655055264" alt="Image 8">
-                    <img class="image" src="https://quinceflowers.com/cdn/shop/products/3-Bridal-Bouquet-Petite-Package-Quince-Flowers-Toronto-Wedding-Florist_1445x.jpg?v=1655055264" alt="Image 9">
-                    <img class="image" src="https://i.etsystatic.com/18889321/r/il/3a0845/3490460883/il_fullxfull.3490460883_pek8.jpg" alt="Image 10">
-                    <img class="image" src="https://quinceflowers.com/cdn/shop/products/3-Bridal-Bouquet-Petite-Package-Quince-Flowers-Toronto-Wedding-Florist_1445x.jpg?v=1655055264" alt="Image 11">
-                    <img class="image" src="https://i.etsystatic.com/18889321/r/il/3a0845/3490460883/il_fullxfull.3490460883_pek8.jpg" alt="Image 12">
-                    <!-- Add more images as needed -->
-                </div>
+                <?php foreach ($gallery as $images): ?>
+                         <img class="image" src="<?php echo $images['image'];?>" alt="Image 1">
+                    <?php endforeach; ?>
                 <div id="addProductContainer">
-                    <a href="add_image.html"><button class="add-product">+ Add Image</button></a>
+                    <a href="add_image.php"><button class="add-product">+ Add Image</button></a>
                 </div>
           
                 <!-- The Modal Overlay -->

@@ -92,7 +92,7 @@
 }
     }
 
-    // Function to fetch seller orders from the sales table// Function to fetch seller orders from the sales table with status "pending"
+    // Function to fetch seller orders from the sales table// Function to fetch seller orders from the sales table with status "Pending"
     function get_seller_orders($seller_id) {
         // Establish a database connection
         $conn = dbconnect();

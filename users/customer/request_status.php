@@ -1,15 +1,3 @@
-<?php
-session_start();
-include '../php/dbhelper.php';
-
-if (isset($_SESSION['user_id']) &&  isset($_GET['service_id'])){
-	$user_id = $_SESSION['user_id'];
-	$service_id = $_GET['service_id'];
-
-	// Fetch product details from the product table
-	$details= getServiceDetails("servicedetails", "services", "users", $service_id, $user_id);
-}
-?>
 
 <!DOCTYPE html> 
 <html lang="en">
@@ -53,130 +41,171 @@ if (isset($_SESSION['user_id']) &&  isset($_GET['service_id'])){
 			<div class="container">
 				<div class="column1">
 					<div class="cart-container">
-						<div class="all-items">
-							<h6 class="items-label">Request ID - 8475645328</h6>
-						</div>
-						<div class="cart-item">
-							<div class="custom-checkbox" style="margin-top:-30px"><img alt="Product 1" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ0V0dWxknmztw6-3Kea1Cr6s1qNe-MdqJ-5k7k99JKt04adfSN5iGni2uYZ1jLqwjRR5c&usqp=CAU"></div>
-							<div class="item-details">
-								<h2>John Bryan Flower Shop</h2>
-								<div class="loc">
-									<p class="location">Lahug, Cebu City</p>
-								</div>
-								<div class="num">
-									<p class="number">(+63)9785654543</p>
-								</div>
-								<p class="price">₱ 300 / hr</p>
-							</div>
-						</div>
-						<hr class="cart-hr">
-						<div class="timeline">
-							<?php
+                    <?php 
 
-							$status = $details["status"];
-						// Display the corresponding HTML based on the status
-                    if ($status === 'Pending') {
-                        echo '<div class="status">
-                                <div class="status-icon">1</div>
-                                <div class="status-info">
-                                    <div class="status-text">Order Placed</div>
-                                    <div class="status-date">on 23 July 20233</div>
+                        session_start();
+                        include '../php/dbhelper.php';
+
+                        if (isset($_SESSION['user_id']) &&  isset($_GET['servicedetails_id'])){
+                            $user_id = $_SESSION['user_id'];
+                            $servicedetails_id = $_GET['servicedetails_id'];
+
+                            // Fetch product details from the product table
+                            $details= getServiceDetails("servicedetails", "services", "users", $servicedetails_id, $user_id);
+
+
+                        }
+                        if (isset($details)) {
+                            echo '<div class="all-items">';
+                            echo '<h6 class="items-label">Request Details</h6>';
+                            echo '</div>';
+                            echo '<div class="cart-item">';
+                            echo '<div class="custom-checkbox" style="margin-top:-30px">';
+                            echo '<img src="' . $details["arranger_profile"] . '" alt="Service Image">';
+                            echo '</div>';
+                            echo '<div class="item-details">';
+                            echo '<h2>' . $details["arranger_first_name"] . " " . $details["arranger_last_name"] . '</h2>';
+                            echo '<div class="loc">';
+                            echo '<p class="location">' . $details['arranger_address'] . '</p>';
+                            echo '</div>';
+                            echo '<div class="num">';
+                            echo '<p class="number">' . $details['arranger_phone'] . '</p>';
+                            echo '</div>';
+                            echo '<p class="price">₱' . number_format($details['service_rate'], 2) . '/ Hr</p>';
+                            echo '</div>';
+                            echo '</div>';
+                        } else {
+                            echo "Service details not found.";
+                        }
+          ?>
+                        <hr class="cart-hr">
+						<div class="timeline">
+
+                            <?php
+                                                
+                            // Check if product_id is set in the URL
+                            if (isset($_GET['servicedetails_id'])) {
+                                $servicedetails_id = $_GET['servicedetails_id'];
+
+                                // Fetch status from the sales table
+                                $status = get_service_status_by_servicedetails_id($servicedetails_id);
+
+                            // Display the corresponding HTML based on the status
+                            if ($status === 'Pending') {
+                            echo '<div class="status">
+                                    <div class="status-icon">1</div>
+                                    <div class="status-info">
+                                        <div class="status-text">Order Placed</div>
+                                    </div>
+                                
+                                </div>';
+                            } elseif ($status === 'Processing') {
+                            echo '<div class="status">
+                                    <div class="status-icon">1</div>
+                                    <div class="status-info">
+                                        <div class="status-text">Order Placed</div>
+                                    </div>
+                                    <div class="vertical-line"></div>
+                                    <!-- Vertical line -->
                                 </div>
-                               
-                            </div>';
-                    } elseif ($status === 'Processing') {
-                        echo '<div class="status">
-                                <div class="status-icon">1</div>
-                                <div class="status-info">
-                                    <div class="status-text">Order Placed</div>
-                                    <div class="status-date">on 23 July 20233</div>
+                                <div class="status">
+                                    <div class="status-icon">2</div>
+                                    <div class="status-info">
+                                        <div class="status-text">Processing</div>
+                              </div>
+                                
+                                </div>';
+                            } elseif ($status === 'Intransit') {
+                            echo '<div class="status">
+                                    <div class="status-icon">1</div>
+                                    <div class="status-info">
+                                        <div class="status-text">Order Placed</div>
+                                    </div>
+                                    <div class="vertical-line"></div>
+                                    <!-- Vertical line -->
                                 </div>
-                                <div class="vertical-line"></div>
-                                <!-- Vertical line -->
-                            </div>
-                            <div class="status">
-                                <div class="status-icon">2</div>
-                                <div class="status-info">
-                                    <div class="status-text">Processing</div>
-                                    <div class="status-date">seller is processing order details</div>
+                                <div class="status">
+                                    <div class="status-icon">2</div>
+                                    <div class="status-info">
+                                        <div class="status-text">Processing</div>
+                                    </div>
+                                    <div class="vertical-line"></div>
+                                    <!-- Vertical line -->
                                 </div>
-                            
-                            </div>';
-                    } elseif ($status === 'To Deliver') {
-                        echo '<div class="status">
-                                <div class="status-icon">1</div>
-                                <div class="status-info">
-                                    <div class="status-text">Order Placed</div>
-                                    <div class="status-date">on 23 July 20233</div>
+                                <div class="status">
+                                    <div class="status-icon">3</div>
+                                    <div class="status-info">
+                                        <div class="status-text">In Transit</div>
+                                    </div>
+                                
+                                </div>';
+                            } elseif ($status === 'Completed') {
+                            echo '<div class="status">
+                                    <div class="status-icon">1</div>
+                                    <div class="status-info">
+                                        <div class="status-text">Order Placed</div>
+                                    </div>
+                                    <div class="vertical-line"></div>
+                                    <!-- Vertical line -->
                                 </div>
-                                <div class="vertical-line"></div>
-                                <!-- Vertical line -->
-                            </div>
-                            <div class="status">
-                                <div class="status-icon">2</div>
-                                <div class="status-info">
-                                    <div class="status-text">Processing</div>
-                                    <div class="status-date">seller is processing order details</div>
+                                <div class="status">
+                                    <div class="status-icon">2</div>
+                                    <div class="status-info">
+                                        <div class="status-text">Processing</div>
+                                    </div>
+                                    <div class="vertical-line"></div>
+                                    <!-- Vertical line -->
                                 </div>
-                                <div class="vertical-line"></div>
-                                <!-- Vertical line -->
-                            </div>
-                            <div class="status">
-                                <div class="status-icon">3</div>
-                                <div class="status-info">
-                                    <div class="status-text">In Transit</div>
-                                    <div class="status-date">order is on the way</div>
+                                <div class="status">
+                                    <div class="status-icon">3</div>
+                                    <div class="status-info">
+                                        <div class="status-text">In Transit</div>
+                                    </div>
+                                    <div class="vertical-line"></div>
+                                    <!-- Vertical line -->
                                 </div>
-                            
-                            </div>';
-                    } elseif ($status === 'Completed') {
-                        echo '<div class="status">
-                                <div class="status-icon">1</div>
-                                <div class="status-info">
-                                    <div class="status-text">Order Placed</div>
-                                    <div class="status-date">on 23 July 20233</div>
-                                </div>
-                                <div class="vertical-line"></div>
-                                <!-- Vertical line -->
-                            </div>
-                            <div class="status">
-                                <div class="status-icon">2</div>
-                                <div class="status-info">
-                                    <div class="status-text">Processing</div>
-                                    <div class="status-date">seller is processing order details</div>
-                                </div>
-                                <div class="vertical-line"></div>
-                                <!-- Vertical line -->
-                            </div>
-                            <div class="status">
-                                <div class="status-icon">3</div>
-                                <div class="status-info">
-                                    <div class="status-text">In Transit</div>
-                                    <div class="status-date">order is on the way</div>
-                                </div>
-                                <div class="vertical-line"></div>
-                                <!-- Vertical line -->
-                            </div>
-                            <div class="status">
-                                <div class="status-icon">4</div>
-                                <div class="status-info">
-                                    <div class="status-text">Delivered</div>
-                                    <div class="status-date">September 7, 2023</div>
-                                </div>
-                            </div>';
-                    } else {
-                        echo "Invalid status.";
-                    }
-                
-				?>
+                                <div class="status">
+                                    <div class="status-icon">4</div>
+                                    <div class="status-info">
+                                        <div class="status-text">Delivered</div>
+                                    </div>
+                                </div>';
+                            } else {
+                                    echo "Invalid status.";
+                                    }
+                            } else {
+                            echo "Product ID not provided.";
+                            }
+
+                            function get_service_status_by_servicedetails_id($servicedetails_id) {
+                                $conn = dbconnect();
+                                $sql = "SELECT status FROM servicedetails WHERE servicedetails_id = ?";
+
+                                try {
+                                    $stmt = $conn->prepare($sql);
+                                    $stmt->execute([$servicedetails_id]); // Use the function parameter here
+                                    $status = $stmt->fetchColumn();
+                                    $conn = null;
+                                    return $status;
+                                } catch (PDOException $e) {
+                                    echo $sql . "<br>" . $e->getMessage();
+                                    $conn = null;
+                                    return false;
+                                }
+                            }
+
+
+                            ?>
+
+
 						</div>
 						<div class="all-items">
-							<h6 class="items-label">Request Details</h6>
+							<h6 class="items-label">Customer Details</h6>
 						</div>
 						<div class="dev-details">
-							<p><?php echo $order["customer_first_name"]. " " . $order["customer_last_name"]; ?></p>
-							<p><?php echo $order["customer_address"]; ?></p>
-							<p><?php echo $order["customer_phone"]; ?></p>
+							<p><?php echo $details["customer_first_name"]. " " . $details["customer_last_name"]; ?></p>
+							<p><?php echo $details["customer_address"]; ?></p>
+							<p><?php echo $details["customer_phone"]; ?></p>
 						</div>
 					</div>
 				</div>
@@ -189,27 +218,24 @@ if (isset($_SESSION['user_id']) &&  isset($_GET['service_id'])){
 							<div class="sub-total">
 								<div class="sched-date">
 									<p class="sched">Date</p>
-									<p class="date"><?php echo $order["date"]; ?></p>
+									<p class="date"><?php echo $details["date"]; ?></p>
 								</div>
-								<div class="sched-time">
+                                <div class="sched-date">
 									<p class="sched">Time</p>
-									<p class="date"><?php echo $order["time"]; ?></p>
+									<p class="date"><?php echo $details["time"]; ?></p>
 								</div>
 								<div class="product-price">
 									<p class="product">Service Price</p>
-									<p class="order-price">₱								<div class="sched-date">
-									<p class="sched">Date</p>
-									<p class="date"><?php echo $order["amount"]; ?></p>
-								</div></p><br>
+									<p class="order-price">₱<?php echo $details["amount"]; ?>	</p>
+                                </div>
 								</div>
-								<div class="service-hours">
-									<p class="hours-label">Hours</p>
-									<p class="hours" id="display-hour"></p>
-									<br>
+                                <div class="total-payment">
+									<p class="product">Hour</p>
+									<p class="t-payment"><?php echo $details["hours"]; ?></p><br>
 								</div>
 								<div class="total-payment">
 									<p class="total">Total</p>
-									<p class="t-payment">₱ 3,000</p><br>
+									<p class="t-payment">₱ <?php echo $details["amount"]; ?></p><br>
 								</div>
 							</div>
 						</div>

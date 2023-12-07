@@ -9,18 +9,15 @@ if (isset($_SESSION["user_id"]) && isset($_SESSION["role"])) {
 
     $users = get_record_by_user($user_id) ;
 
-    $service_order =  get_service_details_completed('servicedetails','services', 'users', $user_id);
-}
-else {
-    echo "User not logged in or role not set.";
 }
 
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $productId = $_POST['productId'];
+    $salesId = $_POST['salesId'];
     $customerId = $_POST['customerId'];
 
     // Update the status in the sales table for the specific product and customer
-    $result = update_status($productId, $customerId);
+    $result = update_status($salesId, $customerId); 
 
     if ($result) {
         echo 'Status updated successfully.';
@@ -31,28 +28,38 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 
 function get_seller_orders($seller_id) {
+    // Establish a database connection
     $conn = dbconnect();
-    $sql = "SELECT s.amount, s.sales_date, s.paymode, p.product_id, p.product_name, p.product_img, p.product_price, sd.flower_type, sd.ribbon_color, s.customer_id
+
+    // Updated SQL query to fetch order details including sales_id
+    $sql = "SELECT s.sales_id, s.amount, s.sales_date, s.paymode, p.product_id, p.product_name, p.product_img, p.product_price, p.flower_type, p.ribbon_color, s.customer_id
             FROM sales s
             JOIN products p ON s.product_id = p.product_id
-            JOIN salesdetails sd ON p.product_id = sd.product_id
             JOIN shops sh ON p.shop_owner = sh.shop_id
             WHERE sh.owner_id = ? AND s.status = 'Completed'";
 
     try {
+        // Prepare and execute the statement
         $stmt = $conn->prepare($sql);
         $stmt->execute([$seller_id]);
+
+        // Fetch and return the orders
         $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        $conn = null;
         return $orders;
     } catch (PDOException $e) {
-        echo $sql . "<br>" . $e->getMessage();
+        // Handle any exceptions (log the error and return false)
+        error_log("Database query error: " . $e->getMessage()); // Log the error
+        return false; // Return false indicating failure
+    } finally {
+        // Close the database connection
         $conn = null;
-        return false;
     }
 }
 
+
 $product_order = get_seller_orders($user_id);
+$service_order =  get_service_details_completed('servicedetails','services', 'users', $user_id);
+
 
 
 // Function to get quantity from sales_details table

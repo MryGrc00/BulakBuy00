@@ -38,7 +38,7 @@ document.addEventListener("DOMContentLoaded", function() {
         .catch(error => {
             // Handle any errors that occurred during the fetch.
             console.error("Error:", error);
-            errorText.textContent = "An error occurred while processing your request.";
+            errorText.textContent = "An error occurred while Processing your request.";
             errorText.classList.add("visible");
         });
     });

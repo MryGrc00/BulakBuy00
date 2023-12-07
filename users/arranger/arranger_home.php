@@ -238,8 +238,7 @@ else {
               $completedOrderCount = count_completed_seller_orders($user_id);
               $completedServiceOrderCount = get_count_of_completed_services('servicedetails', 'services', $user_id);
               $totalcompletedCount = $completedOrderCount + $completedServiceOrderCount;
-
-              ?>
+              ?> 
                <?php if ($totalcompletedCount > 0): ?>
                   <p class="num-cart1"><?php echo $totalcompletedCount; ?></p>
               <?php endif; ?>
@@ -289,7 +288,7 @@ else {
             <span class="label">Subscription</span>
           </div>
         </a>
-        <a href="../common/feedbacks.html">
+        <a href="arranger_feedbacks.php">
           <div class="card2">
             <i class="bi bi-chat-dots"></i>
             <span class="label">Feedback</span>
@@ -377,6 +376,26 @@ else {
                 });
 
         </script>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function () {
+  $("#completed-link").on("click", function (e) {
+    e.preventDefault();
+
+    // Send an AJAX request to update the completed order count
+    $.ajax({
+      url: "arranger_home.php", // Replace with the actual URL for updating the count
+      method: "POST",
+      success: function (data) {
+        // Update the count with the response from the server
+        $("#completed-count").html(data);
+      },
+    });
+  });
+});
+</script>
+
 </body>
 
 </html>

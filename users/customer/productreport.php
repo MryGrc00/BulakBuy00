@@ -2,23 +2,27 @@
 // Include your database connection code or functions here
 session_start();
 include '../php/dbhelper.php';
-// Check if product_id is set in the URL
-if (isset($_GET['product_id'])) {
-    $product_id = $_GET['product_id'];
 
-    // Fetch product details from the product table
-    $product_details = get_product_details($product_id);
+// Check if sales_id is set in the URL
+if (isset($_GET['sales_id'])) {
+    $sales_id = $_GET['sales_id'];
 
-    // Fetch shop details using shop_id from the product table
-    $shop_details = get_shop_details($product_details['shop_owner']);
+    // Fetch product details from the product table using sales_id
+    $product_details = get_product_details_by_sales_id($sales_id);
+
+    if ($product_details) {
+        // Fetch shop details using shop_id from the product table
+        $shop_details = get_shop_details($product_details['shop_owner']);
+    }
 }
-function get_product_details($product_id) {
+
+function get_product_details_by_sales_id($sales_id) {
     // Add your database connection code or function here
     $conn = dbconnect();
-    $sql = "SELECT * FROM products WHERE product_id = ?";
+    $sql = "SELECT p.*, s.sales_id FROM products p JOIN sales s ON p.product_id = s.product_id WHERE s.sales_id = ?";
     try {
         $stmt = $conn->prepare($sql);
-        $stmt->execute([$product_id]);
+        $stmt->execute([$sales_id]);
         $product_details = $stmt->fetch(PDO::FETCH_ASSOC);
         $conn = null;
         return $product_details;
@@ -28,7 +32,6 @@ function get_product_details($product_id) {
         return false;
     }
 }
-
 // Function to fetch shop details from the shop table
 function get_shop_details($shop_id) {
     // Add your database connection code or function here

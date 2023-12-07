@@ -140,96 +140,178 @@ if (isset($_GET['service_id']) && isset($_SESSION['user_id'])) {
                             </div>
                         </div>
                     </div>
+                    <?php
+					// Ensure the function is defined outside of any conditional logic
+					function get_average_rating($service_id) {
+						$conn = dbconnect();
+						$sql = "SELECT AVG(rating) as average_rating, COUNT(rating) as total_ratings
+								FROM servicedetails 
+								WHERE service_id = ? AND rating IS NOT NULL";
+
+						try {
+							$stmt = $conn->prepare($sql);
+							$stmt->execute([$service_id]);
+							$result = $stmt->fetch(PDO::FETCH_ASSOC);
+							$conn = null;
+							return $result;
+						} catch (PDOException $e) {
+							echo $sql . "<br>" . $e->getMessage();
+							$conn = null;
+							return false;
+						}
+					}
+
+					// Check if product_id is set in the URL query string
+					if (isset($_GET['service_id'])) {
+						$service_id = $_GET['service_id'];
+						$total = get_average_rating($service_id);
+					}
+
+					?>
 
                     <div class="reviews">
                         <p class="r-label">Service Ratings</p>
                     </div>
-                    <div class="stars">
-                        <i class="fa fa-star" aria-hidden="true"></i>
-                        <i class="fa fa-star" aria-hidden="true"></i>
-                        <i class="fa fa-star" aria-hidden="true"></i>
-                        <i class="fa fa-star" aria-hidden="true"></i>
-                        <i class="fa fa-star" aria-hidden="true"></i>
-                        <p>4.5 ratings & 35 Reviews</p>
-                    </div>
-                    <div class="p-review">
-                        <div class="review-pic">
-                            <img src="https://i.pinimg.com/736x/2e/59/24/2e5924495141cd8a39ad9deca8acad0e.jpg" alt="Customer Profile">
-                        </div>
-                        <div class="review-info">
-                            <div class="review-text">
-                                <p class="c-name">N**ya</p>
-                                <p class="r-star">
-                                    <i class="fa fa-star" aria-hidden="true"></i>
-                                    <i class="fa fa-star" aria-hidden="true"></i>
-                                    <i class="fa fa-star" aria-hidden="true"></i>
-                                    <i class="fa fa-star" aria-hidden="true"></i>
-                                    <i class="fa fa-star" aria-hidden="true"></i> 5 stars
-                                </p>
-                                <p class="r-date">February 27, 2023</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="r-details">
-                        <p class="c-review">I just receive my order this afternoon, the flower was very fresh and arrived in good shape and the flower smells good, the seller is very  accommodating and the delivery is very fast. Thank you seller.</p>
-                    </div>
+					<div class="stars">
+						<?php if ($total) {
+							$averageRating = round($total['average_rating']); // Round the average rating
+							$averageRatingInt = (int)$averageRating; // Convert to integer to remove decimal part
+
+							for ($i = 1; $i <= 5; $i++) {
+								if ($i <= $averageRating) {
+									echo '<i class="fa fa-star" aria-hidden="true"></i>';
+								} else {
+									echo '<i class="fa fa-star-o" aria-hidden="true"></i>';
+								}
+							}
+							echo '<p class="r_stars">' . $averageRatingInt . ' & ' . $total['total_ratings'] . ' Reviews&nbsp;</p>';
+						} ?>
+					</div>
+                    <?php
+                    function get_service_details($service_id) {
+                        $conn = dbconnect();
+                        $sql = "SELECT * FROM services WHERE service_id = ?";
+                        try {
+                            $stmt = $conn->prepare($sql);
+                            $stmt->execute([$service_id]);
+                            $product_details = $stmt->fetch(PDO::FETCH_ASSOC);
+                            $conn = null;
+                            return $product_details;
+                        } catch (PDOException $e) {
+                            echo $sql . "<br>" . $e->getMessage();
+                            $conn = null;
+                            return false;
+                        }
+                    }
+                        
+                    if (isset($_GET['service_id'])) {
+                        $service_id = $_GET['service_id'];
+                    
+                        // Fetch product details from the product table
+                        $service_details = get_service_details($service_id);
+                    
+                        // Display the product details
+                        if ($service_details) {
+                            // ... (your existing code for displaying product details)
+                    
+                            // Display feedback and ratings
+                            $feedbackAndRatings = get_feedback_and_ratings($service_id);
+                    
+                            if ($feedbackAndRatings) {
+                                foreach ($feedbackAndRatings as $feedback) {
+                                    // Fetch customer details
+                                    $customer = get_customer_details($feedback['customer_id']);
+                                    $fullName = $customer['first_name'] . ' ' . $customer['last_name'];
+                                    
+                                    // Display customer details if there are feedback and ratings
+                                    if ($customer && $feedback['rating'] > 0) {
+                                        echo '<div class="p-review">
+                                                <div class="review-pic">
+                                                    <img src="' . $customer['profile_img'] . '" alt="Customer Profile">
+                                                </div>
+                                                <div class="review-info">
+                                                    <div class="review-text">
+                                                        <p class="c-name">' . $fullName . '</p>
+                                                        <p class="r-star">' . generate_star_rating($feedback['rating']) . '&nbsp;' . $feedback['rating'] . '&nbsp;stars</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="r-details">
+                                                <p class="c-review">' . $feedback['feedback'] . '</p>';                                        
+                                    }
+                                }
+                            } else {
+                                echo '<div class="no_feedback">No feedback and ratings yet.</div>';
+                            }
+                        } else {
+                            echo "Product details not found.";
+                        }
+                    } else {
+                        echo "Product ID not provided.";
+                    }
+                            // Function to fetch feedback and ratings from the sales table
+                            function get_feedback_and_ratings($service_id) {
+                                $conn = dbconnect();
+                                $sql = "SELECT * FROM servicedetails WHERE service_id = ?";
+                                try {
+                                    $stmt = $conn->prepare($sql);
+                                    $stmt->execute([$service_id]);
+                                    $feedbackAndRatings = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                                    $conn = null;
+                                    return $feedbackAndRatings;
+                                } catch (PDOException $e) {
+                                    echo $sql . "<br>" . $e->getMessage();
+                                    $conn = null;
+                                    return false;
+                                }
+                            }
+
+                            // Function to fetch customer details
+                            function get_customer_details($customer_id) {
+                                $conn = dbconnect();
+                                $sql = "SELECT * FROM users WHERE user_id = ?";
+                                try {
+                                    $stmt = $conn->prepare($sql);
+                                    $stmt->execute([$customer_id]);
+                                    $customerDetails = $stmt->fetch(PDO::FETCH_ASSOC);
+                                    $conn = null;
+                                    return $customerDetails;
+                                } catch (PDOException $e) {
+                                    echo $sql . "<br>" . $e->getMessage();
+                                    $conn = null;
+                                    return false;
+                                }
+                            }
+
+                            // Function to generate star rating HTML based on the rating value
+                            function generate_star_rating($rating) {
+                                $starRatingHTML = '<i class="fa fa-star" aria-hidden="true"></i>';
+                                $emptyStarHTML = '<i class="fa fa-star-o" aria-hidden="true"></i>';
+
+                                $fullStars = floor($rating);
+                                $emptyStars = 5 - $fullStars;
+
+                                $ratingHTML = str_repeat($starRatingHTML, $fullStars) . str_repeat($emptyStarHTML, $emptyStars);
+
+                                return $ratingHTML;
+                            }
+                            ?>
+
+                    
                     <hr>
-                    <div class="p-review">
-                        <div class="review-pic">
-                            <img src="https://i.pinimg.com/736x/2e/59/24/2e5924495141cd8a39ad9deca8acad0e.jpg" alt="Customer Profile">
-                        </div>
-                        <div class="review-info">
-                            <div class="review-text">
-                                <p class="c-name">N**ya</p>
-                                <p class="r-star">
-                                    <i class="fa fa-star" aria-hidden="true"></i>
-                                    <i class="fa fa-star" aria-hidden="true"></i>
-                                    <i class="fa fa-star" aria-hidden="true"></i>
-                                    <i class="fa fa-star" aria-hidden="true"></i>
-                                    <i class="fa fa-star" aria-hidden="true"></i> 5 stars
-                                </p>
-                                <p class="r-date">February 27, 2023</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="r-details">
-                        <p class="c-review">I just receive my order this afternoon, the flower was very fresh and arrived in good shape and the flower smells good, the seller is very  accommodating and the delivery is very fast. Thank you seller.</p>
-                    </div>
-                    <hr>
-                    <div class="p-review">
-                        <div class="review-pic">
-                            <img src="https://i.pinimg.com/736x/2e/59/24/2e5924495141cd8a39ad9deca8acad0e.jpg" alt="Customer Profile">
-                        </div>
-                        <div class="review-info">
-                            <div class="review-text">
-                                <p class="c-name">N**ya</p>
-                                <p class="r-star">
-                                    <i class="fa fa-star" aria-hidden="true"></i>
-                                    <i class="fa fa-star" aria-hidden="true"></i>
-                                    <i class="fa fa-star" aria-hidden="true"></i>
-                                    <i class="fa fa-star" aria-hidden="true"></i>
-                                    <i class="fa fa-star" aria-hidden="true"></i> 5 stars
-                                </p>
-                                <p class="r-date">February 27, 2023</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="r-details">
-                        <p class="c-review">I just receive my order this afternoon, the flower was very fresh and arrived in good shape and the flower smells good, the seller is very  accommodating and the delivery is very fast. Thank you seller.</p>
-                    </div>
-                    <hr>
-                    <a href="see_all_reviews.html" class="all">
+                    <a href="see_all_reviews_service.php?service_id=<?php echo $service_id?>" class="all">
                         <p>See All Reviews</p>
                     </a>
                 </div>
             </div>
             <section>
-                <div class="label">
+                <!-- <div class="label">
                     <p class="other">Other Services</p>
-                </div>
-                <div class="service-list" id="service-container">
+                </div> -->
+                <!-- <div class="service-list" id="service-container">
+
                     <div class="service">
-                        <a href="service.html">
+                        <a href="customer_service.php?service_id=<?php echo $services['service_id']?>">
                             <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ0V0dWxknmztw6-3Kea1Cr6s1qNe-MdqJ-5k7k99JKt04adfSN5iGni2uYZ1jLqwjRR5c&usqp=CAU" alt="Product 1">
                             <div class="service-name">Service 1</div>
                             <div class="service-category">Flower Arranger</div>
@@ -363,7 +445,7 @@ if (isset($_GET['service_id']) && isset($_SESSION['user_id'])) {
                 </div>
             </section>
             <p class="p-end">No more services found</p>
-            <br><br><br>
+            <br><br><br> -->
         </main>
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>

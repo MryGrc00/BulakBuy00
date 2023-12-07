@@ -1,3 +1,23 @@
+<?php
+
+session_start();
+include '../php/dbhelper.php';
+$pdo = dbconnect();
+if (isset($_SESSION["user_id"]) && isset($_SESSION["role"])) {
+    $user_id = $_SESSION["user_id"];
+    $role = $_SESSION["role"];
+
+    $users = get_record_by_user($user_id) ;
+
+    $service_order =  get_completed_service_details_arranger('servicedetails','services', 'users', $user_id);
+}
+else {
+    // Handle cases where the user is not logged in or role is not set
+    echo "User not logged in or role not set.";
+    // Optional: Redirect to login page or show a login link
+}
+?>
+
 <!DOCTYPE html> 
 <html lang="en">
 <head>
@@ -38,12 +58,13 @@
             </div>
         </nav><hr class="nav-hr">
     </header>
-
     <div class="wrapper">
-        <div class="products-card">
+    <div class="button-container">
+        <button class="products-btn active">Products</button>
+        <button class="services-button">Services</button>
+    </div>
+    <div class="products-card" id="productsCard">
             <?php
-            session_start();
-            include '../php/dbhelper.php';
 
             if (isset($_SESSION['user_id'])) {
                 $customer_id = $_SESSION['user_id'];
@@ -54,7 +75,7 @@
                 if ($orders) {
                     // Loop through the orders and display them
                     foreach ($orders as $order) {
-                        echo '<div class="single-card" onclick="redirectToOrderStatus(' . $order['product_id'] . ')">';
+                        echo '<div class="single-card" onclick="redirectToOrderStatus(' . $order['sales_id'] . ')">';
                         echo '<div class="img-area">';
                         echo '<img src="' . $order['product_img'] . '" alt="">';
                         echo '</div>';
@@ -83,16 +104,14 @@
                 }
             }
 
-            // Function to fetch customer orders from the sales table with status "Pending"
             function get_customer_orders($customer_id) {
                 $conn = dbconnect();
-                $sql = "SELECT p.product_id, p.product_name, p.product_img, p.product_price, SUM(sd.quantity) as quantity, sd.flower_type, sd.ribbon_color
-                FROM sales s
-                JOIN salesdetails sd ON s.product_id = sd.product_id
-                JOIN products p ON sd.product_id = p.product_id
-                WHERE s.customer_id = ? AND s.status = 'Completed'
-                GROUP BY p.product_id, sd.flower_type, sd.ribbon_color;
-                ";
+                $sql = "SELECT s.sales_id, p.product_name, p.product_img, p.product_price, SUM(sd.quantity) as quantity, sd.flower_type, sd.ribbon_color
+                        FROM sales s
+                        JOIN salesdetails sd ON s.salesdetails_id = sd.salesdetails_id
+                        JOIN products p ON sd.product_id = p.product_id
+                        WHERE s.customer_id = ? AND s.status = 'Completed'
+                        GROUP BY s.sales_id, sd.flower_type, sd.ribbon_color;";
                 try {
                     $stmt = $conn->prepare($sql);
                     $stmt->execute([$customer_id]);
@@ -108,6 +127,31 @@
             ?>
         </div>
     </div>
+    <div class="service-list" id="service-container">
+    <?php foreach ($service_order as $order):?>
+        <div class="single-card" onclick="redirectToServiceStatus('<?= $order['servicedetails_id'] ?>')">
+            <div class="img-area">
+                 <img src="<?php echo $order["arranger_profile"]?>" alt="">
+            </div>
+            <div class="info">
+                <div class="text-left">
+                <h3><?php echo $order["arranger_first_name"]. " " . $order["arranger_last_name"]; ?></h3>
+                    <p class="ad"><?php echo $order["arranger_address"]?></p>
+                    <div class="o-date-time">
+                        <span class="date"><?php echo $order["date"]?></span>
+                        <span class="time"><?php echo $order["time"]?></span>
+                    </div>
+                    <p class="price"><?php echo $order["amount"]?></p>
+                </div>
+                <div class="text-right mt-5">
+                    <i class="bi bi-chevron-right"></i>
+                </div>
+            </div>
+        </div>
+        <?php endforeach;?>
+        
+    </div>
+  </div>
   <script>
         // Get the products and services elements
         const products = document.querySelector('.products-card');
@@ -168,9 +212,15 @@
     }
   </script>
    <script>
-    function redirectToOrderStatus(productId) {
+    function redirectToOrderStatus(salesId) {
         // Redirect the user to the order_status.php page with the product id as a parameter
-        window.location.href = 'order_delivered.php?product_id=' + productId;
+        window.location.href = 'order_delivered.php?sales_id=' + salesId;
+    }
+</script>
+<script>
+    function redirectToServiceStatus(servicedetailsId) {
+        // Redirect the user to the order_status.php page with the product id as a parameter
+        window.location.href = 'request_delivered.php?servicedetails_id=' + servicedetailsId;
     }
 </script>
     

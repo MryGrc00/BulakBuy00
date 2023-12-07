@@ -3,12 +3,16 @@ session_start();
 include '../php/dbhelper.php'; // Include your dbhelper.php file
 
 // Function to fetch product details from the product table
-function get_product_details($product_id) {
+function get_product_details_by_sales_id($sales_id) {
     $conn = dbconnect();
-    $sql = "SELECT * FROM products WHERE product_id = ?";
+    $sql = "SELECT p.product_id, p.product_name, p.product_img, p.product_price, sd.quantity, sd.flower_type, sd.ribbon_color
+            FROM sales s
+            JOIN products p ON s.product_id = p.product_id
+            JOIN salesdetails sd ON s.salesdetails_id = sd.salesdetails_id
+            WHERE s.sales_id = ?";
     try {
         $stmt = $conn->prepare($sql);
-        $stmt->execute([$product_id]);
+        $stmt->execute([$sales_id]);
         $product_details = $stmt->fetch(PDO::FETCH_ASSOC);
         $conn = null;
         return $product_details;
@@ -19,64 +23,59 @@ function get_product_details($product_id) {
     }
 }
 
-// Function to get quantity from sales_details table
-function get_quantity_for_product($product_id) {
-    $conn = dbconnect();
-    $sql = "SELECT quantity FROM salesdetails WHERE product_id = ?";
-    try {
-        $stmt = $conn->prepare($sql);
-        $stmt->execute([$product_id]);
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
-        $conn = null;
-        return $result ? $result['quantity'] : 0;
-    } catch (PDOException $e) {
-        echo $sql . "<br>" . $e->getMessage();
-        $conn = null;
-        return 0;
-    }
-}
 
 // Function to add review and feedback to the database
 // Function to add or update review and feedback in the database
 // Function to add or update review and feedback in the database
-function add_review_feedback($product_id, $customer_id, $shop_id, $feedback, $rating, $image_names) {
-    $table = 'sales';
-    $fields = ['customer_id', 'product_id', 'shop_id', 'feedback', 'rating', 'review_image'];
-    $data = [$customer_id, $product_id, $shop_id, $feedback, $rating, implode(',', $image_names)];
+function add_review_feedback($servicedetails_id, $customer_id, $feedback, $rating) {
+    $table = 'servicedetails';
+    $fields = ['customer_id', 'servicedetails_id', 'feedback', 'rating'];
+    $data = [$customer_id, $servicedetails_id, $feedback, $rating];
 
-    // Check if a record for the product already exists
-    $existing_record = get_existing_record($product_id, $customer_id);
+    // Check if a record for the servicedetail already exists
+    $existing_record = get_existing_servicedetail($servicedetails_id, $customer_id);
 
     if ($existing_record) {
         // Update the existing record
-        $where = ['product_id', 'customer_id'];
-        $where_data = [$product_id, $customer_id];
+        $where = ['servicedetails_id', 'customer_id'];
+        $where_data = [$servicedetails_id, $customer_id];
         return update_sales($table, $fields, $data, $where, $where_data);
     } else {
-        // Record does not exist, do nothing (or handle it as needed)
-        return true;
+        // Record does not exist, insert a new record
+        return insert_into_servicedetails($table, $fields, $data);
     }
 }
+
 
 // ...
 
 
 // Function to get an existing record for a specific product and customer
-function get_existing_record($product_id, $customer_id) {
-    $conn = dbconnect();
-    $sql = "SELECT * FROM sales WHERE product_id = ? AND customer_id = ?";
+function get_existing_servicedetail($servicedetails_id, $customer_id) {
+    $conn = dbconnect(); // Make sure dbconnect() establishes a database connection
+    $sql = "SELECT * FROM servicedetails WHERE servicedetails_id = ? AND customer_id = ?";
+
     try {
         $stmt = $conn->prepare($sql);
-        $stmt->execute([$product_id, $customer_id]);
+        $stmt->execute([$servicedetails_id, $customer_id]);
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        // Close the database connection
         $conn = null;
-        return $result;
+
+        if ($result) {
+            return $result; // Return the found record
+        } else {
+            return false; // No record found
+        }
     } catch (PDOException $e) {
-        echo $sql . "<br>" . $e->getMessage();
+        // Handle the exception
+        echo "Database error: " . $e->getMessage();
         $conn = null;
-        return false;
+        return false; // Return false in case of an error
     }
 }
+
 
 // Function to update an existing record
 function update_sales($table, $fields, $data, $where, $where_data) {
@@ -104,13 +103,17 @@ function update_sales($table, $fields, $data, $where, $where_data) {
 
 
 // Function to get shop_id based on product_id
-function get_shop_id($product_id) {
+function get_shop_id_by_sales_id($sales_id) {
     $conn = dbconnect();
-    $sql = "SELECT shop_owner FROM products WHERE product_id = ?";
+    // SQL to fetch shop_owner (shop_id) based on sales_id
+    $sql = "SELECT p.shop_owner
+            FROM products p
+            JOIN sales s ON p.product_id = s.product_id
+            WHERE s.sales_id = ?";
 
     try {
         $stmt = $conn->prepare($sql);
-        $stmt->execute([$product_id]);
+        $stmt->execute([$sales_id]);
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
         $conn = null;
         return $result ? $result['shop_owner'] : 0;
@@ -123,56 +126,33 @@ function get_shop_id($product_id) {
 
 
 
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $feedback = $_POST['feedback'];
-    $rating = $_POST['rating'];
-    $product_id = $_POST['product_id'];
+    // Check if feedback and rating are set in the POST request
+    if (isset($_POST['feedback']) && isset($_POST['rating']) && isset($_POST['servicedetails_id'])) {
+        $feedback = $_POST['feedback'];
+        $rating = $_POST['rating'];
+        $servicedetails_id = $_POST['servicedetails_id'];
 
-    // Assuming you have a way to retrieve shop_id based on product_id
-    $shop_id = get_shop_id($product_id);
+        if (isset($_SESSION['user_id'])) {
+            $customer_id = $_SESSION['user_id'];
 
-    if (isset($_SESSION['user_id'])) {
-        $customer_id = $_SESSION['user_id'];
-
-        // Handle image upload
-        $image_names = [];
-        if (!empty($_FILES['images']['name'][0])) {
-            $image_names = handle_image_upload($product_id);
+            // Add the review and feedback to the database
+            $result = add_review_feedback($servicedetails_id, $customer_id, $feedback, $rating);
+            if ($result) {
+                // Redirect to the thank-you page
+                header('Location: customer_home.php');
+                exit();
+            } else {
+                $message = "Failed to submit review. Please try again.";
+            }
         }
-
-        // Add the review and feedback to the database
-        $result = add_review_feedback($product_id, $customer_id, $shop_id, $feedback, $rating, $image_names);
-        if ($result) {
-            // Redirect to the thank-you page
-            header('location: customer_home.php');
-            exit();
-        } else {
-            $message = "Failed to submit review. Please try again.";
-        }
+    } else {
+        $message = "Please provide all required fields.";
     }
 }
 
-// Function to handle image upload
-function handle_image_upload($product_id) {
-    $image_names = [];
-    $upload_dir = '../php/images/';
 
-    foreach ($_FILES['images']['tmp_name'] as $key => $tmp_name) {
-        $file_name = $_FILES['images']['name'][$key];
-        $file_tmp = $_FILES['images']['tmp_name'][$key];
-
-        // Generate a unique name for the image
-        $unique_name = uniqid() . '_' . $file_name;
-
-        // Move the uploaded file to the destination folder
-        move_uploaded_file($file_tmp, $upload_dir . $unique_name);
-
-        // Save the image name to the database
-        $image_names[] = $unique_name;
-    }
-
-    return $image_names;
-}
 
 
 // Rest of your HTML and form code...
@@ -234,40 +214,42 @@ function handle_image_upload($product_id) {
                          
 
                             // Check if product_id is set in the URL
-                            if (isset($_GET['product_id'])) {
-                                $product_id = $_GET['product_id'];
+                            if (isset($_SESSION['user_id']) &&  isset($_GET['servicedetails_id'])){
+                                $user_id = $_SESSION['user_id'];
+                                $servicedetails_id = $_GET['servicedetails_id'];
+
                                 // Fetch product details from the product table
-                                $product_details = get_product_details($product_id);
-
-                                // Fetch product quantity from the sales_details table
-                                $quantity = get_quantity_for_product($product_id);
-
-                                // Display the product details
-                                if ($product_details) {
-										echo '<div class="custom-checkbox" style="margin-top:-30px">';
-										echo '<img src="' . $product_details['product_img'] . '" alt="' . $product_details['product_name'] . '">';
-										echo '</div>';
-										echo '<div class="item-details">';
-										echo '<h2>' . $product_details['product_name'] . '</h2>';
-										echo '<div class="flower-type">';
-										echo '<p class="flower">Flower:</p>';
-										echo '<p class="type">' . $product_details['flower_type'] . '</p>';
-										echo '</div>';
-										echo '<div class="ribbon-color">';
-										echo '<p class="ribbon">Ribbon:</p>';
-										echo '<p class="color">' . $product_details['ribbon_color'] . '</p>';
-										echo '</div>';
-										echo '<p class="quantity">x ' . $quantity . '</p>';
-										echo '<p class="price">₱ ' . number_format($product_details['product_price'], 2) . '</p>';	
-									} else {
-										echo "Product details not found.";
-									}
-                            } else {
-                                echo "Product ID not provided.";
-                            }
-
-                            // Function to fetch product details from the product table
+                                $details= getServiceDetails("servicedetails", "services", "users", $servicedetails_id, $user_id);
+                                if (isset($details)) {
+                                    // Custom checkbox style with image
+                                    echo '<div class="custom-checkbox" style="margin-top:-30px">';
+                                    echo '<img src="' . $details["arranger_profile"] . '" alt="Service Image">';
+                                    echo '</div>';
+                                
+                                    // Item details with similar style as product details
+                                    echo '<div class="item-details">';
+                                    echo '<h2>' . $details["arranger_first_name"] . " " . $details["arranger_last_name"] . '</h2>';
                             
+                                    echo '<div class="flower-type">'; // Reusing the flower-type class for location
+                                    echo '<p class="flower">Location:</p>'; // Reusing the flower class for the label
+                                    echo '<p class="type">' . $details['arranger_address'] . '</p>'; // Reusing the type class for value
+                                    echo '</div>';
+                                
+                                    echo '<div class="ribbon-color">'; //
+                                    echo '<p class="ribbon">Phone:</p>'; 
+                                    echo '<p class="color">' . $details['arranger_phone'] . '</p>'; // Reusing the color class for value
+                                    echo '</div>';
+                                
+                                    // Price with similar styling
+                                    echo '<p class="price">₱' . number_format($details['service_rate'], 2) . '/ Hr</p>';
+                                    echo '</div>';
+                                    echo '</div>';
+                                } else {
+                                    echo "Service details not found.";
+                                }
+                                
+                            // Function to fetch product details from the product table
+                    }
                             ?>
 						
 						<div class="rating-input">
@@ -283,16 +265,7 @@ function handle_image_upload($product_id) {
 								<div class="review-input">
 									<textarea name="feedback" placeholder="Write your review here..." rows="4"></textarea>
 								</div>
-								<div class="image-upload-container">
-                                    <div class="image-upload">
-                                        <input accept="image/*" id="imageInput" name="images[]" multiple type="file">
-                                        <label for="imageInput">+ Add Image</label>
-                                    </div>
-                                    <div class="image-preview" id="imagePreview">
-                                        <!-- Selected images will be displayed here -->
-                                    </div>
-                                </div>
-								<input type="hidden" name="product_id" value="<?php echo isset($_GET['product_id']) ? $_GET['product_id'] : ''; ?>">
+								<input type="hidden" name="servicedetails_id" value="<?php echo isset($_GET['servicedetails_id']) ? $_GET['servicedetails_id'] : ''; ?>">
 								<button type="submit" class="submit-button">Submit Review</button>
 							</form>
 						</div>

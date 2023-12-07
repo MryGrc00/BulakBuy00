@@ -312,7 +312,7 @@ if (isset($_SESSION["user_id"])){
                             </div>
                                 <div class="password-input-container mt-4">
                                     <input type="password" class="form-control" name="cpassword" id="cpassword" placeholder="Confirm New Password" required>
-                                    <span class="toggle-password" id="togglePassword">
+                                    <span class="toggle-password" id="toggleCPassword">
                                         <i class="bi bi-eye-slash"></i>
                                     </span>
                                 </div>

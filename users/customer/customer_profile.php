@@ -129,10 +129,13 @@ if (isset($_SESSION["user_id"])) {
                     <a href="customer_completed.php">
                         <div class="card  ">
                         <?php
+                        $productCount= countCompleted($user_id);
                         $completedCount = get_completed_service_details_count_arranger('servicedetails', 'services','users', $user_id);
-                        ?>
-                        <?php if ($completedCount > 0): ?>
-                            <p class="num-cart1"><?php echo $completedCount; ?></p>
+                        $total = $productCount + $completedCount;
+
+                       ?>
+                        <?php if ($total > 0): ?>
+                            <p class="num-cart1"><?php echo $total; ?></p>
                         <?php endif; ?> 
                             <i class="bi bi-bag-check"></i>
                             <span class="label">Completed</span>

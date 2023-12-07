@@ -1540,18 +1540,53 @@ function add_cart_item_without_optional_fields($product_id, $customer_id, $quant
                             echo "Shop details not found.";
                         }
                     ?>
+					<?php
+					// Ensure the function is defined outside of any conditional logic
+					function get_average_rating($product_id) {
+						$conn = dbconnect();
+						$sql = "SELECT AVG(rating) as average_rating, COUNT(rating) as total_ratings
+								FROM sales 
+								WHERE product_id = ? AND rating IS NOT NULL";
+
+						try {
+							$stmt = $conn->prepare($sql);
+							$stmt->execute([$product_id]);
+							$result = $stmt->fetch(PDO::FETCH_ASSOC);
+							$conn = null;
+							return $result;
+						} catch (PDOException $e) {
+							echo $sql . "<br>" . $e->getMessage();
+							$conn = null;
+							return false;
+						}
+					}
+
+					// Check if product_id is set in the URL query string
+					if (isset($_GET['product_id'])) {
+						$product_id = $_GET['product_id'];
+						$total = get_average_rating($product_id);
+					}
+
+					?>
                     <div class="reviews">
                         <p class="r-label">Product Ratings</p>
                     </div>
-                    <div class="stars">
-                    <p class="r_stars">4.5 ratings & 35 Reviews&nbsp;</p> 
-                        <i class="fa fa-star" aria-hidden="true"></i>
-                        <i class="fa fa-star" aria-hidden="true"></i>
-                        <i class="fa fa-star" aria-hidden="true"></i>
-                        <i class="fa fa-star" aria-hidden="true"></i>
-                        <i class="fa fa-star" aria-hidden="true"></i>
-                        
-                    </div>
+					<div class="stars">
+						<?php if ($total) {
+							$averageRating = round($total['average_rating']); // Round the average rating
+							$averageRatingInt = (int)$averageRating; // Convert to integer to remove decimal part
+
+							for ($i = 1; $i <= 5; $i++) {
+								if ($i <= $averageRating) {
+									echo '<i class="fa fa-star" aria-hidden="true"></i>';
+								} else {
+									echo '<i class="fa fa-star-o" aria-hidden="true"></i>';
+								}
+							}
+							echo '<p class="r_stars">' . $averageRatingInt . ' & ' . $total['total_ratings'] . ' Reviews&nbsp;</p>';
+						} ?>
+					</div>
+
                     <?php
                     function get_product_details($product_id) {
                         $conn = dbconnect();
@@ -1587,7 +1622,7 @@ function add_cart_item_without_optional_fields($product_id, $customer_id, $quant
                                     // Fetch customer details
                                     $customer = get_customer_details($feedback['customer_id']);
                                     $fullName = $customer['first_name'] . ' ' . $customer['last_name'];
-                                    $reviewImagePath = '../images/' . $feedback['review_image'];
+                                    $reviewImagePath = '../php/images/' . $feedback['review_image'];
                                     // Display customer details if there are feedback and ratings
                                     if ($customer && $feedback['rating'] > 0) {
                                         echo '<div class="p-review">
@@ -1612,8 +1647,6 @@ function add_cart_item_without_optional_fields($product_id, $customer_id, $quant
                                         }
                                         echo '</div>';
                                     } else {
-                                        // If there are no feedback and ratings or the rating is 0, don't display user details
-                                        echo '<div class="no_feedback">No feedback and ratings yet.</div>';
                                     }
                                 }
                             } else {
@@ -1674,7 +1707,7 @@ function add_cart_item_without_optional_fields($product_id, $customer_id, $quant
                             ?>
 
                     <hr>
-                    <a href="../common/see_all_reviews.html" class="all">
+                    <a href="see_all_reviews_products.php?product_id=<?php echo $product_id?>" class="all">
                         <p>See All Reviews</p>
                     </a>
                 </div>
