@@ -42,6 +42,26 @@ function filter_products_by_price($min, $max) {
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
+if (isset($_GET['category'])) {
+    $selected_category = $_GET['category'];
+
+    // Fetch products based on the selected category
+    $conn = dbconnect();
+    $query = "SELECT * FROM products WHERE product_category = :category";
+    $stmt = $conn->prepare($query);
+    $stmt->bindParam(':category', $selected_category, PDO::PARAM_STR);
+    
+    try {
+        $stmt->execute();
+        $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        echo "Error: " . $e->getMessage();
+    }
+} else {
+    // Handle the case when no category is selected
+    echo "No category selected";
+    // You might want to redirect or display an appropriate message
+}
 ?>
 <!DOCTYPE html> 
 <html lang="en">
@@ -154,9 +174,6 @@ function filter_products_by_price($min, $max) {
     text-decoration: none;
 }
 
-.product:hover {
-    transform: scale(1.05);
-}
 
 .product a img {
     width: 150px;
@@ -384,24 +401,30 @@ function filter_products_by_price($min, $max) {
                 </section>
                 <section>
                 <div class="product-list" id="product-container">
-                <?php foreach ($products as $product): ?>
-                    <div class="product">
-                        <a href="customer_product.php?product_id=<?php echo $product['product_id']; ?>">
-                        <?php
-                        echo '<img src="' . $product['product_img'] . '" alt="' . $product['product_name'] . '">';
-                    ?>                        
-                           <div class="product-name"><?php echo $product['product_name']; ?></div>
-                            <div class="product-category"><?php echo $product['product_category']; ?></div>
-                            <div class="p">
-                                <div class="product-price"><?php echo '₱ '.$product['product_price']; ?></div>
-                            </div>
-                        </a>
-                    </div>
-                <?php endforeach; ?>
-                   
-
+                    <?php foreach ($products as $product): ?>
+                        <div class="product">
+                            <a href="customer_product.php?product_id=<?php echo $product['product_id']; ?>">
+                                <?php
+                                echo '<img src="' . $product['product_img'] . '" alt="' . $product['product_name'] . '">';
+                                ?>
+                                <div class="product-name"><?php echo $product['product_name']; ?></div>
+                                <div class="product-category"><?php echo $product['product_category']; ?></div>
+                                <div class="p">
+                                    <div class="product-price"><?php echo '₱ ' . $product['product_price']; ?></div>
+                                </div>
+                            </a>
+                        </div>
+                    <?php endforeach; ?>
                 </div>
-            </section>
+
+
+                </section>
+            <?php if (empty($products)): ?>
+            <p class="p-end" style="color: #bebebe;
+                font-size: 15px;
+                text-align: center;
+                margin-top: 300px;">No results found</p>
+        <?php endif; ?>
             <br><br><br>
         </main>
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>

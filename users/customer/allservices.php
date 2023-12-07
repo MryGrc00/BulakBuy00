@@ -21,7 +21,7 @@ if (isset($_SESSION["user_id"])) {
 
         // Fetch products within the inputted price range
         if ($min_price_input !== null && $max_price_input !== null) {
-            $services = filter_products_by_price($min_price_input, $max_price_input);
+            $services = filter_service_by_price($min_price_input, $max_price_input);
         } else {
             $services = get_latest_services('services','users','shops','subscription');
         }
@@ -35,7 +35,10 @@ if (isset($_SESSION["user_id"])) {
 
 function filter_service_by_price($min, $max) {
     $conn = dbconnect();
-    $query = "SELECT * FROM services WHERE service_rate BETWEEN :min AND :max";
+    $query = "SELECT s.*, u.profile_img, u.last_name, u.first_name
+              FROM services AS s
+              JOIN users AS u ON s.arranger_id = u.user_id
+              WHERE s.service_rate BETWEEN :min AND :max";
     $stmt = $conn->prepare($query);
     $stmt->bindParam(':min', $min, PDO::PARAM_INT);
     $stmt->bindParam(':max', $max, PDO::PARAM_INT);
@@ -286,9 +289,6 @@ function filter_service_by_price($min, $max) {
     text-decoration: none;
 }
 
-.product:hover {
-    transform: scale(1.05);
-}
 
 .product a img {
     width: 150px;
@@ -646,7 +646,7 @@ function filter_service_by_price($min, $max) {
                         <button class="close-modal" id="closeModal"><i class="fa fa-times-circle-o" aria-hidden="true"></i></button>
                         <p class="p-filter">Filters</p>
                         <hr class="f-hr">
-                        <form action="search_results.php" method="post">
+                        <form action="allservices.php" method="post">
                         <div class="price">
                             <p class="f-label">Price</p>
                             <input type="text" name="min_price" class="m-price" placeholder="Min: <?php echo $min_price; ?>">
@@ -656,6 +656,7 @@ function filter_service_by_price($min, $max) {
                             <button class="apply" type="submit">Apply</button>
                         </div>
                         </form>
+                    </div>
                 </div>
                 <div class="upper">
                     <p class="history">Home > Services</p>
@@ -669,14 +670,15 @@ function filter_service_by_price($min, $max) {
                 <div class="product-list" id="product-container">
                 <?php foreach ($services as $service): ?>
                     <div class="product">
-                        <a href="customer_product.php?service_id=<?php echo $service['service_id']; ?>">
+                        <a href="customer_service.php?service_id=<?php echo $service['service_id']; ?>">
                         <?php
                         echo '<img src="' . $service['profile_img'] . '" alt="' . $service['last_name'] . '">';
                     ?>                        
                             <div class="product-name"><?php echo $service['first_name'] . ' ' . $service['last_name']; ?></div>
+                            <div class="product-category">Flower Arranger</div>
+
                             <div class="p">
-                                <div class="product-price"><?php echo $service['service_rate']; ?></div>
-                                <div class="product-ratings">4.5 stars</div>
+                                <div class="product-price"><?php echo '₱ '. $service['service_rate']; ?></div>
                             </div>
                         </a>
                     </div>
@@ -684,6 +686,13 @@ function filter_service_by_price($min, $max) {
                    
 
                 </div>
+                
+<?php if (empty($services)): ?>
+    <p class="p-end" style="color: #bebebe;
+        font-size: 15px;
+        text-align: center;
+        margin-top: 300px;">No services found</p>
+<?php endif; ?>
             </section>
             <br><br><br>
         </main>

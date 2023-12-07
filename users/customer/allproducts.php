@@ -287,9 +287,6 @@ function filter_products_by_price($min, $max) {
     text-decoration: none;
 }
 
-.product:hover {
-    transform: scale(1.05);
-}
 
 .product a img {
     width: 150px;
@@ -340,6 +337,9 @@ function filter_products_by_price($min, $max) {
          width:100%;
          z-index: 100;
          top:0;
+     }
+     .history{
+        display:none;
      }
      .navbar img {
          display: none;
@@ -541,7 +541,7 @@ function filter_products_by_price($min, $max) {
          display: flex;
          flex-wrap: wrap;
          justify-content: center;
-         margin-top:35px;
+         margin-top:90px;
          margin-bottom:10px;
     }
      .product {
@@ -686,6 +686,13 @@ function filter_products_by_price($min, $max) {
                     
 
                     </div>
+                    
+<?php if (empty($products)): ?>
+    <p class="p-end" style="color: #bebebe;
+        font-size: 15px;
+        text-align: center;
+        margin-top: 300px;">No products found</p>
+<?php endif; ?>
                 </section>
             <br><br><br>
         </main>
