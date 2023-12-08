@@ -6,6 +6,8 @@ $_SESSION['selected_products'] = $selectedProducts;
 $_SESSION['selected_payment'] = $selectedPayment;
 
 
+
+
 if (!isset($_SESSION["user_id"])) {
     header('Location: ../../login.php');
     exit();

@@ -705,11 +705,7 @@ $gallery = get_seller_images($user_id);
                     <button class="gallery-btn active">Gallery</button>
                     <button class="product-btn">Products</button>
                 </div>
-<<<<<<< HEAD
-                <div class="image-grid">
-=======
                 <div class="image-grid" id="imageGrid">
->>>>>>> b2c2f3be586964c059740c1cfb564f5fa6044b26
                 <?php foreach ($gallery as $images): ?>
                          <img class="image" src="<?php echo $images['image'];?>" alt="Image 1">
                     <?php endforeach; ?>
