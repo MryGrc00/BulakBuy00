@@ -105,7 +105,7 @@ if(isset($profileImage)) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Profile</title>
+    <title>Edit Service</title>
     <link href='https://fonts.googleapis.com/css?family=Poppins' rel='stylesheet'>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-pzjw8f+uaex3+ihrbIk8mz07tb2F4F5ssx6kl5v5PmUGp1ELjF8j5+zM1a7z5t2N" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -156,7 +156,7 @@ if(isset($profileImage)) {
             <h3 class="arrangerlname">Last Name</h3>
             <input type="text" name="last_name" id="last_name" value="<?php echo $user['last_name']; ?>" required>
             <h3 class="arranger_rate">Service Rate</h3>
-            <input id="arranger-rate" name="service_rate" required="" type="number" value="<?php echo $user['service_rate']; ?>">
+            <input id="arranger-rate" name="service_rate" required="" type="text" value="<?php echo $user['service_rate']; ?>" onkeypress="return isNumberKey(event)">
             <h3 class="arranger_address">Address</h3>
             <input id="arranger-address" name="arranger_address" required="" value="<?php echo $user['address']; ?>" type="text">
             <h3 class="arranger_deT">Description:</h3>
@@ -186,6 +186,17 @@ if(isset($profileImage)) {
             circleImage.src = imageURL; // Temporarily change the image source for preview
         }
     });
+</script>
+
+<script>
+    function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : evt.keyCode;
+        // Allow only numeric (0-9) input
+        if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+            return false;
+        }
+        return true;
+    }
 </script>
 
 <script>

@@ -138,9 +138,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
                 <input id="seller-name" name="shop_name" required="" type="text" value="<?php echo htmlspecialchars($shopName); ?>">
 
                 <h3 class="arranger_name">Phone</h3>
-                <input type="tel" class="form-control" name="phone" id="phone" placeholder="09...." required maxlength="11" minlength="11" pattern="^09\d{9}$">
-
-                <input id="arranger-name" name="shop_phone" type="tel" placeholder="09...." required maxlength="11" minlength="11" pattern="^09\d{9}$" value="<?php echo htmlspecialchars($shopPhone); ?>">
+                <input id="arranger-name" name="shop_phone" type="text" placeholder="09...." required maxlength="11" minlength="11" pattern="^09\d{9}$" value="<?php echo htmlspecialchars($shopPhone); ?>">
 
                 <h3 class="arranger_uname">Address</h3>
                 <input id="arranger-uname" name="shop_address" required="" type="text" value="<?php echo htmlspecialchars($shopAddress); ?>">
