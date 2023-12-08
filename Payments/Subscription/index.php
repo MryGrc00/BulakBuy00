@@ -227,7 +227,7 @@ $user_role = $users['role']; // Replace 'role' with the actual column name for t
                 width: 310px;
                 background-color: #F5F5F5;
                 border-radius:10px;
-                letter-spacing: 0.1rem;
+            
                 color:#888;
                 margin-top: 10px;
                 outline: none !important;
@@ -265,7 +265,7 @@ $user_role = $users['role']; // Replace 'role' with the actual column name for t
             width: 310px;
             background-color: #F5F5F5;
             border-radius:10px;
-            letter-spacing: 0.1rem;
+    
             color:#888;
             margin-top: 10px;
             margin-left: -18px;
@@ -363,50 +363,50 @@ $user_role = $users['role']; // Replace 'role' with the actual column name for t
     <div class="container mt-4">
         <div class="row">
             <div class="col-md-12 order-md-1">
-                <h4 class="mb-3">Billing Address</h4>
+                <h4 class="mb-2">Billing Address</h4>
                 <?php if (!empty($users)): ?>
                 <form class="needs-validation" method="POST" action="post.php">
                 <div class="two">
                             <div class="form-group row">
-                                <div class="col-md-6 mb-3">
+                                <div class="col-md-6 mb-2">
                                     <label for="firstName">First name</label>
                                     <input type="text" class="form-control custom-font-size" name="first_name" value="<?php echo $users['first_name']; ?>" >
                                     <div class="invalid-feedback">Valid first name is required.</div>
                                 </div>
-                                <div class="col-md-6 mb-3">
+                                <div class="col-md-6 mb-2">
                                     <label for="lastName">Last name</label>
                                     <input type="text" class="form-control custom-font-size" name="last_name" value="<?php echo $users['last_name']; ?>">
                                     <div class="invalid-feedback">Valid last name is required.</div>
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <div class="col-md-6 mb-3">
+                                <div class="col-md-6 mb-2">
                                     <label for="mobile">Mobile</label>
                                     <input type="number" class="form-control custom-font-size" name="phone" value="<?php echo $users['phone']; ?>">
                                     <div class="invalid-feedback">Please enter a valid mobile number for shipping updates.</div>
                                 </div>
-                                <div class="col-md-6 mb-3">
+                                <div class="col-md-6 mb-2">
                                     <label for="email">Email</label>
                                     <input type="email" class="form-control custom-font-size" name="email" value="<?php echo $users['email']; ?>">
                                     <div class="invalid-feedback">Please enter a valid email address for shipping updates.</div>
                                 </div>
                             </div>
                     </div>
-                            <div class=" col-md-6 mb-3">
-                                <label for="merchantname" class="form-label">Merchant Name</label>
-                                <input type="text" class="form-control1 custom-font-size" name="merchantname" value="<?php echo $selectedShopName; ?>">
+                            <div class=" col-md-6 mb-2">
+                            <label for="merchantname" class="form-label">Merchant Name</label>
+                        <input type="text" class="form-control1 custom-font-size" name="merchantname" value="BulakBuy">
                             </div> 
-                            <div class="col-md-6 mb-3">
-                                <label for="merchantphone"  class="form-label">Merchant Phone</label>
-                                <input type="text" class="form-control1 custom-font-size" name="merchantphone" value="<?php echo $selectedShopPhone; ?>">
+                            <div class="col-md-6 mb-2">
+                            <label for="mobile" class="form-label">Mobile</label>
+                            <input type="number" class="form-control1 custom-font-size" name="mobile" value="09272063001">
                             </div>
                       
-                        <div class=" col-md-6 mb-3">
+                        <div class=" col-md-6 mb-2">
                             <label for="amount-label" class="form-label">Amount</label>
-                            <input type="number" class="form-control1 custom-font-size" name="amount" value="<?php echo $totalSales; ?>">
+                            <input type="number" class="form-control1 custom-font-size" name="amount" value="249">
                             <div class="invalid-feedback">Please enter the amount to be paid.</div>
                         </div>
-                    <button class="btn  btn-lg btn-block" type="submit">Continue to checkout</button>
+                    <button class="btn  btn-lg btn-block" type="submit">Pay</button>
                 </form>
                 <?php else: ?>
                     <p>User not found.</p>
@@ -414,7 +414,7 @@ $user_role = $users['role']; // Replace 'role' with the actual column name for t
             </div>
         </div>
         <footer class="my-3 pt-3 text-muted text-center text-small">
-            <p class="mb-1">© <?php echo date("Y"); ?> BulakBuy.ph</p>
+            <p class="mb-2">© <?php echo date("Y"); ?> BulakBuy.ph</p>
         </footer>
     </div>
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"

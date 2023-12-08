@@ -231,7 +231,7 @@ function generateOTP() {
 <main>
         <div class="container-fluid mt-5">
             <div class="row fw-semibold">
-                <h2>Enter Your Email</h2>
+                <h2 class="enter">Enter Your Email</h2>
                 <div class="error-text"></div>
                 <div class="success-text"></div>
                 <form action="" method="POST" enctype="multipart/form-data" autocomplete="off">
@@ -241,7 +241,7 @@ function generateOTP() {
                     <div class="form-group">
                         <br>
                         <div class="button">
-                            <input type="submit" name="submit" class="btn btn-primary w-100" value="Verify"></button>
+                            <input type="submit" name="submit" class="btn  w-100" value="Verify"></button>
                         </div>
                         <br>
                     </div>

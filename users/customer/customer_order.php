@@ -212,12 +212,15 @@
 }
 /*Name*/
 
-.text-left h3 {
+.text-left h2{
 	font-size: 15px;
 	color:#666;
 	margin-left:-130px;
 	margin-top:5px;
 	font-weight: 400;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 .text-right {
 	flex: 1;
@@ -382,35 +385,24 @@
 		
 	}
 
-	.flower-type{
-		display: flex;
-		justify-content:flex-start;
-		text-align: justify;
-		margin-top:-3px;
-		margin-left:10px;
-   }
-	.flower{
-		color:#666;
-		font-size: 11px;
-		margin-left:-53px;
-   }
-	.type{
-		color:#666;
-		font-size: 11px;
-		margin-left:0px;
-		width:120px;
-   }
+
 	.ribbon-color{
 		display: flex;
 		gap:10px;
-		margin-top:-10px;
+		margin-bottom:-13px;
 		margin-left:10px;
-		margin-bottom: -24px;
+        
+		
    }
 	.ribbon{
 		font-size: 11px;
 		color:#666;
 		margin-left:-53px;
+        width:160px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        position: sticky;
    }
    .color{
 		font-size: 11px;
@@ -420,6 +412,7 @@
 	.info {
 		max-width: 100%;
 		
+        margin-left: 10px;
 	}
 
 	.btn{
@@ -491,12 +484,17 @@
 	
 	}
 
-	.text-left h3 {
+	.text-left h2    {
 		font-size: 13px;
 		margin-top:3px;
 		margin-left:-45px;
 		font-weight: 500;
 		font-weight: 400;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        position:sticky;
+        width:175px;
 	}
 	.text-left .ad {
 		margin-left:-45px;
@@ -574,7 +572,7 @@
                         <form class="form-inline my-2 my-lg-0">
                             <a href=""><i class="fa fa-search"></i></a>
                             <input type="text"  class="form-control form-input" placeholder="Search">
-                            <a href="javascript:void(0);" onclick="goBack()">
+                            <a href="customer_profile.php">
                             <i class="back fa fa-angle-left" aria-hidden="true"></i>
                             <div id="search-results">Orders</div>
                             </a>
@@ -606,15 +604,35 @@
                         echo '</div>';
                         echo '<div class="info">';
                         echo '<div class="text-left">';
-                        echo '<h3>' . $order['product_name'] . '</h3>';
-                        echo '<div class="flower-type">';
-                        echo '<p class="flower">Flower:</p>';
-                        echo '<p class="type">' . $order['flower_type'] . '</p>';
-                        echo '</div>';
-                        echo '<div class="ribbon-color">';
-                        echo '<p class="ribbon">Ribbon:</p>';
-                        echo '<p class="color">' . $order['ribbon_color'] . '</p>';
-                        echo '</div>';
+                        echo '<h2>' . $order['product_name'] . '</h2>';
+                        $customization = array();
+                                    
+                        // Check if flower type is available
+                        if (!empty($order['flower_type'])) {
+                            $customization[] = $order['flower_type'];
+                        }
+                    
+                        // Check if ribbon color is available
+                        if (!empty($order['ribbon_color'])) {
+                            $customization[] = $order['ribbon_color'];
+                        }
+                    
+                        // Display the customization details
+                        if (!empty($customization)) {
+                            echo '<div class="ribbon-color">';
+                            echo '<p class="ribbon">'. implode(', ', $customization) .'</p>';
+                            echo '</div>';
+                        }
+                    
+                        if ($order) {
+                            // Initialize a variable to store the message
+                            $message = !empty($order['message']) ? $order['message'] : 'None';
+                        
+                            // Display the message details
+                            echo '<div class="ribbon-color">';
+                            echo '<p class="ribbon">Message: ' . $message .'</p>';
+                            echo '</div>';
+                        }
                         echo '<p class="price">₱ ' . number_format($order['product_price'], 2) . '</p>';
                         echo '</div>';
                         echo '<div class="text-right">';
@@ -625,14 +643,17 @@
                         echo '</div>';
                     }
                 } else {
-                    echo "No orders found for this customer.";
+                    echo' <p class="p-end" style="color: #bebebe;
+                            font-size: 15px;
+                            text-align: center;
+                            margin-top: 300px;">No products found</p>';
                 }
             }
 
             // Function to fetch customer orders from the sales table with status "Pending"
             function get_customer_orders($customer_id) {
                 $conn = dbconnect();
-                $sql = "SELECT s.sales_id, p.product_name, p.product_img, p.product_price, SUM(sd.quantity) as quantity, sd.flower_type, sd.ribbon_color
+                $sql = "SELECT s.sales_id, p.product_name, p.product_img, p.product_price, SUM(sd.quantity) as quantity, sd.flower_type, sd.ribbon_color, sd.message
                         FROM sales s
                         JOIN salesdetails sd ON s.salesdetails_id = sd.salesdetails_id
                         JOIN products p ON sd.product_id = p.product_id
@@ -653,6 +674,7 @@
             
             ?>
         </div>
+		
     </div>
 
   <script>

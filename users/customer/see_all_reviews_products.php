@@ -10,6 +10,41 @@
         <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
         <link rel="stylesheet" href="../../css/see_all_reviews.css">
+        <style>
+            @media (min-width: 300px) and (max-width:500px) {
+            .navbar {
+		position: fixed;
+		background-color: white;
+		width: 100%;
+		z-index: 100;
+    
+	}
+	.navbar img {
+		display: none;
+	}
+	.form-input[type="text"] {
+		display: none;
+	}
+	.nav-hr {
+		width: 100%;
+	}
+	a #search-results {
+		display: block;
+		font-size: 15px;
+		margin-left: 20px;
+		color: #555;
+		margin-top: -20px;
+	}
+	a:hover {
+		text-decoration: none;
+		outline: none;
+		border: none;
+	}
+	.back {
+		display: block;
+		font-size: 20px;
+	}
+ } </style>
     </head>
     <body>
         <header>
@@ -25,8 +60,11 @@
                             <form class="form-inline my-2 my-lg-0">
                                 <a href=""><i class="fa fa-search"></i></a>
                                 <input type="text"  class="form-control form-input" placeholder="Search">
-                                <a href="../customer/product.html"><i class="back fa fa-angle-left" aria-hidden="true"></i></a>
+                                <a href="javascript:void(0);" onclick="goBack()">
+                                 <i class="back fa fa-angle-left" aria-hidden="true"></i>
                                 <div id="search-results">Product Ratings</div>
+                            </a>
+                                
                             </form>
                         </li>
                     </ul>
@@ -223,5 +261,10 @@
             nextButton.addEventListener('click', nextImage);
             
         </script>
+          <script>
+    function goBack() {
+        window.history.back();
+    }
+  </script>
     </body>
 </html>

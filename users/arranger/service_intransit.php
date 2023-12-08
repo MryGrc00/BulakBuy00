@@ -108,7 +108,56 @@ function get_quantity_for_product($product_id, $seller_id) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../../css/arranger.css">
+    <style>
+        @media (min-width: 300px) and (max-width:500px) {
+            .ribbon-color{
+		display: flex;
+		gap:10px;
+		margin-bottom:1px;
 
+		margin-left:10px;
+        
+		
+   }
+	.ribbon{
+		font-size: 11px;
+        margin-top:2px;
+		color:#666;
+		margin-left:-53px;
+        width:160px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        position: sticky;
+   }
+   .text-left h2    {
+		font-size: 13px;
+		margin-top:3px;
+		margin-bottom:15px;
+		margin-left:-45px;
+		font-weight: 500;
+		font-weight: 400;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        position:sticky;
+        width:160px;
+	}
+    .single-card {
+		width: 350px;		
+		height: 140px;	
+        padding-left:5px;	
+		margin-top: 10px 0;	
+	
+		
+		
+	}
+    .img-area {
+		flex: 1;
+		margin-right:8px;
+	}
+        }
+    </style>
 </head>
 
 <body>
@@ -150,16 +199,37 @@ function get_quantity_for_product($product_id, $seller_id) {
             </div>
             <div class="info">
                 <div class="text-left">
-                    <h3><?php echo $order['product_name']?></h3>
-                    <div class="flower-type">
-                        <p class="flower">Flower:</p>
-                        <p class="type"><?php echo $order['flower_type']?> </p>
-                    </div>
-                    <div class="ribbon-color">
-                        <p class="ribbon">Ribbon:</p>
-                        <p class="color"> <?php echo $order['ribbon_color']?> </p>
-                    </div>
-                    <p class="price"><?php echo $order['amount']?></p>
+                    <h2><?php echo $order['product_name']?></h2>
+                    <?php
+                    $customization = array();
+                                    
+                        // Check if flower type is available
+                        if (!empty($order['flower_type'])) {
+                            $customization[] = $order['flower_type'];
+                        }
+                    
+                        // Check if ribbon color is available
+                        if (!empty($order['ribbon_color'])) {
+                            $customization[] = $order['ribbon_color'];
+                        }
+                    
+                        // Display the customization details
+                        if (!empty($customization)) {
+                            echo '<div class="ribbon-color">';
+                            echo '<p class="ribbon">'. implode(', ', $customization) .'</p>';
+                            echo '</div>';
+                        }
+                    
+                        if ($order) {
+                            // Initialize a variable to store the message
+                            $message = !empty($order['message']) ? $order['message'] : 'None';
+                        
+                            // Display the message details
+                            echo '<div class="ribbon-color">';
+                            echo '<p class="ribbon">Message: ' . $message .'</p>';
+                            echo '</div>';
+                        }?>
+                    <p class="price"><?php echo '₱ ' . $order['amount']?></p>
                 </div>
                 <div class="text-right">
                 <?php 
@@ -183,7 +253,7 @@ function get_quantity_for_product($product_id, $seller_id) {
             <div class="info">
                 <div class="text-left">                    
                 
-                <h3><?php echo $order["customer_first_name"]. " " . $order["customer_last_name"]; ?></h3>
+                <h2><?php echo $order["customer_first_name"]. " " . $order["customer_last_name"]; ?></h2>
                     <p class="ad"><?php echo $order["customer_address"]?></p>
                     <div class="o-date-time">
                         <span class="date"><?php echo $order["date"]?></span>

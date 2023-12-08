@@ -9,7 +9,56 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../../css/arranger.css">
+    <style>
+        @media (min-width: 300px) and (max-width:500px) {
+            .ribbon-color{
+		display: flex;
+		gap:10px;
+		margin-bottom:1px;
 
+		margin-left:10px;
+        
+		
+   }
+	.ribbon{
+		font-size: 11px;
+        margin-top:2px;
+		color:#666;
+		margin-left:-53px;
+        width:160px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        position: sticky;
+   }
+   .text-left h2    {
+		font-size: 13px;
+		margin-top:3px;
+		margin-bottom:15px;
+		margin-left:-45px;
+		font-weight: 500;
+		font-weight: 400;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        position:sticky;
+        width:160px;
+	}
+    .single-card {
+		width: 350px;		
+		height: 140px;	
+        padding-left:5px;	
+		margin-top: 10px 0;	
+	
+		
+		
+	}
+    .img-area {
+		flex: 1;
+		margin-right:8px;
+	}
+        }
+    </style>
 </head>
 
 <body>
@@ -58,19 +107,36 @@
         echo '</div>';
         echo '<div class="info">';
         echo '<div class="text-left">';
-        echo '<h3>' . $order['product_name'] . '</h3>';
+        echo '<h2>' . $order['product_name'] . '</h2>';
 
-        // Display flower type
-        echo '<div class="flower-type">';
-        echo '<p class="flower">Flower:</p>';
-        echo '<p class="type">' . $order['flower_type'] . '</p>';
-        echo '</div>';
-
-        // Display ribbon color
-        echo '<div class="ribbon-color">';
-        echo '<p class="ribbon">Ribbon:</p>';
-        echo '<p class="color">' . $order['ribbon_color'] . '</p>';
-        echo '</div>';
+        $customization = array();
+                                    
+        // Check if flower type is available
+        if (!empty($order['flower_type'])) {
+            $customization[] = $order['flower_type'];
+        }
+    
+        // Check if ribbon color is available
+        if (!empty($order['ribbon_color'])) {
+            $customization[] = $order['ribbon_color'];
+        }
+    
+        // Display the customization details
+        if (!empty($customization)) {
+            echo '<div class="ribbon-color">';
+            echo '<p class="ribbon">'. implode(', ', $customization) .'</p>';
+            echo '</div>';
+        }
+    
+        if ($order) {
+            // Initialize a variable to store the message
+            $message = !empty($order['message']) ? $order['message'] : 'None';
+        
+            // Display the message details
+            echo '<div class="ribbon-color">';
+            echo '<p class="ribbon">Message: ' . $message .'</p>';
+            echo '</div>';
+        }
 
         echo '<p class="price">₱ ' . number_format($order['product_price'], 2) . '</p>';
         echo '</div>';
@@ -88,7 +154,10 @@
         echo '</div>';
     }
 } else {
-    echo "No orders found for this seller.";
+    echo' <p class="p-end" style="color: #bebebe;
+    font-size: 15px;
+    text-align: center;
+    margin-top: 300px;">No products found</p>';
 }
     }
 

@@ -65,8 +65,597 @@ $gallery = get_seller_images($user_id);
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
         <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
-        <link rel="stylesheet" href="../../css/arranger_profile.css">
+        
         <style>
+            @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap");
+ * {
+     margin: 0;
+     padding: 0;
+     box-sizing: border-box;
+     font-family: "Poppins", sans-serif;
+}
+ .navbar img {
+     padding: 0;
+     width: 195px;
+     height: 100px;
+     margin-top: -10px;
+     margin-left: 186%;
+}
+ .form {
+     position: relative;
+     color: #8e8e8e;
+     left: 130px;
+}
+ .form-inline .fa-search {
+     position: absolute;
+     top: 43px;
+     left: 78%;
+     color: #9ca3af;
+     font-size: 22px;
+}
+ .form-input[type="text"] {
+     height: 50px;
+     width: 500px;
+     background-color: #f0f0f0;
+     border-radius: 10px;
+     margin-left: 430px;
+     margin-top: -10px;
+}
+ .cart {
+     font-size: 30px;
+     padding: 0;
+     color: #65a5a5;
+     margin-top: -5px;
+     left: 50.5%;
+     transform: translateX(-50%);
+     position: absolute;
+}
+ .num-cart {
+     background-color: #ff7e95;
+     border-radius: 50px;
+     padding: 2px;
+     margin: auto;
+     width: 20px;
+     height: 20px;
+     font-size: 10px;
+     position: absolute;
+     top: 5px;
+     margin-left: 20.5%;
+     transform: translateX(50%);
+     color: white;
+     text-align: center;
+}
+ .nav-hr{
+     width:60%;
+     margin: auto;
+     margin-top:-6px;
+}
+ #search-results{
+     display:none;
+}
+ .back{
+     display: none;
+}
+ .seller-info {
+     background-color: #f0f0f0;
+     padding: 20px;
+     display: flex;
+     border-radius: 20px;
+     flex-direction: column;
+     align-items: center;
+     justify-content: center;
+     text-align: center;
+     margin:auto;
+     margin-top: 0px;
+     width:60%;
+     background-color: #84BEBE;
+     color: white;
+}
+ .seller-image {
+     width: 100px;
+     height: 100px;
+     border-radius: 50%;
+     margin-bottom: 10px;
+     margin-top: 10px;
+}
+ .seller-name {
+     font-size: 17px;
+     margin-bottom: 5px;
+     font-weight: 300;
+}
+ .seller-contact {
+     font-size: 17px;
+     margin-bottom: 10px;
+     font-weight: 300;
+}
+ .bi{
+     margin-right: 10px;
+     font-size: 20px;
+     font-weight: 300;
+     color: white;
+}
+ .button-container {
+     display: flex;
+     justify-content: center;
+     margin-top:30px;
+     align-items: center;
+}
+ .button-container .active{
+     background-color: #65a5a5;
+     color: white;
+     border: none;
+     outline: none;
+}
+#addProductContainer{
+    text-align: center;
+}
+.add-product{
+    background-color: #65A5A5;
+    color: white;
+    padding:10px 20px;
+    font-size: 15px;
+    border:none;
+    border-radius: 10px;
+    margin-top:30px;
+    
+}
+.add-product:focus{
+    outline:none;
+    border:none;
+}
+ .gallery-btn{
+     margin-right: 20%;
+     border:none;
+     padding:10px 50px;
+     border:1px solid #65a5a5;
+     background-color: transparent;
+     border-radius: 10px;
+}
+ .product-btn{
+     border:none;
+     padding:10px 50px;
+     border:1px solid #65a5a5;
+     background-color: transparent;
+     color: #666;
+     border-radius: 10px;
+}
+ .gallery-btn:focus{
+     border:none;
+     outline:none;
+}
+ .product-btn:focus{
+     border:none;
+     outline:none;
+}
+ .product-list {
+     display: flex;
+     flex-wrap: wrap;
+     justify-content: flex-start;
+     gap: 20px;
+     max-width: 1140px;
+     margin: 0 auto;
+     margin-top: 60px;
+}
+ .product {
+     flex: calc(16.666% - 20px);
+     margin-top:-20px;
+     margin-bottom: 20px;
+     padding: 10px;
+     border: 1px solid #ccc;
+     border-radius: 10px;
+     display: flex;
+     flex-direction: column;
+     text-align: left;
+     box-sizing: border-box;
+     max-width: 172px;
+}
+ .product a:hover {
+     text-decoration: none;
+}
+ .product:hover {
+     transform: scale(1.05);
+     box-shadow: 0px 0px 6px #65A5A5;
+}
+ .product a img {
+     max-width: 150px;
+     height:160px;
+     flex-grow: 1;
+}
+ .product .product-info {
+     padding: 10px;
+}
+ .product .product-name {
+     font-weight: 500;
+     margin-top: 20px;
+     margin-bottom: 5px;
+     font-size: 15px;
+     color: #666;
+}
+ .product .product-category {
+     color: #666;
+     margin-bottom: 5px;
+     font-size: 12px;
+}
+ .product .product-price {
+     color: #666;
+     margin-bottom: 5px;
+     font-size: 15px;
+}
+ .product .product-ratings {
+     color: #acaaaa;
+     font-size: 11px;
+     margin-top: 3px;
+     margin-left: auto;
+}
+ .product .p {
+     display: flex;
+}
+ .p-end {
+     color: #bebebe;
+     font-size: 14px;
+     text-align: center;
+     margin-top: 30px;
+}
+ .image-grid {
+     display: flex;
+     flex-wrap: wrap;
+     justify-content: flex-start;
+     gap: 4px;
+     max-width: 1140px;
+     margin: 0 auto;
+     margin-top: 60px;
+     margin-top: 60px;
+}
+ .image {
+     margin: 2px 2px;
+     cursor: pointer;
+     width:182px;
+     height:150px;
+     border-radius: 10px;
+}
+ .modal {
+     display: none;
+     position: fixed;
+     top: 0;
+     left: 0;
+     margin: auto;
+     width: 80%;
+     height: 80%;
+     justify-content: center;
+     align-items: center;
+     z-index: 1;
+     left: 50%;
+     top: 50%;
+     transform: translate(-50%, -50%);
+     transition: background-color 0.3s ease;
+}
+ .modal-overlay {
+     display: none;
+     position: fixed;
+     top: 0;
+     left: 0;
+     width: 100%;
+     height: 100%;
+     background-color: rgba(0, 0, 0, 0.5);
+     z-index: 1;
+}
+ .modal-content {
+     max-width: 80%;
+     max-height: 80%;
+     margin: auto;
+     opacity: 1;
+     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+}
+ .modal-content img {
+     width: 100%;
+     height: auto;
+     display: block;
+}
+ .close {
+     position: absolute;
+     right: 20px;
+     top: 15px;
+     font-size: 30px;
+     cursor: pointer;
+}
+
+ .gallery-btn.active + .image-grid, .product-btn.active + .product-list {
+     display: flex;
+}
+ @media (min-width: 320px) and (max-width: 768px) {
+     .navbar{
+         position: fixed;
+         background-color: white;
+         width:100%;
+         z-index: 10;
+         top:-1px;
+    }
+     .navbar img {
+         display: none;
+    }
+     .form-input[type="text"] {
+         display: none;
+    }
+     .nav-hr{
+         width:100%;
+    }
+     #search-results{
+         display: block ;
+         font-size: 15px;
+         margin-left: 20px;
+         color: #555;
+         margin-top: -20px;
+    }
+    
+    a:hover{
+        text-decoration: none;
+        outline: none;
+        border:none;
+    }
+     .back{
+         display: block;
+         font-size: 20px;
+    }
+     .cart {
+         font-size: 20px;
+         padding: 0;
+         position: absolute;
+         top: 25px;
+         left: 90%;
+         transform: translateX(-50%);
+         color: #65a5a5;
+    }
+     .num-cart {
+         background-color: #ff7e95;
+         border-radius: 50px;
+         padding: 2px;
+         margin: auto;
+         width: 17px;
+         height: 17px;
+         font-size: 9px;
+         font-weight: bold;
+         position: absolute;
+         top: 2px;
+         margin-left: 10%;
+         transform: translateX(50%);
+         color: white;
+         text-align: center;
+    }
+     .form-inline .fa-search {
+         display: none;
+    }
+     .form-inline .back{
+         text-decoration: none;
+         color:#666;
+    }
+     .form-inline .fa-angle-left:focus {
+         text-decoration: none;
+         outline: none;
+    }
+     .seller-info {
+         background-color: #f0f0f0;
+         padding: 20px;
+         display: flex;
+         border-radius: 20px;
+         flex-direction: row;
+         align-items: center;
+         justify-content: center;
+         text-align: center;
+         margin: auto;
+         margin-top: 85px;
+         width: 93%;
+         background-color: #84BEBE;
+         color: white;
+    }
+     .seller-image {
+         width: 55px;
+         height: 55px;
+         border-radius: 50%;
+         margin-right: 20px;
+         margin-left: -45px;
+
+    }
+     .seller-details {
+         display: flex;
+         flex-direction: column;
+         align-items: flex-start;
+         font-size: 13px;
+         font-weight: 300;
+    }
+     .seller-name {
+         margin-bottom: 5px;
+         font-size: 13px;
+    }
+     .seller-contact {
+         margin-bottom: 10px;
+         font-size: 13px;
+    }
+     .bi{
+         margin-right: 10px;
+         font-size: 15px;
+         font-weight: 300;
+         color: white;
+    }
+     .button-container {
+         display: flex;
+         justify-content: center;
+         margin-top:30px;
+         align-items: center;
+    }
+     .button-container .active{
+         background-color: #65a5a5;
+         color: white;
+         border: none;
+         outline: none;
+    }
+     .gallery-btn{
+         margin-right: 15%;
+         border:none;
+         font-size: 13px;
+         padding:5px 30px;
+         border:1px solid #65a5a5;
+         background-color: transparent;
+         border-radius: 10px;
+    }
+     .product-btn{
+         border:none;
+         padding:5px 30px;
+         border:1px solid #65a5a5;
+         background-color: transparent;
+         color: #666;
+         border-radius: 10px;
+         font-size: 13px;
+    }
+
+    #addProductContainer{
+        text-align: center;
+    }
+    .add-product{
+        background-color: #65A5A5;
+        color: white;
+        padding:8px 15px;
+        font-size: 12px;
+        border:none;
+        border-radius: 8px;
+        margin-top:40px;
+      
+    }
+    .add-product:focus{
+        outline:none;
+        border:none;
+    }
+    .product-list {
+         display: flex;
+         flex-wrap: wrap;
+         justify-content: center;
+    }
+     .product {
+         flex: 0 0 calc(2%);
+         padding: 10px;
+         border: 1px solid #ddd;
+  
+         display: flex;
+         flex-direction: column;
+         text-align: left;
+         box-sizing: border-box;
+    }
+     .product img a{
+         width: 193px;
+         height:150px;
+         flex-grow: 1;
+    }
+
+     .product .product-name {
+        font-size: 13px;
+        color: #666;
+        font-weight: 400;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    
+    }
+     .product .product-category {
+         color: #666;
+         margin-bottom: 5px;
+         font-size: 12px;
+    }
+     .product .product-price {
+         color: #666;
+         margin-top: 5px;
+         font-size: 13px;
+    }
+     .product .p {
+         display: flex;
+    }
+     .p-end {
+         color: #bebebe;
+         font-size: 12px;
+         text-align: center;
+         margin-top: 30px;
+    }
+ 
+     .image-grid {
+         display: flex;
+         flex-wrap: wrap;
+         justify-content: flex-start;
+         margin: 0px auto;
+         margin-top: 3%;
+         margin-left: 1%;
+         padding:0px 10px;
+    }
+    .image {
+         margin-top: 30px;
+         margin-bottom: -20px;
+         cursor: pointer;
+         width:108px;
+         height:125px;
+         border-radius: 11px;
+    }
+     .modal {
+         display: none;
+         position: fixed;
+         top: 0;
+         left: 0;
+         margin: auto;
+         width: 80%;
+         height: 80%;
+         justify-content: center;
+         align-items: center;
+         z-index: 100;
+         left: 50%;
+         top: 75%;
+         transform: translate(-50%, -50%);
+         transition: background-color 0.3s ease;
+    }
+     .modal-overlay {
+         display: none;
+         position: fixed;
+         top: 0;
+         left: 0;
+         width: 100%;
+         height: 100%;
+         background-color: rgba(0, 0, 0, 0.5);
+         z-index: 100;
+    }
+     .modal-content {
+         max-width: 80%;
+         max-height: 80%;
+         margin: auto;
+         opacity: 1;
+         box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+    }
+     .modal-content img {
+         width: 100%;
+         height: auto;
+         display: block;
+    }
+     .close {
+         position: absolute;
+         right: 15px;
+         top: 10px;
+         font-size: 20px;
+         cursor: pointer;
+    }
+     .product-list {
+         display: none;
+    }
+     .gallery-btn.active + .image-grid, .product-btn.active + .product-list {
+         display: block;
+    }
+    /* Media query to adjust alignment for smaller screens */
+    @media (max-width: 768px) {
+        .product {
+            width: calc(50% - 15px);
+           /* Two items in a row */
+       }
+        .product-list{
+            gap: 10px;
+       }
+   }
+}
+
+
+ 
         </style>
     </head>
     <body>
@@ -83,7 +672,7 @@ $gallery = get_seller_images($user_id);
                             <form class="form-inline my-2 my-lg-0">
                                 <a href=""><i class="fa fa-search"></i></a>
                                 <input type="text"  class="form-control form-input" placeholder="Search">
-                                <a href="javascript:void(0);" onclick="goBack()">
+                                <a href="arranger_home.php">
                                     <i class="back fa fa-angle-left" aria-hidden="true"></i>
                                     <div id="search-results">Shop</div>
                                   </a>
@@ -116,9 +705,11 @@ $gallery = get_seller_images($user_id);
                     <button class="gallery-btn active">Gallery</button>
                     <button class="product-btn">Products</button>
                 </div>
+                <div class="image-grid">
                 <?php foreach ($gallery as $images): ?>
                          <img class="image" src="<?php echo $images['image'];?>" alt="Image 1">
                     <?php endforeach; ?>
+                </div>
                 <div id="addProductContainer">
                     <a href="add_image.php"><button class="add-product">+ Add Image</button></a>
                 </div>
@@ -145,7 +736,7 @@ $gallery = get_seller_images($user_id);
                             <div class="product-category"><?php echo $product['product_category']; ?></div>
                             <div class="p">
                                 <div class="product-price"><?php echo formatPrice($product['product_price']); ?></div>
-                                <div class="product-ratings">4.5 stars</div>
+                               
                             </div>
                         </a>
                     </div>

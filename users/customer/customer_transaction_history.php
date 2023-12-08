@@ -133,7 +133,7 @@ usort($allTransactions, function($a, $b) {
                                 </div>
                                 <div class="status">
                                     <span class="transaction-description">To <?php echo htmlspecialchars($transaction['merchant_name'] ?? 'N/A'); ?></span>
-                                    <span class="transact-status">Successful</span>
+                                    <span class="transact-status" style="color:#666">Successful</span>
                                 </div>
                                 <div class="o-date-time">
                                     <!-- Display date and time -->

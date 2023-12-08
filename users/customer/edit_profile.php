@@ -84,10 +84,419 @@ if (isset($_GET['user_id'])) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet">
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="../../css/edit_profile.css">
+   
     <link rel="stylesheet" href="../../css/addproduct.css">
 
-   
+   <style>
+    @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap");
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+	font-family: "Poppins", sans-serif;
+}
+.navbar img {
+	padding: 0;
+	width: 195px;
+	height: 100px;
+	margin-top: -10px;
+	margin-left: 186%;
+}
+.form {
+	position: relative;
+	color: #8e8e8e;
+	left: 130px;
+}
+.form-inline .fa-search {
+	position: absolute;
+	top: 43px;
+	left: 78%;
+	color: #9ca3af;
+	font-size: 22px;
+}
+.form-input[type="text"] {
+	height: 45px;
+	width: 500px;
+	background-color: #f0f0f0;
+	border-radius: 10px;
+	margin-left: 430px;
+	margin-top: -10px;
+}
+#arranger-num,
+#arranger-zip,#arranger-state,
+#arranger-city {
+    width: 103.5%; /* Set the width as needed */
+}
+.arranger_uname{
+    margin-top: 20px;
+}
+.nav-hr {
+	width: 60%;
+	margin: auto;
+	margin-top: -6px;
+	color: rgba(0, 0, 0, .4);
+}
+#search-results {
+	display: none;
+}
+.back {
+	display: none;
+}
+.form-container {
+	background-color: white;
+	border-radius: 10px;
+	box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+	padding: 20px;
+	margin: 30px auto;
+	width: 58%;
+}
+form {
+	display: flex;
+	flex-direction: column;
+}
+.prodimgT {
+	margin-top: 0px;
+}
+h3 {
+	font-size: 14px;
+	font-weight: 400;
+	color: #555;
+	margin-top: 10px;
+	flex-wrap: nowrap;
+}
+.circle-container {
+	width: 100px;
+	height: 100px;
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	margin-top: 20px;
+	margin-bottom: 30px;
+	justify-content: center;
+}
+.circle-image {
+	width: 95px;
+	height: 95px;
+	object-fit: cover;
+	border-radius: 50%;
+	overflow: hidden;
+	background-image: url('https://www.shutterstock.com/image-vector/default-avatar-icon-vector-social-260nw-2180009415.jpg');
+    background-size: cover;
+}
+.upload-button {
+	position: absolute;
+	text-align: center;
+	cursor: pointer;
+	bottom: 0;
+	left: 70%;
+	top: 70%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	cursor: pointer;
+}
+.upload-button input[type="file"] {
+	display: none;
+}
+.bi-plus {
+	color: white;
+	width: 25px;
+	height: 25px;
+	padding: 1px 4px;
+	font-size: 15px;
+	border-radius: 50px;
+	background-color: #65A5A5;
+}
+.submit-btn {
+	justify-content: center;
+	display: flex;
+	margin: 20px;
+}
+button {
+	background-color: #65A5A5;
+	color: white;
+	font-size: 14px;
+	padding: 8px 30px;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+	margin-top: 10px;
+}
+.addbtn:focus {
+	outline: none;
+	border: none;
+}
+textarea:focus {
+	outline: none;
+}
+select:focus {
+	outline: none;
+}
+.arranger_deT {
+	margin-bottom: 20px;
+	margin-top: 20px;
+}
+/* Set a fixed width and height for text input fields */
+
+input[type="text"] {
+	font-size: 13px;
+	padding: 10px;
+	border: 1px solid #d8d7d7;
+	border-radius: 5px;
+	width: 100%;
+	/* Set the width as desired */
+	height: 45px;
+	/* Set the height as desired */
+	margin-top: 10px;
+	color: #666;
+}
+textarea {
+	font-size: 13px;
+	padding: 10px;
+	margin: 5px 0;
+	border: 1px solid #d8d7d7;
+	margin-bottom: 20px;
+	border-radius: 5px;
+	width: 100%;
+	/* Set the width as desired */
+	height: 130px;
+	/* Set the height as desired */
+	resize: none;
+	color: #666;
+}
+input[type="text"]:focus, input[type="number"]:focus {
+	outline: none;
+}
+/* Set the text color for select options */
+
+select {
+	font-size: 14px;
+	padding: 10px;
+	border: 1px solid #d8d7d7;
+	border-radius: 5px;
+	width: 98%;
+	/* Set the width as desired */
+	height: 45px;
+	/* Set the height as desired */
+	color: #555;
+	/* Set the text color */
+	margin-top: 15px;
+	margin-left: 0px;
+}
+/* Style labels and input fields */
+
+.form-row {
+	display: flex;
+	justify-content: space-between;
+}
+.container {
+	display: inline-block;
+	margin-top: 10px;
+	width: 50%;
+	margin-left: -11px;
+	font-size: 13px;
+}
+.input-box {
+	display: inline-block;
+	border: 1px solid #d8d7d7;
+	padding: 10px;
+	margin-top: 10px;
+	border-radius: 10px;
+	font-size: 13px;
+	text-align: center;
+}
+@media (min-width: 300px) and (max-width:500px) {
+	.navbar {
+		position: fixed;
+		background-color: white;
+		width: 100%;
+		z-index: 100;
+	}
+	.navbar img {
+		display: none;
+	}
+	.form-input[type="text"] {
+		display: none;
+	}
+	.nav-hr {
+		width: 100%;
+	}
+	a #search-results {
+		display: block;
+		font-size: 15px;
+		margin-left: 20px;
+		color: #555;
+		margin-top: -20px;
+	}
+	a:hover {
+		text-decoration: none;
+		outline: none;
+		border: none;
+	}
+	a .back {
+		display: block;
+		font-size: 20px;
+		text-decoration: none;
+	}
+	.form-inline .fa-search {
+		display: none;
+	}
+	.form-inline .back {
+		text-decoration: none;
+		color: #666;
+	}
+	.form-inline .fa-angle-left:focus {
+		text-decoration: none;
+		outline: none;
+	}
+	form {
+		margin-top: 15px;
+	}
+	.form-container {
+		background-color: white;
+		border-radius: 10px;
+		box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+		padding: 15px;
+		margin: 60px auto;
+		width: 93%;
+	}
+	.prodimgT {
+		margin-left: 0px;
+	}
+	.circle-container {
+		width: 100px;
+		height: 100px;
+		position: relative;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		margin-top: -5px;
+		margin-left: -10px;
+		margin-bottom: 10px;
+		justify-content: center;
+	}
+	.circle-image {
+		width: 70px;
+		height: 70px;
+		object-fit: cover;
+		border-radius: 50%;
+		overflow: hidden;
+	}
+	.upload-button {
+		position: absolute;
+		text-align: center;
+		cursor: pointer;
+		bottom: 0;
+		left: 63%;
+		top: 47%;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		cursor: pointer;
+	}
+	.upload-button input[type="file"] {
+		display: none;
+	}
+	.bi-plus {
+		color: white;
+		width: 20px;
+		height: 20px;
+		padding: 1px 4px;
+		font-size: 13px;
+		border-radius: 50px;
+		background-color: #65A5A5;
+	}
+	.form-row {
+		display: flex;
+		flex-wrap: wrap;
+		width: 106%;
+        margin-left: 10px;
+	}
+    .lab{
+        margin-left: -12px;
+    }
+	/* Set a fixed width and height for text input fields */
+	input[type="text"] {
+		font-size: 12px;
+		padding: 10px;
+		border: 1px solid #d8d7d7;
+		border-radius: 5px;
+		width: 100%;
+		height: 37px;
+		color: #666;
+	}
+    input[type="number"] {
+		font-size: 12px;
+		padding: 10px;
+		border: 1px solid #d8d7d7;
+		border-radius: 5px;
+		width: 100%;
+		height: 37px;
+		color: #666;
+	}
+    #arranger-num,
+    #arranger-zip,#arranger-state,
+    #arranger-city {
+        width: 118%; 
+    }
+	textarea {
+		font-size: 12px;
+		padding: 10px;
+		margin: 5px 0;
+		border: 1px solid #d8d7d7;
+		border-radius: 5px;
+		width: 100%;
+		height: 100px;
+		resize: none;
+		color: #666;
+	}
+	input[type="text"]:focus {
+		outline: none;
+	}
+	h3 {
+		font-size: 13px;
+		font-weight: 400;
+		color: #555;
+		margin-top: 20px;
+		flex-wrap: nowrap;
+	}
+	button {
+		width: 100%;
+		margin-top: 10px;
+	}
+	.addbtn {
+		font-size: 13px;
+		width: 150px;
+	}
+	.container {
+		display: inline-block;
+		margin-top: 10px;
+		width: 51%;
+		gap:10px;
+		font-size: 13px;
+	}
+    .form-row input[type="text"] {
+        width:100%;
+    }
+	.input-box {
+		display: inline-block;
+		border: 1px solid #d8d7d7;
+		margin-left: -10px;
+		border-radius: 5px;
+		text-align: center;
+		font-size: 13px;
+		padding: 3px 5px;
+	}
+	.addbtn:focus {
+		outline: none;
+		border: none;
+	}
+    .prodNat{
+        margin-top: 10px;
+    }
+}
+   </style>
 
 </head>
 
@@ -150,11 +559,11 @@ if (isset($_GET['user_id'])) {
 
             <div class="form-row">
                 <div class="container">
-                    <h3 class="">Number</h3>
+                    <h3 class="lab">Number</h3>
                     <input id="" name="phone" required="" type="text" value="<?php echo $users['phone']; ?>">
                 </div>
                 <div class="container">
-                    <h3 class="">Zipcode</h3>
+                    <h3 class="lab">Zipcode</h3>
                     <input id="" name="zipcode" required="" type="text" value="<?php echo $users['zipcode']; ?>">
                 </div>
             </div>

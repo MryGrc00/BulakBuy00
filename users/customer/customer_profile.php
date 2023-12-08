@@ -37,7 +37,7 @@ if (isset($_SESSION["user_id"])) {
                         <a href="cart.php">
                             <li class="cart">
                                 <i class="fa fa-shopping-bag" aria-hidden="true"></i>
-                                <p class="num-cart">1 </p>
+                               
                             </li>
                         </a>
                         <li class="nav-item">

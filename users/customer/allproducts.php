@@ -623,7 +623,7 @@ function filter_products_by_price($min, $max) {
                         <a href="cart.php">
                             <li class="cart">
                                 <i class="fa fa-shopping-bag" aria-hidden="true"></i>
-                                <p class="num-cart">1 </p>
+                            
                             </li>
                         </a>
                         <li class="nav-item">

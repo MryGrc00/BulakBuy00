@@ -168,7 +168,7 @@ usort($allTransactions, function($a, $b) {
                                 </div>
                                 <div class="status">
                                     <span class="transaction-description"><?php echo htmlspecialchars($transaction['customer_name'] ?? 'To BulakBuy'); // Default for subscriptions ?></span>
-                                    <span class="transact-status">Successful</span>
+                                    <span class="transact-status" style="color:#666">Successful</span>
                                 </div>
                                 <div class="o-date-time">
                                     <!-- Display date and time based on transaction type -->

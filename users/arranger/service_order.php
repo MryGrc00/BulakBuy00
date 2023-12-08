@@ -118,6 +118,12 @@ function update_status($servicedetailsId, $customerId) {
    
     </div>
     <?php endforeach;?>
+    <?php if (empty($order)): ?>
+            <p class="p-end" style="color: #bebebe;
+                font-size: 15px;
+                text-align: center;
+                margin-top: 300px;">No services found</p>
+        <?php endif; ?>
 
   </div>
 

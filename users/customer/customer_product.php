@@ -1415,7 +1415,7 @@ function add_cart_item_without_optional_fields($product_id, $customer_id, $quant
                         <a href="cart.php">
                             <li class="cart">
                                 <i class="fa fa-shopping-bag" aria-hidden="true"></i>
-                                <p class="num-cart">1 </p>
+                         
                             </li>
                         </a>
                         <li class="nav-item">

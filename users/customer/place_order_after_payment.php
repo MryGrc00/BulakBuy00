@@ -621,7 +621,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     position: fixed;
                     background-color: white;
                     width: 100%;
-                    z-index: 10; 
+                    z-index: 1000; 
                 }
                 .navbar img {
                     display: none;

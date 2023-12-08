@@ -103,7 +103,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet">
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../../css/addproduct.css">
+    <style>
+        @media (min-width: 300px) and (max-width:500px) {
 
+        }
+    </style>
 </head>
 
 <body>
@@ -146,7 +150,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
                     <!-- Selected images will be displayed here -->
                 </div>
             </div> 
-            <h3 class="prodnaT">Product Name:</h3>
+            <h3 class="prodnaT" style="margin-top:20px">Product Name:</h3>
             <input type="text" name="product_name" id="product_name" required>
             <div class="form-row ">
                 <div class="form-group col-md-6 prodca">
