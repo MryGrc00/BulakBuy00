@@ -87,7 +87,6 @@ $products = get_products_by_user($user_id, $pdo);
                             <div class="product-category"><?php echo $product['product_category']; ?></div>
                             <div class="p">
                                 <div class="product-price"><?php echo formatPrice($product['product_price']); ?></div>
-                                <div class="product-ratings">4.5 stars</div>
                             </div>
                         </a>
                     </div>

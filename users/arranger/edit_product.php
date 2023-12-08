@@ -182,23 +182,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </div>
     
             <h3 class="proddeT">Product Description:</h3>
-            <textarea name="product_desc" id="product_desc" rows="4" required><?php echo $products['product_desc']; ?></textarea>            <h3 class="custom">Customization</h3>
-
-            <div class="form-row">
-                <div class="container">
-                    <label for="flowerTextBox">Flower Type(s)</label>
-                    <input type="text" id="flowerTextBox" value="<?php echo $products['flower_type']; ?>" onkeydown="checkEnter(event, 'flowerTextBox', 'flowerDisplayContainer')">
-                    <div class="display" id="flowerDisplayContainer"></div>
-                </div>
-                <div class="container">
-                    <label for="ribbonTextBox">Ribbon Color</label>
-                    <input type="text" id="ribbonTextBox" value="<?php echo $products['ribbon_color']; ?>" onkeydown="checkEnter(event, 'ribbonTextBox', 'ribbonDisplayContainer')">
-                    <div class="display" id="ribbonDisplayContainer"></div>
-                </div>
-                <input type="hidden" name="flowerTypes" id="flowerTypes" value="">
-                <input type="hidden" name="ribbonColors" id="ribbonColors" value="">
-
-            </div>
+            <textarea name="product_desc" id="product_desc" rows="4" required><?php echo $products['product_desc']; ?></textarea>         
 
 
             <div class="submit-btn">

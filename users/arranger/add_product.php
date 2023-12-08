@@ -183,16 +183,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
             <h3 class="custom">Customization</h3>
 
             <div class="form-row">
-                <div class="container">
-                    <label for="flowerTextBox">Flower Type(s)</label>
-                    <input type="text" id="flowerTextBox" onkeydown="checkEnter(event, 'flowerTextBox', 'flowerDisplayContainer')">
-                    <div class="display" id="flowerDisplayContainer"></div>
-                </div>
-                <div class="container">
-                    <label for="ribbonTextBox">Ribbon Color</label>
-                    <input type="text" id="ribbonTextBox" onkeydown="checkEnter(event, 'ribbonTextBox', 'ribbonDisplayContainer')">
-                    <div class="display" id="ribbonDisplayContainer"></div>
-                </div>
+            <div class="container">
+                <label for="flowerTextBox">Flower Type(s)</label>
+                <input type="text" id="flowerTextBox">
+                <button type="button" onclick="addFlowerType('flowerTextBox', 'flowerDisplayContainer')">Add Flower Type</button>
+                <div class="display" id="flowerDisplayContainer"></div>
+            </div>
+            <div class="container">
+                <label for="ribbonTextBox">Ribbon Color</label>
+                <input type="text" id="ribbonTextBox">
+                <button type="button" onclick="addRibbonColor('ribbonTextBox', 'ribbonDisplayContainer')">Add Ribbon Color</button>
+                <div class="display" id="ribbonDisplayContainer"></div>
+            </div>
+
                 <input type="hidden" name="flowerTypes" id="flowerTypes" value="">
                 <input type="hidden" name="ribbonColors" id="ribbonColors" value="">
 
@@ -260,20 +263,36 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
     }
 
     // Function to check for Enter key press
-    function checkEnter(event, textBoxId, displayContainerId) {
-        if (event.key === "Enter") {
-            if (textBoxId === "flowerTextBox") {
-                // Call the function to add flower type
-                addFlowerType(textBoxId, displayContainerId);
-            } else if (textBoxId === "ribbonTextBox") {
-                // Call the function to add ribbon color
-                addRibbonColor(textBoxId, displayContainerId);
-            }
+// Function to add flower type
+function addFlowerType(textBoxId, displayContainerId) {
+    const textBox = document.getElementById(textBoxId);
+    const displayContainer = document.getElementById(displayContainerId);
 
-            // Prevent Enter from creating a newline in the input field
-            event.preventDefault();
-        }
+    if (textBox.value.trim() !== "") {
+        const newTextBox = document.createElement("div");
+        newTextBox.className = "input-box";
+        newTextBox.textContent = textBox.value;
+        displayContainer.appendChild(newTextBox);
+        textBox.value = ""; // Clear the input field
+        updateHiddenField("flowerTypes", displayContainer);
     }
+}
+
+// Function to add ribbon color
+function addRibbonColor(textBoxId, displayContainerId) {
+    const textBox = document.getElementById(textBoxId);
+    const displayContainer = document.getElementById(displayContainerId);
+
+    if (textBox.value.trim() !== "") {
+        const newTextBox = document.createElement("div");
+        newTextBox.className = "input-box";
+        newTextBox.textContent = textBox.value;
+        displayContainer.appendChild(newTextBox);
+        textBox.value = ""; // Clear the input field
+        updateHiddenField("ribbonColors", displayContainer);
+    }
+}
+
     
 </script>
 
