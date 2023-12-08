@@ -59,7 +59,7 @@ $gallery = get_seller_images($user_id);
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Arranger Profile</title>
+        <title>Arranger Shop</title>
         <link href='https://fonts.googleapis.com/css?family=Poppins' rel='stylesheet'>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-pzjw8f+uaex3+ihrbIk8mz07tb2F4F5ssx6kl5v5PmUGp1ELjF8j5+zM1a7z5t2N" crossorigin="anonymous">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -705,7 +705,11 @@ $gallery = get_seller_images($user_id);
                     <button class="gallery-btn active">Gallery</button>
                     <button class="product-btn">Products</button>
                 </div>
+<<<<<<< HEAD
                 <div class="image-grid">
+=======
+                <div class="image-grid" id="imageGrid">
+>>>>>>> b2c2f3be586964c059740c1cfb564f5fa6044b26
                 <?php foreach ($gallery as $images): ?>
                          <img class="image" src="<?php echo $images['image'];?>" alt="Image 1">
                     <?php endforeach; ?>

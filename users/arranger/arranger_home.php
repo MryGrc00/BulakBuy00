@@ -1,25 +1,22 @@
 <?php
-
 session_start();
 include '../php/dbhelper.php';
-$pdo = dbconnect();
-if (isset($_SESSION["user_id"]) && isset($_SESSION["role"])) {
-    $user_id = $_SESSION["user_id"];
-    $role = $_SESSION["role"];
 
-    $isShopEmpty = is_shop_empty($user_id);
-    $users = get_record_by_user($user_id) ;
-
-    if ($role == 'seller' && $isShopEmpty) {
-        echo "<script>$(document).ready(function() { $('#shopDetailsModal').modal('show'); });</script>";
-    }
-
-    // Rest of your code
+// Redirect if not logged in
+if (!isset($_SESSION["user_id"]) || !isset($_SESSION["role"])) {  
+    header("Location: ../login.php");
+    exit(); 
 }
-else {
-    // Handle cases where the user is not logged in or role is not set
-    echo "User not logged in or role not set.";
-    // Optional: Redirect to login page or show a login link
+
+$pdo = dbconnect();
+$user_id = $_SESSION["user_id"];
+$role = $_SESSION["role"];
+
+$isShopEmpty = is_shop_empty($user_id);
+$users = get_record_by_user($user_id);
+
+if ($role == 'arranger' && $isShopEmpty) {
+    echo "<script>$(document).ready(function() { $('#shopDetailsModal').modal('show'); });</script>";
 }
 ?>
 
@@ -29,7 +26,7 @@ else {
 <head>
 <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Seller Home</title>
+        <title>Arranger Home</title>
         <link href='https://fonts.googleapis.com/css?family=Poppins' rel='stylesheet'>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-pzjw8f+uaex3+ihrbIk8mz07tb2F4F5ssx6kl5v5PmUGp1ELjF8j5+zM1a7z5t2N" crossorigin="anonymous">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -365,7 +362,7 @@ else {
     // Listen for window resize
     window.addEventListener("resize", checkScreenWidth);
 </script>
-<script>
+        <script>
                 $(document).ready(function() {
                     <?php if ($isShopEmpty): ?>
                     $('#shopDetailsModal').modal({
@@ -377,7 +374,7 @@ else {
 
         </script>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
 $(document).ready(function () {
   $("#completed-link").on("click", function (e) {
@@ -394,7 +391,7 @@ $(document).ready(function () {
     });
   });
 });
-</script>
+</script> -->
 
 </body>
 

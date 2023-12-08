@@ -25,6 +25,26 @@ if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
     exit;
 }
 
+if (strlen($password) < 4) {
+    echo json_encode(array("success" => false, "message" => "Password must be at least 4 characters long."));
+    exit;
+}
+
+if (!preg_match("/[A-Z]/", $password)) {
+    echo json_encode(array("success" => false, "message" => "Password must include at least one uppercase letter."));
+    exit;
+}
+
+if (!preg_match("/[a-z]/", $password)) {
+    echo json_encode(array("success" => false, "message" => "Password must include at least one lowercase letter."));
+    exit;
+}
+
+if (!preg_match("/\W/", $password)) {
+    echo json_encode(array("success" => false, "message" => "Password must include at least one special character."));
+    exit;
+}
+
 if (!empty($fname) && !empty($lname) && !empty($username) && !empty($password) && !empty($cpassword) && !empty($email) && !empty($role) && !empty($phone) && !empty($address) && !empty($zipcode)) {
     if ($password === $cpassword) {
         // Generate random 6-digit OTP
