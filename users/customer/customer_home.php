@@ -818,7 +818,6 @@ if (isset($_SESSION["user_id"])) {
                         <a href="cart.php">
                             <li class="cart">
                                 <i class="fa fa-shopping-bag" aria-hidden="true"></i>
-                                <p class="num-label">1 </p>
                             </li>
                         </a>
                         <li class="nav-item">
@@ -841,7 +840,6 @@ if (isset($_SESSION["user_id"])) {
                     </li>
                     <li>
                     <a href="../users.php"><i class="fa fa-envelope-o" aria-hidden="true"></i></a>
-                        <p class="number">1</p>
                         <span class="h-label">Messages</span>
                     </li>
                     <li>
