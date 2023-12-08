@@ -186,7 +186,7 @@ function get_quantity_for_product($product_id, $seller_id) {
 
         // Send AJAX request to update the status
         $.ajax({
-            url: 'product_intransit.php',
+            url: 'product_process.php',
             method: 'POST',
             data: { salesId: salesId, customerId: customerId }, 
             success: function(response) {
