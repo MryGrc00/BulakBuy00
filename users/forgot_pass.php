@@ -70,11 +70,11 @@ function generateOTP() {
     
     <title>Verify Email</title>
     <style>
-        <style>
+    <style>
         body{
             background-color:#f5f5f5;
         }
-        .container1{
+        .container{
           width:500px;
           margin:auto;
           margin-top: 300px;

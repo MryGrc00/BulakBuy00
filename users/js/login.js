@@ -17,11 +17,11 @@ continueBtn.onclick = () => {
                     let role = data[1]; // Get the role from the response
                     if (role === "customer") {
                         location.href = "customer/customer_home.php";
-                    } if (role === "seller") {
+                    } else if (role === "seller") {
                         location.href = "vendor/vendor_home.php";
                     } else if (role === "arranger") {
                         location.href = "arranger/arranger_home.php";
-                    }else {
+                    } else {
                         // Handle unknown roles, if needed
                         console.error("Unknown role: " + role);
                     }
@@ -31,7 +31,7 @@ continueBtn.onclick = () => {
                     if (data[0] === "Email not verified!") {
                         // If email is not verified, show error message with verification link
                         errorText.innerHTML = `${data[0]} <a href='resend_verification.php?email=${encodeURIComponent(data[1])}'>Resend verification email</a>`;
-                    } else {
+                    }  else {
                         // For other error messages, just display the text
                         errorText.textContent = data[0];
                     }
@@ -43,3 +43,4 @@ continueBtn.onclick = () => {
     let formData = new FormData(form);
     xhr.send(formData);
 };
+

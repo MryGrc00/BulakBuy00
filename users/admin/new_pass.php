@@ -35,7 +35,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             // Redirect based on the user's role
             if ($userRole == "admin") {
-                header("Location: admin/index.php");
+                header("Location: index.php");
             } else {
                 header("Location: login.php");
             }
@@ -267,7 +267,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <div class="tab-content">
                <div id="home" class="tab-pane fade in active">
                   <div class="sales-boxes py-5  ">
-                     <div class="recent-sales box">
+                     <div class="recent-sales box mt-5">
                      <div class="container-fluid mt-5">
                         <div class="row fw-semibold">
                             <h4>Enter New Password</h4>
@@ -282,8 +282,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 </div>
                                     <br>
                                     <div class="password-input-container mt-4">
-                                        <input type="password" class="form-control" name="cpassword" id="cpassword" placeholder="Confirm New Password" required>
-                                        <span class="toggle-password" id="togglePassword">
+                                        <input type="password" class="form-control" name="c_password" id="cpassword" placeholder="Confirm New Password" required>
+                                        <span class="toggle-password" id="toggleCPassword">
                                             <i class="bi bi-eye-slash"></i>
                                         </span>
                                     </div>

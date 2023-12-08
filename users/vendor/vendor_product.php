@@ -123,7 +123,7 @@ if (isset($_SESSION["user_id"]) && ($_SESSION["role"] === "seller" || $_SESSION[
                                     <button class="edit-button"><i class="bi bi-pen"></i></button>
                                 </a> 
                                 
-                                <button class="delete-button" onclick="openModal(<?php echo $product['product_id']; ?>)"><i class="bi bi-trash"></i></button>
+                                <button class="delete-button" onclick="openDeleteModal(<?php echo $product['product_id']; ?>)"><i class="bi bi-trash"></i></button>
                              </div>
                         </div>
                      </a>
@@ -143,8 +143,9 @@ if (isset($_SESSION["user_id"]) && ($_SESSION["role"] === "seller" || $_SESSION[
                 <form method="POST" action="delete.php">
                     <input type="hidden" name="product_id" id="modalProductId">
                     <button type="submit" name="confirm_delete">Yes, Delete it</button>
-                    <button type="button" onclick="closeModal()">Cancel</button>
+                    <button type="button" onclick="closeDeleteModal()">Cancel</button>
                 </form>
+
             </div>
         </div>
         
@@ -157,12 +158,12 @@ if (isset($_SESSION["user_id"]) && ($_SESSION["role"] === "seller" || $_SESSION[
         <script src="js/chat.js"></script>
         <script>
         // JavaScript functions
-        function openModal(productId) {
+        function openDeleteModal(productId) {
             document.getElementById('modalProductId').value = productId;
             document.getElementById('deleteModal').style.display = 'block';
         }
 
-        function closeModal() {
+        function closeDeleteModal() {
             document.getElementById('deleteModal').style.display = 'none';
         }
     </script>

@@ -266,7 +266,7 @@ if (isset($_SESSION["user_id"])) {
                     <div style="width:900px;height:500px;background-color:white;padding:30px;margin-left:60px;margin-top:40px;border-radius:20px">
                         <p style="color: #868e96;font-size:15px">Subscribers</p>
                         <form id="filterForm2">
-                            <label for="yearSelect" style="color:#666;font-weight:400">Year:</label>
+                            <label for="yearSelect2" style="color:#666;font-weight:400">Year:</label>
                             <select id="yearSelect2" class="btn custom-button">
                                     <?php
                                     for ($year = 2023; $year <= 2030; $year++) {
@@ -348,7 +348,7 @@ if (isset($_SESSION["user_id"])) {
                     <div style="width:900px;height:550px;background-color:white;padding:30px;margin-left:60px;margin-top:100px;border-radius:20px">
                         <p style="color: #868e96;font-size:15px">Seller Sales</p>
                         <form id="filterForm4">
-                           <label for="yearSelect4" style="color:#666;font-weight:400;">Year:</label>
+                           <label for="yearSelect" style="color:#666;font-weight:400;">Year:</label>
                            <select id="yearSelect4" class="btn custom-button">
                                  <?php
                                  for ($year = 2023; $year <= 2030; $year++) {
@@ -393,7 +393,7 @@ if (isset($_SESSION["user_id"])) {
                                             <tbody>
                                                 
                                             <tbody id="arrangerBody">
-                                                    <?php include("update_seller_table.php")?>
+                                                    <?php include("update_arranger_table.php")?>
                                                 </tbody>
                                             </table>
                                         </div>
@@ -405,7 +405,7 @@ if (isset($_SESSION["user_id"])) {
                     <div style="width:900px;height:630px;background-color:white;padding:30px;margin-left:60px;margin-top:100px;border-radius:20px">
                         <p style="color: #868e96;font-size:15px">Flower Arranger Sales</p>
                         <form id="filterForm6">
-                           <label for="yearSelect6" style="color:#666;font-weight:400;margin-left:10%">Year:</label>
+                           <label for="yearSelect" style="color:#666;font-weight:400;margin-left:10%">Year:</label>
                            <select id="yearSelect6" class="btn custom-button">
                                  <?php
                                  for ($year = 2023; $year <= 2030; $year++) {
@@ -464,7 +464,7 @@ if (isset($_SESSION["user_id"])) {
                     <div style="width:900px;height:630px;background-color:white;padding:30px;margin-left:60px;margin-top:100px;border-radius:20px">
                         <p style="color: #868e96;font-size:15px">Service Customers</p>
                         <form id="filterForm8">
-                           <label for="yearSelect8" style="color:#666;font-weight:400;">Year:</label>
+                           <label for="yearSelect" style="color:#666;font-weight:400;">Year:</label>
                            <select id="yearSelect8" class="btn custom-button">
                                  <?php
                                  for ($year = 2023; $year <= 2030; $year++) {
