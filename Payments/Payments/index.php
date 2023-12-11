@@ -450,8 +450,9 @@ $selectedShopPhone = getShopPhone($selectedShopId, $pdo);
                             <div class="invalid-feedback">Please enter the amount to be paid.</div>
                         </div>
                     
-                        <input type="hidden" name="selected_products" value="<?php echo htmlspecialchars(json_encode($selectedProducts), ENT_QUOTES, 'UTF-8'); ?>">
-                        <button class="btn btn-lg btn-block" id= "checkoutForm" type="submit">Continue to checkout</button>
+                        <input type="hidden" name="selected_products" value="<?php echo htmlspecialchars(json_encode($_SESSION['selected_products']), ENT_QUOTES, 'UTF-8'); ?>">
+                            <input type="hidden" name="selected_payment" value="<?php echo htmlspecialchars($_SESSION['selected_payment'], ENT_QUOTES, 'UTF-8'); ?>">
+                            <button class="btn btn-lg btn-block" type="submit">Continue to checkout</button>
                 
                     </form>
                     <?php else: ?>

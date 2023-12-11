@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action']) && $_POST['a
 
 function block_shop($shop_id) {
    $conn = dbconnect();
-   $sql = "UPDATE shops SET status = 'Blocked' WHERE shop_id = :shop_id";
+   $sql = "UPDATE shops SET status = 'blocked' WHERE shop_id = :shop_id";
 
    try {
        $stmt = $conn->prepare($sql);

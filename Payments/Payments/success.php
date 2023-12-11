@@ -165,7 +165,7 @@ include '../../users/php/dbhelper.php'; // Adjust the path as needed
 $selectedProducts = isset($_SESSION['selected_products']) ? $_SESSION['selected_products'] : [];
 $selectedPayment = isset($_SESSION['selected_payment']) ? $_SESSION['selected_payment'] : '';
 $_SESSION['from_success_page'] = true;
-var_dump($selectedPayment);
+
 
 
 date_default_timezone_set('Asia/Manila');
