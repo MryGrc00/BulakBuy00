@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html> 
 <html lang="en">
 <head>
@@ -146,8 +148,10 @@
         $quantity = get_quantity_for_product($order['product_id'], $seller_id);
         $quantityText = $quantity ? 'x ' . $quantity : 'Quantity not available';
         echo '<p class="count">' . $quantityText . '</p>';
-
-        echo '<button class="product-accept accept" data-sales-id="' . $order['sales_id'] .'"data-product-id"'.$order['product_id']. '" data-customer-id="' . $order['customer_id'] . '">Accept</button>';
+        echo '<div class="btn-container order" style="margin-top:-1%;">';
+        echo '<button class="service-accept accept" data-sales-id="' . $order['sales_id'] .'"data-product-id"'.$order['product_id']. '" data-customer-id="' . $order['customer_id'] . '">Accept</button>';
+        echo '<button class="service-cancel" data-sales-id="' . $order['sales_id'] .'"data-product-id"'.$order['product_id']. '" data-customer-id="' . $order['customer_id'] . '">Cancel</button>';
+        echo '</div>';
         echo '</div>';
         echo '</div>';
         echo '</div>';
@@ -222,13 +226,41 @@
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <script>
     $(document).ready(function() {
-    $(".product-accept").click(function() {
+    $(".service-accept").click(function() {
         var salesId = $(this).data("sales-id");
         var customerId = $(this).data("customer-id");
 
         // Send AJAX request to update the status
         $.ajax({
             url: '../php/update_status.php',
+            method: 'POST',
+            data: { salesId: salesId, customerId: customerId }, 
+            success: function(response) {
+                // Handle the response if needed
+                console.log(response);
+
+                // Reload the page after the status is updated
+                location.reload();
+            },
+            error: function(error) {
+                // Handle the error if needed
+                console.error(error);
+            }
+        });
+    });
+
+});
+
+</script>
+<script>
+    $(document).ready(function() {
+    $(".service-cancel").click(function() {
+        var salesId = $(this).data("sales-id");
+        var customerId = $(this).data("customer-id");
+
+        // Send AJAX request to update the status
+        $.ajax({
+            url: '../php/product_cancel.php',
             method: 'POST',
             data: { salesId: salesId, customerId: customerId }, 
             success: function(response) {

@@ -9,6 +9,25 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../../css/vendor.css">
+    <style>
+@media (min-width: 300px) and (max-width:500px) {
+    .service-accept, .service-cancel {
+		background-color: #65A5A5;
+		color: white;
+		padding: 4px 0px;
+		border-radius: 5px;
+		font-size: 11px;
+		border: none;
+		margin-top:45% !important;
+		margin-right: 3px;
+		width:60px;
+		
+	
+	}
+
+}
+
+    </style>
 
 </head>
 
@@ -74,6 +93,7 @@ if (isset($_SESSION['user_id'])) {
             
             echo '<p class="count">x ' . $quantity . '</p>';
             echo '<button class="product-accept accept" data-sales-id="' . $order['sales_id'] . '" data-customer-id="' . $order['customer_id'] . '">Accept</button>';
+            echo '<button class="service-cancel" data-sales-id="' . $order['sales_id'] . '" data-customer-id="' . $order['customer_id'] . '">Cancel</button>';
             echo '</div>';
             echo '</div>';
             echo '</div>';
@@ -152,6 +172,34 @@ function get_quantity_for_product($product_id, $seller_id) {
         // Send AJAX request to update the status
         $.ajax({
             url: '../php/update_status.php',
+            method: 'POST',
+            data: { salesId: salesId, customerId: customerId }, 
+            success: function(response) {
+                // Handle the response if needed
+                console.log(response);
+
+                // Reload the page after the status is updated
+                location.reload();
+            },
+            error: function(error) {
+                // Handle the error if needed
+                console.error(error);
+            }
+        });
+    });
+
+});
+
+</script>
+<script>
+    $(document).ready(function() {
+    $(".service-cancel").click(function() {
+        var salesId = $(this).data("sales-id");
+        var customerId = $(this).data("customer-id");
+
+        // Send AJAX request to update the status
+        $.ajax({
+            url: '../php/product_cancel.php',
             method: 'POST',
             data: { salesId: salesId, customerId: customerId }, 
             success: function(response) {
