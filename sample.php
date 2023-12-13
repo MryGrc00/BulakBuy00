@@ -1,12 +1,9 @@
 <?php
 session_start();
-require_once '../php/dbhelper.php'; // Using require_once ensures the script stops if the file is missing.
+require_once 'users/php/dbhelper.php'; // Using require_once ensures the script stops if the file is missing.
 
-// Redirect non-sellers or unauthenticated users to the login page
-if (!isset($_SESSION["user_id"]) || $_SESSION["role"] !== "seller") {
-    header("Location: ../login.php");
-    exit(); // Stop script execution after a header redirect
-}
+
+
 
 $userId = $_SESSION["user_id"];
 
@@ -128,8 +125,7 @@ $monthlySales = getMonthlySales($userId, 2022,2023);
                 <?php endforeach; ?>
             </section>
         </main>
-        <form action="product_excel.php" method="post">
-        <input type="hidden" name="user_id" value="<?php echo $userId; ?>">
+        <form action="process.php" method="post">
             <div class="form-group">
                 <label for="month">Select Month:</label>
                 <select class="form-control" id="month" name="month">
