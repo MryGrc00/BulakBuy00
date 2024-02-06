@@ -231,34 +231,6 @@ $serviceMonthlySales = getServiceMonthlySales($userId, 2022,2023);
                     </div>
                 </div>
             <?php endforeach; ?>
-            <form action="service_pdf.php" method="post">
-                <input type="hidden" name="user_id" value="<?php echo $userId; ?>">
-                    <div class="form-group">
-                        <label for="month" style="margin-left:10px;margin-top:20px;">Select Month:</label>
-                        <select class="form-control" style="width:95%;margin:auto;margin-top:10px"  id="month" name="month">
-                            <?php
-                            // Loop to generate options for months
-                            for ($i = 1; $i <= 12; $i++) {
-                                $monthName = date("F", mktime(0, 0, 0, $i, 10));
-                                echo "<option value='$i'>$monthName</option>";
-                            }
-                            ?>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="year" style="margin-left:10px;margin-top:20px;">Select Year:</label>
-                        <select class="form-control" style="width:95%;margin:auto;margin-top:10px" id="year" name="year">
-                            <?php
-                            // Loop to generate options for years
-                            $currentYear = date('Y');
-                            for ($i = $currentYear; $i >= $currentYear - 10; $i--) {
-                                echo "<option value='$i'>$i</option>";
-                            }
-                            ?>
-                        </select>
-                    </div>
-                    <button type="submit" name="submit" style="background-color: #65A5A5;color:white;margin-left:37%;margin-top:20px;" class="btn">Download</button>
-                </form>
             </div>
             </section>
         </main>

@@ -294,6 +294,13 @@ else {
 		z-index: 100;
     
 	}
+	.text-left h3 {
+    font-size: 13px;
+    margin-top: 3px;
+    margin-left: -45px;
+    font-weight: 500;
+    font-weight: 400;
+}
 	.navbar img {
 		display: none;
 	}

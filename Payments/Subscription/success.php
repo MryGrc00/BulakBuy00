@@ -234,7 +234,7 @@ if (isset($_SESSION['user_id']) && isset($_SESSION['role'])) {
         echo "<div class='alert '>";
         echo "<p class='reference'>Reference Code: $paymongo_id</p>";
         echo "</div>";
-        echo "<a class='btn  btn-lg' href='http://192.168.137.1:80/Bulakbuy00/Payments/Subscription/$backUrl'>Back to main</a>";
+        echo "<a class='btn  btn-lg' href='http://192.168.1.167/Bulakbuy00/Payments/Subscription/$backUrl'>Back to main</a>";
         echo "</div>";
     } else {
         // Handle case where shop_id is not found

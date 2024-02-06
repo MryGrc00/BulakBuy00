@@ -5,8 +5,8 @@
     $url = "https://api4wrd-v1.kpa.ph/paymongo/v1/create";
 
     $redirect = [
-        "success" => "http://localhost/Bulakbuy00/Payments/Payments/success.php?selected_products=" . urlencode(json_encode($selectedProducts)),
-        "failed" => "http://localhost/Bulakbuy00/Payments/Payments/failed.php"
+        "success" => "http://192.168.1.167:80/Bulakbuy00/Payments/Payments/success.php?selected_products=" . urlencode(json_encode($selectedProducts)),
+        "failed" => "http://192.168.1.167:80/Bulakbuy00/Payments/failed.php"
     ];
     
 

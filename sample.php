@@ -1,12 +1,9 @@
 <?php
 session_start();
-require_once '../php/dbhelper.php'; // Using require_once ensures the script stops if the file is missing.
+require_once 'users/php/dbhelper.php'; // Using require_once ensures the script stops if the file is missing.
 
-// Redirect non-sellers or unauthenticated users to the login page
-if (!isset($_SESSION["user_id"]) || $_SESSION["role"] !== "seller") {
-    header("Location: ../index.php");
-    exit(); // Stop script execution after a header redirect
-}
+
+
 
 $userId = $_SESSION["user_id"];
 
@@ -72,7 +69,6 @@ $monthlySales = getMonthlySales($userId, 2022,2023);
         <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
         <link rel="stylesheet" href="../../css/total_income.css">
-        
     </head>
     <body>
     <header>
@@ -129,6 +125,33 @@ $monthlySales = getMonthlySales($userId, 2022,2023);
                 <?php endforeach; ?>
             </section>
         </main>
+        <form action="process.php" method="post">
+            <div class="form-group">
+                <label for="month">Select Month:</label>
+                <select class="form-control" id="month" name="month">
+                    <?php
+                    // Loop to generate options for months
+                    for ($i = 1; $i <= 12; $i++) {
+                        $monthName = date("F", mktime(0, 0, 0, $i, 10));
+                        echo "<option value='$i'>$monthName</option>";
+                    }
+                    ?>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="year">Select Year:</label>
+                <select class="form-control" id="year" name="year">
+                    <?php
+                    // Loop to generate options for years
+                    $currentYear = date('Y');
+                    for ($i = $currentYear; $i >= $currentYear - 10; $i--) {
+                        echo "<option value='$i'>$i</option>";
+                    }
+                    ?>
+                </select>
+            </div>
+            <button type="submit" name="submit" class="btn btn-primary">Download</button>
+        </form>
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

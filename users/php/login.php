@@ -30,6 +30,21 @@ if (!empty($input) && !empty($password)) {
 
         if ($user_pass === $enc_pass) {
             if ($row['e_status'] === 'Verified') {
+
+                // Check the shop status for this user
+                $shopStmt = $conn->prepare("SELECT status FROM shops WHERE owner_id = :owner_id");
+                $shopStmt->bindParam(':owner_id', $row['user_id']);
+                $shopStmt->execute();
+
+                if ($shopRow = $shopStmt->fetch(PDO::FETCH_ASSOC)) {
+                    if ($shopRow['status'] === 'blocked') {
+                        echo "Shop is blocked! &nbsp;
+                        Contact Admin : bulakbuy@gmail.com";
+
+                        exit;
+                    }
+                }
+
                 $status = "Active now";
                 $updateStatus = $conn->prepare("UPDATE users SET status = :status WHERE user_id = :user_id");
                 $updateStatus->bindParam(':status', $status);

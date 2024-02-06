@@ -162,10 +162,11 @@ include '../../users/php/dbhelper.php'; // Adjust the path as needed
 <body>
 
 <?php
-
 $selectedProducts = isset($_SESSION['selected_products']) ? $_SESSION['selected_products'] : [];
 $selectedPayment = isset($_SESSION['selected_payment']) ? $_SESSION['selected_payment'] : '';
 $_SESSION['from_success_page'] = true;
+
+
 
 date_default_timezone_set('Asia/Manila');
 
@@ -183,7 +184,7 @@ date_default_timezone_set('Asia/Manila');
         echo "<div class='alert '>";
         echo "<p class='reference'>Reference Code: $paymongo_id</p>";
         echo "</div>";
-        echo "<a class='btn  btn-lg' href='http://localhost:80/Bulakbuy00/users/customer/place_order_after_payment.php?selected_products=" . urlencode(json_encode($selectedProducts)) . "&selected_payment=" . urlencode($selectedPayment) . "'>Continue</a>";
+        echo "<a class='btn  btn-lg' href='http://192.168.1.167:80/Bulakbuy00/users/customer/place_order_after_payment.php?selected_products=" . urlencode(json_encode($selectedProducts)) . "&selected_payment=" . urlencode($selectedPayment) . "'>Continue</a>";
         echo "</div>";
 ?>
 <script>

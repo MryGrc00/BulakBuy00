@@ -977,27 +977,22 @@ input[type="text"]:focus, input[type="number"]:focus{
             </div>
             <h3 class="proddeT">Product Description:</h3>
             <textarea name="product_desc" id="product_desc" rows="4" required></textarea>
-            <div  style="display:flex">
-                <input type="checkbox" name="customization_checkbox" id="customization_checkbox" onchange="toggleCustomization()">
-                <h3 class="custom1">Customization</h3>
+            <h3 class="custom">Customization</h3>
+
+            <div class="form-row">
+            <div class="container">
+                <label for="flowerTextBox">Flower Type(s)</label>
+                <input type="text" id="flowerTextBox">
+                <button type="button" onclick="addFlowerType('flowerTextBox', 'flowerDisplayContainer')">Add Flower Type</button>
+                <div class="display" id="flowerDisplayContainer"></div>
             </div>
-            <div id="customizationSection" style="display: none;">
-                <div class="container">
-                    <label for="flowerTextBox">Flower Type(s)</label>
-                    <div  style="display:flex">
-                        <input type="text" id="flowerTextBox" style="width:600px">
-                        <button class="custom-btn" type="button" onclick="addFlowerType('flowerTextBox', 'flowerDisplayContainer')"> + </button>
-                    </div>
-                    <div class="display" id="flowerDisplayContainer"></div>
-                </div>
-                <div class="container">
-                    <label for="ribbonTextBox">Ribbon Color</label>
-                    <div  style="display:flex"> 
-                        <input type="text" id="ribbonTextBox" style="width:600px">
-                        <button type="button" class="custom-btn" onclick="addRibbonColor('ribbonTextBox', 'ribbonDisplayContainer')"> + </button>
-                    </div>
-                    <div class="display" id="ribbonDisplayContainer"></div>
-                </div>
+            <div class="container">
+                <label for="ribbonTextBox">Ribbon Color</label>
+                <input type="text" id="ribbonTextBox">
+                <button type="button" onclick="addRibbonColor('ribbonTextBox', 'ribbonDisplayContainer')">Add Ribbon Color</button>
+                <div class="display" id="ribbonDisplayContainer"></div>
+            </div>
+
                 <input type="hidden" name="flowerTypes" id="flowerTypes" value="">
                 <input type="hidden" name="ribbonColors" id="ribbonColors" value="">
             </div>
@@ -1075,21 +1070,21 @@ input[type="text"]:focus, input[type="number"]:focus{
         hiddenInput.value = JSON.stringify(values);
     }
 
-    // Add this function to toggle customization section visibility
-    function toggleCustomization() {
-        const customizationSection = document.getElementById("customizationSection");
-        const checkbox = document.getElementById("customization_checkbox");
+    // Function to check for Enter key press
+    function checkEnter(event, textBoxId, displayContainerId) {
+        if (event.key === "Enter") {
+            if (textBoxId === "flowerTextBox") {
+                // Call the function to add flower type
+                addFlowerType(textBoxId, displayContainerId);
+            } else if (textBoxId === "ribbonTextBox") {
+                // Call the function to add ribbon color
+                addRibbonColor(textBoxId, displayContainerId);
+            }
 
-        if (checkbox.checked) {
-            customizationSection.style.display = "block";
-        } else {
-            customizationSection.style.display = "none";
+            // Prevent Enter from creating a newline in the input field
+            event.preventDefault();
         }
     }
-
-    // Call the toggleCustomization function on page load to set initial visibility
-    toggleCustomization();
-
     
 </script>
 
