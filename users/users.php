@@ -5,7 +5,7 @@ include_once "php/dbhelper.php"; // Include dbhelper.php which contains the dbco
 $conn = dbconnect(); // Establish database connection using dbconnect() function from dbhelper.php
 
 if (!isset($_SESSION['user_id'])) {
-    header("location: login.php");
+    header("location: index.php");
 }
 
 $sql = $conn->prepare("SELECT * FROM users WHERE user_id = :user_id");

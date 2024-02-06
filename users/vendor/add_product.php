@@ -3,7 +3,7 @@ session_start();
 include '../php/dbhelper.php'; // Make sure this path is correct
 
 if (!isset($_SESSION["user_id"]) || $_SESSION["role"] !== "seller") {
-    header("Location: ../login.php"); 
+    header("Location: ../index.php"); 
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
@@ -36,6 +36,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
     $productName = $_POST['product_name'];
     $productCategory = $_POST['product_category'];
     $productPrice = $_POST['product_price'];
+    $productStocks = $_POST['product_stocks'];
+    $productUnit = $_POST['product_unit'];
     $productDesc = $_POST['product_desc'];
 
     // Check if the selected category is 'Other'
@@ -52,7 +54,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
     $allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
     if (in_array($productImage['type'], $allowedTypes) && move_uploaded_file($productImage['tmp_name'], $uploadFile)) {
         // Prepare SQL to insert into products table
-        $sql = "INSERT INTO products (shop_owner, product_img, product_name, product_category, product_price, product_desc) VALUES (:shop_id, :product_img, :product_name, :product_category, :product_price, :product_desc)";
+        $sql = "INSERT INTO products (shop_owner, product_img, product_name, product_category, product_price, product_stocks, product_unit, product_desc, product_status) VALUES (:shop_id, :product_img, :product_name, :product_category, :product_price, :product_stocks, :product_unit, :product_desc, 'Available')";
 
         // Insert product data into the database using PDO
         try {
@@ -62,8 +64,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
             $stmt->bindParam(':product_name', $productName);
             $stmt->bindParam(':product_category', $productCategory);
             $stmt->bindParam(':product_price', $productPrice);
+            $stmt->bindParam(':product_stocks', $productStocks);
+            $stmt->bindParam(':product_unit', $productUnit);
             $stmt->bindParam(':product_desc', $productDesc);
             $stmt->execute();
+
 
             echo "Product added successfully!";
             header("Location: vendor_product.php"); // Redirect as needed
@@ -91,6 +96,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet">
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../../css/addproduct.css">
+    
 
 </head>
 
@@ -149,14 +155,32 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
                         <option value="Arrangement Materials">Arrangement Materials</option>
                         <option value="Flower Stands">Flower Stands</option>
                         <option value="Leaves">Leaves</option>
+                        <option value="Add Ons">Add Ons</option>
                         <option value="Other">Other</option>
                     </select>
                  </div>
               <div class="form-group col-md-6 prodpr">
                 <h3 class="prodprT">Product Price:</h3>
-                <input type="number" name="product_price" id="product_price" required>                
+                <input type="number" name="product_price" id="product_price" >                
               </div>
             </div>
+            <div class="form-row ">
+                <div class="form-group col-md-6 prodpr">
+                    <h3 class="prodprT">Product Stocks</h3>
+                    <input type="number" name="product_stocks" id="product_stocks" >     
+                </div>
+                <div class="form-group col-md-6 prodpr">
+                    <h3 class="prodcaT">Product Unit </h3>
+                    <select name="product_unit" id="product_unit">
+                        <option value="" disabled selected>--Select a Unit--</option>
+                        <option value="Per Piece">Per Piece</option>
+                        <option value="Per Bundle">Per Bundle</option>
+                        <option value="Per Dozen">Per Dozen</option>
+                       
+                    </select>
+                </div>
+            </div>
+
 
             <div id="other-category" style="display: none;">
                 <label for="other-category-input" class="prodott">Other Category:</label>

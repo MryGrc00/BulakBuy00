@@ -401,21 +401,29 @@ if (isset($_GET['category'])) {
                 </section>
                 <section>
                 <div class="product-list" id="product-container">
-                    <?php foreach ($products as $product): ?>
+                    <?php 
+                    foreach ($products as $product):
+                        // Only display products with status 'Available'
+                        if ($product['product_status'] !== 'Available') {
+                            continue; // Skip to the next iteration if the product status is not 'Available'
+                        }
+                        ?>
                         <div class="product">
                             <a href="customer_product.php?product_id=<?php echo $product['product_id']; ?>">
                                 <?php
                                 echo '<img src="' . $product['product_img'] . '" alt="' . $product['product_name'] . '">';
-                                ?>
+                                ?>                        
                                 <div class="product-name"><?php echo $product['product_name']; ?></div>
                                 <div class="product-category"><?php echo $product['product_category']; ?></div>
                                 <div class="p">
-                                    <div class="product-price"><?php echo '₱ ' . $product['product_price']; ?></div>
+                                    <div class="product-price"><?php echo '₱ '. $product['product_price']; ?></div>
                                 </div>
                             </a>
                         </div>
-                    <?php endforeach; ?>
+                        <?php
+                    endforeach; ?>
                 </div>
+                    
 
 
                 </section>

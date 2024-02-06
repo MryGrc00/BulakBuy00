@@ -4,7 +4,7 @@ include '../php/dbhelper.php';
 
 // Redirect if not logged in
 if (!isset($_SESSION["user_id"]) || !isset($_SESSION["role"])) {  
-    header("Location: ../login.php");
+    header("Location: ../index.php");
     exit(); 
 }
 
@@ -263,22 +263,28 @@ if ($role == 'arranger' && $isShopEmpty) {
             <span class="label">Services</span>
           </div>
         </a>
+        <a href="package.php">
+          <div class="card2">
+            <i class="bi bi-flower1"></i>
+            <span class="label">Add Packages</span>
+          </div>
+        </a>
         <a href="arranger_transaction_history.php">
           <div class="card2">
             <i class="bi bi-file-earmark-text"></i>
             <span class="label">Transaction History</span>
           </div>
         </a>
-        
-      </div>
-      
-      <div class="container1">
-      <a href="arranger_total_income.php">
+        <a href="arranger_total_income.php">
           <div class="card2">
             <i class="bi bi-file-bar-graph"></i>
             <span class="label">Reports</span>
           </div>
         </a>
+      </div>
+      
+      <div class="container1">
+
         <a href="arranger_subscription.php">
           <div class="card2">
             <i class="bi bi-credit-card"></i>
@@ -296,6 +302,13 @@ if ($role == 'arranger' && $isShopEmpty) {
             <i class="bi bi-gear"></i>
             <span class="label">Settings</span>
           </div>
+        </a>
+
+        <a href="#">
+            <div class="card2">
+                <i class="bi bi-question-circle"></i>
+                <span class="label">Help</span>
+            </div>
         </a>
        
       </div>

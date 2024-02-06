@@ -3,7 +3,7 @@ session_start();
 
 // Redirect to login page if not logged in
 if (!isset($_SESSION["user_id"])) {
-    header("Location: ../login.php");
+    header("Location: ../index.php");
     exit();
 }
 
@@ -28,6 +28,21 @@ function get_products_by_shop($shop_id, $pdo) {
     $stmt->execute();
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
+
+function get_gallery_images_by_shop($shop_id, $pdo) {
+    $sql = "SELECT gallery.image
+            FROM gallery
+            JOIN shop ON gallery.arranger_id = shop.owner_id
+            WHERE shop.shop_id = :shop_id";
+    
+    $stmt = $pdo->prepare($sql);
+    $stmt->bindParam(':shop_id', $shop_id);
+    $stmt->execute();
+    
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+$gallery = get_gallery_images_by_shop($shop_id,$pdo);
 ?>
 
 
@@ -89,41 +104,30 @@ function get_products_by_shop($shop_id, $pdo) {
                 <?php endif; ?>
                     </div>
                 </div>
-            <section>
-                
-                <div class="button-container">
-                    <button class="gallery-btn active">Gallery</button>
-                    <button class="product-btn">Products</button>
-                </div>
-                <div class="image-grid" id="imageGrid">
-                    <!-- Add your images here -->
-                    <img class="image" src="https://quinceflowers.com/cdn/shop/products/3-Bridal-Bouquet-Petite-Package-Quince-Flowers-Toronto-Wedding-Florist_1445x.jpg?v=1655055264" alt="Image 1">
-                    <img class="image" src="https://i.etsystatic.com/18889321/r/il/3a0845/3490460883/il_fullxfull.3490460883_pek8.jpg" alt="Image 2">
-                    <img class="image" src="https://quinceflowers.com/cdn/shop/products/3-Bridal-Bouquet-Petite-Package-Quince-Flowers-Toronto-Wedding-Florist_1445x.jpg?v=1655055264" alt="Image 3">
-                    <img class="image" src="https://quinceflowers.com/cdn/shop/products/3-Bridal-Bouquet-Petite-Package-Quince-Flowers-Toronto-Wedding-Florist_1445x.jpg?v=1655055264" alt="Image 4">
-                    <img class="image" src="https://i.etsystatic.com/18889321/r/il/3a0845/3490460883/il_fullxfull.3490460883_pek8.jpg" alt="Image 5">
-                    <img class="image" src="https://quinceflowers.com/cdn/shop/products/3-Bridal-Bouquet-Petite-Package-Quince-Flowers-Toronto-Wedding-Florist_1445x.jpg?v=1655055264" alt="Image 6">
-                    <img class="image" src="https://quinceflowers.com/cdn/shop/products/3-Bridal-Bouquet-Petite-Package-Quince-Flowers-Toronto-Wedding-Florist_1445x.jpg?v=1655055264" alt="Image 7">
-                    <img class="image" src="https://quinceflowers.com/cdn/shop/products/3-Bridal-Bouquet-Petite-Package-Quince-Flowers-Toronto-Wedding-Florist_1445x.jpg?v=1655055264" alt="Image 8">
-                    <img class="image" src="https://quinceflowers.com/cdn/shop/products/3-Bridal-Bouquet-Petite-Package-Quince-Flowers-Toronto-Wedding-Florist_1445x.jpg?v=1655055264" alt="Image 9">
-                    <img class="image" src="https://i.etsystatic.com/18889321/r/il/3a0845/3490460883/il_fullxfull.3490460883_pek8.jpg" alt="Image 10">
-                    <img class="image" src="https://quinceflowers.com/cdn/shop/products/3-Bridal-Bouquet-Petite-Package-Quince-Flowers-Toronto-Wedding-Florist_1445x.jpg?v=1655055264" alt="Image 11">
-                    <img class="image" src="https://i.etsystatic.com/18889321/r/il/3a0845/3490460883/il_fullxfull.3490460883_pek8.jpg" alt="Image 12">
-                    <!-- Add more images as needed -->
-                </div>
-                <div id="addProductContainer">
-                </div>
-          
-                <!-- The Modal Overlay -->
-                <div class="modal-overlay" id="modalOverlay"></div>
-                <!-- The Modal -->
-                <div class="modal" id="myModal">
-                    <div class="modal-content">
-                        <span class="close" onclick="closeModal()">&times;</span>
-                        <img id="modalImage" src="" alt="Modal Image">
+                <section>
+                    <div class="button-container">
+                        <button class="gallery-btn active">Gallery</button>
+                        <button class="product-btn">Products</button>
                     </div>
-                </div>
-            </section>
+                    <div class="image-grid" id="imageGrid">
+                    <?php foreach ($gallery as $images): ?>
+                            <img class="image" src="<?php echo $images['image'];?>" alt="Image 1">
+                        <?php endforeach; ?>
+                    </div>
+                    <div id="addProductContainer">
+                        <a href="add_image.php"><button class="add-product">+ Add Image</button></a>
+                    </div>
+            
+                    <!-- The Modal Overlay -->
+                    <div class="modal-overlay" id="modalOverlay"></div>
+                    <!-- The Modal -->
+                    <div class="modal" id="myModal">
+                        <div class="modal-content">
+                            <span class="close" onclick="closeModal()">&times;</span>
+                            <img id="modalImage" src="" alt="Modal Image">
+                        </div>
+                    </div>
+                </section>
             <section>
                 <div class="product-list" id="product-container">
                 <?php foreach ($products as $product) : ?>

@@ -938,20 +938,20 @@ if (isset($_SESSION["user_id"])) {
                     <?php 
                     $counter = 0;
                     foreach ($products as $product):
-                        if ($counter >= 30) {
-                            break; // Stop the loop after displaying 6 products
+                        // Only display products with status 'Available'
+                        if ($counter >= 30 || $product['product_status'] !== 'Available') {
+                            continue; // Skip to the next iteration if the product status is not 'Available'
                         }
                         ?>
                         <div class="product">
                             <a href="customer_product.php?product_id=<?php echo $product['product_id']; ?>">
-                            <?php
+                                <?php
                                 echo '<img src="' . $product['product_img'] . '" alt="' . $product['product_name'] . '">';
-                            ?>                        
+                                ?>                        
                                 <div class="product-name"><?php echo $product['product_name']; ?></div>
                                 <div class="product-category"><?php echo $product['product_category']; ?></div>
                                 <div class="p">
                                     <div class="product-price"><?php echo '₱ '. $product['product_price']; ?></div>
-                                  
                                 </div>
                             </a>
                         </div>
@@ -959,6 +959,7 @@ if (isset($_SESSION["user_id"])) {
                         $counter++; // Increment counter for each displayed product
                     endforeach; ?>
                 </div>
+
             </section>
 
             <section>
@@ -980,9 +981,7 @@ if (isset($_SESSION["user_id"])) {
                                 echo '<img src="' . $service['profile_img'] . '" alt="' . $service['last_name'] . '">';
                                 ?>
                                 <div class="product-name"><?php echo $service['first_name'] . ' ' . $service['last_name']; ?></div>
-                                <div class="p">
-                                    <div class="product-price"><?php echo '₱ '. $service['service_rate']; ?></div>
-                                </div>
+                    
                             </a>
                         </div>
                         <?php

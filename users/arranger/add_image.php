@@ -5,7 +5,7 @@ include '../php/dbhelper.php'; // Make sure this path is correct
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
     // Check user login and role
     if (!isset($_SESSION["user_id"]) || $_SESSION["role"] !== "arranger") {
-        header("Location: login.php");
+        header("Location: index.php");
         exit();
     }
 

@@ -618,7 +618,7 @@ else {
             </div>
             <div class="info">
                 <div class="text-left">
-                    <h3><?php echo $order["arranger_first_name"]. " " . $order["arranger_last_name"]; ?></h3>
+                    <h2><?php echo $order["arranger_first_name"]. " " . $order["arranger_last_name"]; ?></h2>
                     <p class="ad"><?php echo $order["arranger_address"]?></p>
                     
                     <div class="o-date-time">
@@ -645,13 +645,14 @@ else {
     </div>
     <div class="service-list" id="service-container">
     <?php foreach ($customer_order1 as $order):?>
+		<a href="request_status.php?servicedetails_id=<?php echo $order['servicedetails_id']; ?>">
         <div class="single-card ">
             <div class="img-area">
                 <img src="<?php echo $order["arranger_profile"]?>" alt="">
             </div>
             <div class="info">
                 <div class="text-left">
-                    <h3><?php echo $order["arranger_first_name"]. " " . $order["arranger_last_name"]; ?></h3>
+                    <h2><?php echo $order["arranger_first_name"]. " " . $order["arranger_last_name"]; ?></h2>
                     <p class="ad"><?php echo $order["arranger_address"]?></p>
                     
                     <div class="o-date-time">
@@ -665,7 +666,7 @@ else {
                 </div>
             </div>
         </div>
-        
+		</a>
      <?php endforeach;?>
      <?php if (empty($order)): ?>
             <p class="p-end" style="color: #bebebe;

@@ -12,7 +12,7 @@ if (isset($_SESSION["user_id"]) && ($_SESSION["role"] === "seller" || $_SESSION[
 } else {
     echo "Access Denied. User not logged in or not authorized.";
     // Optional: Redirect to login or home page
-    // header('Location: login.php');
+    // header('Location: index.php');
     exit();
 }
 
@@ -29,7 +29,6 @@ if (isset($_SESSION["user_id"]) && ($_SESSION["role"] === "seller" || $_SESSION[
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
         <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet">
-        <link rel="stylesheet" href="../../css/myproduct.css">
         <style>
         @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap");
  * {
@@ -121,60 +120,61 @@ if (isset($_SESSION["user_id"]) && ($_SESSION["role"] === "seller" || $_SESSION[
     gap: 20px;
     max-width: 1140px;
     margin: 0 auto;
-    margin-top: 50px;
-    margin-bottom: 30px;
 }
+
 .product {
-    flex: 0 0 calc(2%);
-    margin-top:-20px;
+    flex: 0 0 calc(4%);
+    margin-top: -20px;
     margin-bottom: 20px;
     padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 10px;
+    border: 1px solid #ddd;
     display: flex;
     flex-direction: column;
     text-align: left;
     box-sizing: border-box;
 }
-.product a:hover{
+
+.product a:hover {
     text-decoration: none;
 }
-.product:hover {
-    transform: scale(1.05);
-    box-shadow: 0px 0px 6px #65A5A5;
-}
+
+
 .product a img {
-    max-width: 150px;
-    height:160px;
+    width: 150px;
+    height: 150px;
     flex-grow: 1;
 }
+
 .product .product-info {
     padding: 10px;
 }
+
 .product .product-name {
-    font-weight: 500;
     margin-top: 20px;
+    width: 150px;
     margin-bottom: 5px;
     font-size: 15px;
     color: #666;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
-.product .product-category {
-    color: #666;
-    margin-bottom: 5px;
-    font-size: 12px;
+
+ .product .product-category {
+     color: #666;
+     margin-bottom: 5px;
+     font-size: 13px;
 }
-.product .product-price {
-    color: #666;
-    margin-bottom: 5px;
-    font-size: 15px;
-    margin-right:50px
+ .product .product-price {
+     color: #666;
+     margin-bottom: 5px;
+     font-size: 13px;
 }
 /* Style for the Edit and Delete buttons */
 .product-actions {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 10px;
-    
+    flex:1;
+    gap: 10px;
+    text-align: right;
 }
 
 .edit-button,
@@ -251,12 +251,11 @@ if (isset($_SESSION["user_id"]) && ($_SESSION["role"] === "seller" || $_SESSION[
          color:#666;
     }
     .product-actions {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 5px;
-    text-align: left;
-    
-}
+        flex:1;
+        gap: 10px;
+        text-align: right;
+        margin-top: 5px;
+    }
      .nav-hr{
          display: none;
     }
@@ -267,8 +266,9 @@ if (isset($_SESSION["user_id"]) && ($_SESSION["role"] === "seller" || $_SESSION[
         font-size: 12px;
         border:none;
         border-radius: 8px;
-        margin-top:90px;
-        margin-left:67%;
+        margin-top:30px;
+        margin-bottom:70px;
+        margin-left:35%;
     }
     .add-product:focus{
         outline:none;
@@ -278,6 +278,7 @@ if (isset($_SESSION["user_id"]) && ($_SESSION["role"] === "seller" || $_SESSION[
          display: flex;
          flex-wrap: wrap;
          justify-content: center;
+         margin-top:20px;
     }
      .product {
          flex: 0 0 calc(2%);
@@ -290,7 +291,7 @@ if (isset($_SESSION["user_id"]) && ($_SESSION["role"] === "seller" || $_SESSION[
          box-sizing: border-box;
     }
      .product img a{
-         width: 193px;
+         width:193px;
          height:150px;
          flex-grow: 1;
     }
@@ -319,6 +320,30 @@ if (isset($_SESSION["user_id"]) && ($_SESSION["role"] === "seller" || $_SESSION[
         text-align: center;
         margin-top: 30px;
    }
+   .cat-label {
+         color: #666;
+         font-size: 14px;
+         font-style: normal;
+         font-weight: 400;
+         line-height: normal;
+         margin-left: 3%;
+         margin-top: 100px;
+         display: flex;
+         justify-content: space-between;
+         align-items: center;
+    }
+    .cat-label1 {
+         color: #666;
+         font-size: 14px;
+         font-style: normal;
+         font-weight: 400;
+         line-height: normal;
+         margin-left: 3%;
+         margin-top: 20px;
+         display: flex;
+         justify-content: space-between;
+         align-items: center;
+    }
    /* Media query to adjust alignment for smaller screens */
     @media (max-width: 768px) {
         .product {
@@ -361,37 +386,77 @@ if (isset($_SESSION["user_id"]) && ($_SESSION["role"] === "seller" || $_SESSION[
             <hr class="nav-hr">
         </header>
         <main>
-            <a href="add_product.php"><button class="add-product"> + Add Product</button></a>
-            <div class="product-list" id="product-container">
-             <?php foreach ($products as $product) : ?>
-                <div class="product">
-                    <a href="">
-                    <?php
-                        echo '<img src="' . $product['product_img'] . '" alt="' . $product['product_name'] . '">';
-                    ?>
-                        <div class="product-name"><?php echo $product['product_name']; ?></div>
-                        <div class="product-category"><?php echo $product['product_category']; ?></div>
-                        <div class="p">
-                    
-                            <div class="product-price"><?php echo formatPrice($product['product_price']); ?></div>
-                            <div class="product-actions">
-                            <a href="edit_product.php?product_id=<?php echo $product['product_id']; ?>">
-                                    <button class="edit-button"><i class="bi bi-pen"></i></button>
-                                </a> 
-                                <a href="delete.php?product_id=<?php echo $product['product_id'];?>">                               
-                                     <button class="delete-button"><i class="bi bi-trash"></i></button> </div>
-                                </a>
-                             </div>
-                     </a>
-                      </div>
-
-                      <?php endforeach; ?>
-
-                    <?php if (empty($products)) : ?>
-                        <p class="p-end">No more products found</p><br><br><br>
-                    <?php endif; ?>
+            <div class="cat-label">
+            <p>Available Products</p>
         </div>
-          
+        <div class="product-list" id="product-container">
+            <?php foreach ($products as $product) : ?>
+                <?php if ($product['product_status'] == 'Available') : ?>
+                    <div class="product">
+                        <a href="">
+                            <?php
+                            echo '<img src="' . $product['product_img'] . '" alt="' . $product['product_name'] . '">';
+                            ?>
+                            <div class="product-name"><?php echo $product['product_name']; ?></div>
+                            <div class="product-category"><?php echo $product['product_category']; ?></div>
+                            <?php if (!empty($product['product_stocks'])) : ?>
+                                <div class="product-category">Stocks: <?php echo $product['product_stocks']; ?></div>
+                            <?php endif; ?>
+
+                            <div class="p">
+
+                                <div class="product-price"><?php echo formatPrice($product['product_price']); ?></div>
+                                <div class="product-actions">
+                                    <a href="edit_product.php?product_id=<?php echo $product['product_id']; ?>">
+                                        <button class="edit-button"><i class="bi bi-pen"></i></button>
+                                    </a>
+
+                                    <button class="delete-button" onclick="openModal(<?php echo $product['product_id']; ?>)"><i class="bi bi-trash"></i></button>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                <?php endif; ?>
+            <?php endforeach; ?>
+        </div>
+
+        <div class="cat-label1">
+            <p>Out of Stocks Products</p>
+        </div>
+        <div class="product-list" id="product-container">
+            <?php foreach ($products as $product) : ?>
+                <?php if ($product['product_status'] != 'Available') : ?>
+                    <div class="product">
+                        <a href="">
+                            <?php
+                            echo '<img src="' . $product['product_img'] . '" alt="' . $product['product_name'] . '">';
+                            ?>
+                            <div class="product-name"><?php echo $product['product_name']; ?></div>
+                            <div class="product-category"><?php echo $product['product_category']; ?></div>
+                            <?php if (!empty($product['product_stocks'])) : ?>
+                                <div class="product-category">Stocks: <?php echo $product['product_stocks']; ?></div>
+                            <?php endif; ?>
+
+                            <div class="p">
+
+                                <div class="product-price"><?php echo formatPrice($product['product_price']); ?></div>
+                                <div class="product-actions">
+                                    <a href="edit_product.php?product_id=<?php echo $product['product_id']; ?>">
+                                        <button class="edit-button"><i class="bi bi-pen"></i></button>
+                                    </a>
+
+                                    <button class="delete-button" onclick="openModal(<?php echo $product['product_id']; ?>)"><i class="bi bi-trash"></i></button>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                <?php endif; ?>
+            <?php endforeach; ?>
+
+           
+        </div>
+        <a href="add_product.php"><button class="add-product"> + Add Product</button></a>
+
         </main>
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>

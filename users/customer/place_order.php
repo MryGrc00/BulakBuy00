@@ -20,6 +20,7 @@ if (isset($_SESSION['user_id'])) {
 }
 
 // Add the sales record to the database
+// Function to add the sales record to the database and update product_stocks// Function to add the sales record to the database and update product_stocks
 function add_sales_record($salesdetailsId, $productID, $shopID, $customer_id, $quantity, $productPrice, $sales_date, $status, $paymode) {
     $sales_date = date("Y-m-d H:i:s"); // Get current date and time in MySQL format
 
@@ -31,6 +32,14 @@ function add_sales_record($salesdetailsId, $productID, $shopID, $customer_id, $q
     try {
         $stmt = $conn->prepare($sql);
         $stmt->execute([$salesdetailsId, $productID, $shopID, $customer_id, $amount, $sales_date, $status, $paymode]);
+
+        // Update product_stocks in the products table
+        $updateStocksSql = "UPDATE products SET product_stocks = product_stocks - :quantity, product_status = CASE WHEN product_stocks - :quantity <= 0 THEN 'Not Available' ELSE product_status END WHERE product_id = :product_id";
+        $updateStocksStmt = $conn->prepare($updateStocksSql);
+        $updateStocksStmt->bindParam(':quantity', $quantity, PDO::PARAM_INT);
+        $updateStocksStmt->bindParam(':product_id', $productID, PDO::PARAM_INT);
+        $updateStocksStmt->execute();
+
         $conn = null;
         return true;
     } catch (PDOException $e) {
@@ -39,6 +48,7 @@ function add_sales_record($salesdetailsId, $productID, $shopID, $customer_id, $q
         return false;
     }
 }
+
 
 
 // Function to calculate the total amount based on price and quantity

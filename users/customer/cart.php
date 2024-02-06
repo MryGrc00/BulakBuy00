@@ -103,34 +103,7 @@ function get_product_details($productID, $salesdetailsId) {
 
 
 
-// Function to check if a product with a given salesdetails_id exists in the sales table
-function is_salesdetails_id_in_sales_table($salesdetailsId) {
-    $conn = dbconnect(); // Connect to the database
 
-    // Define the table and where clause
-    $table = 'sales';
-    $where = 'salesdetails_id';
-
-    // Prepare the SQL query to check if salesdetails_id is in the sales table
-    $sql = "SELECT COUNT(*) as count FROM $table WHERE $where = ?";
-
-    try {
-        // Prepare and execute the statement
-        $stmt = $conn->prepare($sql);
-        $stmt->execute([$salesdetailsId]);
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        // Check if salesdetails_id is in the sales table
-        return ($result['count'] > 0);
-    } catch (PDOException $e) {
-        // Handle any errors
-        echo "Error: " . $e->getMessage();
-        return false;
-    } finally {
-        // Close the database connection
-        $conn = null;
-    }
-}
 
 ?>
 
@@ -1038,11 +1011,6 @@ function is_salesdetails_id_in_sales_table($salesdetailsId) {
                                                 $productsByShop[$shopId] = array();
                                             }
                                         
-                                            // Check if the salesdetails_id is already in the sales table
-                                            if (is_salesdetails_id_in_sales_table($product['salesdetails_id'])) {
-                                                $removedSalesDetailsIds[] = $product['salesdetails_id'];
-                                                continue; // Skip this product if its salesdetails_id is in the sales table
-                                            }
                                         
                                             $productsByShop[$shopId][] = $product;
                                         }

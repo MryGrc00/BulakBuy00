@@ -3,9 +3,9 @@ session_start(); // Start or resume the session to access session variables
 
 include '../php/dbhelper.php';
 
-if (isset($_GET['product_id'])) {
-    // Get the product ID from the URL
-    $productID = $_GET['product_id'];
+if (isset($_POST['product_id'])) {
+    // Get the product ID from the form submission
+    $productID = $_POST['product_id'];
 
     // Establish database connection
     $pdo = dbconnect();

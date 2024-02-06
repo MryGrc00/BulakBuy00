@@ -338,7 +338,7 @@
          <div class="modal-content">
             <i class="bi bi-check-circle"></i>
             <h2 class="confirmed">Email Confirmed !</h2>
-            <a href="login.php"><button class="c-shopping">Continue Login</button></a>
+            <a href="index.php"><button class="c-shopping">Continue Login</button></a>
           </div>
       </div>
       

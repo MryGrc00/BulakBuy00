@@ -787,6 +787,14 @@
                                 </div>
                                
                             </div>';
+                    }elseif ($status === 'Cancelled') {
+                        echo '<div class="status">
+                                <div class="status-icon">1</div>
+                                <div class="status-info">
+                                    <div class="status-text">Order Cancelled</div>
+                                </div>
+                               
+                            </div>';
                     } elseif ($status === 'Processing') {
                         echo '<div class="status">
                                 <div class="status-icon">1</div>

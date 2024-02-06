@@ -1461,8 +1461,14 @@ function add_cart_item_without_optional_fields($product_id, $customer_id, $quant
                     <!-- Second column with image descriptions -->
                     <p class="p-name"><?php echo $product['product_name']; ?></p>
                     <p class="p-category"><?php echo $product['product_category']; ?></p>
-                    <div class="p-price"><?php echo '₱ '. $product['product_price']; ?></div>
-                    <p class="p-ratings">4.5 ratings & 35 reviews</p>
+					<?php if (!empty($product['product_unit'])) : ?>
+						<div class="p-ratings">Stocks: <?php echo $product['product_unit']; ?></div>
+					<?php endif; ?>
+					<?php if (!empty($product['product_stocks'])) : ?>
+						<div class="p-ratings">Stocks: <?php echo $product['product_stocks']; ?></div>
+					<?php endif; ?>
+
+					<div class="p-price"><?php echo '₱ '. $product['product_price']?></div>
                     <form method="POST" action=""id="myForm">
                         <?php if ($isArranger): ?>
                             <div class="f-type">
@@ -1704,6 +1710,7 @@ function add_cart_item_without_optional_fields($product_id, $customer_id, $quant
 
                                 return $ratingHTML;
                             }
+
                             ?>
 
                     <hr>
@@ -1719,37 +1726,196 @@ function add_cart_item_without_optional_fields($product_id, $customer_id, $quant
                     <button id="nextButton" class="next">&#8250;</button>
                 </div>
             </div>
+			<?php
+				$counter = 0;
+
+				// Assuming $shopId contains the current shop ID
+				$shopId = $product['shop_owner'];
+
+				$otherProducts = get_add($shopId);
+				// Retrieve products from the same shop where the category is not "Flower Bouquet"
+				function get_add($shopId) {
+					$conn = dbconnect();
+
+					$sql = "SELECT p.*
+							FROM products p
+							JOIN shops s ON p.shop_owner = s.shop_id
+							WHERE s.shop_id = ? AND p.product_category = 'Add Ons' AND p.product_status = 'Available'
+							LIMIT 30"; // Limiting to 30 products as in your original code
+
+					try {
+						$stmt = $conn->prepare($sql);
+						$stmt->execute([$shopId]);
+						$products = $stmt->fetchAll(PDO::FETCH_ASSOC);
+						$conn = null;
+						return $products;
+					} catch (PDOException $e) {
+						echo $sql . "<br>" . $e->getMessage();
+						$conn = null;
+						return false;
+					}
+				}
+
+				// Check if there are available "Add Ons" before displaying the label
+				if (!empty($otherProducts)) {
+					?>
+					<section>
+						<div class="label">
+							<p class="other">Add Ons</p>
+						</div>
+						<div class="product-list" id="product-container">
+							<?php
+							foreach ($otherProducts as $product):
+								// Only display products with status 'Available'
+								if ($counter >= 30 || $product['product_status'] !== 'Available') {
+									continue; // Skip to the next iteration if the product status is not 'Available'
+								}
+								?>
+								<div class="product">
+									<a href="customer_product.php?product_id=<?php echo $product['product_id']; ?>">
+										<?php
+										echo '<img src="' . $product['product_img'] . '" alt="' . $product['product_name'] . '">';
+										?>                        
+										<div class="product-name"><?php echo $product['product_name']; ?></div>
+										<div class="product-category"><?php echo $product['product_category']; ?></div>
+										<div class="p">
+											<div class="product-price"><?php echo '₱ ' . $product['product_price']; ?></div>
+										</div>
+									</a>
+								</div>
+								<?php
+								$counter++; // Increment counter for each displayed product
+							endforeach;
+							?>
+						</div>
+					</section>
+				<?php
+				}
+				?>
+
             <section>
-                <div class="label">
-                    <p class="other">Other Products</p>
-                </div>
-                <div class="product-list" id="product-container">
-                  
-                <?php 
-                    $counter = 0;
-                    foreach ($products as $product):
-                        if ($counter >= 30) {
-                            break; // Stop the loop after displaying 6 products
-                        }
-                        ?>
-                        <div class="product">
-                            <a href="customer_product.php?product_id=<?php echo $product['product_id']; ?>">
-                            <?php
-                                echo '<img src="' . $product['product_img'] . '" alt="' . $product['product_name'] . '">';
-                            ?>                        
-                                <div class="product-name"><?php echo $product['product_name']; ?></div>
-                                <div class="product-category"><?php echo $product['product_category']; ?></div>
-                                <div class="p">
-                                    <div class="product-price"><?php echo '₱ '. $product['product_price']; ?></div>
-                                  
-                                </div>
-                            </a>
-                        </div>
-                        <?php
-                        $counter++; // Increment counter for each displayed product
-                    endforeach; ?>
-                </div>
-            </section>
+				<div class="label">
+					<p class="other">Same Shop Products</p>
+				</div>
+				<div class="product-list" id="product-container">
+					<?php 
+					$counter = 0;
+					
+					// Assuming $shopId contains the current shop ID
+					$shopId = $product['shop_owner'];
+					
+					// Retrieve products from the same shop where the category is not "Flower Bouquet"
+					$otherProducts = get_other_products($shopId);
+					function get_other_products($shopId) {
+						$conn = dbconnect();
+
+						$sql = "SELECT p.*
+								FROM products p
+								JOIN shops s ON p.shop_owner = s.shop_id
+								WHERE s.shop_id = ? AND p.product_category != 'Add Ons' AND p.product_status = 'Available'
+								LIMIT 30"; // Limiting to 30 products as in your original code
+
+						try {
+							$stmt = $conn->prepare($sql);
+							$stmt->execute([$shopId]);
+							$products = $stmt->fetchAll(PDO::FETCH_ASSOC);
+							$conn = null;
+							return $products;
+						} catch (PDOException $e) {
+							echo $sql . "<br>" . $e->getMessage();
+							$conn = null;
+							return false;
+						}
+					}
+					foreach ($otherProducts as $product):
+						// Only display products with status 'Available'
+						if ($counter >= 30 || $product['product_status'] !== 'Available') {
+							continue; // Skip to the next iteration if the product status is not 'Available'
+						}
+						if ($product['product_category'] !== 'Flower Bouquets') {
+							?>
+						
+							<div class="product">
+								<a href="customer_product.php?product_id=<?php echo $product['product_id']; ?>">
+									<?php
+									echo '<img src="' . $product['product_img'] . '" alt="' . $product['product_name'] . '">';
+									?>                        
+									<div class="product-name"><?php echo $product['product_name']; ?></div>
+									<div class="product-category"><?php echo $product['product_category']; ?></div>
+									<div class="p">
+										<div class="product-price"><?php echo '₱ '. $product['product_price']; ?></div>
+									</div>
+								</a>
+							</div>
+							<?php
+							$counter++; // Increment counter for each displayed product
+						}
+					endforeach; ?>
+				</div>
+			</section>
+			<section>
+				<div class="label">
+					<p class="other">Other Products</p>
+				</div>
+				<div class="product-list" id="product-container">
+					<?php 
+					$counter = 0;
+					
+					// Assuming $shopId contains the current shop ID
+					$shopId = $product['shop_owner'];
+					
+					// Retrieve products from the same shop where the category is not "Flower Bouquet"
+					$otherProducts = get_products($shopId);
+					function get_products($shopId) {
+						$conn = dbconnect();
+					
+						$sql = "SELECT p.*
+								FROM products p
+								JOIN shops s ON p.shop_owner = s.shop_id
+								WHERE s.shop_id != ? AND p.product_status = 'Available'
+								LIMIT 30"; // Limiting to 30 products as in your original code
+					
+						try {
+							$stmt = $conn->prepare($sql);
+							$stmt->execute([$shopId]);
+							$products = $stmt->fetchAll(PDO::FETCH_ASSOC);
+							$conn = null;
+							return $products;
+						} catch (PDOException $e) {
+							echo $sql . "<br>" . $e->getMessage();
+							$conn = null;
+							return false;
+						}
+					}
+					
+					foreach ($otherProducts as $product):
+						// Only display products with status 'Available'
+						if ($counter >= 30 || $product['product_status'] !== 'Available') {
+							continue; // Skip to the next iteration if the product status is not 'Available'
+						}
+
+						// Check if the product category is not "Flower Bouquet"
+						
+							?>
+							<div class="product">
+								<a href="customer_product.php?product_id=<?php echo $product['product_id']; ?>">
+									<?php
+									echo '<img src="' . $product['product_img'] . '" alt="' . $product['product_name'] . '">';
+									?>                        
+									<div class="product-name"><?php echo $product['product_name']; ?></div>
+									<div class="product-category"><?php echo $product['product_category']; ?></div>
+									<div class="p">
+										<div class="product-price"><?php echo '₱ '. $product['product_price']; ?></div>
+									</div>
+								</a>
+							</div>
+							<?php
+							$counter++; // Increment counter for each displayed product
+						
+					endforeach; ?>
+				</div>
+			</section>
+
             <br><br><br>
             
         </main>

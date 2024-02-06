@@ -4,7 +4,7 @@ require_once '../php/dbhelper.php'; // Using require_once ensures the script sto
 
 // Redirect non-sellers or unauthenticated users to the login page
 if (!isset($_SESSION["user_id"]) || $_SESSION["role"] !== "seller") {
-    header("Location: ../login.php");
+    header("Location: ../index.php");
     exit(); // Stop script execution after a header redirect
 }
 
@@ -117,14 +117,13 @@ usort($allTransactions, function($a, $b) {
                     <div class="column1">
                         <div class="transaction-details">
                             <!-- Check transaction type and display appropriate image -->
-                            <?php if ($transaction['type'] == 'product' && $transaction['paymode'] == 'gcash'): ?>
+                            <?php if ($transaction['type'] == 'sale' && $transaction['paymode'] == 'gcash'): ?>
                                 <img src="../php/images/gcash.png" alt="GCash Logo">
-                            <?php elseif ($transaction['type'] == 'product'): ?>
-                                <!-- Display a default image for COD or other paymodes -->
-                                <img src="../php/images/cod.jpg" alt="Default Image">
+                            <?php elseif ($transaction['type'] == 'sale' && $transaction['paymode'] == 'cod'): ?>
+                                <img src="../php/images/cod.jpg" alt="COD Image">
                             <?php else: ?>
                                 <!-- Display a generic image for services and subscriptions -->
-                                <img src="https://logos-download.com/wp-content/uploads/2020/06/GCash_Logo.png" alt="Transaction Image">
+                                <img src="../php/images/default_transaction.jpg" alt="Transaction Image">
                             <?php endif; ?>
                             
                             <div class="text-content">

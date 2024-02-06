@@ -6,7 +6,7 @@ $pdo = dbconnect();
 $userID = isset($_GET['user_id']) ? filter_input(INPUT_GET, 'user_id', FILTER_SANITIZE_NUMBER_INT) : null;
 
 if (isset($_GET['user_id'])) {
-    $stmt = $pdo->prepare("SELECT users.*, services.service_id, services.service_rate, services.service_description FROM users LEFT JOIN services ON users.user_id = services.arranger_id WHERE users.user_id = :userID");
+    $stmt = $pdo->prepare("SELECT users.*, services.service_id,  services.service_description FROM users LEFT JOIN services ON users.user_id = services.arranger_id WHERE users.user_id = :userID");
     $stmt->execute(['userID' => $userID]);
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -19,7 +19,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_service'])) {
     $firstName = filter_input(INPUT_POST, 'first_name', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
     $lastName = filter_input(INPUT_POST, 'last_name', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
     $arrangerAddress = filter_input(INPUT_POST, 'arranger_address', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-    $serviceRate = filter_input(INPUT_POST, 'service_rate', FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
     $serviceDescription = filter_input(INPUT_POST, 'service_description', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
 
@@ -70,7 +69,7 @@ if(isset($profileImage)) {
 
     if ($serviceExists) {
         // Update existing service
-        $updateServiceQuery = "UPDATE services SET service_rate = :serviceRate, service_description = :serviceDescription WHERE arranger_id = :arrangerID";
+        $updateServiceQuery = "UPDATE services SET  service_description = :serviceDescription WHERE arranger_id = :arrangerID";
         $stmt = $pdo->prepare($updateServiceQuery);
         $stmt->execute([
             'serviceRate' => $serviceRate,
@@ -79,7 +78,7 @@ if(isset($profileImage)) {
         ]);
     } else {
         // Insert new service
-        $insertServiceQuery = "INSERT INTO services (arranger_id, service_rate, service_description, status) VALUES (:arrangerID, :serviceRate, :serviceDescription, 'enabled')";        $stmt = $pdo->prepare($insertServiceQuery);
+        $insertServiceQuery = "INSERT INTO services (arranger_id, service_description, status) VALUES (:arrangerID, :serviceRate, :serviceDescription, 'enabled')";        $stmt = $pdo->prepare($insertServiceQuery);
         $stmt->execute([
             'arrangerID' => $userID,
             'serviceRate' => $serviceRate,
@@ -557,8 +556,6 @@ select {
             <input type="text" name="first_name" id="first_name" value="<?php echo $user['first_name']; ?>" required>  
             <h3 class="arrangerlname">Last Name</h3>
             <input type="text" name="last_name" id="last_name" value="<?php echo $user['last_name']; ?>" required>
-            <h3 class="arranger_rate">Service Rate</h3>
-            <input id="arranger-rate" name="service_rate" required="" type="text" value="<?php echo $user['service_rate']; ?>" onkeypress="return isNumberKey(event)">
             <h3 class="arranger_address">Address</h3>
             <input id="arranger-address" name="arranger_address" required="" value="<?php echo $user['address']; ?>" type="text">
             <h3 class="arranger_deT">Description:</h3>

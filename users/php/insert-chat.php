@@ -21,6 +21,6 @@ if (isset($_SESSION['user_id'])) {
     // Close the database connection
     $conn = null;
 } else {
-    header("location: ../login.php");
+    header("location: ../index.php");
 }
 ?>

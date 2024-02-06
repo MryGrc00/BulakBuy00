@@ -25,7 +25,7 @@
                             <form class="form-inline my-2 my-lg-0">
                                 <a href=""><i class="fa fa-search"></i></a>
                                 <input type="text"  class="form-control form-input" placeholder="Search">
-                                <a href="../customer/product.html"><i class="back fa fa-angle-left" aria-hidden="true"></i></a>
+                                <a href="#" onclick="goBack()"><i class="back fa fa-angle-left" aria-hidden="true"></i></a>
                                 <div id="search-results">Product Ratings</div>
                             </form>
                         </li>
@@ -213,5 +213,10 @@
             nextButton.addEventListener('click', nextImage);
             
         </script>
+                <script>
+            function goBack() {
+                window.history.back();
+            }
+          </script>
     </body>
 </html>

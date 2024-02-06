@@ -33,7 +33,7 @@ if (isset($_SESSION['user_id'])) {
     exit();
 } else {
     // Redirect to login page or handle the case where the user is not logged in
-    header('Location: login.php');
+    header('Location: index.php');
     exit();
 }
 ?>

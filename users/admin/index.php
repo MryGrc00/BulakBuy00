@@ -1,17 +1,17 @@
 <?php
 session_start();
-include('../php/dbhelper.php'); 
+include('../php/dbhelper.php');
 
 $alert = "";
 
 if (isset($_POST["login"])) {
     $email = $_POST["email"];
-    $pword = md5($_POST["password"]); 
+    $pword = $_POST["password"];
 
     try {
         $conn = dbconnect();
 
-        // Prepare and execute SQL statement for the admin table
+        // Prepare and execute SQL statement for the users table
         $stmt = $conn->prepare("SELECT * FROM `users` WHERE email = :email AND password = :password");
         $stmt->execute(['email' => $email, 'password' => $pword]);
 
@@ -19,7 +19,7 @@ if (isset($_POST["login"])) {
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
             // Set session variables
-            $_SESSION["user_id"] = $user["user_id"]; 
+            $_SESSION["user_id"] = $user["user_id"];
             $_SESSION["role"] = $user["role"]; // Set the user's role in the session
 
             // Redirect based on the user's role
@@ -44,8 +44,8 @@ if (isset($_POST["login"])) {
         echo "Connection failed: " . $e->getMessage();
     }
 }
-
 ?>
+
 
 
 

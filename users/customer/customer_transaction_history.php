@@ -4,7 +4,7 @@ require_once '../php/dbhelper.php'; // Using require_once ensures the script sto
 
 // Redirect non-sellers or unauthenticated users to the login page
 if (!isset($_SESSION["user_id"]) || $_SESSION["role"] !== "customer") {
-    header("Location: ../login.php");
+    header("Location: ../index.php");
     exit(); // Stop script execution after a header redirect
 }
 

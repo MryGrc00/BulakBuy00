@@ -160,7 +160,7 @@ function check_login($redirect = true){
 	}
 
 	if($redirect){
-		header("Location: login.php");
+		header("Location: index.php");
 		die;
 	}else{
 		return false;
@@ -672,7 +672,7 @@ function getServiceDetails($servicedetailsTable, $servicesTable, $usersTable, $s
     $conn = dbconnect();
 
     // SQL query to join servicedetails with services, and then join with users twice (once for customer, once for arranger)
-    $sql = "SELECT sd.*, s.service_rate,
+    $sql = "SELECT sd.*,
                    cust.first_name AS customer_first_name, cust.last_name AS customer_last_name, cust.profile_img AS customer_profile, cust.address AS customer_address, cust.phone AS customer_phone,
                    arr.first_name AS arranger_first_name, arr.last_name AS arranger_last_name, arr.profile_img AS arranger_profile, arr.address AS arranger_address, arr.phone AS arranger_phone
             FROM " . $servicedetailsTable . " AS sd

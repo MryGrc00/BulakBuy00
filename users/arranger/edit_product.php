@@ -23,7 +23,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $productName = $_POST['product_name'];
     $productCategory = $_POST['product_category'];
     $productPrice = $_POST['product_price'];
+    $productStocks = $_POST['product_stocks'];  
+    $productUnit = $_POST['product_unit'];
     $productDesc = $_POST['product_desc'];
+    $productStatus = $_POST['product_status'];
     $otherCategory = ($productCategory == 'Other') ? $_POST['other_category'] : '';
 
     // Processing flowerTypes and ribbonColors data
@@ -64,12 +67,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     try {
         $pdo = dbconnect();
-        $stmt = $pdo->prepare("UPDATE products SET product_name = :product_name, product_category = :product_category, other_category = :other_category, product_price = :product_price, product_desc = :product_desc, product_img = :product_img, flower_type = :flower_type, ribbon_color = :ribbon_color WHERE product_id = :product_id");
+        $stmt = $pdo->prepare("UPDATE products SET product_name = :product_name, product_category = :product_category, other_category = :other_category, product_price = :product_price, product_price = :product_price, product_stocks = :product_stocks, product_unit = :product_unit, product_desc = :product_desc, product_status = :product_status, product_img = :product_img, flower_type = :flower_type, ribbon_color = :ribbon_color WHERE product_id = :product_id");
         $stmt->bindParam(':product_name', $productName);
         $stmt->bindParam(':product_category', $productCategory);
         $stmt->bindParam(':other_category', $otherCategory);
         $stmt->bindParam(':product_price', $productPrice);
+        $stmt->bindParam(':product_stocks', $productStocks);
+        $stmt->bindParam(':product_unit', $productUnit);
         $stmt->bindParam(':product_desc', $productDesc);
+        $stmt->bindParam(':product_status', $productStatus);
         $stmt->bindParam(':product_img', $imagePath);
         $stmt->bindParam(':flower_type', $flowerTypeStr);
         $stmt->bindParam(':ribbon_color', $ribbonColorStr);
@@ -167,6 +173,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <option value="Arrangement Materials"<?php if ($products['product_category'] == 'Arrangement Materials') echo 'selected'; ?>>Arrangement Materials</option>
                         <option value="Flower Stands"<?php if ($products['product_category'] == 'Flower Stands') echo 'selected'; ?>>Flower Stands</option>
                         <option value="Leaves"<?php if ($products['product_category'] == 'Leaves') echo 'selected'; ?>>Leaves</option>
+                        <option value="Add Ons"<?php if ($products['product_category'] == 'Add Ons') echo 'selected'; ?>>Add Ons</option>
                         <option value="Other"<?php if ($products['product_category'] == 'Other') echo 'selected'; ?>>Other</option>
                     </select>
                  </div>
@@ -180,9 +187,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <label for="other-category-input" class="prodott">Other Category:</label>
                 <input type="text" name="other_category" id="other_category">
             </div>
-    
+
+            <div class="form-row ">
+                <div class="form-group col-md-6 prodpr">
+                    <h3 class="prodprT">Product Stocks</h3>
+                    <input type="number" name="product_stocks" id="product_stocks" value="<?php echo $products['product_stocks']; ?>"required>     
+                </div>
+                <div class="form-group col-md-6 prodpr">
+                    <h3 class="prodcaT">Product Unit  </h3>
+                    <select name="product_unit" id="product_unit">
+                        <option value="Per Piece"<?php if ($products['product_unit'] == 'Per Piece') echo 'selected'; ?>>Per Piece</option>
+                        <option value="Per Bundle"<?php if ($products['product_unit'] == 'Per Bundle') echo 'selected'; ?>>Per Bundle</option>
+                        <option value="Per Dozen"<?php if ($products['product_unit'] == 'Per Dozen') echo 'selected'; ?>>Per Dozen</option>
+                     
+                    </select>
+                </div>
+            </div>
             <h3 class="proddeT">Product Description:</h3>
-            <textarea name="product_desc" id="product_desc" rows="4" required><?php echo $products['product_desc']; ?></textarea>            <h3 class="custom">Customization</h3>
+            <textarea name="product_desc" id="product_desc" rows="4" required><?php echo $products['product_desc']; ?></textarea>            
+            
+            <h3 class="custom">Customization</h3>
 
             <div class="form-row">
                 <div class="container">
@@ -200,7 +224,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             </div>
 
+            <h3 class="custom mt-4">Availability</h3>
+            <div class="form-row">
+                <div class="container" style="display:flex">
+                    <input type="radio" name="product_status" id="available" value="Available" <?php echo ($products['product_status'] === 'Available') ? 'checked' : ''; ?>>
+                    <label for="available" style="margin-left:10px;margin-top:10px">Available</label>
+                   
+                </div>
+                <div class="container"style="display:flex">
+                <input type="radio" name="product_status" id="notAvailable" value="Not Available" <?php echo ($products['product_status'] === 'Not Available') ? 'checked' : ''; ?>>
+                <label for="notAvailable" style="margin-left:10px;margin-top:10px">Not Available</label>
 
+                </div>
+            </div>
             <div class="submit-btn">
                 <button class="addbtn" type="submit" name="submit" id="submit">Save</button>
             </div>

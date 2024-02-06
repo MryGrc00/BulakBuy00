@@ -228,6 +228,33 @@ try {
 
 
                         </table>
+                        <form action="reports_pdf.php" method="post">
+                        <div class="form-group">
+                              <label for="month">Select Month:</label>
+                              <select class="form-control" id="month" name="month">
+                                 <?php
+                                 // Loop to generate options for months
+                                 for ($i = 1; $i <= 12; $i++) {
+                                    $monthName = date("F", mktime(0, 0, 0, $i, 10));
+                                    echo "<option value='$i'>$monthName</option>";
+                                 }
+                                 ?>
+                              </select>
+                        </div>
+                        <div class="form-group">
+                              <label for="year">Select Year:</label>
+                              <select class="form-control" id="year" name="year">
+                                 <?php
+                                 // Loop to generate options for years
+                                 $currentYear = date('Y');
+                                 for ($i = $currentYear; $i >= $currentYear - 10; $i--) {
+                                    echo "<option value='$i'>$i</option>";
+                                 }
+                                 ?>
+                              </select>
+                        </div>
+                        <button type="submit" name="submit" class="btn btn-primary">Download</button>
+                     </form>
                      </div>
                   </div>
                </div>

@@ -1,7 +1,39 @@
 <?php
   session_start();
   include '../php/dbhelper.php';
-?><!DOCTYPE html> 
+
+
+  if (isset($_SESSION['user_id'])) {
+	$customer_id = $_SESSION['user_id'];
+
+  	function get_customer_orders_cancelled($customer_id) {
+	$conn = dbconnect();
+	$sql = "SELECT s.sales_id, p.product_name, p.product_img, p.product_price, SUM(sd.quantity) as quantity, sd.flower_type, sd.ribbon_color, sd.message
+			FROM sales s
+			JOIN salesdetails sd ON s.salesdetails_id = sd.salesdetails_id
+			JOIN products p ON sd.product_id = p.product_id
+			WHERE s.customer_id = ? AND s.status = 'Cancelled'
+			GROUP BY s.sales_id, sd.flower_type, sd.ribbon_color;";
+	try {
+		$stmt = $conn->prepare($sql);
+		$stmt->execute([$customer_id]);
+		$orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
+		$conn = null;
+		return $orders;
+	} catch (PDOException $e) {
+		echo $sql . "<br>" . $e->getMessage();
+		$conn = null;
+		return false;
+	}
+}
+
+	$order1 = get_customer_orders_cancelled($customer_id);
+
+  }
+
+
+?>
+<!DOCTYPE html> 
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -550,6 +582,14 @@
 		white-space: nowrap; 
 	}
 
+	.text-left h3 {
+		font-size: 13px;
+		margin-top:3px;
+		margin-left:-45px;
+		font-weight: 500;
+		font-weight: 400;
+	}
+
 	
 
   }
@@ -585,7 +625,11 @@
     </header>
 
     <div class="wrapper">
-        <div class="products-card">
+		<div class="button-container">
+			<button class="request-btn active">Orders</button>
+			<button class="cancelled-btn">Cancelled</button>
+		</div>
+        <div class="products-card" id="productsCard">
             <?php
           
 
@@ -597,57 +641,58 @@
 
                 if ($orders) {
                     // Loop through the orders and display them
-                    foreach ($orders as $order) {
-                        echo '<div class="single-card" onclick="redirectToOrderStatus(' . $order['sales_id'] . ')">';
-                        echo '<div class="img-area">';
-                        echo '<img src="' . $order['product_img'] . '" alt="">';
-                        echo '</div>';
-                        echo '<div class="info">';
-                        echo '<div class="text-left">';
-                        echo '<h2>' . $order['product_name'] . '</h2>';
-                        $customization = array();
-                                    
-                        // Check if flower type is available
-                        if (!empty($order['flower_type'])) {
-                            $customization[] = $order['flower_type'];
-                        }
-                    
-                        // Check if ribbon color is available
-                        if (!empty($order['ribbon_color'])) {
-                            $customization[] = $order['ribbon_color'];
-                        }
-                    
-                        // Display the customization details
-                        if (!empty($customization)) {
-                            echo '<div class="ribbon-color">';
-                            echo '<p class="ribbon">'. implode(', ', $customization) .'</p>';
-                            echo '</div>';
-                        }
-                    
-                        if ($order) {
-                            // Initialize a variable to store the message
-                            $message = !empty($order['message']) ? $order['message'] : 'None';
-                        
-                            // Display the message details
-                            echo '<div class="ribbon-color">';
-                            echo '<p class="ribbon">Message: ' . $message .'</p>';
-                            echo '</div>';
-                        }
-                        echo '<p class="price">₱ ' . number_format($order['product_price'], 2) . '</p>';
-                        echo '</div>';
-                        echo '<div class="text-right">';
-                        echo '<i class="bi bi-chevron-right"></i>';
-                        echo '<p class="count">x ' . $order['quantity'] . '</p>';
-                        echo '</div>';
-                        echo '</div>';
-                        echo '</div>';
-                    }
+					foreach ($orders as $order) {
+						echo '<div class="single-card" onclick="redirectToOrderStatus(' . $order['sales_id'] . ')">';
+						echo '<div class="img-area">';
+						echo '<img src="' . $order['product_img'] . '" alt="">';
+						echo '</div>';
+						echo '<div class="info">';
+						echo '<div class="text-left">';
+						echo '<h2>' . $order['product_name'] . '</h2>';
+						$customization = array();
+													
+						// Check if flower type is available
+						if (!empty($order['flower_type'])) {
+							$customization[] = $order['flower_type'];
+						}
+					
+						// Check if ribbon color is available
+						if (!empty($order['ribbon_color'])) {
+							$customization[] = $order['ribbon_color'];
+						}
+					
+						// Display the customization details
+						if (!empty($customization)) {
+							echo '<div class="ribbon-color">';
+							echo '<p class="ribbon">'. implode(', ', $customization) .'</p>';
+							echo '</div>';
+						}
+					
+						// Initialize a variable to store the message
+						$message = !empty($order['message']) ? $order['message'] : 'None';
+					
+						// Display the message details
+						echo '<div class="ribbon-color">';
+						echo '<p class="ribbon">Message: ' . $message .'</p>';
+						echo '</div>';
+					
+						echo '<p class="price">₱ ' . number_format($order['product_price'], 2) . '</p>';
+						echo '</div>';
+						echo '<div class="text-right">';
+						echo '<i class="bi bi-chevron-right"></i>';
+						echo '<p class="count">x ' . $order['quantity'] . '</p>';
+						echo '</div>';
+						echo '</div>';
+						echo '</div>';
+					}
                 } else {
                     echo' <p class="p-end" style="color: #bebebe;
                             font-size: 15px;
                             text-align: center;
                             margin-top: 300px;">No products found</p>';
                 }
+				echo '</div>';
+
             }
 
             // Function to fetch customer orders from the sales table with status "Pending"
@@ -673,10 +718,123 @@
             }
             
             ?>
+
+		 <div class="service-list" id="service-container">
+		 <?php
+			if ($order1) {
+				foreach ($order1 as $order) {
+			?>
+					<div class="single-card" onclick="redirectToOrderStatus(<?php echo $order['sales_id']; ?>)">
+						<div class="img-area">
+							<img src="<?php echo $order['product_img']; ?>" alt="">
+						</div>
+						<div class="info">
+							<div class="text-left">
+								<h3><?php echo $order['product_name']; ?></h3>
+								<?php
+								$customization = array();
+
+								if (!empty($order['flower_type'])) {
+									$customization[] = $order['flower_type'];
+								}
+
+								if (!empty($order['ribbon_color'])) {
+									$customization[] = $order['ribbon_color'];
+								}
+
+								if (!empty($customization)) {
+								?>
+									<div class="ribbon-color">
+										<p class="ribbon"><?php echo implode(', ', $customization); ?></p>
+									</div>
+								<?php
+								}
+
+								$message = !empty($order['message']) ? $order['message'] : 'None';
+								?>
+								<div class="ribbon-color">
+									<p class="ribbon">Message: <?php echo $message; ?></p>
+								</div>
+								<p class="price">₱ <?php echo number_format($order['product_price'], 2); ?></p>
+							</div>
+							<div class="text-right">
+								<i class="bi bi-chevron-right"></i>
+								<p class="count">x <?php echo $order['quantity']; ?></p>
+							</div>
+						</div>
+					</div>
+				
+			<?php
+				}
+			} else {
+			?>
+				<p class="p-end" style="color: #bebebe;
+										font-size: 15px;
+										text-align: center;
+										margin-top: 300px;">No products found</p>
+			<?php
+			}
+			?>
+
+
+
         </div>
 		
     </div>
+  <script>
+        // Get the products and services elements
+        const products = document.querySelector('.products-card');
+        const services = document.querySelector('.service-list');
 
+        // Get the products and product buttons
+        const productsBtn = document.querySelector('.request-btn');
+        const productBtn = document.querySelector('.cancelled-btn');
+
+        // Function to set the active page in localStorage
+        function setActivePage(page) {
+            localStorage.setItem('activePage', page);
+        }products
+
+        // Function to get the active page from localStorage
+        function getActivePage() {
+            return localStorage.getItem('activePage');
+        }
+
+        // Function to handle button clicks
+        function handleButtonClick(page) {
+            setActivePage(page);
+
+            if (page === 'products') {
+                // Show the products and hide the services
+                products.style.display = 'block';
+                services.style.display = 'none';
+
+                // Make the products button active and deactivate the product button
+                productsBtn.classList.add('active');
+                productBtn.classList.remove('active');
+            } else if (page === 'services') {
+                // Show the services and hide the products
+                products.style.display = 'none';
+                services.style.display = 'block';
+
+                // Make the product button active and deactivate the products button
+                productBtn.classList.add('active');
+                productsBtn.classList.remove('active');
+            }
+        }
+
+        // Check if there's an active page in localStorage and set it
+        const activePage = getActivePage();
+        if (activePage === 'services') {
+            handleButtonClick('services');
+        } else {
+            handleButtonClick('products'); // Default to products if no active page is found
+        }
+
+        // Add click event listeners to the products and services buttons
+        productsBtn.addEventListener('click', () => handleButtonClick('products'));
+        productBtn.addEventListener('click', () => handleButtonClick('services'));
+    </script>
   <script>
     function goBack() {
         window.history.back();

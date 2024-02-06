@@ -84,7 +84,7 @@ if (isset($_SESSION['user_id'])) {
     if ($orders) {
         // Loop through the orders and display them
         foreach ($orders as $order) {
-            echo '<div class="wrapper">';
+            echo '<div class="wrapper" style="margin-bottom:-60px">';
             echo '<div class="products-card">';
             echo '<div class="single-card">';
             echo '<div class="img-area">';
@@ -107,7 +107,7 @@ if (isset($_SESSION['user_id'])) {
             $quantity = isset($quantity) ? $quantity : 'Quantity not available';
             
             echo '<p class="count">x ' . $quantity . '</p>';
-            echo '<button class="product-done" data-sales-id="' . $order['sales_id'] . '" data-customer-id="' . $order['customer_id'] . '">In transit</button>';
+            echo '<button  style="margin-top:60px" class="product-done" data-sales-id="' . $order['sales_id'] . '" data-customer-id="' . $order['customer_id'] . '">Done</button>';
             echo '</div>';
             echo '</div>';
             echo '</div>';

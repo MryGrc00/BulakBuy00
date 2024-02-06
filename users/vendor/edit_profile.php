@@ -57,7 +57,7 @@ if (isset($_GET['user_id'])) {
         echo "User not found!";
     }
 } else {
-    header("Location: login.php"); 
+    header("Location: index.php"); 
     exit();
 }
 ?>

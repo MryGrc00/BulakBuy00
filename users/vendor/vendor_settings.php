@@ -8,7 +8,7 @@ if (isset($_SESSION["user_id"])){
         $users = get_record('users','user_id',$user_id);
 
 }else{
-    header("Location: login.php");
+    header("Location: index.php");
     exit();
 }
 

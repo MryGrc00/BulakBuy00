@@ -6,7 +6,7 @@ if (isset($_SESSION['user_id'])) {
 
 } else {
     // User is not logged in, redirect back to the login page
-    header("Location: login.php"); // Replace 'login.php' with your login page URL
+    header("Location: index.php"); // Replace 'index.php' with your login page URL
     exit();
 }
 ?>

@@ -5,7 +5,7 @@ include_once "php/dbhelper.php";
 $conn = dbconnect();
 
 if (!isset($_SESSION['user_id'])) {
-    header("location: login.php");
+    header("location: index.php");
 }
 
 $user_id = $_GET['user_id'];

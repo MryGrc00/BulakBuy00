@@ -453,7 +453,7 @@
                 <div class="container1">
                     <div class="row">
                         <br><br>
-                      <a href="login.php" class="link-dark pt-2 text-center">Already have an account?</a>
+                      <a href="index.php" class="link-dark pt-2 text-center">Already have an account?</a>
                     </div>
                 </div>
               </section>

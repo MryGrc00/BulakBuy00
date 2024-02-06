@@ -18,13 +18,13 @@ if (isset($_SESSION['user_id'])) {
         if ($stmt->rowCount() > 0) {
             session_unset();
             session_destroy();
-            header("location: ../login.php");
+            header("location: ../index.php");
         }
     } else {
         header("location: ../vendor_home.php");
     }
 } else {
-    header("location: ../login.php");
+    header("location: ../index.php");
 }
 
 // Close the database connection

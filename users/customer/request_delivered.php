@@ -70,13 +70,62 @@ if (isset($_SESSION['user_id']) &&  isset($_GET['servicedetails_id'])){
                             echo '<div class="num">';
                             echo '<p class="number">' . $details['arranger_phone'] . '</p>';
                             echo '</div>';
-                            echo '<p class="price">₱' . number_format($details['service_rate'], 2) . '/ Hr</p>';
+
                             echo '</div>';
                             echo '</div>';
                         } else {
                             echo "Service details not found.";
                         }
-          ?>
+							?>
+							<?php
+                    if (isset($_SESSION['user_id']) && isset($_GET['servicedetails_id'])) {
+                        $user_id = $_SESSION['user_id'];
+                        $servicedetails_id = $_GET['servicedetails_id'];
+
+                        // Fetch service details from the servicedetails table
+                        $details1 = getService_Details("servicedetails", "services", "users", "service_package", $servicedetails_id, $user_id);
+                    }
+
+                    if (isset($details1)) {
+                        echo '<div class="all-items">';
+                        echo '<h6 class="items-label">Package Details</h6>';
+                        echo '</div>';
+                        echo '<div class="cart-item">';
+                        echo '<div class="custom-checkbox" style="margin-top:-30px">';
+                        echo '<img src="' . $details1["package_image"] . '" alt="Package Image">';
+                        echo '</div>';
+                        echo '<div class="item-details">';
+                        echo '<h2>' . $details1["package_name"] . '</h2>';
+                        echo '<div class="loc">';
+                        echo '<p class="location">' . $details1['inclusions'] . '</p>'; // Assuming package_description is the field for inclusions
+                        echo '</div>';
+                        echo '<div class="num">';
+                        echo '<p class="number">' . '₱ ' . $details1['package_price'] . '</p>';
+                        echo '</div>';
+                        echo '</div>';
+                        echo '</div>';
+                    } else {
+                        echo "Service details not found.";
+                    }
+
+                    function getService_Details($servicedetailsTable, $servicesTable, $usersTable, $servicePackageTable, $servicedetails_id, $user_id)
+                    {
+                        $conn = dbconnect();
+
+                        // SQL to join servicedetails with services, then with users and service_package
+                        $sql = "SELECT sd.*, sp.package_image, sp.package_name, sp.inclusions, sp.package_price
+                                FROM " . $servicedetailsTable . " AS sd
+                                JOIN " . $servicesTable . " AS s ON sd.service_id = s.service_id
+                                JOIN " . $servicePackageTable . " AS sp ON sd.package_id = sp.package_id
+                                WHERE sd.servicedetails_id = :servicedetails_id AND sd.customer_id = :user_id";
+                        $stmt = $conn->prepare($sql);
+                        $stmt->bindParam(':servicedetails_id', $servicedetails_id, PDO::PARAM_INT);
+                        $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+                        $stmt->execute();
+
+                        return $stmt->fetch(PDO::FETCH_ASSOC);
+                    }
+                    ?>
                         <hr class="cart-hr">
 						<div class="timeline">
 							<?php
@@ -127,7 +176,7 @@ if (isset($_SESSION['user_id']) &&  isset($_GET['servicedetails_id'])){
 				
                 
 				?>
-						</div>
+				</div>
 						<div class="all-items">
                             <h6 class="items-label">Write a Review</h6>
                         </div>
@@ -158,17 +207,9 @@ if (isset($_SESSION['user_id']) &&  isset($_GET['servicedetails_id'])){
 								</div>
 							</div>
 						</div>
-						<div class="all-items">
-							<h6 class="items-label">Payment Details</h6>
-						</div>
-						<div class="dev-details">
-							<div class="payment-method">
-								<i class=" wallet bi bi-wallet2"></i> <label for="cash">Cash on Arrival</label>
-								<p></p><p></p>
-								<br>
-							</div>
-						</div>
-					</div>
+					
+		
+					
 				<div class="column2">
 					<div class="summary-container">
 						<div class="order-summary">
@@ -188,21 +229,19 @@ if (isset($_SESSION['user_id']) &&  isset($_GET['servicedetails_id'])){
 									<p class="product">Service Price</p>
 									<p class="order-price">₱<?php echo $details["amount"]; ?>	</p>
                                 </div>
-								</div>
-                                <div class="total-payment">
-									<p class="product">Hour</p>
-									<p class="t-payment"><?php echo $details["hours"]; ?></p><br>
-								</div>
+								
+         
 								<div class="total-payment">
 									<p class="total">Total</p>
 									<p class="t-payment">₱ <?php echo $details["amount"]; ?></p><br>
 								</div>
 								<div class="report-container">
-                                <a href="servicereport.php?servicedetails_id=<?php echo $servicedetails_id; ?>">
-                                    <button class="report-btn">Report Seller</button>
-                                </a>
+									<a href="servicereport.php?servicedetails_id=<?php echo $servicedetails_id; ?>">
+										<button class="report-btn">Report Seller</button>
+									</a>
+								</div>
                             </div>
-							</div>
+						
 						</div>
 					</div>
 				</div>
